@@ -1,0 +1,17 @@
+{
+    "Profile": "登録情報",
+    "Profile Information": "登録情報の修正",
+    "Update your account's profile information and email address.":"氏名・所属・Eメールを修正できます。",
+    "Name": "氏 名",
+    "Affiliation": "所属",
+    "Email": "Eメール",
+    "Save":"保存",
+    "Saved." : "保存しました。",
+    "Password": "パスワード",
+    "Confirm Password": "(確認用)上とおなじパスワード",
+    "Log In": "ログイン",
+    "Forgot your password?": "パスワードを忘れた？",
+    "Log Out": "ログアウト",
+    "Reset Password": "あたらしいパスワードの設定",
+    "Email Password Reset Link": "パスワード再設定メールを送信"
+}

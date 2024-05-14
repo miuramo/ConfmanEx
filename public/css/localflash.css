@@ -1,0 +1,12 @@
+@keyframes flash {
+    0% {
+      background-color: #df9;
+    }
+    100% {
+      background-color: inherit;
+    }
+  }
+
+  .flash {
+    animation: flash 1s;
+  }

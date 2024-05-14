@@ -1,0 +1,127 @@
+<?php
+
+namespace App\Models;
+
+use App\Mail\BbNotify;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+
+class Bb extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'paper_id',
+        'category_id',
+        'type',
+        'key',
+        'needreply',
+        'isopen',
+        'isclose',
+        'subscribers',
+    ];
+
+    public function paper()
+    {
+        return $this->belongsTo(Paper::class, 'paper_id');
+    }
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+    public function messages()
+    {
+        return $this->hasMany(BbMes::class, 'bb_id');
+    }
+    public static function make_bb(int $type, int $pid, int $cid)
+    {
+        $subs = [
+            1 => "pc|reviewer|metareviewer",
+            2 => "pc|metareviewer|author",
+            3 => "pc|pub|author",
+        ];
+        $firstmes = [
+            1 => "ここは査読者同士の事前議論掲示板です。\n査読者は自身を名乗らないでください。必要があればRevIDを用いてください。RevIDは送信フォームに表示されています。\n（RevIDが表示されていない場合は、査読を担当していません。）\n注：RevIDは査読者のIDではなく、査読割当てごとに異なるIDです。",
+            2 => "ここはメタ査読者と著者の掲示板です。（プログラム委員長も閲覧できます。）",
+            3 => "ここは出版担当と著者の掲示板です。（プログラム委員長も閲覧できます。）",
+        ];
+        $bb = Bb::firstOrCreate([
+            'paper_id' => $pid,
+            'category_id' => $cid,
+            'type' => $type,
+        ], [
+            'key' => Str::random(30),
+            'subscribers' => $subs[$type],
+        ]);
+        $mes = BbMes::firstOrCreate([
+            'bb_id' => $bb->id,
+        ], [
+            'user_id' => 0,
+            'subject' => 'ごあんない',
+            'mes' => $firstmes[$type],
+        ]);
+        return Bb::with("messages")->with("paper")->with("category")->find($bb->id);
+    }
+
+    /**
+     * Bb通知メールをおくる
+     */
+    public static function send_email_nofity(Bb $bb, BbMes $bbmes)
+    {
+        // pcのみ利害関係に注意する。
+        (new BbNotify($bb, $bbmes))->process_send();
+
+    }
+    public function url()
+    {
+        return route('bb.show', ['bb' => $this->id, 'key' => $this->key]);
+    }
+    public static function url_from_rev(Review $rev, int $type=1)
+    {
+        $bb = Bb::where("paper_id", $rev->paper_id)->where("category_id", $rev->category_id)->where("type", $type)->first();
+        if ($bb==null) return null;
+        return $bb->url();
+    }
+
+    public function get_mail_to_cc()
+    {
+        $tolist = [];
+        $bcclist = [];
+        $subary = explode("|", trim($this->subscribers));
+
+        //利害関係配列
+        $rigais = RevConflict::arr_pu_rigai();
+
+        foreach($subary as $role){
+            if ($role=="author"){
+                $to_cc_list = $this->paper->get_mail_to_cc();
+                $tolist[] = $to_cc_list['to'];
+                $bcclist = array_merge($bcclist, $to_cc_list['cc']);
+            } else if ($role=="pc" || $role=="pub"){
+                $role = Role::findByIdOrName($role);
+                foreach($role->users as $u){
+                    if ( isset($rigais[$this->paper_id][$u->id]) && $rigais[$this->paper_id][$u->id]<3 ) continue; //利害or共著
+                    $bcclist[] = $u->email;
+                }
+            } else if ($role=="metareviewer" || $role=="reviewer"){
+                $revuids = Review::where("paper_id", $this->paper_id)->where("category_id",$this->category_id)->where("ismeta", $role=="metareviewer")->pluck("user_id", "id")->toArray();
+                $revus = User::whereIn("id", $revuids)->get();
+                foreach($revus as $u){
+                    if ($this->type == 1 && $role=="metareviewer"){ //査読者同士の事前議論掲示板のときは、to:metaになる。 (メタと著者の掲示板のときは、to: author になるので、metaはbccに加わる。)
+                        $tolist[] = $u->email;
+                    } else {
+                        $bcclist[] = $u->email;
+                    }
+                }
+            }
+        }
+        // 保険のため、もしtolistが空だった場合は、個別に送信する
+        if (count($tolist)==0){
+            return ["separate_to" => $bcclist];
+        }
+        return ["to" => $tolist, "bcc" => $bcclist ];
+    }
+
+}

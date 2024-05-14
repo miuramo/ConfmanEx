@@ -1,0 +1,15 @@
+#pdftext {
+    border: 1px solid #ccc;
+    padding: 10px;
+    user-select: none;
+    /* テキスト選択を無効にする */
+}
+
+@font-face {
+    font-family: 'Monacakomi';
+    src: url('/font/Monacakomi.woff2') format('woff2'),
+        url('/font/Monacakomi.woff') format('woff');
+    /* 他のフォント形式も追加できます */
+    font-weight: normal;
+    font-style: normal;
+}

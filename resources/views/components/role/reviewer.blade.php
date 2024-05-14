@@ -1,0 +1,97 @@
+@php
+    $cats = App\Models\Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+    $bidon = App\Models\Category::select('id', 'status__bidding_on')
+        ->get()
+        ->pluck('status__bidding_on', 'id')
+        ->toArray();
+    $bidoff = App\Models\Category::select('id', 'status__bidding_off')
+        ->get()
+        ->pluck('status__bidding_off', 'id')
+        ->toArray();
+    $revon = App\Models\Category::select('id', 'status__revedit_on')
+        ->get()
+        ->pluck('status__revedit_on', 'id')
+        ->toArray();
+    // 査読結果スコア一覧
+    $revlist = App\Models\Category::select('id', 'status__revlist_on')
+        ->get()
+        ->pluck('status__revlist_on', 'id')
+        ->toArray();
+
+@endphp
+<!-- components.role.reviewer -->
+<div class="px-6 py-4">
+    <x-element.h1>
+        {{ $role->desc }}のかたは、最初に、利害表明 / Bidding を行ってください。
+    </x-element.h1>
+
+    <div class="px-6 py-2 pb-6">
+        @foreach ($cats as $n => $cat)
+            @if ($bidon[$n])
+                @if ($bidoff[$n])
+                    <div class="p-1 pt-3 text-blue-400  dark:bg-slate-400">{{ $cat }}の利害表明 / Bidding 期間は、終了しました。
+                    </div>
+                @else
+                    <x-element.linkbutton href="{{ route('review.conflict', ['cat' => $n]) }}" color="cyan">
+                        利害表明 ({{ $cat }})
+                    </x-element.linkbutton> <span class="mx-2"></span>
+                @endif
+            @else
+                <div class="p-1 pt-3 text-gray-400">{{ $cat }}の利害表明 / Bidding は、まだ開始していません。</div>
+            @endif
+        @endforeach
+    </div>
+
+    <x-element.h1>
+        査読期間になりましたら、以下のボタンから、査読をお願いします。
+    </x-element.h1>
+    @php
+        $total_revon = false;
+        foreach ($cats as $n => $cat) {
+            if ($revon[$n]) {
+                $total_revon = true;
+            }
+        }
+    @endphp
+    @if ($total_revon)
+        <div class="mx-6 my-4">
+            <x-element.linkbutton href="{{ route('review.index') }}" color="lime">
+                査読を担当していただく投稿の一覧
+            </x-element.linkbutton>
+        </div>
+    @else
+        <div class="m-2 p-2 text-gray-400">まだ査読割り当て作業中、または査読開始前です</div>
+    @endif
+
+    @php
+        $total_revlist = false;
+        foreach ($cats as $n => $cat) {
+            if ($revlist[$n]) {
+                $total_revlist = true;
+            }
+        }
+    @endphp
+    @if ($total_revlist)
+        <x-element.h1>
+            査読協力ありがとうございました。査読結果・スコアの一覧は以下から参照できます。
+        </x-element.h1>
+        <div class="mx-6 my-4">
+            @foreach ($cats as $n => $cat)
+                @if ($revlist[$n])
+                <x-element.linkbutton href="{{ route('review.result', ['cat' => $n]) }}" color="purple"
+                    target="_blank">
+                        査読結果・スコアの一覧 ({{ $cat }})
+                    </x-element.linkbutton> <span class="mx-2"></span>
+                @endif
+            @endforeach
+        </div>
+    @endif
+
+</div>
+
+
+@php
+    // 担当の査読状況
+    // TODO: 査読結果一覧を開示したら、リンクを表示する revlist_on
+    // もし担当したときの査読フォーム review.
+@endphp

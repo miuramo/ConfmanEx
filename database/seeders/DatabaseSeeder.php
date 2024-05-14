@@ -1,0 +1,52 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Bidding;
+use App\Models\Contact;
+use App\Models\Paper;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        if (\App\Models\User::count() == 0) {
+            \App\Models\User::factory()->create([
+                'name' => 'First User',
+                'email' => 'firstuser@example.com',
+                'affil' => 'Example',
+                'password' => Hash::make(env('INITIAL_PASSWORD')),
+            ]);
+
+        }
+        if (\App\Models\Role::count() == 0) {
+            foreach (\App\Models\Role::$roles as $name => $desc) {
+                $tmp = \App\Models\Role::create([
+                    'name' => $name,
+                    'desc' => $desc,
+                    'abbr' => $name,
+                ]);
+                $tmp->users()->attach(1);
+            }
+        }
+
+        $this->call([
+            EnqueteSeeder::class,
+            EnqueteConfigSeeder::class,
+            EnqueteItemSeeder::class,
+            BiddingSeeder::class,
+            ViewpointSeeder::class,
+            CategorySeeder::class,
+            ConfirmSeeder::class,
+            AcceptSeeder::class,
+            SettingSeeder::class,
+            MailTemplateSeeder::class,
+            EventConfigSeeder::class,
+        ]);
+    }
+}
