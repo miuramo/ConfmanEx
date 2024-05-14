@@ -70,4 +70,9 @@
         </ol>
     </div>
 
+    <div class="my-10 text-center text-gray-300 dark:text-gray-500">
+        Powered by <a href="https://github.com/miuramo/ConfmanEx/" target="_blank" class="hover:underline">ConfmanEx</a> <br>
+        Copyright &copy; 2024 <a href="https://istlab.info/" target="_blank" class="hover:underline">Motoki Miura</a>
+    </div>
+
 </x-app-layout>
