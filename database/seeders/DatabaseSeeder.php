@@ -17,9 +17,9 @@ class DatabaseSeeder extends Seeder
     {
         if (\App\Models\User::count() == 0) {
             \App\Models\User::factory()->create([
-                'name' => 'First User',
-                'email' => 'firstuser@example.com',
-                'affil' => 'Example',
+                'name' => env('INITIAL_NAME'),   //'First User',
+                'email' => env('INITIAL_EMAIL'), //'firstuser@example.com',
+                'affil' => env('INITIAL_AFFIL'), //'Example',
                 'password' => Hash::make(env('INITIAL_PASSWORD')),
             ]);
 

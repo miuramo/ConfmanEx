@@ -13,7 +13,7 @@
             @if($role->name == 'pc')
             <x-element.linkbutton href="https://scrapbox.io/confman/ConfmanEx_PC%E5%A7%94%E5%93%A1%E9%95%B7%E5%90%91%E3%81%91%E3%81%AE%E8%B3%87%E6%96%99"
              color="cyan" size="sm" target="_blank">
-                マニュアル (Scrapbox)</x-element.linkbutton>
+                マニュアル (Cosense/Scrapbox)</x-element.linkbutton>
 
 
 

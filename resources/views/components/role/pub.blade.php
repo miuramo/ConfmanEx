@@ -114,7 +114,7 @@
                     @endforeach
                 </div>
                 <div>
-                    ファイル名は、Prefix→ <input type="text" name="fn_prefix" value="IPSJ-SSS2024_" class="p-1"> +
+                    ファイル名は、Prefix→ <input type="text" name="fn_prefix" value="{{ env("PUB_DL_PREFIX","IPSJ-SSS2024_") }}" class="p-1"> +
                     [ブース記番].pdf になります。ファイル名が重複するため、pdf と altpdf は同時に選択しないでください。
                 </div>
 
