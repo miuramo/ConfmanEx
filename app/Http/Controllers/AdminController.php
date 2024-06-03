@@ -299,7 +299,7 @@ class AdminController extends Controller
     }
     public function crud(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);
+        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
         //テーブル指定があるか？
         // $connection = config('database.default');
         $driver = DB::connection()->getDriverName();
@@ -365,7 +365,7 @@ class AdminController extends Controller
      */
     public function crudpost(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'admin|manager|pub')) abort(403); // Note: 出版担当もbibinfochkから修正できる。
+        if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403); // Note: 出版担当もbibinfochkから修正できる。
         if ($req->input("dtype") == "tinyint") {
             $row = DB::select("SELECT `{$req->input("field")}` as field FROM {$req->input("table")} WHERE id={$req->input("data_id")} limit 1");
             $currentVal = intval($row[0]->field);
@@ -381,7 +381,7 @@ class AdminController extends Controller
     }
     public function crudnew(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);
+        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
         $tableName = $req->input("table");
         $eloModelName = 'App\\Models\\' . Str::studly(Str::singular($tableName)); //　studly でUpperCamelCaseにする
         if (class_exists($eloModelName)) {
@@ -391,7 +391,7 @@ class AdminController extends Controller
     }
     public function crudcopy(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);
+        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
         $tableName = $req->input("table");
         $row = $req->input("row");
         $eloModelName = 'App\\Models\\' . Str::studly(Str::singular($tableName)); //　studly でUpperCamelCaseにする
@@ -407,7 +407,7 @@ class AdminController extends Controller
     }
     public function cruddelete(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);
+        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
         $tableName = $req->input("table");
         $row = $req->input("row");
         $eloModelName = 'App\\Models\\' . Str::studly(Str::singular($tableName)); //　studly でUpperCamelCaseにする

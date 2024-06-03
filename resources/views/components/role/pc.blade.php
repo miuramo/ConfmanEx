@@ -42,7 +42,8 @@
                     @foreach ($cats as $catid => $catname)
                         <input type="checkbox" name="targetcat{{ $catid }}" value="{{ $catid }}"
                             id="label{{ $catid }}" @if ($catid == 1) checked="checked" @endif>
-                        <label for="label{{ $catid }}" class="dark:text-gray-300">{{ $catname }}</label> &nbsp;
+                        <label for="label{{ $catid }}" class="dark:text-gray-300">{{ $catname }}</label>
+                        &nbsp;
                     @endforeach
                 </div>
                 <x-element.submitbutton value="view" color="green">↑選択カテゴリの投稿論文リスト
@@ -63,14 +64,16 @@
                     @foreach ($cats as $catid => $catname)
                         <input type="checkbox" name="targetcat{{ $catid }}" value="{{ $catid }}"
                             id="label{{ $catid }}" @if ($catid == 1) checked="checked" @endif>
-                        <label for="label{{ $catid }}" class="dark:text-gray-300">{{ $catname }}</label>&nbsp;
+                        <label for="label{{ $catid }}"
+                            class="dark:text-gray-300">{{ $catname }}</label>&nbsp;
                     @endforeach
                 </div>
                 <div>
                     @foreach ($fts as $ft)
                         <input type="checkbox" name="filetype{{ $ft }}" value="{{ $ft }}"
                             id="label{{ $ft }}" @if ($ft == 'pdf') checked="checked" @endif>
-                        <label for="label{{ $ft }}" class="dark:text-gray-300">{{ $ft }}</label>&nbsp;
+                        <label for="label{{ $ft }}"
+                            class="dark:text-gray-300">{{ $ft }}</label>&nbsp;
                     @endforeach
                 </div>
 
@@ -156,41 +159,66 @@
     </x-element.h1>
 
 
-<x-element.h1>査読観点(Viewpoint)の管理</x-element.h1>
+    <x-element.h1>査読観点(Viewpoint)の管理</x-element.h1>
 
-<div class="px-6 dark:text-gray-300">
-    <x-element.linkbutton href="{{ route('viewpoint.export') }}" color="yellow">
-        Viewpoint Download
-    </x-element.linkbutton>
-    でダウンロードしたExcelを修正して、<br>↓でアップロードすると変更できます。
-    <form action="{{ route('viewpoint.import') }}" method="post" id="vpimport" enctype="multipart/form-data">
-        @csrf
-        @method('post')
-        <input type="file" name="file" id="file">
-        <div>
-            <input type="hidden" id="append" name="append" value="off">
-            <input type="checkbox" id="append" name="append" checked switch>
-            <label class="form-check-label" for="append">
-                アップロードした内容を追加する(一旦全削除してから追加する場合は、チェックを外す)
-            </label>
-        </div>
-        <x-element.submitbutton color="yellow">Viewpoint Upload
-        </x-element.submitbutton>
-    </form>
-</div>
+    <div class="px-6 dark:text-gray-300">
+        <x-element.linkbutton href="{{ route('viewpoint.export') }}" color="yellow">
+            Viewpoint Download
+        </x-element.linkbutton>
+        でダウンロードしたExcelを修正して、<br>↓でアップロードすると変更できます。
+        <form action="{{ route('viewpoint.import') }}" method="post" id="vpimport" enctype="multipart/form-data">
+            @csrf
+            @method('post')
+            <input type="file" name="file" id="file">
+            <div>
+                <input type="hidden" id="append" name="append" value="off">
+                <input type="checkbox" id="append" name="append" checked switch>
+                <label class="form-check-label" for="append">
+                    アップロードした内容を追加する(一旦全削除してから追加する場合は、チェックを外す)
+                </label>
+            </div>
+            <x-element.submitbutton color="yellow">Viewpoint Upload
+            </x-element.submitbutton>
+        </form>
+    </div>
 
-<x-element.h1>自分の権限確認（Role一覧）</x-element.h1>
-@php
-    $user = App\Models\User::find(auth()->id());
-@endphp
-@foreach ($user->roles as $ro)
-    <span class="inline-block bg-slate-300 rounded-md p-1">{{ $ro->desc }} ({{ $ro->name }})</span>
-@endforeach
+    <x-element.h1>自分の権限確認（Role一覧）</x-element.h1>
+    @php
+        $user = App\Models\User::find(auth()->id());
+    @endphp
+    @foreach ($user->roles as $ro)
+        <span class="inline-block bg-slate-300 rounded-md p-1">{{ $ro->desc }} ({{ $ro->name }})</span>
+    @endforeach
 
-<x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
-        情報学広場登録用Excel Download
-    </x-element.linkbutton>
-</x-element.h1>
+
+    <x-element.h1>
+
+        <x-element.linkbutton color="cyan" href="{{ route('admin.crud') }}" target="_blank">
+            CRUD
+        </x-element.linkbutton>
+        @php
+            $shortcuts = [
+                'Setting' => 'settings',
+                'Category' => 'categories',
+                'EnqueteConfig' => 'enquete_configs',
+                'Enquete' => 'enquetes',
+                'EnqueteItems' => 'enquete_items',
+            ];
+        @endphp
+        @foreach ($shortcuts as $key => $tbl)
+            <span class="mx-2"></span>
+            <x-element.linkbutton color="cyan" href="{{ route('admin.crud', ['table' => $tbl]) }}" target="_blank">
+                {{ $key }}
+            </x-element.linkbutton>
+        @endforeach
+    </x-element.h1>
+
+
+
+    <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
+            情報学広場登録用Excel Download
+        </x-element.linkbutton>
+    </x-element.h1>
 
 
 </div>
