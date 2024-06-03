@@ -101,6 +101,10 @@ class File extends Model
         $orig_h = 1754;
         $crop_w = 900;
         $crop_x = intval(($orig_w - $crop_w) / 2);
+        $setting_crop_x = Setting::findByIdOrName("CROP_X","value");
+        if ($setting_crop_x){
+            $crop_x = $setting_crop_x;
+        }
         $crop_h = 400;
         $crop_y = 180;
 
