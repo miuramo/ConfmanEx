@@ -78,6 +78,7 @@ class Submitted extends Mailable
             with: [
                 'datauri' => $imageDataURI,
                 'title' => $this->paper->title,
+                'paperid' => $this->paper->id_03d(),
                 'owner' => $owner,
             ],
         );

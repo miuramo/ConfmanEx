@@ -11,7 +11,7 @@
 
 
 ---
-
+# PaperID：{{ $paperid }}
 
 # タイトル：{{ $title }}
 
