@@ -10,9 +10,9 @@
      @elseif ($file->pending)
      class="bg-yellow-200 dark:bg-yellow-800
     @else
-    class="bg-slate-200 dark:bg-slate-600
-    @endif
-        overflow-hidden shadow-lg sm:rounded-lg dark:text-slate-400 motion-safe:hover:scale-[1.05] transition-all duration-250">
+    class="bg-slate-200 dark:bg-slate-600 @endif
+        overflow-hidden shadow-lg sm:rounded-lg dark:text-slate-400 motion-safe:hover:scale-[1.05] transition-all
+        duration-250">
         {{-- <div class="p-4 text-gray-900 xs:text-sm sm:text-sm md:text-md lg:text-lg xl:text-2xl"> --}}
         <div class="p-2 text-gray-900 text-sm leading-relaxed  dark:text-gray-400">
             @if (!$file->locked)
@@ -77,7 +77,8 @@
                     <div class="my-2 "></div>
                     {{ $file->origname }}
                     &nbsp;
-                    <span class="sm:rounded-lg  bg-cyan-100 p-1 dark:bg-cyan-300 dark:text-gray-500">{{ $file->pagenum }}
+                    <span
+                        class="sm:rounded-lg  bg-cyan-100 p-1 dark:bg-cyan-300 dark:text-gray-500">{{ $file->pagenum }}
                         @if ($file->pagenum > 1)
                             pages
                         @else
@@ -93,9 +94,17 @@
                             class="mx-4 sm:rounded-lg  bg-yellow-500 px-2 py-1 font-bold text-yellow-50 text-lg">Pending</span>
                     @endif
                     @if (!$file->valid)
-                        <span
-                            class="mx-4 sm:rounded-lg  bg-red-500 px-2 py-0 font-bold text-black text-lg">Invalid ({{$file->created_at}})</span>
+                        <span class="mx-4 sm:rounded-lg  bg-red-500 px-2 py-0 font-bold text-black text-lg">Invalid
+                            ({{ $file->created_at }})</span>
                     @endif
+                @elseif (strpos($file->mime, 'video') == 0)
+                    <a href="{{ route('file.showhash', ['file' => $file->id, 'hash' => substr($file->key, 0, 8)]) }}"
+                        target="_blank">
+                        <img src="{{ route('file.altimgshow', ['file' => $file->id, 'hash' => substr($file->key, 0, 8)]) }}"
+                            title="{{ $file->origname }}" loading="lazy" class="flex-shrink-0" width=300>
+                    </a>
+                    <div class="my-2 "></div>
+                    {{ $file->origname }}
                 @else
                     <a href="{{ route('file.showhash', ['file' => $file->id, 'hash' => substr($file->key, 0, 8)]) }}"
                         target="_blank">{{ $file->origname }}</a>

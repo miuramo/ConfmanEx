@@ -104,7 +104,10 @@ class StoreFileRequest extends FormRequest
             shell_exec("pdftoppm -png -singlefile {$fullpath} " . storage_path(File::apf() . '/' . substr($hashname, 0, -4)));
             // 残りのタスク
             PdfJob::dispatch($file);
-
+        } else if ( strpos($file->mime,"video")==0 ){
+            // ビデオのサムネをつくる
+            shell_exec("ffmpeg -i {$fullpath} -vf thumbnail=100,scale=384:216 -frames:v 1 " . storage_path(File::apf() . '/' . substr($hashname, 0, -4)).".png" );
+            // not implemented VideoJob::dispatch($file);
         }
         return redirect()->route('paper.edit', ['paper' => $pid])->with('feedback.success', "ファイルをアップロードしました。");
     }
