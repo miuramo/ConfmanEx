@@ -510,7 +510,7 @@ class AdminController extends Controller
      */
     public function check_exefiles()
     {
-        $in = ["pdftoppm -v", "convert -version", "md5sum --version", "file -v", "pdfinfo -v", "node -v", "npm -v", "composer -V", "php -i"];
+        $in = ["pdftoppm -v", "convert -version", "md5sum --version", "file -v", "pdfinfo -v", "node -v", "npm -v", "composer -V", "ffmpeg -version", "php -i"];
         $out = [];
         foreach ($in as $com) {
             $out[$com] = shell_exec($com . " 2>&1");
