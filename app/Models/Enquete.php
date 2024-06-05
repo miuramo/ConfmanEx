@@ -11,7 +11,8 @@ class Enquete extends Model
 
     public function items()
     {
-        return $this->hasMany(EnqueteItem::class, 'enquete_id');
+        // 並び順を orderint にする
+        return $this->hasMany(EnqueteItem::class, 'enquete_id')->orderBy('orderint');
     }
     /**
      * 必要なアンケートを返す
