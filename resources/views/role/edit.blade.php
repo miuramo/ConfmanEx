@@ -39,14 +39,15 @@
         </div>
     </div>
 
-    <div class="mx-6 my-2">
-        <x-element.submitbutton value="excel" color="lime">
-            Role『{{ $role->desc }}』のメンバーをExcel出力
-        </x-element.submitbutton>
-    </div>
     <form action="{{ route('role.editpost', ['role' => $role->name]) }}" method="post" id="addusertorole">
         @csrf
         @method('post')
+
+        <div class="mx-6 my-2">
+            <x-element.submitbutton value="excel" color="lime">
+                Role『{{ $role->desc }}』のメンバーをExcel出力
+            </x-element.submitbutton>
+        </div>
 
         <div class="mx-6">
             <div class="container">
@@ -54,9 +55,10 @@
                     onclick="openclose('content')">
                 </x-element.button>
                 <div class="hidden-content mt-2 bg-pink-200 dark:bg-pink-600 p-2" id="content" style="display:none;">
-                    subject: <input class="w-3/4 p-1 text-sm text-black  bg-white dark:text-gray-200 dark:bg-gray-800" type="text" name="subject"
-                        value="[:CONFTITLE:] 投稿・査読システムのログイン方法">
-                    <textarea class="w-full p-1 text-sm text-black  bg-white dark:text-gray-200 dark:bg-gray-800" name="body" id="" cols="80" rows="10">[:AFFIL:] [:NAME:] 様
+                    subject: <input class="w-3/4 p-1 text-sm text-black  bg-white dark:text-gray-200 dark:bg-gray-800"
+                        type="text" name="subject" value="[:CONFTITLE:] 投稿・査読システムのログイン方法">
+                    <textarea class="w-full p-1 text-sm text-black  bg-white dark:text-gray-200 dark:bg-gray-800" name="body"
+                        id="" cols="80" rows="10">[:AFFIL:] [:NAME:] 様
 
 [:CONFTITLE:] プログラム委員長です。
 
@@ -73,6 +75,30 @@
 </textarea>
                     <x-element.submitbutton value="mailsend" color="pink">
                         チェックをいれた人に、メール送信
+                    </x-element.submitbutton>
+                </div>
+            </div>
+        </div>
+
+        <div class="mx-6 my-2">
+            <div class="container">
+                <x-element.button class="" id="toggleButton" value="他のRole追加パネルを開く／閉じる"
+                    color='cyan' onclick="openclose('otherroles')">
+                </x-element.button>
+                <div class="hidden-content mt-2 bg-cyan-200 dark:bg-cyan-600 p-2" id="otherroles" style="display:none;">
+
+                    @foreach ($roles as $ro)
+                        @if ($ro->name != $role->name)
+                            <span>
+                                <input type="checkbox" id="id_{{ $ro->name }}" name="ROLE_{{ $ro->id }}"
+                                    value="on" />
+                                <label for="id_{{ $ro->name }}" class="mr-4">{{ $ro->desc }}</label>
+                            </span>
+                        @endif
+                    @endforeach
+
+                    <x-element.submitbutton value="otherroles" color="cyan">
+                        チェックをいれた人に、選択したRoleを追加する
                     </x-element.submitbutton>
                 </div>
             </div>

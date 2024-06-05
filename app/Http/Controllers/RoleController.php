@@ -52,6 +52,35 @@ class RoleController extends Controller
 
         if ($req->has("action") && $req->input("action") == "excel") {
             return Excel::download(new RoleMembersExportFromView($role), "role_{$name}_members.xlsx");
+        } else if ($req->has("action") && $req->input("action") == "otherroles") {
+            // valueがonの要素をあつめる。u_{uid}になっているので、とりだす。
+            $target_users = []; // uid (integer) の配列
+            foreach ($req->all() as $k => $v) {
+                if ($v == 'on' && strpos($k, 'u_') == 0) {
+                    $uid = explode("_", $k)[1];
+                    if (is_numeric($uid)) $target_users[] = $uid;
+                }
+            }
+            $target_roles = []; // Roleオブジェクト の配列
+            foreach ($req->all() as $kk => $vv) {
+                if ($vv == 'on' && strpos($kk, 'ROLE_') === 0) {
+                    $kkary = explode("_", $kk);
+                    if (isset($kkary[1])) {
+                        $rid = $kkary[1];
+                        if (is_numeric($rid)) $target_roles[] = Role::find($rid);
+                    }
+                }
+            }
+            foreach ($target_users as $uuid) {
+                $u = User::find($uuid);
+                if ($u != null) {
+                    foreach ($target_roles as $tRole) {
+                        if ($tRole->containsUser($uuid)) continue;
+                        $u->roles()->attach($tRole);
+                    }
+                }
+            }
+            return redirect()->route('role.edit', ["role" => $name])->with('feedback.success', "他のRoleを追加しました。");
         } else if ($req->has("action") && $req->input("action") == "mailsend") {
             // valueがonの要素をあつめる。u_{uid}になっているので、とりだす。
             $target_users = [];
