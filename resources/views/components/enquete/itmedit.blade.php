@@ -19,7 +19,8 @@
     }
     $after = nl2br($itm->contentafter); // input要素のあとの説明など
 @endphp
-<tr class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200' : 'bg-white-50 dark:bg-slate-400' }}">
+<tr
+    class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200' : 'bg-white-50 dark:bg-slate-400' }}">
     <td nowrap class="p-4">
         {{ $itm->desc }} →</td>
     @if ($type == 'selection')
@@ -35,6 +36,7 @@
                     class="hover:bg-lime-100">{{ $choice }}</label>
                 &nbsp;<br>
             @endforeach
+            <div class="my-3"></div>
             {!! $after !!}
         </td>
     @elseif($type == 'number')
@@ -45,6 +47,7 @@
             <input type="number" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
                 onchange="changed('{{ $formid }}','{{ $itm->name }}');" value="{{ $current ?? $sel[2] }}"
                 min="{{ $sel[0] }}" max="{{ $sel[1] }}">
+            <div class="my-3"></div>
             {!! $after !!}
         </td>
     @elseif($type == 'text')
@@ -56,6 +59,7 @@
             <input type="text" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
                 onblur="changed('{{ $formid }}','{{ $itm->name }}');" value="{{ $current ?? '' }}"
                 size="{{ $sel[0] }}" placeholder="{{ $sel[1] }}">
+            <div class="my-3"></div>
             {!! $after !!}
         </td>
     @elseif($type == 'textarea')
@@ -67,6 +71,7 @@
             <textarea class="text-left" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
                 onblur="changed('{{ $formid }}','{{ $itm->name }}');" cols="{{ $sel[0] }}"
                 rows="{{ $sel[1] }}" placeholder="{{ $sel[2] }}">{{ $current ?? '' }}</textarea>
+            <div class="my-3"></div>
             {!! $after !!}
         </td>
     @endif
