@@ -79,7 +79,11 @@ class EnqueteController extends Controller
      */
     public function update(UpdateEnqueteRequest $request, Enquete $enquete)
     {
-        return $request->shori();
+        if ($request->ajax()) return $request->shori();
+        else {
+            // input type=numberでEnterをおすと、submitしてしまうので、ここでリダイレクトしてあげる
+            return redirect()->route('enquete.pageedit',['paper'=>$request->input("paper_id"), 'enq'=>$request->input("enq_id")]);
+        }
         //
     }
 
