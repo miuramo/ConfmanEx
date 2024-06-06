@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Category;
 use App\Models\Confirm;
 use App\Models\Paper;
 use Illuminate\Foundation\Http\FormRequest;
@@ -65,6 +66,10 @@ class PaperStoreRequest extends FormRequest
     // papers.create からのPost
     public function shori(): object
     {
+        $cat = Category::find($this->input("action"));
+        if (!$cat->isnotUpperLimit()){
+            return redirect()->route('paper.create')->with('feedback.error', "申し訳ありませんが、{$cat->name}は受け入れ件数の上限に達しているため、投稿情報を作成できませんでした。");
+        }
         $validator = $this->validate_em();
         if ($validator == null) {
             return redirect()->route('paper.create')->with('feedback.error', "投稿連絡用メールアドレスは1件以上" . env('CONTACTEMAILS_MAX', 5) . "件以内で入力してください。");

@@ -92,7 +92,7 @@
                         @if ($anyopen)
                             チェック事項を了解したうえで、
                             @foreach ($cats as $c)
-                                @if ($c->isOpen())
+                            @if ($c->isOpen() && $c->isnotUpperLimit())
                                     <x-element.submitbutton value="{{ $c->id }}" color="{{ $c->color }}">
                                         {{ $c->name }}に新規投稿する
                                     </x-element.submitbutton>
@@ -108,7 +108,7 @@
                 </div>
             </form>
             @can('admin')
-                <x-element.button onclick="debug_em()" color="gray" value="debug">
+                <x-element.button onclick="debug_em()" color="white" value="debug">
                 </x-element.button>
             @endcan
 

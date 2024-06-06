@@ -40,4 +40,13 @@ class Category extends Model
     public function is_accept_pdf(){
         return Enquete::checkdayduration($this->pdf_accept_start, $this->pdf_accept_end);
     }
+
+    /**
+     * 投稿数が設定の上限(upperlimit)を超えたらfalse
+     */
+    public function isnotUpperLimit(){
+        if ($this->upperlimit == 0) return true;
+        $papercount = Paper::where("category_id", $this->id)->where("deleted",0)->count();
+        return ($papercount < $this->upperlimit );
+    }
 }
