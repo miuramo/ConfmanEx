@@ -128,6 +128,10 @@
         <x-element.linkbutton href="{{ route('bb.index') }}" color="pink">
             掲示板一覧
         </x-element.linkbutton>
+        <span class="px-3">アンケート</span>
+        <x-element.linkbutton href="{{ route('enq.index') }}" color="cyan">
+            アンケート一覧
+        </x-element.linkbutton>
     </x-element.h1>
 
 

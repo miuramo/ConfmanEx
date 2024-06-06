@@ -85,7 +85,7 @@
                         <x-element.gendospan>{{ $enqs['until'][$enq->id] }}まで修正可</x-element.gendospan>
                     </div>
                     @if ($enq->showonpaperindex)
-                        <form action="{{ route('enquetes.update', ['paper' => $paper->id, 'enq' => $enq]) }}"
+                        <form action="{{ route('enquete.update', ['paper' => $paper->id, 'enq' => $enq]) }}"
                             method="post" id="enqform{{ $enq->id }}">
                             @csrf
                             @method('put')

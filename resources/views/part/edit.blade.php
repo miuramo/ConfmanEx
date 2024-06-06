@@ -40,7 +40,7 @@
                 <x-element.gendospan>{{ $enqs['until'][$enq->id] }}まで修正可</x-element.gendospan>
             </div>
             @if ($enq->showonpaperindex)
-                <form action="{{ route('enquetes.update', ['paper' => $part->id, 'enq' => $enq]) }}" method="post"
+                <form action="{{ route('enquete.update', ['paper' => $part->id, 'enq' => $enq]) }}" method="post"
                     id="enqform{{ $enq->id }}">
                     @csrf
                     @method('put')

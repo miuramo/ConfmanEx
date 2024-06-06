@@ -341,6 +341,9 @@ class AdminController extends Controller
                         $query = $query->where($fn, 'LIKE', '%' . $fv . '%');
                     }
                 }
+                if (isset($coldetails['orderint'])) {
+                    $query = $query->orderBy('orderint');
+                }
                 $numdata = $query->count();
                 $data = $query->limit(100)->get()->toArray();
             }

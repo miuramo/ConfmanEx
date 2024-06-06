@@ -66,9 +66,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/user/profile', [UserController::class, 'profile'])->name('user.profile.edit');
     //アンケート回答
+    Route::resource('enq', EnqueteController::class); // ここはenq.index, enq.store 等。
+    Route::get('/enq/{enq}/answers', [EnqueteController::class, 'answers'])->name('enq.answers'); 
+
     Route::get('/paper/{paper}/enq/{enq}/edit', [EnqueteController::class, 'edit'])->name('enquete.pageedit'); //インラインではなく個別のpageで表示
     Route::get('/paper/{paper}/enq/{enq}', [EnqueteController::class, 'show'])->name('enquete.pageview');
-    Route::put('/paper/{paper}/enq/{enq}', [EnqueteController::class, 'update'])->name('enquetes.update');
+    Route::put('/paper/{paper}/enq/{enq}', [EnqueteController::class, 'update'])->name('enquete.update');
     //査読結果
     Route::get('/paper/{paper}/review', [PaperController::class, 'review'])->name('paper.review');
     //ドラッグ範囲選択
