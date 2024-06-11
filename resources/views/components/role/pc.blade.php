@@ -28,7 +28,11 @@
                     <tr>
                         <td class="px-2 text-center">{{ $cpc->name }}</td>
                         <td class="px-2 text-right">{{ $cpc->papers_count }}</td>
-                        <td class="px-2 text-right">{{ $count_paper_haspdf[$cpc->id] }}</td>
+                        @isset($count_paper_haspdf[$cpc->id])
+                            <td class="px-2 text-right">{{ $count_paper_haspdf[$cpc->id] }}</td>
+                        @else
+                            <td class="px-2 text-right">0</td>
+                        @endisset
                     </tr>
                 @endforeach
             </tbody>
@@ -219,7 +223,8 @@
         @endphp
         @foreach ($shortcuts as $key => $tbl)
             <span class="mx-2"></span>
-            <x-element.linkbutton color="cyan" href="{{ route('admin.crud', ['table' => $tbl]) }}" target="_blank">
+            <x-element.linkbutton color="cyan" href="{{ route('admin.crud', ['table' => $tbl]) }}"
+                target="_blank">
                 {{ $key }}
             </x-element.linkbutton>
         @endforeach
