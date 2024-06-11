@@ -17,7 +17,7 @@ class Category extends Model
 
     public function papers()
     {
-        return $this->hasMany(Paper::class,'category_id');
+        return $this->hasMany(Paper::class,'category_id')->orderBy('id');
     }
 
     public static function spans()
