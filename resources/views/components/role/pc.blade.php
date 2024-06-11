@@ -2,12 +2,12 @@
     $cats = App\Models\Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
 
     $cat_paper_count = App\Models\Category::withCount('papers')->get();
-    // PDFファイルがある投稿
-    $paper_with_file = [];
-    foreach($cats as $cid=>$cname){
-        $cnt = App\Models\Paper::whereNotNull("pdf_file_id")->where("category_id",$cid)->count();
-        $paper_with_file[$cid] = $cnt;
-    }
+    // PDFファイルがある投稿の数
+    $count_paper_haspdf = App\Models\Paper::select(DB::raw('count(id) as count, category_id'))
+        ->groupBy('category_id')
+        ->whereNotNull('pdf_file_id')
+        ->get()
+        ->pluck('count', 'category_id');
 @endphp
 <!-- components.role.reviewer -->
 <div class="px-6 py-4">
@@ -28,7 +28,7 @@
                     <tr>
                         <td class="px-2 text-center">{{ $cpc->name }}</td>
                         <td class="px-2 text-right">{{ $cpc->papers_count }}</td>
-                        <td class="px-2 text-right">{{ $paper_with_file[$cpc->id] }}</td>
+                        <td class="px-2 text-right">{{ $count_paper_haspdf[$cpc->id] }}</td>
                     </tr>
                 @endforeach
             </tbody>
