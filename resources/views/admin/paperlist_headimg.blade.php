@@ -57,8 +57,8 @@
             @endforeach
         </div>
         <div class="mb-4 my-10">
-            <x-element.linkbutton href="{{ route('role.top', ['role' => 'reviewer']) }}" color="gray" size="sm">
-                &larr; 査読者Topに戻る
+            <x-element.linkbutton href="{{ route('admin.dashboard') }}" color="gray" size="sm">
+                &larr; Admin Topに戻る
             </x-element.linkbutton>
         </div>
     </div>
