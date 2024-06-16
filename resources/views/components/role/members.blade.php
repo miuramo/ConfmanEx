@@ -1,7 +1,7 @@
 @props([
     'users' => [],
     'role' => null,
-    'heads' => ['chk','uid', 'name','affil','email','last_access','created_at','(action)'],
+    'heads' => ['chk','uid', 'name','affil','email','last_access','created_at','(action)','i'],
     'chkfor' => null,
 ])
 <!-- components.role.members -->
@@ -39,6 +39,9 @@
                     <x-element.deletebutton action="{{ route('role.leave', ['role' => $role, 'user' => $u]) }}"
                         confirm="脱退させる？">脱退
                     </x-element.deletebutton>
+                </td>
+                <td class="text-center text-gray-600">
+                    {{$loop->iteration}}
                 </td>
             </tr>
         @endforeach
