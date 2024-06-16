@@ -141,7 +141,26 @@
 
         </div>
     </form>
-
+    <div class="mx-6 my-2">
+        <x-element.h1>{{ strtoupper($role->name) }}_MEMBER に登録されているが、まだアカウントがない人</x-element.h1>
+        @php
+            // check
+            $mem = App\Models\Setting::where('name', strtoupper($role->name) . '_MEMBER')
+                ->where('valid', true)
+                ->first();
+            $noreg_members = [];
+            $ary = explode('|', $mem->value);
+            foreach ($ary as $n => $name) {
+                $uobj = App\Models\User::where('name', $name)->first();
+                if ($uobj == null) {
+                    $noreg_members[] = $name;
+                }
+            }
+        @endphp
+        <div class="mx-4">
+            {{ implode("，", $noreg_members) }}
+        </div>
+    </div>
 
     @push('localjs')
         <script src="/js/jquery.min.js"></script>

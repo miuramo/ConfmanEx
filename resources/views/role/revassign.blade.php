@@ -2,14 +2,8 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
-            査読割り当て {{ $cat->name }}→{{ $role->desc }}
-            {{-- &nbsp;
-            <x-element.linkbutton href="{{ route('file.create') }}" color="cyan">
-                Upload New File</x-element.linkbutton>
-
-            <x-element.deletebutton action="{{ route('file.delall') }}" color="red" confirm="全部削除してよいですか？"> Delete All
-            </x-element.deletebutton> --}}
-
+            査読割り当て <span class="mx-2"></span>
+            {{ $cat->name }} {{count($papers)}}件 → {{ $role->desc }}
         </h2>
     </x-slot>
     @section('title', "査読割当 {$cat->name}")
@@ -29,6 +23,7 @@
                         color="lime">
                         {{ $catname }}→{{ $role->desc }}
                     </x-element.linkbutton>
+                    <span class="mx-2"></span>
                 @endforeach
             @endforeach
         </div>

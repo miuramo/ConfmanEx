@@ -126,9 +126,18 @@
             <x-element.linkbutton href="{{ route('admin.mailtest') }}" color="pink">
                 mailtest
             </x-element.linkbutton>
+            <span class="px-5"></span>
+            <x-element.linkbutton href="{{ route('admin.paperlist_headimg') }}" color="yellow">
+                切り取り画像の確認
+            </x-element.linkbutton>
         </x-element.h1>
 
         <x-element.h1>Danger Zone：
+            <x-element.linkbutton href="{{ route('admin.resetbidding') }}" color="pink"
+                confirm="RevConflict::truncate() で、利害表明 / Biddingがすべて消えます。本当に、リセットしてよいですか？">
+                利害表明 / Bidding をすべてリセットする
+            </x-element.linkbutton>
+            <span class="px-5"></span>
             <x-element.linkbutton href="{{ route('admin.resetpaper') }}" color="red"
                 confirm="ユーザやロール、設定以外、すべて消えます。ファイルを含め、事前にバックアップをとってください。本当に、リセットしてよいですか？">
                 投稿をすべてリセットする

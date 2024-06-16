@@ -148,7 +148,7 @@ class RoleController extends Controller
 
         $reviewers = $role->users;
         $roles = Role::where("name", "like", "%reviewer")->get();
-        $papers = $cat->papers;
+        $papers = $cat->paperswithpdf;
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
         return view('role.revassign', ["role" => $role, "cat" => $cat])->with(compact("reviewers", "role", "roles", "cat", "papers", "cats"));
     }

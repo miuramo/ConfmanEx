@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\OcrJob;
 use App\Jobs\PdfJob;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,15 +23,17 @@ class File extends Model
     // public static $app_public_files = 'app/public/';
     // public static $public_files = 'public';
     public static $filedir = 'zzz2024';
-    public static function apf(){
-        File::$filedir = Setting::where('name', 'FILEPUT_DIR')->first()['value'];// Config::get('fileput.dir');
-        if (strlen(File::$filedir)==0) File::$filedir = env('FILEPUT_DIR', 'plz_set_Setting_FILEPUT_DIR');
+    public static function apf()
+    {
+        File::$filedir = Setting::where('name', 'FILEPUT_DIR')->first()['value']; // Config::get('fileput.dir');
+        if (strlen(File::$filedir) == 0) File::$filedir = env('FILEPUT_DIR', 'plz_set_Setting_FILEPUT_DIR');
         return 'app/public/' . File::$filedir;
     }
-    public static function pf(){
+    public static function pf()
+    {
         File::$filedir = Setting::where('name', 'FILEPUT_DIR')->first()['value'];
-        if (strlen(File::$filedir)==0) File::$filedir = env('FILEPUT_DIR', 'plz_set_Setting_FILEPUT_DIR');
-        return 'public/'. File::$filedir;
+        if (strlen(File::$filedir) == 0) File::$filedir = env('FILEPUT_DIR', 'plz_set_Setting_FILEPUT_DIR');
+        return 'public/' . File::$filedir;
     }
 
     /**
@@ -62,7 +65,7 @@ class File extends Model
     }
     public function fullpath()
     {
-        return storage_path(File::apf() .'/'. $this->fname);
+        return storage_path(File::apf() . '/' . $this->fname);
     }
     public function extension()
     {
@@ -99,15 +102,15 @@ class File extends Model
         // 画像のオリジナルサイズは1241x1754
         $orig_w = 1241;
         $orig_h = 1754;
-        $crop_w = 900;
-        $crop_x = intval(($orig_w - $crop_w) / 2);
-        $setting_crop_x = Setting::findByIdOrName("CROP_X","value");
-        if ($setting_crop_x){
-            $crop_x = $setting_crop_x;
+        $crop_yhwx_setting = Setting::findByIdOrName("CROP_YHWX","value");
+        $crop_yhwx = json_decode($crop_yhwx_setting->value);
+        $crop_y = $crop_yhwx[0];
+        $crop_h = $crop_yhwx[1];
+        $crop_w = $crop_yhwx[2];
+        $crop_x = $crop_yhwx[3];
+        if ($crop_x < 0){
+            $crop_x = intval(($orig_w - $crop_w) / 2);
         }
-        $crop_h = 400;
-        $crop_y = 180;
-
         File::mkdir_ifnot($dirpath);
         chdir($dirpath);
         while (!file_exists($fullpath_png)) {
@@ -115,7 +118,6 @@ class File extends Model
         }
         // Log::info("convert {$fullpath_png} -crop {$crop_w}x{$crop_h}+{$crop_x}+{$crop_y} {$dirpath}/h-00001.png");
         $out = shell_exec("convert {$fullpath_png} -crop {$crop_w}x{$crop_h}+{$crop_x}+{$crop_y} {$dirpath}/h-00001.png 2>&1");
-
     }
 
 
@@ -124,10 +126,10 @@ class File extends Model
      */
     public function makePdfThumbs()
     {
-        $fullpath = storage_path(File::apf() .'/'. $this->fname); // 元のファイル名
+        $fullpath = storage_path(File::apf() . '/' . $this->fname); // 元のファイル名
         $dir = substr($this->fname, 0, -4);
-        $dirpath = storage_path(File::apf() .'/'. $dir); // /でおわらないので注意
-        $newpath = storage_path(File::apf() .'/'. $dir . '/_.pdf');
+        $dirpath = storage_path(File::apf() . '/' . $dir); // /でおわらないので注意
+        $newpath = storage_path(File::apf() . '/' . $dir . '/_.pdf');
         link($fullpath, $newpath);
 
         shell_exec("pdftoppm -png {$newpath} {$dirpath}/t");
@@ -148,24 +150,25 @@ class File extends Model
     {
         $h_00001 = sprintf("h-%05d.png", 1);
         $dir = substr($this->fname, 0, -4);
-        return storage_path(File::apf() .'/'. $dir . "/" . $h_00001);
+        return storage_path(File::apf() . '/' . $dir . "/" . $h_00001);
     }
     public function getPdfThumbPath(int $pagenum)
     {
         $page05f = sprintf("t-%05d.png", $pagenum);
         $dir = substr($this->fname, 0, -4);
-        return storage_path(File::apf() .'/'. $dir . "/" . $page05f);
+        return storage_path(File::apf() . '/' . $dir . "/" . $page05f);
     }
     public function getPdfTextPath()
     {
         $page05f = "p-00001.txt";
         $dir = substr($this->fname, 0, -4);
-        return storage_path(File::apf() .'/'. $dir . "/" . $page05f);
+        return storage_path(File::apf() . '/' . $dir . "/" . $page05f);
     }
-    public function getPdfText(){
+    public function getPdfText()
+    {
         $fn = $this->getPdfTextPath();
-        $txtf = fopen($fn,"r");
-        if ($txtf){
+        $txtf = fopen($fn, "r");
+        if ($txtf) {
             return fread($txtf, filesize($fn));
         }
         return null;
@@ -178,7 +181,7 @@ class File extends Model
         $text = Normalizer::normalize($text, Normalizer::FORM_C);
 
         $dir = substr($this->fname, 0, -4);
-        $dirpath = storage_path(File::apf() .'/'. $dir);
+        $dirpath = storage_path(File::apf() . '/' . $dir);
         $txtpath = $dirpath . "/p-00001.txt";
         $txtf = fopen($txtpath, "w");
         if ($txtf) {
@@ -279,14 +282,23 @@ class File extends Model
      */
     public static function rebuildPDFThumb()
     {
-        $pdfs = File::where("mime","application/pdf")->get();
-        foreach($pdfs as $pdf){
-            if ($pdf->someLostFiles()){
+        $pdfs = File::where("mime", "application/pdf")->get();
+        foreach ($pdfs as $pdf) {
+            if ($pdf->someLostFiles()) {
                 echo "rebuild file id:{$pdf->id}\n";
                 PdfJob::dispatch($pdf);
             }
         }
     }
+    /**
+     * タイトル部分画像のみを再構成
+     */
+    public function altimg_recrop()
+    {
+        @unlink($this->getPdfHeadPath());
+        PdfJob::dispatch($this);
+    }
+
     /**
      * サーバ側でPDFから生成するファイルについて、不足があればtrueをかえす。
      * 注：PDFのみ意味がある。ビデオや画像には適用できない。
@@ -294,14 +306,39 @@ class File extends Model
     public function someLostFiles()
     {
         $dir = substr($this->fname, 0, -4);
-        if (!file_exists(storage_path(File::apf() .'/'. $dir))) return true;
+        if (!file_exists(storage_path(File::apf() . '/' . $dir))) return true;
 
         if (!file_exists($this->getPdfHeadPath())) return true;
         $pages = $this->pagenum;
-        for($i=1;$i<=$pages;$i++){
+        for ($i = 1; $i <= $pages; $i++) {
             if (!file_exists($this->getPdfThumbPath($i))) return true;
         }
         if (!file_exists($this->getPdfTextPath())) return true;
         return false;
+    }
+    public static function rebuildOcrTsv()
+    {
+        $pdfs = File::where("mime", "application/pdf")->get();
+        foreach ($pdfs as $pdf) {
+            if (!file_exists($pdf->getPdfOcrTsvPath())) {
+                echo "rebuild ocr: file id {$pdf->id}\n";
+                OcrJob::dispatch($pdf);
+            }
+        }
+    }
+    public function getPdfOcrTsvPath()
+    {
+        $page05f = "h-00001.tsv";
+        $dir = substr($this->fname, 0, -4);
+        return storage_path(File::apf() . '/' . $dir . "/" . $page05f);
+    }
+    public function makeOcrTsv()
+    {
+        $dir = substr($this->fname, 0, -4);
+        $dirpath = storage_path(File::apf() . '/' . $dir); // /でおわらないので注意
+        chdir($dirpath);
+        shell_exec("tesseract h-00001.png h-00001 -l jpn tsv ");
+        // shell_exec("tesseract h-00001.png h-00001 --psm 6 -l jpn+eng tsv ");
+        shell_exec("tesseract t-00001.png t-00001 -l jpn tsv ");
     }
 }

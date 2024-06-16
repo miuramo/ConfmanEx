@@ -44,7 +44,7 @@ class ReviewController extends Controller
             ]);
         }
 
-        $papers = Paper::where('category_id', $cat_id)->orderBy('id')->get();
+        $papers = Paper::where('category_id', $cat_id)->whereNotNull('pdf_file_id')->orderBy('id')->get();
         $revconfs = RevConflict::with('bidding')->where('user_id', auth()->user()->id)->get();
         $revcon = [];
         $revconname = [];

@@ -102,6 +102,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_paperlist_excel', [AdminController::class, 'paperlist_excel'])->name('admin.paperlist_excel');
     Route::get('/admin_hiroba_excel', [AdminController::class, 'hiroba_excel'])->name('admin.hiroba_excel');
     Route::get('/admin_filelist', [AdminController::class, 'filelist'])->name('admin.filelist');
+    // 切り取った画像の一覧
+    Route::get('/admin_paperlist_headimg', [AdminController::class, 'paperlist_headimg'])->name('admin.paperlist_headimg');
+    Route::get('/admin_paperlist_headimg_recrop', [AdminController::class, 'paperlist_headimg_recrop'])->name('admin.paperlist_headimg_recrop');
+    // Route::post('/admin_paperlist_headimg', [AdminController::class, 'paperlist_headimg'])->name('admin.paperlist_headimg');
 
     Route::get('/role/{role}/top', [RoleController::class, 'top'])->name('role.top');
     Route::get('/role/{role}/pc', [RoleController::class, 'top'])->name('role.pc'); //本当はrole.topがあればよいのだが、navigationをactiveにするため...
@@ -141,6 +145,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_mailtest', [AdminController::class, 'mailtest'])->name('admin.mailtest');
     Route::get('/admin_9wtest', [AdminController::class, 'test9w'])->name('admin.test9w');
     Route::get('/admin_resetpaper', [AdminController::class, 'resetpaper'])->name('admin.resetpaper');
+    Route::get('/admin_resetbidding', [AdminController::class, 'resetbidding'])->name('admin.resetbidding');
     Route::get('/admin_chkexefiles', [AdminController::class, 'check_exefiles'])->name('admin.chkexefiles');
 
     // Export and Import

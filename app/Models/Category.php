@@ -15,9 +15,19 @@ class Category extends Model
         // 'email',
     ];
 
+    /**
+     * PDFファイルがないものも含めて返す。
+     */
     public function papers()
     {
         return $this->hasMany(Paper::class,'category_id')->orderBy('id');
+    }
+    /**
+     * PDFファイルがあるものだけを返す。
+     */
+    public function paperswithpdf()
+    {
+        return $this->hasMany(Paper::class,'category_id')->whereNotNull('pdf_file_id')->orderBy('id');
     }
 
     public static function spans()

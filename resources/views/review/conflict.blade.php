@@ -11,10 +11,15 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
 
             {{ __('利害関係の表明とBidding') }}
-
+            <span class="mx-4"></span>
             {!! $catspans[$cat_id] !!}
 
         </h2>
+        {{-- PDFがない投稿については、お手数ですが「利害」を選択してください。 --}}
+        <x-element.h1>投稿PDF画像の著者名で、利害がないかをご確認ください。<br>
+            タイトル・概要等から、査読希望 / 可能 / 困難 を表明してください。<br>
+            {!! $catspans[$cat_id] !!} は、全部で {{ count($papers) }} 件あります。<br>
+            投稿PDF画像をクリックすると、論文の1ページ目を閲覧できます。</x-element.h1>
     </x-slot>
     @push('localcss')
         <link rel="stylesheet" href="{{ asset('/css/localflash.css') }}">
@@ -43,7 +48,8 @@
             @foreach ($papers as $paper)
                 <div classs="bg-slate-200 p-2">
                     @if ($paper->pdf_file_id != null)
-                        <a href="{{ route('file.altimgshow', ['file' => $paper->pdf_file_id, 'hash'=> substr($paper->pdf_file->key,0,8)]) }}" target="_blank">
+                        <a href="{{ route('file.altimgshow', ['file' => $paper->pdf_file_id, 'hash' => substr($paper->pdf_file->key, 0, 8)]) }}"
+                            target="_blank">
                     @endif
                     <x-file.paperheadimg :paper=$paper>
                     </x-file.paperheadimg>
@@ -93,6 +99,9 @@
                             共著者のため表明不要
                         </div>
                     @endif
+                    <div class="my-10 mx-5 text-gray-300 text-xl align-bottom">
+                        {{$loop->iteration}} / {{$loop->count}}
+                    </div>
                 </div>
             @endforeach
         </div>

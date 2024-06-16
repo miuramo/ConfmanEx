@@ -18,6 +18,7 @@ use App\Models\LogForbidden;
 use App\Models\LogModify;
 use App\Models\MailTemplate;
 use App\Models\Paper;
+use App\Models\RevConflict;
 use App\Models\Review;
 use App\Models\Role;
 use App\Models\Setting;
@@ -90,6 +91,15 @@ class AdminController extends Controller
             'isnumber' => false,
             'isbool' => false,
         ]);
+        Setting::firstOrCreate([
+            'name' => "CROP_YHWX",
+        ], [
+            'value' => "[80,500, 1100,-1]",
+            'isnumber' => false,
+            'isbool' => false,
+            'misc'=>'最後のXが負数だとセンタリング計算でXを求める'
+        ]);
+
 
         // Userが存在しないContactを参照していたら、直す
         User::fix_broken_contact_all();
@@ -169,6 +179,27 @@ class AdminController extends Controller
         if (count($targets) == 0) $targets =  [1, 2, 3];
         $target_str = implode("", $targets);
         return Excel::download(new PapersExportFromView($targets), "paperlist_{$target_str}.xlsx");
+    }
+
+    /**
+     * CROP Imageの確認と再作成
+     */
+    public function paperlist_headimg()
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        $all = Paper::whereNotNull('pdf_file_id')->get();
+
+        return view('admin.paperlist_headimg')->with(compact("all"));
+
+    }
+    public function paperlist_headimg_recrop()
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        $all = Paper::whereNotNull('pdf_file_id')->get();
+        foreach($all as $paper){
+            $paper->pdf_file->altimg_recrop();
+        }
+        return redirect()->route('admin.paperlist_headimg')->with('feedback.success', 'タイトル画像の再クロップを開始しました。');
     }
 
     /**
@@ -476,7 +507,25 @@ class AdminController extends Controller
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         Test9w::dispatch();
+        $this->ocr9w();
         return redirect()->route('admin.dashboard')->with('feedback.success', 'テストQueueを実行しました。再読み込みして各種設定→LAST_QUEUEWORK_DATEが更新されていることを確認してください。');
+    }
+
+    public function ocr9w()
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        File::rebuildOcrTsv();
+        // OcrJob::dispatch();
+        return redirect()->route('admin.dashboard')->with('feedback.success', 'OCR Queueを実行しました。');
+    }
+/**
+ * RevConflict を truncate する。
+ */
+    public function resetbidding()
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        RevConflict::truncate();
+        return redirect()->route('admin.dashboard')->with('feedback.success', '利害表明とBiddingをすべてリセットしました');
     }
     /**
      * 投稿をすべてリセットする。ファイルも消す。ログも消す。
@@ -494,6 +543,7 @@ class AdminController extends Controller
         Contact::truncate();
         EnqueteAnswer::truncate();
         Submit::truncate();
+        RevConflict::truncate();
         Review::truncate();
         DB::table('paper_contact')->truncate();
 
@@ -513,7 +563,10 @@ class AdminController extends Controller
      */
     public function check_exefiles()
     {
-        $in = ["pdftoppm -v", "convert -version", "md5sum --version", "file -v", "pdfinfo -v", "node -v", "npm -v", "composer -V", "ffmpeg -version", "php -i"];
+        $in = [
+            "pdftoppm -v", "convert -version", "md5sum --version", "file -v", "pdfinfo -v", "node -v", "npm -v",
+            "composer -V", "tesseract -v", "tesseract --list-langs", "php -i"
+        ];
         $out = [];
         foreach ($in as $com) {
             $out[$com] = shell_exec($com . " 2>&1");

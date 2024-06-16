@@ -166,11 +166,11 @@
     <x-element.h1>ロック
         <span class="px-3"></span>
         <x-element.linkbutton href="{{ route('file.adminlock') }}" color="orange">
-            投稿ファイルのロック
+            投稿ファイルの管理
         </x-element.linkbutton> <span class="text-sm mx-2 mr-10">投稿締め切り後に操作してください。PDFファイルがロックされます。</span>
 
         <x-element.linkbutton href="{{ route('paper.adminlock') }}" color="cyan">
-            Paperのロック
+            書誌情報(Paper)の管理
         </x-element.linkbutton> <span class="text-sm mx-2 mr-10">カメラレディ締め切り後に操作してください。著者名と所属、書誌情報がロックされます。</span>
     </x-element.h1>
 
