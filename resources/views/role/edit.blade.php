@@ -141,13 +141,12 @@
 
         </div>
     </form>
-    <div class="mx-6 my-2">
-        <x-element.h1>{{ strtoupper($role->name) }}_MEMBER に登録されているが、まだアカウントがない人</x-element.h1>
-        @php
-            // check
-            $mem = App\Models\Setting::where('name', strtoupper($role->name) . '_MEMBER')
-                ->where('valid', true)
-                ->first();
+    @php
+        // REVIEWER_MEMBER をチェックして、まだアカウントがない人を表示する
+        $mem = App\Models\Setting::where('name', strtoupper($role->name) . '_MEMBER')
+            ->where('valid', true)
+            ->first();
+        if ($mem != null) {
             $noreg_members = [];
             $ary = explode('|', $mem->value);
             foreach ($ary as $n => $name) {
@@ -156,11 +155,16 @@
                     $noreg_members[] = $name;
                 }
             }
-        @endphp
-        <div class="mx-4">
-            {{ implode("，", $noreg_members) }}
+        }
+    @endphp
+    @isset($noreg_members)
+        <div class="mx-6 my-2">
+            <x-element.h1>{{ strtoupper($role->name) }}_MEMBER に登録されているが、まだアカウントがない人</x-element.h1>
+            <div class="mx-4">
+                {{ implode('，', $noreg_members) }}
+            </div>
         </div>
-    </div>
+    @endisset
 
     @push('localjs')
         <script src="/js/jquery.min.js"></script>
