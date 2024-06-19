@@ -519,4 +519,28 @@ class Paper extends Model
         }
         return implode("，", $ret); // カンマでつなげて出力
     }
+
+    public function writeHintFile(){
+        $txt = "pdf_file_id\t" . $this->pdf_file_id."\n";
+        $txt .= "title\t" . $this->title."\n";
+        $txt .= "titletail\t" . $this->titletail."\n";
+        $txt .= "authorhead\t" . $this->authorhead."\n";
+        $txt .= "updated\t" . date("Y-m-d_H:i:s")."\n";
+
+        $this->pdf_file->writeHintFile($txt);
+    }
+
+    public function pdftotext(){
+        return $this->pdf_file->getPdfText();
+    }
+    public function title_candidate(){
+        $title = str_replace("\n","",$this->pdftotext());
+        // owner name
+        $owner = $this->paperowner->name;
+        $pos1 = mb_strpos($title, $owner);
+        if ($pos1 > -1){
+            $title = mb_substr($title,0, $pos1);
+        }
+        return $title;
+    }
 }

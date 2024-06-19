@@ -102,13 +102,13 @@ class File extends Model
         // 画像のオリジナルサイズは1241x1754
         $orig_w = 1241;
         $orig_h = 1754;
-        $crop_yhwx_setting = Setting::findByIdOrName("CROP_YHWX","value");
+        $crop_yhwx_setting = Setting::findByIdOrName("CROP_YHWX", "value");
         $crop_yhwx = json_decode($crop_yhwx_setting);
         $crop_y = $crop_yhwx[0];
         $crop_h = $crop_yhwx[1];
         $crop_w = $crop_yhwx[2];
         $crop_x = $crop_yhwx[3];
-        if ($crop_x < 0){
+        if ($crop_x < 0) {
             $crop_x = intval(($orig_w - $crop_w) / 2);
         }
         File::mkdir_ifnot($dirpath);
@@ -167,9 +167,21 @@ class File extends Model
     public function getPdfText()
     {
         $fn = $this->getPdfTextPath();
+        return $this->read_textfile($fn);
+    }
+    public function read_textfile($fn)
+    {
         $txtf = fopen($fn, "r");
         if ($txtf) {
             return fread($txtf, filesize($fn));
+        }
+        return null;
+    }
+    public function write_textfile($fn, $txt)
+    {
+        $txtf = fopen($fn, "w");
+        if ($txtf) {
+            return fwrite($txtf, $txt);
         }
         return null;
     }
@@ -291,7 +303,7 @@ class File extends Model
         }
     }
     /**
-     * タイトル部分画像のみを再構成
+     * タイトル部分画像のみを再構成（注: 現状は画像も再生成してしまう）
      */
     public function altimg_recrop()
     {
@@ -340,5 +352,65 @@ class File extends Model
         shell_exec("tesseract h-00001.png h-00001 -l jpn tsv ");
         // shell_exec("tesseract h-00001.png h-00001 --psm 6 -l jpn+eng tsv ");
         shell_exec("tesseract t-00001.png t-00001 -l jpn tsv ");
+    }
+
+    public function getTailHead()
+    {
+        // $paper = Paper::find($this->file->paper_id);
+        // if ($paper->pdf_file_id != $this->id) return "unlink";
+        // return $this->getPdfOcrTsvPath();
+        //   0 => "level"
+        //   1 => "page_num"
+        //   2 => "block_num"
+        //   3 => "par_num"
+        //   4 => "line_num"
+        //   5 => "word_num"
+        //   6 => "left"
+        //   7 => "top"
+        //   8 => "width"
+        //   9 => "height"
+        //   10 => "conf"
+        //   11 => "text"
+        $ocrtxt = $this->read_textfile($this->getPdfOcrTsvPath());
+        $lines = explode("\n", $ocrtxt);
+        $lines = array_map("trim", $lines);
+        $l2i = []; // すぐに置き換えられる
+        $i2l = [];
+        $words = [];
+        foreach ($lines as $n => $line) {
+            // tab
+            $ary = explode("\t", $line);
+            $ary = array_map("trim", $ary);
+            $tmp = [];
+            if ($n == 0) {
+                $i2l = $ary;
+                $l2i = array_flip($ary);
+            } else {
+                foreach ($i2l as $i => $l) {
+                    $tmp[$l] = $ary[$i];
+                }
+                // 下準備完了
+                if ($tmp['level'] == 5 && $tmp['text'] != null) {
+                    $words[]= $tmp;
+                }
+            }
+        }
+        // return $i2l;
+        return $words;
+    }
+
+    public function getHintFilePath()
+    {
+        $fn = "hint.txt";
+        $dir = substr($this->fname, 0, -4);
+        return storage_path(File::apf() . '/' . $dir . "/" . $fn);
+    }
+
+    public function removeHintFile(){
+        @unlink($this->getHintFilePath());
+        // $this->writeHintFile("xx");
+    }
+    public function writeHintFile($txt){
+        $this->write_textfile($this->getHintFilePath(), $txt);
     }
 }

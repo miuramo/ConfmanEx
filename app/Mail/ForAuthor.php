@@ -38,6 +38,8 @@ class ForAuthor extends Mailable implements ShouldQueue
     {
         $pmail = Mail::to($this->mail_to_cc['to']);
         $pmail->cc($this->mail_to_cc['cc']);
+        $backup_bcc = env("MAIL_BCC_ADDRESS", null);
+        if ($backup_bcc != null) $pmail->bcc($backup_bcc);
         $pmail->send($this);
     }
 

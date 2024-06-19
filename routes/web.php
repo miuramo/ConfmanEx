@@ -6,6 +6,7 @@ use App\Http\Controllers\BbMesController;
 use App\Http\Controllers\EnqueteController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\MailTemplateController;
+use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\PaperController;
 use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\ProfileController;
@@ -102,10 +103,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_paperlist_excel', [AdminController::class, 'paperlist_excel'])->name('admin.paperlist_excel');
     Route::get('/admin_hiroba_excel', [AdminController::class, 'hiroba_excel'])->name('admin.hiroba_excel');
     Route::get('/admin_filelist', [AdminController::class, 'filelist'])->name('admin.filelist');
-    // 切り取った画像の一覧
-    Route::get('/admin_paperlist_headimg', [AdminController::class, 'paperlist_headimg'])->name('admin.paperlist_headimg');
-    Route::get('/admin_paperlist_headimg_recrop', [AdminController::class, 'paperlist_headimg_recrop'])->name('admin.paperlist_headimg_recrop');
-    // Route::post('/admin_paperlist_headimg', [AdminController::class, 'paperlist_headimg'])->name('admin.paperlist_headimg');
 
     Route::get('/role/{role}/top', [RoleController::class, 'top'])->name('role.top');
     Route::get('/role/{role}/pc', [RoleController::class, 'top'])->name('role.pc'); //本当はrole.topがあればよいのだが、navigationをactiveにするため...
@@ -141,12 +138,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin_crud', [AdminController::class, 'crud'])->name('admin.crudpost');
     Route::post('/admin_crudpost', [AdminController::class, 'crudpost'])->name('admin.crudpost');
     Route::get('/admin_catsetting', [AdminController::class, 'catsetting'])->name('admin.catsetting');
-    Route::get('/admin_rebuildpdf', [AdminController::class, 'rebuildPDFThumb'])->name('admin.rebuildpdf');
-    Route::get('/admin_mailtest', [AdminController::class, 'mailtest'])->name('admin.mailtest');
-    Route::get('/admin_9wtest', [AdminController::class, 'test9w'])->name('admin.test9w');
     Route::get('/admin_resetpaper', [AdminController::class, 'resetpaper'])->name('admin.resetpaper');
     Route::get('/admin_resetbidding', [AdminController::class, 'resetbidding'])->name('admin.resetbidding');
     Route::get('/admin_chkexefiles', [AdminController::class, 'check_exefiles'])->name('admin.chkexefiles');
+    Route::get('/admin_forcedelete', [AdminController::class, 'forcedelete'])->name('admin.forcedelete');
+
+    Route::get('/man_rebuildpdf', [ManagerController::class, 'rebuildPDFThumb'])->name('admin.rebuildpdf');
+    Route::get('/man_mailtest', [ManagerController::class, 'mailtest'])->name('admin.mailtest');
+    Route::get('/man_9wtest', [ManagerController::class, 'test9w'])->name('admin.test9w');
+    Route::get('/man_paperauthorhead', [ManagerController::class, 'paperauthorhead'])->name('admin.paperauthorhead');
+    Route::post('/man_paperauthorhead', [ManagerController::class, 'paperauthorhead'])->name('admin.paperauthorhead');
+    // 切り取った画像の一覧
+    Route::get('/man_paperlist_headimg', [ManagerController::class, 'paperlist_headimg'])->name('admin.paperlist_headimg');
+    Route::get('/man_paperlist_headimg_recrop', [ManagerController::class, 'paperlist_headimg_recrop'])->name('admin.paperlist_headimg_recrop');
+    // Route::post('/admin_paperlist_headimg', [AdminController::class, 'paperlist_headimg'])->name('admin.paperlist_headimg');
 
     // Export and Import
     Route::get('viewpoints/export', [ViewpointController::class, 'export'])->name('viewpoint.export');

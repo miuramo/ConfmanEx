@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\PapersExport4Hiroba;
 use App\Exports\PapersExportFromView;
+use App\Jobs\ExportHintFileJob;
 use App\Jobs\Test9w;
 use App\Mail\DisableEmail;
 use App\Mail\ForAuthor;
@@ -107,13 +108,6 @@ class AdminController extends Controller
         return view('admin.admindb')->with(compact("roles", "roleall"));
     }
 
-    public function rebuildPDFThumb()
-    {
-        if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);
-        File::rebuildPDFThumb();
-        return redirect()->route('admin.dashboard');
-    }
-
     public function disable_email(Request $req)
     {
         if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);
@@ -179,27 +173,6 @@ class AdminController extends Controller
         if (count($targets) == 0) $targets =  [1, 2, 3];
         $target_str = implode("", $targets);
         return Excel::download(new PapersExportFromView($targets), "paperlist_{$target_str}.xlsx");
-    }
-
-    /**
-     * CROP Imageの確認と再作成
-     */
-    public function paperlist_headimg()
-    {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
-        $all = Paper::whereNotNull('pdf_file_id')->get();
-
-        return view('admin.paperlist_headimg')->with(compact("all"));
-
-    }
-    public function paperlist_headimg_recrop()
-    {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
-        $all = Paper::whereNotNull('pdf_file_id')->get();
-        foreach($all as $paper){
-            $paper->pdf_file->altimg_recrop();
-        }
-        return redirect()->route('admin.paperlist_headimg')->with('feedback.success', 'タイトル画像の再クロップを開始しました。');
     }
 
     /**
@@ -488,44 +461,23 @@ class AdminController extends Controller
         return view('admin.crudtable2')->with(compact("tableName", "coldetails", "data", "whereBy", "numdata", "tableComments", "title"));
     }
 
-    public function mailtest()
-    {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
-        if (!auth()->user()->id == 1) abort(403);
-        $papers = Paper::all();
-        $mts = MailTemplate::all();
-        foreach ($mts as $mt) {
-            foreach ($papers as $paper) {
-                (new ForAuthor($paper, $mt))->process_send();
-                // Mail::send(new ForAuthor($paper, $mt));
-            }
-        }
-        return redirect()->route('admin.admindb');
-    }
-
-    public function test9w()
-    {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
-        Test9w::dispatch();
-        $this->ocr9w();
-        return redirect()->route('admin.dashboard')->with('feedback.success', 'テストQueueを実行しました。再読み込みして各種設定→LAST_QUEUEWORK_DATEが更新されていることを確認してください。');
-    }
-
-    public function ocr9w()
-    {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
-        File::rebuildOcrTsv();
-        // OcrJob::dispatch();
-        return redirect()->route('admin.dashboard')->with('feedback.success', 'OCR Queueを実行しました。');
-    }
-/**
- * RevConflict を truncate する。
- */
+    /**
+     * RevConflict を truncate する。
+     */
     public function resetbidding()
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         RevConflict::truncate();
         return redirect()->route('admin.dashboard')->with('feedback.success', '利害表明とBiddingをすべてリセットしました');
+    }
+    /**
+     * UserのsoftDeleted を 完全削除 する。
+     */
+    public function forcedelete()
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        User::onlyTrashed()->whereNotNull('id')->forceDelete();
+        return redirect()->route('admin.dashboard')->with('feedback.success', 'User softDeleted を完全削除しました');
     }
     /**
      * 投稿をすべてリセットする。ファイルも消す。ログも消す。

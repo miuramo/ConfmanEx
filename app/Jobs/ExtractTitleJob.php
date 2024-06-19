@@ -3,6 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\File;
+use App\Models\Paper;
+use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -10,7 +12,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class PdfJob implements ShouldQueue
+class ExtractTitleJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -30,11 +32,10 @@ class PdfJob implements ShouldQueue
      */
     public function handle(): void
     {
-        // fnameのフォルダを作成
-        $this->file->makeThumbFolder();
-        $this->file->makePdfThumbs();
-        $text = $this->file->makePdfText();
-        $this->file->makePdfHeadThumb();
+        // $paper = Paper::find($this->file->paper_id);
+        // titletail, authorhead を取得する
+        $tail_head = $this->file->getTailHead();
 
+        // $this->file->extractTitleAndAuthors($text); //ページ数が2ページ以上のときなど、論文PDFのときに使用
     }
 }

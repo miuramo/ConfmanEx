@@ -116,11 +116,18 @@ class RoleController extends Controller
                             'password' => Hash::make(Str::random(10)),
                         ]);
                     }
-                    $uu->roles()->attach($role);
+                    // auto_role_member でRoleがつくかもしれないので、チェックする。
+                    $role = Role::findByIdOrName($name);
+                    if (!$role->containsUser($uu->id)) { // ふくまれていなければ
+                        $uu->roles()->attach($role);
+                    }
                 } else if (count($ary) == 1) {
                     $u = User::where("email", $ary[0])->first();
                     if ($u != null) {
-                        $u->roles()->attach($role);
+                        $role = Role::findByIdOrName($name);
+                        if (!$role->containsUser($u->id)) { // ふくまれていなければ
+                            $u->roles()->attach($role);
+                        }
                     }
                 }
             }
