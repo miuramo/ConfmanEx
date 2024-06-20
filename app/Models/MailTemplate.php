@@ -45,7 +45,7 @@ class MailTemplate extends Model
             $replacetxt["ACCNAME"] = Accept::find($accid)->name;
             $replacetxt["CATNAME"] = Category::find($p_or_u->category_id)->name;
         }
-        $replacetxt["CONFTITLE"] = Setting::findByIdOrName("CONFTITLE","value");
+        $replacetxt["CONFTITLE"] = Setting::findByIdOrName("CONFTITLE", "value");
         $replacetxt["APP_URL"] = env('APP_URL');
         return $replacetxt;
     }
@@ -195,6 +195,15 @@ class MailTemplate extends Model
         }
         return $users;
     }
+    /**
+     * Bidding未完了がある査読者
+     */
+    public static function mt_miss_bid()
+    {
+        $missing = RevConflict::bidding_status(true); //skip_allfinished=true(すべて完了の人を除く)
+        return User::whereIn('id', array_keys($missing))->get();
+    }
+
     /**
      * 査読担当があるのに、まだ査読用ファイルをダウンロードしていないユーザ
      */

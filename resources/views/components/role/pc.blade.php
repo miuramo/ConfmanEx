@@ -159,6 +159,22 @@
                 </x-element.linkbutton>
             @endforeach
         @endforeach
+        <span class="mx-3"></span>
+        <x-element.linkbutton href="{{ route('revcon.index') }}" color="orange"
+            target="_blank">
+            Bidding未完了状態
+        </x-element.linkbutton>
+        <span class="mx-3"></span>
+        <x-element.linkbutton href="{{ route('revcon.stat') }}" color="green"
+            target="_blank">
+            Bidding Stat
+        </x-element.linkbutton>
+        <span class="mx-3"></span>
+        <x-element.linkbutton href="{{ route('revcon.revstat') }}" color="lime"
+            target="_blank">
+            査読割り当て Stat
+        </x-element.linkbutton>
+
     </x-element.h1>
 
 
@@ -203,7 +219,7 @@
         $user = App\Models\User::find(auth()->id());
     @endphp
     @foreach ($user->roles as $ro)
-        <span class="inline-block bg-slate-300 rounded-md p-1">{{ $ro->desc }} ({{ $ro->name }})</span>
+        <span class="inline-block bg-slate-300 rounded-md p-1 mb-0.5">{{ $ro->desc }} ({{ $ro->name }})</span>
     @endforeach
 
 

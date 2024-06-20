@@ -51,6 +51,7 @@
                 'userid(uid1,uid2, ...)' => 'UserIDの羅列',
                 'roleid(roleid1, roleid2, ...)' => 'RoleIDの羅列',
                 'roleid_noaccess(roleid1, roleid2, ...)' => 'RoleIDで未アクセス',
+                'miss_bid()' => 'Bidding未完了',
                 'norev()' => '査読未完了',
                 'norev_cat(catid)' => '査読未完了(category限定)',
                 'norev_catmeta(catid, 0|1)' => '査読未完了(ismeta=1)',

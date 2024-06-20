@@ -16,6 +16,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubmitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewpointController;
+use App\Models\RevConflict;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -152,6 +153,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/man_paperlist_headimg', [ManagerController::class, 'paperlist_headimg'])->name('admin.paperlist_headimg');
     Route::get('/man_paperlist_headimg_recrop', [ManagerController::class, 'paperlist_headimg_recrop'])->name('admin.paperlist_headimg_recrop');
     // Route::post('/admin_paperlist_headimg', [AdminController::class, 'paperlist_headimg'])->name('admin.paperlist_headimg');
+    Route::get('/revcon', [RevConflictController::class, 'index'])->name('revcon.index');
+    Route::get('/revcon/stat', [RevConflictController::class, 'stat'])->name('revcon.stat');
+    Route::get('/revcon/revstat', [RevConflictController::class, 'revstat'])->name('revcon.revstat');
 
     // Export and Import
     Route::get('viewpoints/export', [ViewpointController::class, 'export'])->name('viewpoint.export');

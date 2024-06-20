@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Review extends Model
 {
@@ -58,6 +59,38 @@ class Review extends Model
                 $r->delete();
             }
         }
+    }
+
+    /**
+     * 数をしらべる。( field = paper_id or user_id )
+     */
+    public static function revass_stat($catid,$field="user_id")
+    {
+        $tmp = Review::select(DB::raw("count(id) as count, {$field}, ismeta"))
+        ->where('category_id', $catid)
+        ->groupBy($field)
+        ->groupBy("ismeta")
+        ->orderBy($field)
+        ->get();
+        $ret = [];
+        foreach($tmp as $n=>$t){
+            $ret[$t->{$field}][$t->ismeta] = $t->count;
+        }
+        return $ret;
+    }
+    public static function revass_stat_allcategory()
+    {
+        $field = "user_id";
+        $tmp = Review::select(DB::raw("count(id) as count, {$field}, ismeta"))
+        ->groupBy($field)
+        ->groupBy("ismeta")
+        ->orderBy($field)
+        ->get();
+        $ret = [];
+        foreach($tmp as $n=>$t){
+            $ret[$t->{$field}][$t->ismeta] = $t->count;
+        }
+        return $ret;
     }
 
     /**
