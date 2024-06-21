@@ -9,6 +9,7 @@
 <div class="px-6 py-4">
     <x-element.h1>
         参加登録
+        <span class="px-3"></span>
         <x-element.linkbutton href="{{ route('part.create') }}" color="teal">
             参加登録
         </x-element.linkbutton>

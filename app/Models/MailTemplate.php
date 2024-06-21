@@ -211,7 +211,7 @@ class MailTemplate extends Model
     {
         // 査読用ファイルをダウンロードしたユーザ
         // TODO: review_downzipのパラメータに、catidをいれる
-        $downus = LogAccess::where('url', "/review_downzip/{$catid}")->pluck("uid", "id")->toArray();
+        $downus = LogAccess::where('url', 'like', "/review_downzip/{$catid}%")->pluck("uid", "id")->toArray();
         // カテゴリ catid の査読担当者のうち、ダウンロードしたユーザ以外
         $notrevus = Review::where('category_id', $catid)->whereNotIn('user_id', $downus)->pluck("user_id", "id")->toArray();
         return User::whereIn('id', $notrevus)->get();

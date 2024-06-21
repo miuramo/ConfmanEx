@@ -107,6 +107,17 @@
         </x-element.linkbutton>
     </x-element.h1>
 
+    <x-element.h1>メール送信
+        <span class="px-3"></span>
+        <x-element.linkbutton href="{{ route('mt.index') }}" color="pink">
+            メール雛形
+        </x-element.linkbutton>
+        <span class="px-3">掲示板</span>
+        <x-element.linkbutton href="{{ route('bb.index') }}" color="pink">
+            掲示板一覧
+        </x-element.linkbutton>
+    </x-element.h1>
+
     <x-element.h1>査読結果 <span class="px-2"></span>
         @foreach ($cats as $catid => $catname)
             <x-element.linkbutton href="{{ route('review.result', ['cat' => $catid]) }}" color="purple"
@@ -131,21 +142,11 @@
         @endforeach
     </x-element.h1>
 
-    <x-element.h1>メール送信
-        <span class="px-3"></span>
-        <x-element.linkbutton href="{{ route('mt.index') }}" color="pink">
-            メール雛形
-        </x-element.linkbutton>
-        <span class="px-3">掲示板</span>
-        <x-element.linkbutton href="{{ route('bb.index') }}" color="pink">
-            掲示板一覧
-        </x-element.linkbutton>
-        <span class="px-3">アンケート</span>
-        <x-element.linkbutton href="{{ route('enq.index') }}" color="cyan">
-            アンケート一覧
-        </x-element.linkbutton>
+    <x-element.h1>査読進捗 <span class="px-2"></span>
+            <x-element.linkbutton href="{{ route('revcon.revstatus') }}" color="orange"
+                target="_blank">査読進捗
+            </x-element.linkbutton>
     </x-element.h1>
-
 
     <x-element.h1>査読割り当て <span class="px-2"></span>
         @php
@@ -221,32 +222,6 @@
     @foreach ($user->roles as $ro)
         <span class="inline-block bg-slate-300 rounded-md p-1 mb-0.5">{{ $ro->desc }} ({{ $ro->name }})</span>
     @endforeach
-
-
-    <x-element.h1>
-
-        <x-element.linkbutton color="cyan" href="{{ route('admin.crud') }}" target="_blank">
-            CRUD
-        </x-element.linkbutton>
-        @php
-            $shortcuts = [
-                'Setting' => 'settings',
-                'Category' => 'categories',
-                'EnqueteConfig' => 'enquete_configs',
-                'Enquete' => 'enquetes',
-                'EnqueteItems' => 'enquete_items',
-            ];
-        @endphp
-        @foreach ($shortcuts as $key => $tbl)
-            <span class="mx-2"></span>
-            <x-element.linkbutton color="cyan" href="{{ route('admin.crud', ['table' => $tbl]) }}"
-                target="_blank">
-                {{ $key }}
-            </x-element.linkbutton>
-        @endforeach
-    </x-element.h1>
-
-
 
     <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
             情報学広場登録用Excel Download

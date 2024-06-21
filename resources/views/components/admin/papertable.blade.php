@@ -1,6 +1,6 @@
 @props([
     'all' => [],
-    'heads' => ['cat', 'id', 'id03d', 'title', 'owner', 'owneraffil', 'owneremail', 'contactemails','pdf','enqans'],
+    'heads' => ['cat', 'id', 'id03d', 'title', 'owner', 'owneraffil', 'owneremail', 'contactemails', 'pdf', 'enqans'],
     'enqans' => [],
 ])
 
@@ -36,7 +36,8 @@
                 </td>
                 <td class="p-1">
                     @if ($paper->pdf_file_id != 0)
-                        <a href="{{ route('file.showhash', ['file' => $paper->pdf_file_id, 'hash'=> substr($paper->pdf_file->key,0,8)]) }}" target="_blank">
+                        <a href="{{ route('file.showhash', ['file' => $paper->pdf_file_id, 'hash' => substr($paper->pdf_file->key, 0, 8)]) }}"
+                            target="_blank">
                             {{ $paper->pdf_file->pagenum }}page
                         </a>
                     @else

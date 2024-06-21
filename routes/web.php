@@ -156,6 +156,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/revcon', [RevConflictController::class, 'index'])->name('revcon.index');
     Route::get('/revcon/stat', [RevConflictController::class, 'stat'])->name('revcon.stat');
     Route::get('/revcon/revstat', [RevConflictController::class, 'revstat'])->name('revcon.revstat');
+    Route::get('/revcon/revstatus', [RevConflictController::class, 'revstatus'])->name('revcon.revstatus');
+    Route::get('/revcon/notdownloaded', [RevConflictController::class, 'notdownloaded'])->name('revcon.notdownloaded');
+    Route::get('/revcon/norev', [RevConflictController::class, 'norev'])->name('revcon.norev');
 
     // Export and Import
     Route::get('viewpoints/export', [ViewpointController::class, 'export'])->name('viewpoint.export');

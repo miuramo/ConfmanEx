@@ -19,51 +19,66 @@
             <th class="p-1 bg-slate-300"> num assign</th>
             <th class="p-1 bg-slate-300"> Rev1</th>
             @php
-                $vps = App\Models\Viewpoint::where('category_id', $cat_id)->orderBy('orderint')->pluck("desc", "id")->toArray();
+                $vps = App\Models\Viewpoint::where('category_id', $cat_id)
+                    ->orderBy('orderint')
+                    ->pluck('desc', 'id')
+                    ->toArray();
             @endphp
-            @foreach($vps as $id=>$desc)
-            <th class="p-1 bg-slate-300">{{$desc}}</th>
+            @foreach ($vps as $id => $desc)
+                <th class="p-1 bg-slate-300">{{ $desc }}</th>
             @endforeach
         </tr>
     </thead>
 
     <tbody class="bg-white divide-y divide-gray-200">
-        @foreach ($subs as $sub)
-            <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200' : 'bg-white' }}">
-                <td class="p-1 text-center">
-                    {{ $sub->paper->id_03d() }}
-                </td>
-                <td class="p-1">
-                    {{ $sub->paper->title }}
-                </td>
-                <td class="p-1 text-center">
-                    {{ $accepts[$sub->accept_id] }}
-                </td>
-                <td class="p-1 text-center">
-                    {{ $sub->score }}
-                </td>
-                <td class="p-1 text-center">
-                    {{ $sub->stddevscore }}
-                </td>
-                <td class="p-1 text-center">
-                    {{ $sub->reviews->where('status', 2)->count() }}
-                </td>
-                <td class="p-1 text-center">
-                    {{ $sub->reviews->count() }}
-                </td>
+        @php
+            $count = 1;
+        @endphp
 
-                {{--  ここから、各査読者のコメント --}}
-                @foreach($sub->reviews as $rev)
-                    <td class="bg-orange-200">
-                        査{{$rev->id}}
-                    </td>
-                    @foreach($rev->scores_and_comments() as $vpdesc=> $valstr)
-                    <td>
-                        {{$valstr}}
-                    </td>
-                    @endforeach
-                @endforeach
-            </tr>
+        @foreach ($subs as $sub)
+            @isset($sub->paper)
+                @isset($sub->paper->pdf_file)
+                    <tr class="{{ $count % 2 === 0 ? 'bg-slate-200' : 'bg-white' }}">
+                        <td class="p-1 text-center">
+                            {{ $sub->paper->id_03d() }}
+                        </td>
+                        <td class="p-1">
+                            {{ $sub->paper->title }}
+                        </td>
+                        <td class="p-1 text-center">
+                            {{ $accepts[$sub->accept_id] }}
+                        </td>
+                        <td class="p-1 text-center">
+                            @if ($sub->score)
+                                {{ sprintf('%4.2f', $sub->score) }}
+                            @endif
+                        </td>
+                        <td class="p-1 text-center">
+                            @if ($sub->stddevscore)
+                                {{ sprintf('%4.2f', $sub->stddevscore) }}
+                            @endif
+                        </td>
+                        <td class="p-1 text-center">
+                            {{ $sub->reviews->where('status', 2)->count() }}
+                        </td>
+                        <td class="p-1 text-center">
+                            {{ $sub->reviews->count() }}
+                        </td>
+
+                        {{--  ここから、各査読者のコメント --}}
+                        @foreach ($sub->reviews as $rev)
+                            <td class="bg-orange-200">
+                                査{{ $rev->id }}
+                            </td>
+                            @foreach ($rev->scores_and_comments() as $vpdesc => $valstr)
+                                <td>
+                                    {{ $valstr }}
+                                </td>
+                            @endforeach
+                        @endforeach
+                    </tr>
+                @endisset
+            @endisset
         @endforeach
     </tbody>
 
