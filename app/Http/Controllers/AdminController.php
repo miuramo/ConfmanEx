@@ -25,6 +25,7 @@ use App\Models\Role;
 use App\Models\Setting;
 use App\Models\Submit;
 use App\Models\User;
+use App\Models\Viewpoint;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -101,6 +102,7 @@ class AdminController extends Controller
             'misc'=>'最後のXが負数だとセンタリング計算でXを求める'
         ]);
 
+        Viewpoint::change_separator();
 
         // Userが存在しないContactを参照していたら、直す
         User::fix_broken_contact_all();

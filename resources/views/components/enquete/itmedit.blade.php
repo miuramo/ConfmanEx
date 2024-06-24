@@ -6,7 +6,7 @@
 ])
 
 @php
-    $ary = explode(':', $itm->content); //改行ではなく、: で区切っていることに注意
+    $ary = explode(App\Models\Viewpoint::$separator, $itm->content); //改行ではなく、セミコロン ; で区切っていることに注意
     $item_title = nl2br(trim($ary[0])); // 最初の要素は、説明
     $type = trim($ary[1]); // 次は、formの種類
     $sel = array_map('trim', array_slice($ary, 2)); // 選択肢やオプション
