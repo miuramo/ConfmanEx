@@ -102,7 +102,7 @@ class AdminController extends Controller
             'misc'=>'最後のXが負数だとセンタリング計算でXを求める'
         ]);
 
-        Viewpoint::change_separator();
+        // Viewpoint::change_separator();
 
         // Userが存在しないContactを参照していたら、直す
         User::fix_broken_contact_all();
