@@ -143,6 +143,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_resetbidding', [AdminController::class, 'resetbidding'])->name('admin.resetbidding');
     Route::get('/admin_chkexefiles', [AdminController::class, 'check_exefiles'])->name('admin.chkexefiles');
     Route::get('/admin_forcedelete', [AdminController::class, 'forcedelete'])->name('admin.forcedelete');
+    Route::get('/admin_passdumpsql', [AdminController::class, 'passdumpsql'])->name('admin.passdumpsql');
 
     Route::get('/man_rebuildpdf', [ManagerController::class, 'rebuildPDFThumb'])->name('admin.rebuildpdf');
     Route::get('/man_mailtest', [ManagerController::class, 'mailtest'])->name('admin.mailtest');

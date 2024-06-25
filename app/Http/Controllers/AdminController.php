@@ -527,4 +527,24 @@ class AdminController extends Controller
         }
         return view('admin.chkexefiles')->with(compact("in", "out"));
     }
+
+    /**
+     * dump sql for backup
+     */
+    public function passdumpsql(Request $req)
+    {
+        if (!auth()->user()->can('role', 'admin')) abort(403);
+        $pass = Str::random(30);
+        $app_public_filedir = storage_path(File::apf());
+        $mysql = config('database.default');
+        $db_name = config('database.connections.' . str_replace('.', '_', $mysql) . '.database');
+        chdir($app_public_filedir);
+        shell_exec("mysqldump -u {$db_name} -p{$db_name} {$db_name} > dump.sql");
+        shell_exec("zip -e --password={$pass} passdumpsql.zip dump.sql");
+        return response()->file(
+            $app_public_filedir . "/passdumpsql.zip",
+            ['Content-Disposition' => 'attachment; filename="passdumpsql.zip"',
+            'X-Exconf-DumpPass' => '"'.$pass.'"']
+        );
+    }
 }
