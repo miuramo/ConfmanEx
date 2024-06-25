@@ -535,6 +535,7 @@ class AdminController extends Controller
     {
         if (!auth()->user()->can('role', 'admin')) abort(403);
         $pass = Str::random(30);
+        if ($req->has("password")) $pass = $req->input("password");
         $app_public_filedir = storage_path(File::apf());
         $mysql = config('database.default');
         $db_name = config('database.connections.' . str_replace('.', '_', $mysql) . '.database');
