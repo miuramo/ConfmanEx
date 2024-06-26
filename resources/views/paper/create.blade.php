@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2
-            class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400 dark:bg-slate-800 dark:text-slate-400">
+            class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400 ">
             {{ __('新規投稿') }}
         </h2>
     </x-slot>
@@ -86,6 +86,13 @@
                                 break;
                             }
                         }
+                        $anylimit = false;
+                        foreach ($cats as $c) {
+                            if ($c->isOpen() && $c->upperlimit > 0) {
+                                $anylimit = true;
+                                break;
+                            }
+                        }
                     @endphp
 
                     <x-element.h1>
@@ -105,12 +112,16 @@
                         @endif
                     </x-element.h1>
 
+                    @if($anylimit)
+                    <x-paper.upperlimit :cats=$cats></x-paper.upperlimit>
+                    @endif
+
                 </div>
             </form>
-            @can('admin')
+            {{-- @can('admin')
                 <x-element.button onclick="debug_em()" color="white" value="debug">
                 </x-element.button>
-            @endcan
+            @endcan --}}
 
         </div>
 

@@ -70,6 +70,11 @@ class PaperStoreRequest extends FormRequest
         if (!$cat->isnotUpperLimit()){
             return redirect()->route('paper.create')->with('feedback.error', "申し訳ありませんが、{$cat->name}は受け入れ件数の上限に達しているため、投稿情報を作成できませんでした。");
         }
+        if ($cat->upperlimit > 0){
+            // 重複投稿の禁止： すでに投稿があるか？
+            $count = Paper::where("category_id",$cat->id)->where("deleted",0)->where("owner", auth()->id())->count();
+            if ($count > 0) return redirect()->route('paper.create')->with('feedback.error', "申し訳ありませんが、{$cat->name}の投稿は一人一件に制限されているため、投稿情報を作成できませんでした。");
+        }
         $validator = $this->validate_em();
         if ($validator == null) {
             return redirect()->route('paper.create')->with('feedback.error', "投稿連絡用メールアドレスは1件以上" . env('CONTACTEMAILS_MAX', 5) . "件以内で入力してください。");
