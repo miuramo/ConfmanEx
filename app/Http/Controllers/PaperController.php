@@ -71,8 +71,8 @@ class PaperController extends Controller
             return redirect()->route('user.profile.edit')->with('feedback.success', '最初に「氏 名」を設定してください。氏と名のあいだには半角スペースをいれてください。');
         }
 
-        $kakunin = Confirm::where('grp', 1)->select('name', 'mes')->get()->pluck('mes', 'name')->toArray();
-        $mailkakunin = Confirm::where('grp', 2)->select('name', 'mes')->get()->pluck('mes', 'name')->toArray();
+        $kakunin = Confirm::where('grp', 1)->where('valid', 1)->select('name', 'mes')->get()->pluck('mes', 'name')->toArray();
+        $mailkakunin = Confirm::where('grp', 2)->where('valid', 1)->select('name', 'mes')->get()->pluck('mes', 'name')->toArray();
 
         return view("paper.create")->with(compact("kakunin", "mailkakunin"));
         //
