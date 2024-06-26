@@ -147,9 +147,8 @@
     </x-element.h1>
 
     <x-element.h1>査読進捗 <span class="px-2"></span>
-            <x-element.linkbutton href="{{ route('revcon.revstatus') }}" color="orange"
-                target="_blank">査読進捗
-            </x-element.linkbutton>
+        <x-element.linkbutton href="{{ route('revcon.revstatus') }}" color="orange" target="_blank">査読進捗
+        </x-element.linkbutton>
     </x-element.h1>
 
     <x-element.h1>査読割り当て <span class="px-2"></span>
@@ -165,18 +164,15 @@
             @endforeach
         @endforeach
         <span class="mx-3"></span>
-        <x-element.linkbutton href="{{ route('revcon.index') }}" color="orange"
-            target="_blank">
+        <x-element.linkbutton href="{{ route('revcon.index') }}" color="orange" target="_blank">
             Bidding未完了状態
         </x-element.linkbutton>
         <span class="mx-3"></span>
-        <x-element.linkbutton href="{{ route('revcon.stat') }}" color="green"
-            target="_blank">
+        <x-element.linkbutton href="{{ route('revcon.stat') }}" color="green" target="_blank">
             Bidding Stat
         </x-element.linkbutton>
         <span class="mx-3"></span>
-        <x-element.linkbutton href="{{ route('revcon.revstat') }}" color="lime"
-            target="_blank">
+        <x-element.linkbutton href="{{ route('revcon.revstat') }}" color="lime" target="_blank">
             査読割り当て Stat
         </x-element.linkbutton>
 
@@ -196,7 +192,23 @@
     </x-element.h1>
 
 
-    <x-element.h1>査読観点(Viewpoint)の管理</x-element.h1>
+    <x-element.h1>査読観点(Viewpoint)の管理
+        <span class="mx-2"></span>
+        @foreach ($cats as $catid => $catname)
+            <form class="inline" action="{{ route('admin.crud') }}?table=viewpoints" method="post"
+                id="admincrudwhere{{ $catid }}">
+                @csrf
+                @method('post')
+                <input id="whereby" type="hidden"
+                    class="whereBy text-sm bg-slate-100 font-thin mr-2 p-0 h-5 w-full" name="whereBy__category_id"
+                    value={{ $catid }}>
+                <x-element.submitbutton color="yellow" size="sm">{{ $catname }}
+                </x-element.submitbutton>
+            </form>
+            <span class="mx-2"></span>
+        @endforeach
+
+    </x-element.h1>
 
     <div class="px-6 dark:text-gray-300">
         <x-element.linkbutton href="{{ route('viewpoint.export') }}" color="yellow">
@@ -224,7 +236,9 @@
         $user = App\Models\User::find(auth()->id());
     @endphp
     @foreach ($user->roles as $ro)
-        <span class="inline-block bg-slate-300 rounded-md p-1 mb-0.5">{{ $ro->desc }} ({{ $ro->name }})</span>
+        <span class="inline-block bg-slate-300 rounded-md p-1 mb-0.5">{{ $ro->desc }}
+            ({{ $ro->name }})
+        </span>
     @endforeach
 
     <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
