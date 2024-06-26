@@ -32,8 +32,16 @@
     </div>
 
 
-    <div class="py-4">
+    <div class="py-2">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="mb-2">
+                <x-element.button onclick="CheckAll('addusertorole')" color="lime" size="sm" value="すべてチェック">
+                </x-element.button>
+                &nbsp;
+                <x-element.button onclick="UnCheckAll('addusertorole')" color="orange" size="sm" value="すべてチェック解除">
+                </x-element.button>
+            </div>
+
             <x-role.members :users="$users" :role="$role" chkfor="addusertorole">
             </x-role.members>
         </div>
@@ -82,8 +90,8 @@
 
         <div class="mx-6 my-2">
             <div class="container">
-                <x-element.button class="" id="toggleButton" value="他のRole追加パネルを開く／閉じる"
-                    color='cyan' onclick="openclose('otherroles')">
+                <x-element.button class="" id="toggleButton" value="他のRole追加パネルを開く／閉じる" color='cyan'
+                    onclick="openclose('otherroles')">
                 </x-element.button>
                 <div class="hidden-content mt-2 bg-cyan-200 dark:bg-cyan-600 p-2" id="otherroles" style="display:none;">
 
@@ -169,7 +177,10 @@
     @push('localjs')
         <script src="/js/jquery.min.js"></script>
         <script src="/js/openclose.js"></script>
+        <script src="/js/chk_all.js"></script>
     @endpush
+
+
 
 
 </x-app-layout>
