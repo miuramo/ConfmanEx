@@ -5,7 +5,6 @@
 ])
 <!-- components.enquete.itmview -->
 @php
-info($itm->content);
     $ary = explode(App\Models\Viewpoint::$separator, $itm->content);
     $item_title = nl2br(trim($ary[0]));
     $type = trim($ary[1]);

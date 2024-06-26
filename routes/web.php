@@ -69,7 +69,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/profile', [UserController::class, 'profile'])->name('user.profile.edit');
     //アンケート回答
     Route::resource('enq', EnqueteController::class); // ここはenq.index, enq.store 等。
-    Route::get('/enq/{enq}/answers', [EnqueteController::class, 'answers'])->name('enq.answers'); 
+    Route::get('/enq/{enq}/answers', [EnqueteController::class, 'answers'])->name('enq.answers');
+    Route::get('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');
+    Route::post('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');
 
     Route::get('/paper/{paper}/enq/{enq}/edit', [EnqueteController::class, 'edit'])->name('enquete.pageedit'); //インラインではなく個別のpageで表示
     Route::get('/paper/{paper}/enq/{enq}', [EnqueteController::class, 'show'])->name('enquete.pageview');

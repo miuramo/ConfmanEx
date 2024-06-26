@@ -144,6 +144,10 @@
                 利害表明 / Bidding をすべてリセットする
             </x-element.linkbutton>
             <span class="px-5"></span>
+            <x-element.linkbutton href="{{ route('enq.resetenqans') }}" color="blue">
+                アンケート・参加登録 を部分的にリセットする画面に遷移
+            </x-element.linkbutton>
+            <span class="px-5"></span>
             <x-element.linkbutton href="{{ route('admin.forcedelete') }}" color="lime"
                 confirm="ソフトデリートしたUserがすべて消えますが、よろしいですか？">
                 ソフトデリート済みUserの削除

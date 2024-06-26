@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\EnqExportFromView;
 use App\Http\Requests\StoreEnqueteRequest;
 use App\Http\Requests\UpdateEnqueteRequest;
+use App\Models\Category;
 use App\Models\Enquete;
 use App\Models\EnqueteAnswer;
 use App\Models\Paper;
@@ -41,8 +42,7 @@ class EnqueteController extends Controller
         if ($req->has("action") && $req->input("action") == "excel") {
             return Excel::download(new EnqExportFromView($enq), "enqans_{$enq->name}.xlsx");
         }
-        return view("enquete.answers")->with(compact("enq","enqans","papers"));
-
+        return view("enquete.answers")->with(compact("enq", "enqans", "papers"));
     }
 
     /**
@@ -80,7 +80,7 @@ class EnqueteController extends Controller
             $enqans[$ea->enquete_id][$ea->enquete_item_id] = $ea;
         }
 
-        return view("enquete.pageview")->with(compact("enq","enqs","enqans","paper"));
+        return view("enquete.pageview")->with(compact("enq", "enqs", "enqans", "paper"));
         //
     }
 
@@ -99,7 +99,7 @@ class EnqueteController extends Controller
             $enqans[$ea->enquete_id][$ea->enquete_item_id] = $ea;
         }
 
-        return view("enquete.pageedit")->with(compact("enq","enqs","enqans","paper"));
+        return view("enquete.pageedit")->with(compact("enq", "enqs", "enqans", "paper"));
         //
     }
 
@@ -111,7 +111,7 @@ class EnqueteController extends Controller
         if ($request->ajax()) return $request->shori();
         else {
             // input type=numberでEnterをおすと、submitしてしまうので、ここでリダイレクトしてあげる
-            return redirect()->route('enquete.pageedit',['paper'=>$request->input("paper_id"), 'enq'=>$request->input("enq_id")]);
+            return redirect()->route('enquete.pageedit', ['paper' => $request->input("paper_id"), 'enq' => $request->input("enq_id")]);
         }
         //
     }
@@ -124,5 +124,29 @@ class EnqueteController extends Controller
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
 
         //
+    }
+
+    /**
+     * EnqueteAnswer を部分的に削除する
+     */
+    public function resetenqans(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if ($req->has("action")) {
+            // Formからのカテゴリ選択を配列にいれる
+            $targets = [];
+            foreach ($req->all() as $k => $v) {
+                if (strpos($k, "targetcat") === 0) $targets[] = $v;
+            }
+            if (count($targets) == 0) $targets =  [1, 2, 3];
+
+            $pidary = Paper::select('id')->whereIn('category_id', $targets)
+                ->get()->pluck('title', 'id')->toArray();
+            $enqans = EnqueteAnswer::whereIn("paper_id", array_keys($pidary))->get();
+            foreach ($enqans as $enqa) {
+                EnqueteAnswer::destroy($enqa->id);
+            }
+        }
+        return view("enquete.resetenqans");
     }
 }
