@@ -49,6 +49,13 @@ class AdminController extends Controller
         $roleall = Role::all();
 
         Setting::firstOrCreate([
+            'name' => "NAME_OF_META",
+        ], [
+            'value' => "メタ査読者",
+            'isnumber' => false,
+            'isbool' => false,
+        ]);
+        Setting::firstOrCreate([
             'name' => "FILEPUT_DIR",
         ], [
             'value' => "z2024",

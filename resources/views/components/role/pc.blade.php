@@ -155,13 +155,15 @@
         @php
             $roles = App\Models\Role::where('name', 'like', '%reviewer')->get();
         @endphp
-        @foreach ($cats as $catid => $catname)
-            @foreach ($roles as $role)
+        @foreach ($roles as $role)
+            @if($role->users->count() > 1)
+            @foreach ($cats as $catid => $catname)
                 <x-element.linkbutton href="{{ route('role.revassign', ['cat' => $catid, 'role' => $role]) }}"
                     color="lime">
                     {{ $catname }}→{{ $role->desc }}
                 </x-element.linkbutton>
             @endforeach
+            @endif
         @endforeach
         <span class="mx-3"></span>
         <x-element.linkbutton href="{{ route('revcon.index') }}" color="orange" target="_blank">
@@ -208,13 +210,12 @@
             <span class="mx-2"></span>
         @endforeach
 
-    </x-element.h1>
 
-    <div class="px-6 dark:text-gray-300">
+    <div class="my-2 px-6 py-2 dark:text-gray-300 bg-slate-300 text-sm">
         <x-element.linkbutton href="{{ route('viewpoint.export') }}" color="yellow">
             Viewpoint Download
         </x-element.linkbutton>
-        でダウンロードしたExcelを修正して、<br>↓でアップロードすると変更できます。
+        でダウンロードしたExcelを修正して、<br>↓でアップロードしても変更できます。
         <form action="{{ route('viewpoint.import') }}" method="post" id="vpimport" enctype="multipart/form-data">
             @csrf
             @method('post')
@@ -230,6 +231,7 @@
             </x-element.submitbutton>
         </form>
     </div>
+</x-element.h1>
 
     <x-element.h1>自分の権限確認（Role一覧）</x-element.h1>
     @php

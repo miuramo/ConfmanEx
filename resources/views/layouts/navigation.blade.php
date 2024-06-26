@@ -32,8 +32,8 @@
                     @endcan
                     @can('role', 'pc')
                         @php
-                            $navs_href['PC'] = route('role.pc', ['role' => 'pc']);
-                            $navs_active['PC'] = request()->routeIs('role.pc', ['role' => 'pc']);
+                            $navs_href['PC長'] = route('role.pc', ['role' => 'pc']);
+                            $navs_active['PC長'] = request()->routeIs('role.pc', ['role' => 'pc']);
                         @endphp
                     @endcan
                     @can('role', 'pub')

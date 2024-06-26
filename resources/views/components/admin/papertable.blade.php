@@ -36,7 +36,7 @@
                 </td>
                 <td class="p-1">
                     @if ($paper->pdf_file_id != 0)
-                        <a href="{{ route('file.showhash', ['file' => $paper->pdf_file_id, 'hash' => substr($paper->pdf_file->key, 0, 8)]) }}"
+                        <a class="underline text-blue-600 hover:bg-lime-200" href="{{ route('file.showhash', ['file' => $paper->pdf_file_id, 'hash' => substr($paper->pdf_file->key, 0, 8)]) }}"
                             target="_blank">
                             {{ $paper->pdf_file->pagenum }}page
                         </a>

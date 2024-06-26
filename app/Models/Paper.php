@@ -358,12 +358,12 @@ class Paper extends Model
             $minnum['video'] = 0;
             $maxnum['video'] = 1;
         }
-        foreach (['pdf', 'altpdf', 'img', 'video'] as $ft) {
+        foreach (['pdf'=>'論文PDF', 'altpdf'=>'ティザー資料', 'img'=>'代表画像', 'video'=>'参考ビデオ'] as $ft=>$ffname) {
             if (!$this->between($minnum[$ft], count($checkary[$ft]), $maxnum[$ft])) {
                 if ($minnum[$ft] == 1 && $maxnum[$ft] == 1) {
-                    $errorary[] = "{$ft}は必須です（1つのファイルのみ受け付けます）。";
+                    $errorary[] = "{$ffname}は必須です（1つのファイルのみ受け付けます）。";
                 } else {
-                    $errorary[] = "{$ft}は {$minnum[$ft]}個〜{$maxnum[$ft]}個にしてください。";
+                    $errorary[] = "{$ffname}は {$minnum[$ft]}個〜{$maxnum[$ft]}個にしてください。";
                 }
             }
         }

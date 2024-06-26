@@ -3,7 +3,7 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
             査読割り当て <span class="mx-2"></span>
-            {{ $cat->name }} {{count($papers)}}件 → {{ $role->desc }}
+            {{ $cat->name }} {{ count($papers) }}件 → {{ $role->desc }}
         </h2>
     </x-slot>
     @section('title', "査読割当 {$cat->name}")
@@ -16,16 +16,21 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @php
                 $roles = App\Models\Role::where('name', 'like', '%reviewer')->get();
+
+                $nameofmeta = App\Models\Setting::findByIdOrName("NAME_OF_META","value");
             @endphp
-            @foreach ($cats as $catid => $catname)
-                @foreach ($roles as $role)
-                    <x-element.linkbutton href="{{ route('role.revassign', ['cat' => $catid, 'role' => $role]) }}"
-                        color="lime">
-                        {{ $catname }}→{{ $role->desc }}
-                    </x-element.linkbutton>
-                    <span class="mx-2"></span>
-                @endforeach
+            @foreach ($roles as $role)
+                @if ($role->users->count() > 1)
+                    @foreach ($cats as $catid => $catname)
+                        <x-element.linkbutton href="{{ route('role.revassign', ['cat' => $catid, 'role' => $role]) }}"
+                            color="lime">
+                            {{ $catname }}→{{ $role->desc }}
+                        </x-element.linkbutton>
+                        <span class="mx-2"></span>
+                    @endforeach
+                @endif
             @endforeach
+
         </div>
     </div>
 
@@ -46,11 +51,11 @@
         <div class="saihi" id="saihimenu_cancel">（Close Menu）</div>
         <div class="saihi" id="saihimenu_99">---------------</div>
         <div class="saihi" id="saihimenu_1">一般査読者にする</div>
-        <div class="saihi" id="saihimenu_2">メタ査読者にする</div>
+        <div class="saihi" id="saihimenu_2">{{$nameofmeta}}にする</div>
         <div class="saihi" id="saihimenu_0">割り当て解除</div>
     </div>
 
-    <form action="{{ route('role.revassignpost', ['role' => $role, 'cat'=>$cat]) }}" method="post" id="revass">
+    <form action="{{ route('role.revassignpost', ['role' => $role, 'cat' => $cat]) }}" method="post" id="revass">
         @csrf
         @method('post')
         <input type="hidden" name="paper_id" id="revass_paper_id">

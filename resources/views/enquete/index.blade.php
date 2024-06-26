@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="mb-4">
             <x-element.linkbutton href="{{ route('role.top', ['role' => 'pc']) }}" color="gray" size="sm">
-                &larr; PC Topに戻る
+                &larr; PC長 Topに戻る
             </x-element.linkbutton>
         </div>
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
@@ -75,7 +75,7 @@
 
         <div class="mb-4 my-10">
             <x-element.linkbutton href="{{ route('role.top', ['role' => 'pc']) }}" color="gray" size="sm">
-                &larr; PC Topに戻る
+                &larr; PC長 Topに戻る
             </x-element.linkbutton>
         </div>
     </div>
