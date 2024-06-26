@@ -36,8 +36,13 @@
         @if (count($fileerrors) == 0)
             @if (count($enqerrors) > 0)
                 @foreach ($enqerrors as $er)
-                    <x-alert.error>{{ $er }}</x-alert.error>
+                    @if ($loop->iteration < 4)
+                        <x-alert.error>{{ $er }}</x-alert.error>
+                    @endif
                 @endforeach
+                @if (count($enqerrors) > 3)
+                    <x-alert.error>（このほかに、ご回答いただく項目が、{{ count($enqerrors)-3 }}項目あります。）</x-alert.error>
+                @endif
             @else
                 <x-alert.success>投稿に必要なファイルと情報は、そろっています。<br>投稿完了通知は「投稿状況メールを送信」をおすと送信します。<br>締め切り日時までは、ひきつづき修正可能です。</x-alert.success>
 
