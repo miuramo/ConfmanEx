@@ -128,7 +128,7 @@ class ManagerController extends Controller
             $lines = explode("\n", $req->input('authorheads'));
             $lines = array_map("trim", $lines);
             foreach ($lines as $n => $line) {
-                $ary = explode("::", $line);
+                $ary = explode(";;", $line);
                 $ary = array_map("trim", $ary);
                 $paper = Paper::find($ary[0]);
                 $paper->authorhead = $ary[1];

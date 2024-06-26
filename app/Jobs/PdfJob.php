@@ -35,6 +35,6 @@ class PdfJob implements ShouldQueue
         $this->file->makePdfThumbs();
         $text = $this->file->makePdfText();
         $this->file->makePdfHeadThumb();
-
+        $this->file->extractTitleAndAuthors($text); //ページ数が2ページ以上のときなど、論文PDFのときに使用
     }
 }

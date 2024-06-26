@@ -25,18 +25,22 @@
     @endif
     @php
         $catspans = App\Models\Category::spans();
-        $cur = "";
-        foreach($papers as $paper){
+        $cur = '';
+        foreach ($papers as $paper) {
             $title = $paper->title_candidate();
-            foreach($sets as $set){
-                $title = str_replace($set->value,"",$title);
+            foreach ($sets as $set) {
+                $title = str_replace($set->value, '', $title);
             }
             // authorheadが含まれていたら
-            $pos = mb_strpos($title, mb_substr($paper->authorhead,0,2));
-            if ( $pos > -1){
-                $title = mb_substr($title, 0, $pos)." (".$pos.")";
+            $pos = mb_strpos($title, mb_substr($paper->authorhead, 0, 2));
+            if ($pos > -1) {
+                $title = mb_substr($title, 0, $pos) ;
             }
-            $cur .= $paper->id." :: ".$paper->authorhead." :: ".$title. "\n";
+            if (mb_strlen($paper->authorhead) < 1) {
+                $cur .= $paper->id . ' ;; ' . $paper->authorhead . ' ;; ★★第一著者未設定★★ ' . $paper->title . " 【" . $paper->paperowner->name . "】\n";
+            } else {
+                $cur .= $paper->id . ' ;; ' . $paper->authorhead . ' ;; ' . $title . "\n";
+            }
         }
     @endphp
 
@@ -48,7 +52,7 @@
                 <div class="mb-1">
                     <textarea name="authorheads" class="w-full text-sm mt-1 p-2" cols="30" rows="45">{{ $cur }}</textarea>
                     <x-element.submitbutton color="cyan" value="ahead">
-                        第一著者の名前（::で区切られた第2要素のみ）を設定する
+                        第一著者の名前（;;で区切られた第2要素のみ）を設定する
                     </x-element.submitbutton>
                     <x-element.submitbutton color="purple" value="titleupdate">
                         上記の第3要素のタイトルで書き換える
@@ -58,10 +62,12 @@
         </div>
 
         <div class="mx-2 py-4">
+            <x-element.h1>現状設定されているタイトル</x-element.h1>
+            <dix class="my-2"></dix>
             <pre class="text-sm">
-                @foreach($papers as $paper)
-                {{$paper->id}} :: {{$paper->title}}
-                @endforeach
+@foreach ($papers as $paper)
+{{ $paper->id }} ;; {{ $paper->title }}
+@endforeach
             </pre>
         </div>
 

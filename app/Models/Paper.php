@@ -415,7 +415,7 @@ class Paper extends Model
                 $title_candidate = mb_substr($nocr_text, 0, $pos);
             } else {
                 // みつからなかったので、
-                $title_candidate = mb_substr($nocr_text, 0, 60);
+                $title_candidate = mb_substr($nocr_text, 0, 120);
             }
         } else {
             $nocr_text = str_replace("\n", "", $text);
@@ -425,8 +425,13 @@ class Paper extends Model
                 $title_candidate = substr($nocr_text, 0, $pos);
             } else {
                 // みつからなかったので、
-                $title_candidate = substr($nocr_text, 0, 30) . "...";
+                $title_candidate = substr($nocr_text, 0, 120) . "...";
             }
+        }
+        // SKIP_HEAD_n を適用する。（先頭にあれば、削除する
+        $sets = Setting::where("name", "like", "SKIP_HEAD_%")->where("valid", true)->get();
+        foreach($sets as $set){
+            $title_candidate = str_replace($set->value,"",$title_candidate);
         }
         $this->title = $title_candidate;
         $this->save();
@@ -531,7 +536,9 @@ class Paper extends Model
     }
 
     public function pdftotext(){
+        if ($this->pdf_file)
         return $this->pdf_file->getPdfText();
+        return "(pdftotext準備中)";
     }
     public function title_candidate(){
         $title = str_replace("\n","",$this->pdftotext());
