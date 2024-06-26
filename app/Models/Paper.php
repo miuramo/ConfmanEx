@@ -332,7 +332,7 @@ class Paper extends Model
                 }
                 continue;
             }
-            if ($file->mime == "image/png" || $file->mime == "image/jpg") {
+            if ($file->mime == "image/png" || $file->mime == "image/jpeg" || $file->mime == "image/jpg") {
                 $checkary['img'][] = $file->id;
                 continue;
             }
