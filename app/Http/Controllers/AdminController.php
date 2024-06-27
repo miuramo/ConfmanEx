@@ -83,6 +83,7 @@ class AdminController extends Controller
             'value' => "",
             'isnumber' => false,
             'isbool' => false,
+            'valid' => false,
         ]);
         Setting::firstOrCreate([
             'name' => "REVIEWER_MEMBER",
@@ -90,7 +91,17 @@ class AdminController extends Controller
             'value' => "",
             'isnumber' => false,
             'isbool' => false,
+            'valid' => false,
         ]);
+        $sets = Setting::where("name","like","%_MEMBER")->where("valid",true)->get();
+        foreach($sets as $set){
+            if (strlen($set->value)<1) {
+                $set->valid = false;
+                $set->misc = "（注意）氏 名を|で区切って設定しておくと、自動でROLE付与します。";
+                $set->save();
+            }
+        }
+
         // 表彰状用JSON のダウンロードキー
         $temporal_key = Setting::findByIdOrName("CONFTITLE_YEAR", "value") . Str::random(10);
         Setting::firstOrCreate([
