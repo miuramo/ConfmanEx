@@ -25,7 +25,7 @@
             凡例： <span class="bg-orange-200 px-1 hover:bg-yellow-100">アンロック状態 PaperID (FileId)</span>
             <span class="bg-green-200 px-1 hover:bg-yellow-100">ロック状態 PaperID (FileId)</span>
             <span class="mx-3">cntは件数(count)</span>
-            <span class="mx-3">ファイルをロックすると、著者があたらしいファイルをアップロードしたときにPendingの状態となり、直接の差替えができなくなります。</span>
+            <span class="mx-3">ファイルをロックすると、著者があたらしいファイルをアップロードしたときにPendingの状態となり、差替えができなくなります。</span>
         </div>
         <table class="divide-y divide-gray-200">
             <thead>
@@ -47,11 +47,13 @@
                         <td>
                             @if (isset($pids[$col->category_id][$col->valid][$col->deleted][$col->pending][$col->locked]))
                                 @foreach ($pids[$col->category_id][$col->valid][$col->deleted][$col->pending][$col->locked] as $pid)
+                                <a href="{{ route('file.showhash', ['file' => $fileids[$pid], 'hash' => substr($filekeys[$pid], 0, 8)]) }}" target="_blank">
                                     @if ($col->locked)
                                         <span class="bg-green-200 px-1 hover:bg-yellow-100">{{ $pid }}</span>
                                     @else
                                         <span class="bg-orange-200 px-1 hover:bg-yellow-100">{{ $pid }}</span>
                                     @endif
+                                </a>
                                 @endforeach
                             @endif
                         </td>

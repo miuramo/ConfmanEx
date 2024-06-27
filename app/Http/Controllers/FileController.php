@@ -237,23 +237,31 @@ class FileController extends Controller
         $cols = DB::select($sql1);
 
         // 個別項目
-        $sql2 = "select paper_id, files.id, mime, " . implode(",", $fs);
+        $sql2 = "select paper_id, files.id, mime, pagenum, files.key, " . implode(",", $fs);
         $sql2 .= " ,category_id from files left join papers on files.paper_id = papers.id order by category_id, paper_id, " . implode(",", $fs);
         $res2 = DB::select($sql2);
         $pids = [];
+        $fileids = [];
+        $filekeys = [];
         foreach ($res2 as $res) {
             $shortmime = explode("/", $res->mime)[1];
-            if (is_array(@$pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked])) {
-                $pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked][] = sprintf("%03d", $res->paper_id) . " (f{$res->id} {$shortmime})";
-            } else {
+            if (!is_array(@$pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked])) {
                 $pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked] = [];
-                $pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked][] = sprintf("%03d", $res->paper_id) . " (f{$res->id} {$shortmime})";
             }
+            $label = sprintf("%03d", $res->paper_id) . " (f{$res->id} {$shortmime}";
+            if ($res->mime === 'application/pdf'){
+                $label .= $res->pagenum."p";
+            }
+            $label .= ")";
+            $pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked][] = $label;
+
+            $fileids [$label] = $res->id;
+            $filekeys [$label] = $res->key;
         }
         // dd($pids);
 
 
-        return view('admin.filelock')->with(compact("cols", "pids"));
+        return view('admin.filelock')->with(compact("cols", "pids","fileids","filekeys"));
     }
 
     public function favicon()
