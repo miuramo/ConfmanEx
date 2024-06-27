@@ -56,6 +56,13 @@ class AdminController extends Controller
             'isbool' => false,
         ]);
         Setting::firstOrCreate([
+            'name' => "SKIP_BIBINFO",
+        ], [
+            'value' => '["keyword","etitle","eabst","ekeyword"]',
+            'isnumber' => false,
+            'isbool' => false,
+        ]);
+        Setting::firstOrCreate([
             'name' => "FILEPUT_DIR",
         ], [
             'value' => "z2024",
@@ -106,7 +113,7 @@ class AdminController extends Controller
             'value' => "[80,500, 1100,-1]",
             'isnumber' => false,
             'isbool' => false,
-            'misc'=>'最後のXが負数だとセンタリング計算でXを求める'
+            'misc' => '最後のXが負数だとセンタリング計算でXを求める'
         ]);
 
         // Viewpoint::change_separator();
@@ -551,8 +558,10 @@ class AdminController extends Controller
         shell_exec("zip -e --password={$pass} passdumpsql.zip dump.sql");
         return response()->file(
             $app_public_filedir . "/passdumpsql.zip",
-            ['Content-Disposition' => 'attachment; filename="passdumpsql.zip"',
-            'X-Exconf-DumpPass' => '"'.$pass.'"']
+            [
+                'Content-Disposition' => 'attachment; filename="passdumpsql.zip"',
+                'X-Exconf-DumpPass' => '"' . $pass . '"'
+            ]
         );
     }
 }

@@ -9,6 +9,7 @@ use App\Models\Enquete;
 use App\Models\EnqueteAnswer;
 use App\Models\File;
 use App\Models\Paper;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -348,6 +349,11 @@ class PaperController extends Controller
         $pdftext = $paper->pdf_file->getPdfText();
         // 書誌情報の設定項目
         $koumoku = ['title' => '和文タイトル', 'abst' => '和文アブストラクト', 'keyword' => '和文キーワード', 'etitle' => '英文Title', 'eabst' => '英文Abstract', 'ekeyword' => '英文Keyword'];
+        $skip_bibinfo = Setting::findByIdOrName("SKIP_BIBINFO", "value");
+        $skip_bibinfo = json_decode($skip_bibinfo);
+        foreach($skip_bibinfo as $key){
+            unset($koumoku[$key]);
+        }
         $koumokucolor = ['title' => 'teal', 'abst' => 'teal', 'keyword' => 'teal', 'etitle' => 'lime', 'eabst' => 'lime', 'ekeyword' => 'lime'];
         // $pdftext = mb_ereg_replace('\n+',"\n",$pdftext);
         $reps = ["ﬁ" => "fi", "ﬀ" => "ff", "ﬃ" => "ffi"];
