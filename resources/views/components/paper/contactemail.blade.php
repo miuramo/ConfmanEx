@@ -4,10 +4,10 @@
 ])
 
 <div class="mx-6 my-0">
-    <div class="text-lg mt-2 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
+    {{-- <div class="text-lg mt-2 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
         投稿連絡用メールアドレス
         <x-element.gendospan>いつでも修正可</x-element.gendospan>
-    </div>
+    </div> --}}
     <form action="{{ route('paper.update', ['paper' => $paper->id]) }}" method="post" id="editform">
         @csrf
         @method('put')

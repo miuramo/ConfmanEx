@@ -14,8 +14,14 @@
             </x-element.category>
             &nbsp;
             &nbsp;
-
         </h2>
+        <style>
+            .hidden-content {
+                display: none;
+                opacity: 0;
+                transition: opacity 0.5s ease;
+            }
+        </style>
     </x-slot>
     <!-- paper.edit -->
     @push('localcss')
@@ -30,6 +36,9 @@
             <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
         @endif
 
+        @if (count($fileerrors) > 0 || count($enqerrors) > 0)
+            <x-alert.error2>投稿はまだ完了していません。</x-alert.error2>
+        @endif
         @foreach ($fileerrors as $er)
             <x-alert.error>{{ $er }}</x-alert.error>
         @endforeach
@@ -41,7 +50,7 @@
                     @endif
                 @endforeach
                 @if (count($enqerrors) > 3)
-                    <x-alert.error>（このほかに、ご回答いただく項目が、{{ count($enqerrors)-3 }}項目あります。）</x-alert.error>
+                    <x-alert.error>（このほかに、ご回答いただく項目が、{{ count($enqerrors) - 3 }}項目あります。）</x-alert.error>
                 @endif
             @else
                 <x-alert.success>投稿に必要なファイルと情報は、そろっています。<br>投稿完了通知は「投稿状況メールを送信」をおすと送信します。<br>締め切り日時までは、ひきつづき修正可能です。</x-alert.success>
@@ -128,8 +137,8 @@
                     href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="lime">再読み込み
                 </x-element.linkbutton2> を押してください。
             </div>
-            <div class="m-6">
 
+            <div class="m-6">
                 <div class="text-lg my-5 p-1 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
                     <div class="mx-5 my-5">
                         投稿が正しく完了しているとき、
@@ -153,66 +162,82 @@
                             </x-element.deletebutton_nodiv> を押してください。
                         </div>
                     @endif
+
+                    <div class="mx-6 my-2">
+                        <div class="container">
+                            <x-element.button class="" id="toggleButton" value="投稿連絡用メールアドレス修正画面をひらく"
+                                color='yellow' size='sm' onclick="openclose('editcontact')">
+                            </x-element.button>
+
+                            <span class="mx-2"></span>
+                            <x-element.linkbutton2 href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}"
+                                color="cyan" size="md">
+                                書誌情報の設定
+                            </x-element.linkbutton2>
+                            @if ($paper->locked)
+                                <span class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、書誌情報の設定はできません。）</span>
+                            @endif
+                        </div>
+                        <div class="hidden-content mt-2 bg-yellow-200 dark:bg-cyan-600 p-2" id="editcontact"
+                            style="display:none;">
+                            <x-paper.contactemail :paper="$paper">
+                            </x-paper.contactemail>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="mt-4 px-6 mb-10">
-                <x-element.linkbutton href="{{ route('paper.index') }}" color="gray" size="lg">
-                    &larr; 投稿一覧に戻る
-                </x-element.linkbutton>
-            </div>
 
-            <x-element.sankou>
-                参考：投稿締め切り後の流れは、およそ以下のようになります。
-                <ol class="list-decimal px-8 pt-4">
-                    <li> 査読結果（採否）の通知</li>
-                    <li> （採択の場合）コメントに対応したPDF（カメラレディ）の再アップロード、
-                        <x-element.linkbutton2 href="#authorlist" color="teal" size="md">
-                            著者名と所属の入力
-                        </x-element.linkbutton2>
-                        、<x-element.linkbutton2 href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}"
-                            color="cyan" size="md">
-                            書誌情報の設定
-                        </x-element.linkbutton2>
-                        など。
-                        @if ($paper->locked)
-                            <span
-                                class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、著者名と所属の入力、書誌情報の設定はできません。）</span>
-                        @endif
-                        {{-- 日本語で記述した場合、英文アブストラクトと英文キーワードは任意です。 --}}
-                    </li>
-                </ol>
-                原稿または入力事項に問題がある場合は、個別に連絡しますので、期日までにすみやかに対応してください。
-            </x-element.sankou>
+                <div class="mt-4 px-6 mb-10">
+                    <x-element.linkbutton href="{{ route('paper.index') }}" color="gray" size="lg">
+                        &larr; 投稿一覧に戻る
+                    </x-element.linkbutton>
+                </div>
 
-            <div class="mx-6 mt-12 mb-0  dark:text-gray-400">
+                {{-- <x-element.sankou>
+                    参考：投稿締め切り後の流れは、およそ以下のようになります。
+                    <ol class="list-decimal px-8 pt-4">
+                        <li> 査読結果（採否）の通知</li>
+                        <li> （採択の場合）コメントに対応したPDF（カメラレディ）の再アップロード、
+                            <x-element.linkbutton2 href="#authorlist" color="teal" size="md">
+                                著者名と所属の入力
+                            </x-element.linkbutton2>
+                            、<x-element.linkbutton2 href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}"
+                                color="cyan" size="md">
+                                書誌情報の設定
+                            </x-element.linkbutton2>
+                            など。
+                        </li>
+                    </ol>
+                    原稿または入力事項に問題がある場合は、個別に連絡しますので、期日までにすみやかに対応してください。
+                </x-element.sankou> --}}
+
+                {{-- <div class="mx-6 mt-12 mb-0  dark:text-gray-400">
                 投稿連絡用メールアドレスを修正する必要がある場合は、この下のフォームで送信してください。
+            </div> --}}
+
+
+                {{-- <div class="my-10"></div>
+
+                {{-- 著者名と所属 
+                @if (!$paper->locked)
+                    <x-paper.authorlist :paper="$paper">
+                    </x-paper.authorlist>
+                @endif --}}
+
             </div>
-
-            <x-paper.contactemail :paper="$paper">
-            </x-paper.contactemail>
-
-            <div class="my-10"></div>
-
-            {{-- 著者名と所属 --}}
-            @if (!$paper->locked)
-                <x-paper.authorlist :paper="$paper">
-                </x-paper.authorlist>
-            @endif
-
         </div>
-    </div>
 
-    <div class="mt-4 px-6 pb-10">
-        <x-element.linkbutton href="{{ route('paper.index') }}" color="gray" size="lg">
-            &larr; 投稿一覧に戻る
-        </x-element.linkbutton>
-    </div>
+        {{-- <div class="mt-4 px-6 pb-10">
+            <x-element.linkbutton href="{{ route('paper.index') }}" color="gray" size="lg">
+                &larr; 投稿一覧に戻る
+            </x-element.linkbutton>
+        </div> --}}
 
-    @push('localjs')
-        <script src="/js/jquery.min.js"></script>
-        <script src="/js/drop_zone_upload.js"></script>
-        <script src="/js/form_changed.js"></script>
-    @endpush
+        @push('localjs')
+            <script src="/js/jquery.min.js"></script>
+            <script src="/js/drop_zone_upload.js"></script>
+            <script src="/js/form_changed.js"></script>
+            <script src="/js/openclose.js"></script>
+        @endpush
 
 </x-app-layout>
