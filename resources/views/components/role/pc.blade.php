@@ -4,8 +4,9 @@
     $cat_paper_count = App\Models\Category::withCount('papers')->get();
     // PDFファイルがある投稿の数
     $count_paper_haspdf = App\Models\Paper::select(DB::raw('count(id) as count, category_id'))
-        ->groupBy('category_id')
         ->whereNotNull('pdf_file_id')
+        ->whereNot('pdf_file_id', 0)  // 一度PDFをアップして、あとで消すとnullではなく0になることがあった。現在は修正済み
+        ->groupBy('category_id')
         ->get()
         ->pluck('count', 'category_id');
 @endphp

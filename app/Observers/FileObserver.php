@@ -43,7 +43,7 @@ class FileObserver
         // Log::info("[FileObserver@deleted] ", ["file" => $file]);
         $paper = Paper::find($file->paper_id);
         if ($paper->pdf_file_id != null && $paper->pdf_file_id == $file->id) {
-            $paper->pdf_file_id = 0;
+            $paper->pdf_file_id = null;
             $paper->save();
         }
     }
