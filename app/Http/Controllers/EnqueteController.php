@@ -24,6 +24,7 @@ class EnqueteController extends Controller
     public function index()
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        Enquete::reorderint(10); // orderint を再割り当てする
         $enqs = Enquete::all();
         return view("enquete.index")->with(compact("enqs"));
         //

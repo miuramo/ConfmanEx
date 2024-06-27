@@ -48,7 +48,6 @@
                         項目編集
                     </x-element.linkbutton2>
 
-                    
                     {{-- <form class="inline" action="{{ route('admin.crud') }}?table=enquete_items" method="post"
                         id="admincrudwhere{{ $enq->id }}">
                         @csrf
@@ -67,7 +66,7 @@
 
                     <ul class="ml-8">
                         @foreach ($enq->items as $itm)
-                            <li>{{ $itm->desc }} ({{ $itm->name }})</li>
+                            <li>{{ $itm->desc }} ({{ $itm->name }}) {{$itm->orderint}}</li>
                         @endforeach
                     </ul>
                 </div>

@@ -132,4 +132,20 @@ class Enquete extends Model
         $e = array_map("intval", explode("-", $mmdd));
         return "{$e[0]}月{$e[1]}日";
     }
+
+    /**
+     * OrderInt をstep ずつで再設定する
+     */
+    public static function reorderint($step=10)
+    {
+        $all = Enquete::all();
+        foreach($all as $enq){
+            $num = $step;
+            foreach($enq->items as $enqitm){
+                $enqitm->orderint = $num;
+                $enqitm->save();
+                $num += $step;
+            }    
+        }
+    }
 }
