@@ -363,7 +363,6 @@ class Paper extends Model
             $maxnum['video'] = 1;
         }
         $minnum['pptx'] = $maxnum['pptx'] = isset($cat) ? $cat->accept_pptx : 0;
-        info($cat);
         if ($cat->accept_pptx == 2) { //2はオプション。0or1
             $minnum['pptx'] = 0;
             $maxnum['pptx'] = 1;
