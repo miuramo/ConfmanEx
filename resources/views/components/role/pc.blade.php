@@ -102,6 +102,11 @@
             投稿受付管理
         </x-element.linkbutton>
         <span class="px-2"></span>
+        <x-element.linkbutton href="{{ route('admin.catsetting', ['mandatoryfile' => 'on']) }}" color="lime"
+            target="_blank">
+            サプリメントファイル受付管理
+        </x-element.linkbutton>
+        <span class="px-2"></span>
         <x-element.linkbutton href="{{ route('admin.catsetting') }}" color="orange" target="_blank">
             査読進行管理
         </x-element.linkbutton>

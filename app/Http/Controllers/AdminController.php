@@ -457,6 +457,14 @@ class AdminController extends Controller
             }
             $coldetails = $cold2;
             $title = "投稿受付管理";
+        } else if ($req->has("mandatoryfile")) { // 必須ファイル関係
+            $ary = ['name', 'accept_video','accept_pptx','accept_img','img_max_width','img_max_height','accept_altpdf','altpdf_page_min','altpdf_page_max'];
+            $cold2 = [];
+            foreach ($ary as $f) {
+                $cold2[$f] = $coldetails[$f];
+            }
+            $coldetails = $cold2;
+            $title = "サプリメントファイル受付管理";
         } else { // 査読関係
             foreach ($coldetails as $field => $type) {
                 if (strpos($field, "status__") !== 0 && $field != 'name') {

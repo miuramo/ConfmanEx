@@ -314,6 +314,7 @@ class Paper extends Model
         $checkary['altpdf'] = [];
         $checkary['video'] = [];
         $checkary['img'] = [];
+        $checkary['pptx'] = [];
 
         $errorary = [];
         $cat = Category::find($this->category_id);
@@ -339,6 +340,9 @@ class Paper extends Model
             if (strpos($file->mime, "video") === 0) {
                 $checkary['video'][] = $file->id;
             }
+            if ($file->mime == "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
+                $checkary['pptx'][] = $file->id;
+            }
         }
         $maxnum = [];
         $minnum = [];
@@ -358,12 +362,22 @@ class Paper extends Model
             $minnum['video'] = 0;
             $maxnum['video'] = 1;
         }
-        foreach (['pdf'=>'論文PDF', 'altpdf'=>'ティザー資料', 'img'=>'代表画像', 'video'=>'参考ビデオ'] as $ft=>$ffname) {
+        $minnum['pptx'] = $maxnum['pptx'] = isset($cat) ? $cat->accept_pptx : 0;
+        info($cat);
+        if ($cat->accept_pptx == 2) { //2はオプション。0or1
+            $minnum['pptx'] = 0;
+            $maxnum['pptx'] = 1;
+        }
+        foreach (['pdf'=>'論文PDF', 'altpdf'=>'ティザー資料', 'img'=>'代表画像', 'video'=>'参考ビデオ', 'pptx'=>'PowerPoint(pptx)'] as $ft=>$ffname) {
             if (!$this->between($minnum[$ft], count($checkary[$ft]), $maxnum[$ft])) {
                 if ($minnum[$ft] == 1 && $maxnum[$ft] == 1) {
                     $errorary[] = "{$ffname}は必須です（1つのファイルのみ受け付けます）。";
                 } else {
-                    $errorary[] = "{$ffname}は {$minnum[$ft]}個〜{$maxnum[$ft]}個にしてください。";
+                    if ($minnum[$ft]==0) {
+                        $errorary[] = "{$ffname}は {$maxnum[$ft]}個以下にしてください。";
+                    } else {
+                        $errorary[] = "{$ffname}は {$minnum[$ft]}個〜{$maxnum[$ft]}個にしてください。";
+                    }
                 }
             }
         }
