@@ -70,6 +70,7 @@ Route::middleware('auth')->group(function () {
     //アンケート回答
     Route::resource('enq', EnqueteController::class); // ここはenq.index, enq.store 等。
     Route::get('/enq/{enq}/answers', [EnqueteController::class, 'answers'])->name('enq.answers');
+    Route::get('/enq_enqitmsetting', [EnqueteController::class, 'enqitmsetting'])->name('enq.enqitmsetting');
     Route::get('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');
     Route::post('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');
 

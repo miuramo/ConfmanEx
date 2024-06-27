@@ -1,8 +1,17 @@
+@php
+    if (!isset($back_link_href)) {
+        $back_link_href = route('role.top', ['role' => 'pc']);
+    }
+    if (!isset($back_link_label)) {
+        $back_link_label = 'PC長 Topに戻る';
+    }
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
         <div class="mb-4">
-            <x-element.linkbutton href="{{ route('role.top',['role'=>'pc']) }}" color="gray" size="sm">
-                &larr; PC長 Topに戻る
+            <x-element.linkbutton href="{{ $back_link_href }}" color="gray" size="sm">
+                &larr; {{ $back_link_label }}
             </x-element.linkbutton>
         </div>
 
@@ -29,10 +38,10 @@
                     <tr>
                         @foreach ($coldetails as $nam => $typ)
                             <th class="px-2 py-2 text-sm my-0">
-                                @if(isset($tableComments[$nam]))
-                                {{$tableComments[$nam]}}
+                                @if (isset($tableComments[$nam]))
+                                    {{ $tableComments[$nam] }}
                                 @endif
-                                {{ str_replace("status__","",$nam) }}
+                                {{ str_replace('status__', '', $nam) }}
                             </th>
                         @endforeach
                     </tr>
@@ -41,11 +50,26 @@
                     @foreach ($data as $d)
                         <tr>
                             @foreach ($coldetails as $nam => $typ)
-                                <td class="p-2 hover:text-blue-600 hover:bg-slate-200 clicktoedit  dark:hover:bg-slate-700 dark:hover:text-blue-500"
-                                    id="{{ $nam }}__{{ $d->id }}__{{ $typ }}"
-                                    >
-                                    {{ $d->$nam }}
-                                </td>
+                                @if ($nam == 'COPY')
+                                    <td>
+                                        <x-element.linkbutton2
+                                            href="{{ route('enq.enqitmsetting', ['copy_id' => $d->id, 'enq_id' => $enq_id, 'enq_name' => $enq_name]) }}"
+                                            color="yellow" size="sm">
+                                            Copy
+                                        </x-element.linkbutton2>
+                                        <div class="my-2"></div>
+                                        <x-element.linkbutton2
+                                            href="{{ route('enq.enqitmsetting', ['del_id' => $d->id, 'enq_id' => $enq_id, 'enq_name' => $enq_name]) }}"
+                                            color="red" size="sm">
+                                            Del
+                                        </x-element.linkbutton2>
+                                    </td>
+                                @else
+                                    <td class="p-2 hover:text-blue-600 hover:bg-slate-200 clicktoedit  dark:hover:bg-slate-700 dark:hover:text-blue-500"
+                                        id="{{ $nam }}__{{ $d->id }}__{{ $typ }}">
+                                        {{ $d->$nam }}
+                                    </td>
+                                @endif
                             @endforeach
                             {{-- <td>
                                 <a href="{{ route('admin.crud') }}?table={{ $table->name }}"> {{ $table->name }}</a>

@@ -8,8 +8,10 @@ use App\Http\Requests\UpdateEnqueteRequest;
 use App\Models\Category;
 use App\Models\Enquete;
 use App\Models\EnqueteAnswer;
+use App\Models\EnqueteItem;
 use App\Models\Paper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
@@ -43,6 +45,62 @@ class EnqueteController extends Controller
             return Excel::download(new EnqExportFromView($enq), "enqans_{$enq->name}.xlsx");
         }
         return view("enquete.answers")->with(compact("enq", "enqans", "papers"));
+    }
+    /**
+     * アンケート項目編集用のCRUD 2
+     */
+    public function enqitmsetting(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        $tableName = 'enquete_items';
+        // copy_id がセットされていたら、行をコピーする
+        if ($req->has('copy_id')) {
+            $copy_id = $req->input('copy_id');
+            $enqitm = EnqueteItem::find($copy_id);
+            $newdatum = $enqitm->replicate(); // copy data
+            $newdatum->orderint++;
+            $newdatum->save();
+        }
+        // del_id がセットされていたら、行を削除する
+        if ($req->has('del_id')) {
+            $del_id = $req->input('del_id');
+            EnqueteItem::destroy($del_id);
+        }
+        $coldetails = AdminController::column_details($tableName);
+        $coldetails['COPY'] = 'COPY';
+        $ary = ['COPY', 'orderint', 'name', 'desc', 'content', 'contentafter', 'is_mandatory', 'pregrule', 'pregerrmes'];
+        $cold2 = [];
+        foreach ($ary as $f) {
+            if (isset($coldetails[$f])) $cold2[$f] = $coldetails[$f];
+        }
+        $coldetails = $cold2;
+        $title = "「" . $req->input('enq_name') . "」アンケート項目の編集";
+
+        $domain = config('database.default');
+        $db_name = config('database.connections.' . str_replace('.', '_', $domain) . '.database');
+
+        $whereBy['enquete_id'] = $req->input("enq_id");
+        $tableComments = AdminController::get_table_comments($db_name, $tableName);
+        $data = DB::table($tableName)->where("enquete_id", $req->input("enq_id"))
+            ->orderBy('orderint')->limit(100)->get()->toArray();
+        $numdata = DB::table($tableName)->count();
+        $back_link_href = route("enq.index");
+        $back_link_label = "アンケート一覧に戻る";
+        $enq_id = $req->input("enq_id");
+        $enq_name = $req->input("enq_name");
+        return view('admin.crudtable2')->with(compact(
+            "tableName",
+            "coldetails",
+            "data",
+            "whereBy",
+            "numdata",
+            "tableComments",
+            "title",
+            "back_link_href",
+            "back_link_label",
+            "enq_id",
+            "enq_name"
+        ));
     }
 
     /**

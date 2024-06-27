@@ -262,7 +262,7 @@ class AdminController extends Controller
         return view('admin.filelist')->with(compact("targets", "filetypes"));
     }
 
-    private function column_details($tableName)
+    public static function column_details($tableName)
     {
         $driver = DB::connection()->getDriverName();
         $coldetails = [];
@@ -287,7 +287,7 @@ class AdminController extends Controller
         }
         return $coldetails;
     }
-    private function get_db_tables()
+    public static function get_db_tables()
     {
         $driver = DB::connection()->getDriverName();
         if ($driver === 'sqlite' || $driver === 'sqlite_testing') {
@@ -307,7 +307,7 @@ class AdminController extends Controller
         sort($tables);
         return $tables;
     }
-    private function get_table_comments($dbName, $tableName)
+    public static function get_table_comments($dbName, $tableName)
     {
         $driver = DB::connection()->getDriverName();
         $coldetails = [];

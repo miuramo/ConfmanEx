@@ -11,12 +11,12 @@
 
         </h2>
     </x-slot>
-    <div class="mx-4">
+    {{-- <div class="mx-4">
         <x-element.h1>
             <x-element.submitbutton2 color="yellow" size="sm">項目編集
             </x-element.submitbutton2>ページから戻るときは、ブラウザのBackボタンを使用してください。
         </x-element.h1>
-    </div>
+    </div> --}}
     @push('localcss')
         <link rel="stylesheet" href="{{ asset('/css/localflash.css') }}">
     @endpush
@@ -43,7 +43,13 @@
                         Excel
                     </x-element.linkbutton>
 
-                    <form class="inline" action="{{ route('admin.crud') }}?table=enquete_items" method="post"
+                    <x-element.linkbutton2 href="{{ route('enq.enqitmsetting', ['enq_id' => $enq->id, 'enq_name' => $enq->name]) }}"
+                        color="yellow" size="sm">
+                        項目編集
+                    </x-element.linkbutton2>
+
+                    
+                    {{-- <form class="inline" action="{{ route('admin.crud') }}?table=enquete_items" method="post"
                         id="admincrudwhere{{ $enq->id }}">
                         @csrf
                         @method('post')
@@ -52,7 +58,7 @@
                             name="whereBy__enquete_id" value={{ $enq->id }}>
                         <x-element.submitbutton2 color="yellow" size="sm">項目編集
                         </x-element.submitbutton2>
-                    </form>
+                    </form> --}}
                 </div>
 
                 <div class="text-sm ml-8 text-gray-400">
