@@ -62,6 +62,14 @@ class AdminController extends Controller
             'isnumber' => false,
             'isbool' => false,
         ]);
+        // 
+        Setting::firstOrCreate([
+            'name' => "FILE_DESCRIPTIONS",
+        ], [
+            'value' => '{"pdf":"論文PDF","altpdf":"ティザー資料","img":"代表画像","video":"参考ビデオ","pptx":"PowerPoint(pptx)"}',
+            'isnumber' => false,
+            'isbool' => false,
+        ]);
         Setting::firstOrCreate([
             'name' => "FILEPUT_DIR",
         ], [

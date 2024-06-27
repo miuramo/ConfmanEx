@@ -367,7 +367,11 @@ class Paper extends Model
             $minnum['pptx'] = 0;
             $maxnum['pptx'] = 1;
         }
-        foreach (['pdf'=>'論文PDF', 'altpdf'=>'ティザー資料', 'img'=>'代表画像', 'video'=>'参考ビデオ', 'pptx'=>'PowerPoint(pptx)'] as $ft=>$ffname) {
+        // ['pdf'=>'論文PDF', 'altpdf'=>'ティザー資料', 'img'=>'代表画像', 'video'=>'参考ビデオ', 'pptx'=>'PowerPoint(pptx)']
+        $file_desc = Setting::findByIdOrName("FILE_DESCRIPTIONS", "value");
+        $file_desc = json_decode($file_desc);
+
+        foreach ($file_desc as $ft=>$ffname) {
             if (!$this->between($minnum[$ft], count($checkary[$ft]), $maxnum[$ft])) {
                 if ($minnum[$ft] == 1 && $maxnum[$ft] == 1) {
                     $errorary[] = "{$ffname}は必須です（1つのファイルのみ受け付けます）。";
