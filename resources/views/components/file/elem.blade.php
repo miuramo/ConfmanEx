@@ -53,6 +53,13 @@
                 </x-dropdown2>
                 <br>
             @endif
+
+            @if ($file->locked)
+                <span
+                    class="mx-1 sm:rounded-lg border-2 border-green-600 bg-lime-200 px-2 py-1 font-bold text-green-600 text-lg dark:bg-lime-400">Locked</span>
+                <div class="my-2"></div>
+            @endif
+
             @if ($file->mime == 'image/png' || $file->mime == 'image/jpeg')
                 <a href="{{ route('file.showhash', ['file' => $file->id, 'hash' => substr($file->key, 0, 8)]) }}"
                     target="_blank">
@@ -63,12 +70,6 @@
                 {{ $file->origname }}
             @else
                 @if ($file->mime == 'application/pdf')
-                    @if ($file->locked)
-                        <span
-                            class="mx-1 sm:rounded-lg border-2 border-green-600 bg-lime-200 px-2 py-1 font-bold text-green-600 text-lg dark:bg-lime-400">Locked</span>
-                        <div class="my-2"></div>
-                    @endif
-
                     <a href="{{ route('file.showhash', ['file' => $file->id, 'hash' => substr($file->key, 0, 8)]) }}"
                         target="_blank">
                         <img src="{{ route('file.altimgshow', ['file' => $file->id, 'hash' => substr($file->key, 0, 8)]) }}"
@@ -85,19 +86,7 @@
                             page
                         @endif
                     </span>
-                    @if ($file->deleted)
-                        <span
-                            class="mx-4 sm:rounded-lg  bg-yellow-200 px-2 py-1 font-bold text-red-600 text-lg">Deleted</span>
-                    @endif
-                    @if ($file->pending)
-                        <span
-                            class="mx-4 sm:rounded-lg  bg-yellow-500 px-2 py-1 font-bold text-yellow-50 text-lg">Pending</span>
-                    @endif
-                    @if (!$file->valid)
-                        <span class="mx-4 sm:rounded-lg  bg-red-500 px-2 py-0 font-bold text-black text-lg">Invalid
-                            ({{ $file->created_at }})</span>
-                    @endif
-                @elseif (strpos($file->mime, 'video') == 0)
+                @elseif (strpos($file->mime, 'video') === 0)
                     <a href="{{ route('file.showhash', ['file' => $file->id, 'hash' => substr($file->key, 0, 8)]) }}"
                         target="_blank">
                         <img src="{{ route('file.altimgshow', ['file' => $file->id, 'hash' => substr($file->key, 0, 8)]) }}"
@@ -109,6 +98,18 @@
                     <a href="{{ route('file.showhash', ['file' => $file->id, 'hash' => substr($file->key, 0, 8)]) }}"
                         target="_blank">{{ $file->origname }}</a>
                 @endif
+            @endif
+            
+            @if ($file->deleted)
+                <span class="mx-4 sm:rounded-lg  bg-yellow-200 px-2 py-1 font-bold text-red-600 text-lg">Deleted</span>
+            @endif
+            @if ($file->pending)
+                <span
+                    class="mx-4 sm:rounded-lg  bg-yellow-500 px-2 py-1 font-bold text-yellow-50 text-lg">Pending</span>
+            @endif
+            @if (!$file->valid)
+                <span class="mx-4 sm:rounded-lg  bg-red-500 px-2 py-0 font-bold text-black text-lg">Invalid
+                    ({{ $file->created_at }})</span>
             @endif
 
 

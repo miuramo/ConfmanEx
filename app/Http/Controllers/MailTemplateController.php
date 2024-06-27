@@ -100,7 +100,7 @@ class MailTemplateController extends Controller
             // valueがonの要素をあつめる。mt_{mtid}になっているので、とりだす。
             $targetmts = [];
             foreach ($req->all() as $k => $v) {
-                if ($v == 'on' && strpos($k, 'mt_') == 0) {
+                if ($v == 'on' && strpos($k, 'mt_') === 0) {
                     $mtid = explode("_", $k)[1];
                     if (is_numeric($mtid)) $targetmts[] = $mtid;
                 }

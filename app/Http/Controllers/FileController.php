@@ -104,7 +104,7 @@ class FileController extends Controller
             $aT = $file->paper->getAuthorType();
             if ($aT < 0) {
                 if (strlen($firsthash) < 12) abort(403, 'file id and key required');
-                if (strpos($file->key, $firsthash)!==0) abort(403, 'file key mismatch');
+                if (strpos($file->key, $firsthash) !== 0) abort(403, 'file key mismatch');
             }
             if (!is_numeric($pagenum)) {
                 return view("file/pdfimages")->with(compact("file"));
@@ -185,26 +185,42 @@ class FileController extends Controller
         if ($req->method() === 'POST') {
 
             if ($req->has('action')) { // action is lock or unlock
+                // targetmime の value をあつめる
+                $targetmimes = [];
                 foreach ($req->all() as $k => $v) {
-                    if (strpos($k, "targetcat") == 0) {
+                    if (strpos($k, "targetmime") === 0) { // == 0 だと、false がふくまれてしまう。
+                        $targetmimes[$v] = 1;
+                    }
+                }
+                // targetmainpdf 
+                $targetmainpdf = $req->has("targetmainpdf");
+                foreach ($req->all() as $k => $v) {
+                    if (strpos($k, "targetcat") === 0) { // == 0 だと、false がふくまれてしまう。
 
                         // 採択状態を調査
                         $acc = MailTemplate::mt_accept(intval($v));
                         $rej = MailTemplate::mt_reject(intval($v));
                         $papers = Paper::with("pdf_file")->where("category_id", $v)->where("deleted", 0)->get();
                         $ta = $req->input("targetaccept");
-                        if ($ta=="accepted"){
+                        if ($ta == "accepted") {
                             $papers = $acc;
-                        } else if ($ta=="rejected"){
+                        } else if ($ta == "rejected") {
                             $papers = $rej;
                         }
                         foreach ($papers as $paper) {
-                            if (is_numeric($paper)){
+                            if (is_numeric($paper)) {
                                 $paper = Paper::with("pdf_file")->find($paper);
                             }
-                            if ($paper->pdf_file_id) {
+                            if ($paper->pdf_file_id && $targetmainpdf) {
                                 $paper->pdf_file->locked = ($req->input('action') === 'lock');
                                 $paper->pdf_file->save();
+                            }
+                            // サプリメントファイルを操作する。ただし、PaperPDFは除外する。
+                            $files = File::where("paper_id", $paper->id)->whereNot("id", $paper->pdf_file_id)->whereIn("mime", array_keys($targetmimes))->get();
+                            foreach ($files as $file) {
+                                if ($file->id == $paper->pdf_file_id) continue; // PaperPDFは除外
+                                $file->locked = ($req->input('action') === 'lock');
+                                $file->save();
                             }
                         }
                     }
@@ -213,22 +229,25 @@ class FileController extends Controller
             return redirect()->route('file.adminlock')->with('feedback.success', "選択カテゴリの投稿ファイルを{$req->input('action')}にしました。（ただし、deleted=0, pending=0が対象）");
         }
 
+        // 集約でカウント→cnt 
         $fs = ["files.valid", "files.deleted", "files.pending", "files.locked"];
         $sql1 = "select count(files.id) as cnt, " . implode(",", $fs);
         $sql1 .= " ,category_id from files left join papers on files.paper_id = papers.id group by " . implode(",", $fs);
         $sql1 .= " ,category_id order by category_id, " . implode(",", $fs);
         $cols = DB::select($sql1);
 
-        $sql2 = "select paper_id, files.id, " . implode(",", $fs);
-        $sql2 .= " ,category_id from files left join papers on files.paper_id = papers.id order by category_id, " . implode(",", $fs);
+        // 個別項目
+        $sql2 = "select paper_id, files.id, mime, " . implode(",", $fs);
+        $sql2 .= " ,category_id from files left join papers on files.paper_id = papers.id order by category_id, paper_id, " . implode(",", $fs);
         $res2 = DB::select($sql2);
         $pids = [];
         foreach ($res2 as $res) {
+            $shortmime = explode("/", $res->mime)[1];
             if (is_array(@$pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked])) {
-                $pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked][] = sprintf("%03d", $res->paper_id) . " (f{$res->id})";
+                $pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked][] = sprintf("%03d", $res->paper_id) . " (f{$res->id} {$shortmime})";
             } else {
                 $pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked] = [];
-                $pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked][] = sprintf("%03d", $res->paper_id) . " (f{$res->id})";
+                $pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked][] = sprintf("%03d", $res->paper_id) . " (f{$res->id} {$shortmime})";
             }
         }
         // dd($pids);
@@ -241,7 +260,7 @@ class FileController extends Controller
     {
         $im = imagecreatefrompng(public_path("favicon.png"));
 
-        $year = Setting::findByIdOrName("CONFTITLE_YEAR","value");
+        $year = Setting::findByIdOrName("CONFTITLE_YEAR", "value");
         if ($year) {
             $year_02d = $year % 100;
             $fabcolors = Setting::firstOrCreate([

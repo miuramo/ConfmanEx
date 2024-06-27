@@ -420,7 +420,7 @@ class PaperController extends Controller
         if ($req->method() === 'POST') {
             if ($req->has('action')) { // action is lock or unlock
                 foreach ($req->all() as $k => $v) {
-                    if (strpos($k, "targetcat") == 0) {
+                    if (strpos($k, "targetcat") === 0) {
                         $papers = Paper::where("category_id", $v)->where("deleted", 0)->get();
                         foreach ($papers as $paper) {
                             $paper->locked = ($req->input('action') === 'lock');

@@ -56,7 +56,7 @@ class RoleController extends Controller
             // valueがonの要素をあつめる。u_{uid}になっているので、とりだす。
             $target_users = []; // uid (integer) の配列
             foreach ($req->all() as $k => $v) {
-                if ($v == 'on' && strpos($k, 'u_') == 0) {
+                if ($v == 'on' && strpos($k, 'u_') === 0) {
                     $uid = explode("_", $k)[1];
                     if (is_numeric($uid)) $target_users[] = $uid;
                 }
@@ -85,7 +85,7 @@ class RoleController extends Controller
             // valueがonの要素をあつめる。u_{uid}になっているので、とりだす。
             $target_users = [];
             foreach ($req->all() as $k => $v) {
-                if ($v == 'on' && strpos($k, 'u_') == 0) {
+                if ($v == 'on' && strpos($k, 'u_') === 0) {
                     $uid = explode("_", $k)[1];
                     if (is_numeric($uid)) $target_users[] = $uid;
                 }

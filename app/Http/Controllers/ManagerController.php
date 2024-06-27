@@ -116,7 +116,7 @@ class ManagerController extends Controller
                 }
                 // authorheadが含まれていたら
                 $pos = mb_strpos($title, mb_substr($paper->authorhead,0,2));
-                if ( $pos > -1){
+                if ( $pos > -1 && $pos !== false){
                     $title = mb_substr($title, 0, $pos);
                 }
                 $paper->title = $title;

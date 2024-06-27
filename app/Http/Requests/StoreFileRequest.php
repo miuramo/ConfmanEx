@@ -113,6 +113,17 @@ class StoreFileRequest extends FormRequest
             shell_exec("pdftoppm -png -singlefile {$fullpath} " . storage_path(File::apf() . '/' . substr($hashname, 0, -4)));
             // 残りのタスク
             PdfJob::dispatch($file);
+        } else {
+            // PDF以外のとき、すでに同一mimeでのロックファイルが1つでもあれば、Pendingにする
+            // ただし、pngのあとでjpegをアップロードして通らないように、mimeの前半部分がマッチしたらPendingにする。
+            $firstmime = explode("/",$file->mime)[0];
+            info($firstmime);
+            $countlocked_similar = File::where("paper_id",$pid)->where("locked",1)->where("mime", "like", "{$firstmime}%")->count();
+            if ($countlocked_similar > 0){
+                $file->pending = true;
+                $file->save();
+            }
+
         }
         return redirect()->route('paper.edit', ['paper' => $pid])->with('feedback.success', "ファイルをアップロードしました。");
     }

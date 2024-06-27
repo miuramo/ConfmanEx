@@ -17,6 +17,8 @@
 
     @php
         $fs = ['category_id', 'valid', 'deleted', 'pending', 'locked', 'cnt'];
+        // サプリメントファイルのmimeタイプを集める
+        $mimes = App\Models\File::select('mime')->distinct()->orderBy('mime')->get();
     @endphp
     <div class="px-4 py-4">
         <div class="py-2">
@@ -31,7 +33,7 @@
                     @foreach ($fs as $h)
                         <th class="p-1 bg-slate-300">{{ $h }}</th>
                     @endforeach
-                    <th class="p-1 bg-slate-300">pid (fid)</th>
+                    <th class="p-1 bg-slate-300">pid (fid mime)</th>
                 </tr>
 
             </thead>
@@ -72,28 +74,48 @@
         <form action="{{ route('file.adminlock') }}" method="post" id="file_adminlock">
             @csrf
             @method('post')
-            @foreach ($cats as $catid => $catname)
-                <input type="checkbox" name="targetcat{{ $catid }}" value="{{ $catid }}"
-                    id="label{{ $catid }}" class="text-{{ $catcolors[$catid] }}-200"
-                    @isset($targets[$catid])
+            <div class="my-2">
+                @foreach ($cats as $catid => $catname)
+                    <input type="checkbox" name="targetcat{{ $catid }}" value="{{ $catid }}"
+                        id="label{{ $catid }}" class="text-{{ $catcolors[$catid] }}-200"
+                        @isset($targets[$catid])
             checked="checked"
             @endisset> <label
-                    for="label{{ $catid }}" class="dark:text-gray-300">{{ $catname }}</label>
-            @endforeach
-            <br>
-            @foreach (['すべて'=>'all', '採択のみ'=>'accepted', '不採択のみ'=>'rejected'] as $lbl=>$val)
-                <input type="radio" name="targetaccept" id="id_{{$val}}" value="{{$val}}"
-                @if ($val=='all')
-                    checked="checked"
-                @endif
-                >
-                <label for="id_{{$val}}">{{$lbl}}</label>
-            @endforeach
-            <x-element.submitbutton value="lock" color="green">ロックする
-            </x-element.submitbutton>
-            <x-element.submitbutton value="unlock" color="orange">アンロックする
-            </x-element.submitbutton>
-            <x-element.gendospan>操作対象は、deleted=0 かつ pending=0 のみです。</x-element.gendospan>
+                        for="label{{ $catid }}" class="dark:text-gray-300">{{ $catname }}</label>
+                    <span class="mx-2"></span>
+                @endforeach
+            </div>
+            <div class="my-2 border-slate-400 border-2 bg-slate-200 p-2">
+                <input type="checkbox" name="targetmainpdf" value="1" checked="checked" id="labelmain">
+                <label for="labelmain" class="dark:text-gray-300">メインの論文PDFファイルをロック／アンロック対象とする</label><span
+                    class="mx-1"></span>
+            </div>
+
+            <div class="mx-8 my-2 border-slate-400 border-2 bg-slate-200 p-2">
+                サプリメントファイルをロック／アンロック対象に含めるときは、以下にチェックをいれてください。<br>
+                @foreach ($mimes as $nn => $mime)
+                    <input type="checkbox" name="targetmime{{ $nn }}" value="{{ $mime['mime'] }}"
+                        id="labelmime{{ $nn }}">
+                    <label for="labelmime{{ $nn }}" class="dark:text-gray-300">{{ $mime['mime'] }}</label><span
+                        class="mx-2"></span>
+                @endforeach
+
+            </div>
+            <div class="my-2">
+
+                @foreach (['すべて' => 'all', '採択のみ' => 'accepted', '不採択のみ' => 'rejected'] as $lbl => $val)
+                    <input type="radio" name="targetaccept" id="id_{{ $val }}" value="{{ $val }}"
+                        @if ($val == 'all') checked="checked" @endif>
+                    <label for="id_{{ $val }}">{{ $lbl }}</label>
+                @endforeach
+                <span class="mx-2"></span>
+                <x-element.submitbutton value="lock" color="green">ロックする
+                </x-element.submitbutton>
+                <span class="mx-1"></span>
+                <x-element.submitbutton value="unlock" color="orange">アンロックする
+                </x-element.submitbutton>
+                <x-element.gendospan>操作対象は、deleted=0 かつ pending=0 のみです。</x-element.gendospan>
+            </div>
         </form>
     </div>
     @if (session('feedback.success'))

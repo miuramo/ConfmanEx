@@ -336,7 +336,7 @@ class Paper extends Model
                 $checkary['img'][] = $file->id;
                 continue;
             }
-            if (strpos($file->mime, "video") == 0) {
+            if (strpos($file->mime, "video") === 0) {
                 $checkary['video'][] = $file->id;
             }
         }
