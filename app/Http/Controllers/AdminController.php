@@ -401,6 +401,14 @@ class AdminController extends Controller
             }
             $coldetails = $cold2;
             $title = "サプリメントファイル受付管理";
+        } else if ($req->has("leadtext")) { // 必須ファイル関係
+            $ary = ['name', 'leadtext'];
+            $cold2 = [];
+            foreach ($ary as $f) {
+                $cold2[$f] = $coldetails[$f];
+            }
+            $coldetails = $cold2;
+            $title = "カテゴリ固有の案内(リード文)";
         } else { // 査読関係
             foreach ($coldetails as $field => $type) {
                 if (strpos($field, "status__") !== 0 && $field != 'name') {

@@ -60,6 +60,14 @@
         @endif
 
         <div class="py-2 px-6">
+            <!-- Category:leadtext -->
+            @isset($cat->leadtext)
+                @if (strpos($cat->leadtext, '__') !== 0)
+                    <div class="m-6">
+                        <x-element.h1>{!! $cat->leadtext !!}</x-element.h1>
+                    </div>
+                @endif
+            @endisset
 
             <div class="m-6">
                 <x-element.h1>ファイルをアップロードするには <span class="bg-lime-200 text-green-700 px-1 dark:bg-lime-500">Drop Files

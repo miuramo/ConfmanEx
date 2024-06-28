@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PaperStoreRequest;
 use App\Mail\Submitted;
+use App\Models\Category;
 use App\Models\Confirm;
 use App\Models\Enquete;
 use App\Models\EnqueteAnswer;
@@ -290,7 +291,9 @@ class PaperController extends Controller
             $paper->accepted = (count($fileerrors) == 0 && count($enqerrors) == 0);
             $paper->save();
 
-            return view("paper.edit", ["paper" => $id])->with(compact("id", "id_03d", "all", "paper", "enqs", "enqans", "fileerrors", "enqerrors"));
+            $cat = Category::find($paper->category_id);
+
+            return view("paper.edit", ["paper" => $id])->with(compact("id", "id_03d", "all", "paper", "enqs", "enqans", "fileerrors", "enqerrors","cat"));
         } catch (ModelNotFoundException $ex) {
         }
     }

@@ -51,6 +51,7 @@
     @php
         $introvideourl = App\Models\Setting::findByIdOrName('INTRO_VIDEO_URL', 'value');
     @endphp
+    <!-- 動画でみる投稿の流れの設定は、Setting:INTRO_VIDEO_URL にあります。 -->
     @isset($introvideourl)
         <div class="my-6 mx-6 p-6 bg-slate-200 dark:bg-slate-700 dark:text-slate-400">
             <div class="mx-2">

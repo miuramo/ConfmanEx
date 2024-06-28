@@ -117,6 +117,10 @@
         <x-element.linkbutton href="{{ route('admin.catsetting') }}" color="orange" target="_blank">
             査読進行管理
         </x-element.linkbutton>
+        <span class="px-2"></span>
+        <x-element.linkbutton2 href="{{ route('admin.catsetting', ['leadtext' => 'on']) }}" color="gray" target="_blank">
+            カテゴリ固有の案内(リード文)
+        </x-element.linkbutton2>
     </x-element.h1>
 
     <x-element.h1>メール送信
