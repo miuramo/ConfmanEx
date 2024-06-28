@@ -36,7 +36,8 @@
             <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
         @endif
 
-        @if (count($fileerrors) > 0 || count($enqerrors) > 0)
+        {{-- 最初のsuccess がなく、かつ、エラーがあれば --}}
+        @if ( (count($fileerrors) > 0 || count($enqerrors) > 0) && !session('feedback.success') )
             <x-alert.error2>投稿はまだ完了していません。</x-alert.error2>
         @endif
         @foreach ($fileerrors as $er)

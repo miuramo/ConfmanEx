@@ -27,7 +27,8 @@ class PaperStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        $kakunin = Confirm::select('name', 'mes')->where('valid',1)->get()->pluck('grp', 'name')->toArray();
+        $kakunin = Confirm::select('name', 'mes')->where('valid',1)
+        ->whereIn('grp',[1,2])->get()->pluck('grp', 'name')->toArray();
         foreach ($kakunin as $nm => $grp) {
             $kakunin[$nm] = 'required';
         }
