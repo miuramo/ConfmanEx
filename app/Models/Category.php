@@ -12,7 +12,8 @@ class Category extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        // 'email',
+        'name',
+        'leadtext',
     ];
 
     /**
