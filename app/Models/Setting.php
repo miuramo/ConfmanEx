@@ -134,6 +134,13 @@ class Setting extends Model
             'isbool' => false,
         ]);
         Setting::firstOrCreate([
+            'name' => "INTRO_VIDEO_URL",
+        ], [
+            'value' => "https://exconf.istlab.info/SSS_tutorial.mp4",
+            'isnumber' => false,
+            'isbool' => false,
+        ]);
+        Setting::firstOrCreate([
             'name' => "CROP_YHWX",
         ], [
             'value' => "[80,500, 1100,-1]",
