@@ -158,14 +158,14 @@
                             <x-element.deletebutton_nodiv
                                 action="{{ route('paper.destroy', ['paper' => $paper->id]) }}"
                                 confirm="アップロードファイルも消えますが、本当にPaperID : {{ $id_03d }} 投稿を削除してよいですか？"> PaperID :
-                                {{ $id_03d }} 投稿を削除する
+                                {{ $id_03d }} 投稿を削除
                             </x-element.deletebutton_nodiv> を押してください。
                         </div>
                     @endif
 
                     <div class="mx-6 my-2">
                         <div class="container">
-                            <x-element.button class="" id="toggleButton" value="投稿連絡用メールアドレス修正画面をひらく"
+                            <x-element.button class="" id="toggleButton" value="投稿連絡用メールアドレス修正画面の開閉"
                                 color='yellow' size='sm' onclick="openclose('editcontact')">
                             </x-element.button>
 
