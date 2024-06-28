@@ -485,6 +485,7 @@ class AdminController extends Controller
     {
         $in = [
             "pdftoppm -v", "convert -version", "md5sum --version", "file -v", "pdfinfo -v", "node -v", "npm -v",
+            "ffmpeg -version",
             "composer -V", "tesseract -v", "tesseract --list-langs", "php -i"
         ];
         $out = [];
