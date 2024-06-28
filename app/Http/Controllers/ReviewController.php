@@ -190,8 +190,11 @@ class ReviewController extends Controller
     public function update(UpdateReviewRequest $request, Review $review)
     {
         if (!auth()->user()->can('role', 'reviewer')) return abort(403);
-
-        return $request->shori();
+        if ($request->ajax()) return $request->shori();
+        else {
+            // input type=numberでEnterをおすと、submitしてしまうので、ここでリダイレクトしてあげる
+            return redirect()->route('review.edit', ['review' => $request->input("review_id")]);
+        }
         //
     }
 

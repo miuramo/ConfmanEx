@@ -47,6 +47,8 @@
             <input type="number" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
                 onchange="changed('{{ $formid }}','{{ $itm->name }}');" value="{{ $current ?? $sel[2] }}"
                 min="{{ $sel[0] }}" max="{{ $sel[1] }}">
+                {{-- EnterでJSONが表示されてしまう問題に対しては、まずonkeypress ではなく、Controller.update()でリダイレクトすることによって対応
+                その後、Javascript form_changed.js でkeydown処理によって対応 --}}
             <div class="my-3"></div>
             {!! $after !!}
         </td>

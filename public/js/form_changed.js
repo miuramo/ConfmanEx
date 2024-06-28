@@ -11,7 +11,7 @@ function changed(formName, name) {
             console.log(result);
             var ary = JSON.parse(result);
             var elem = $("#" + name + "_answer");
-            if (ary[name] == null){
+            if (ary[name] == null) {
                 elem.html('<span class="text-red-600 font-extrabold">(未入力)</span>');
             } else if (typeof ary[name].replaceAll === 'function') {
                 elem.html(ary[name].replaceAll("&", "&amp;").replaceAll("<", "&lt;")
@@ -27,3 +27,35 @@ function changed(formName, name) {
         }
     });
 }
+
+const numberInputs = document.querySelectorAll('input[type="number"]');
+// 各 <input type="number"> 要素に対してイベントリスナーを追加
+numberInputs.forEach(input => {
+    input.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+
+            // このままでは、min〜max外の値も送信してしまうので、
+            // 入力値を取得
+            let value = parseInt(input.value);
+            // min と max の値を取得
+            const min = parseInt(input.getAttribute('min'));
+            const max = parseInt(input.getAttribute('max'));
+
+            // min と max の範囲に収める
+            if (value < min) {
+                value = min;
+            } else if (value > max) {
+                value = max;
+            }
+            input.value = value;
+
+            // changeイベントを擬似的に発火させる
+            const changeEvent = new Event('change', {
+                bubbles: true,
+                cancelable: true
+            });
+            input.dispatchEvent(changeEvent);
+        }
+    });
+});

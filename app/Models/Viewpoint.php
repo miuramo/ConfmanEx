@@ -9,7 +9,7 @@ class Viewpoint extends Model
 {
     use HasFactory;
 
-    public static $separator = ';' ; // semi-colon is better than colon
+    public static $separator = ';'; // semi-colon is better than colon
 
     protected $fillable = [
         'category_id',
@@ -42,17 +42,31 @@ class Viewpoint extends Model
             $vp->content = str_replace($pre, $post, $vp->content);
             // $vp->contentafter = str_replace($pre, $post, $vp->contentafter);
             $vp->save();
-            $log .= $vp->id." ";
+            $log .= $vp->id . " ";
         }
         // アンケート項目も同様に。
         $log .= "\nEnqueteItem\n";
         $enqitems = EnqueteItem::all();
-        foreach($enqitems as $vp) {
+        foreach ($enqitems as $vp) {
             $vp->content = str_replace($pre, $post, $vp->content);
             // $vp->contentafter = str_replace($pre, $post, $vp->contentafter);
             $vp->save();
-            $log .= $vp->id." ";
+            $log .= $vp->id . " ";
         }
         return $log;
+    }
+
+    /**
+     * OrderInt をstep ずつで再設定する
+     */
+    public static function reorderint($cat_id, $step = 10)
+    {
+        $items = Viewpoint::where("category_id", $cat_id)->orderBy("orderint")->get();
+        $num = $step;
+        foreach ($items as $enqitm) {
+            $enqitm->orderint = $num;
+            $enqitm->save();
+            $num += $step;
+        }
     }
 }

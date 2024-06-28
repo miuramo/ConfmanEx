@@ -89,7 +89,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/paper/{paper}/conflictupdate', [RevConflictController::class, 'update'])->name('revconflict.update');
     // 査読フォーム
     Route::get('/review/{review}/edit', [ReviewController::class, 'edit'])->name('review.edit');
-    Route::put('/review/{review}', [ReviewController::class, 'update'])->name('review.update');
+    Route::put('/review/{review}', [ReviewController::class, 'update'])->name('review.update'); //査読フォームの変更を受けとる
     Route::get('/review/{review}', [ReviewController::class, 'show'])->name('review.show');
     Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
     Route::get('/review_downzip/{cat}', [ReviewController::class, 'zipdownload_for_rev'])->name('review.downzip');
@@ -167,6 +167,7 @@ Route::middleware('auth')->group(function () {
     // Export and Import
     Route::get('viewpoints/export', [ViewpointController::class, 'export'])->name('viewpoint.export');
     Route::post('viewpoints/import', [ViewpointController::class, 'import'])->name('viewpoint.import');
+    Route::get('viewpoints/itmsetting', [ViewpointController::class, 'itmsetting'])->name('viewpoint.itmsetting');
 
     // 掲示板
     Route::get('bb', [BbController::class, 'index'])->name('bb.index');

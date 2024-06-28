@@ -136,11 +136,11 @@
 
     <x-element.h1>査読結果と判定 <span class="px-2"></span>
         @foreach ($cats as $catid => $catname)
-        @php
-            $btncolor = (isset($cat_arrange_review[$catid])) ? "purple" : "gray";
-        @endphp
-        <x-element.linkbutton href="{{ route('review.result', ['cat' => $catid]) }}" 
-                 color="{{$btncolor}}"  target="_blank">
+            @php
+                $btncolor = isset($cat_arrange_review[$catid]) ? 'purple' : 'gray';
+            @endphp
+            <x-element.linkbutton href="{{ route('review.result', ['cat' => $catid]) }}" color="{{ $btncolor }}"
+                target="_blank">
                 {{ $catname }}
             </x-element.linkbutton>
             <span class="mx-1"></span>
@@ -221,7 +221,13 @@
         <span class="mx-2"></span>
         @foreach ($cats as $catid => $catname)
             @isset($cat_arrange_review[$catid])
-                <form class="inline" action="{{ route('admin.crud') }}?table=viewpoints" method="post"
+                <x-element.linkbutton
+                    href="{{ route('viewpoint.itmsetting', ['cat_id' => $catid, 'cat_name' => $catname]) }}"
+                    color="yellow" size="sm">
+                    {{ $catname }}
+                </x-element.linkbutton>
+
+                {{-- <form class="inline" action="{{ route('admin.crud') }}?table=viewpoints" method="post"
                     id="admincrudwhere{{ $catid }}">
                     @csrf
                     @method('post')
@@ -230,13 +236,13 @@
                         value={{ $catid }}>
                     <x-element.submitbutton color="yellow" size="sm">{{ $catname }}
                     </x-element.submitbutton>
-                </form>
+                </form> --}}
                 <span class="mx-2"></span>
             @endisset
         @endforeach
+        <span class="text-sm mx-2 mr-10">編集画面をひらくとき、orderintを自動再調整します。</span>
 
-
-        <div class="my-2 px-6 py-2 dark:text-gray-300 bg-slate-300 text-sm">
+        {{-- <div class="my-2 px-6 py-2 dark:text-gray-300 bg-slate-300 text-sm">
             <x-element.linkbutton href="{{ route('viewpoint.export') }}" color="yellow">
                 Viewpoint Download
             </x-element.linkbutton>
@@ -256,7 +262,7 @@
                 <x-element.submitbutton color="yellow">Viewpoint Upload
                 </x-element.submitbutton>
             </form>
-        </div>
+        </div> --}}
     </x-element.h1>
 
     <x-element.h1>自分の権限確認（Role一覧）

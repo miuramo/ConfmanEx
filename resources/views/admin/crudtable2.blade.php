@@ -52,6 +52,7 @@
                             @foreach ($coldetails as $nam => $typ)
                                 @if ($nam == 'COPY')
                                     <td>
+                                        @isset($enq_id)
                                         <x-element.linkbutton2
                                             href="{{ route('enq.enqitmsetting', ['copy_id' => $d->id, 'enq_id' => $enq_id, 'enq_name' => $enq_name]) }}"
                                             color="yellow" size="sm">
@@ -63,6 +64,20 @@
                                             color="red" size="sm">
                                             Del
                                         </x-element.linkbutton2>
+                                        @else
+                                        <x-element.linkbutton2
+                                            href="{{ route('viewpoint.itmsetting', ['copy_id' => $d->id, 'cat_id' => $cat_id, 'cat_name' => $cat_name]) }}"
+                                            color="yellow" size="sm">
+                                            Copy
+                                        </x-element.linkbutton2>
+                                        <div class="my-2"></div>
+                                        <x-element.linkbutton2
+                                            href="{{ route('viewpoint.itmsetting', ['del_id' => $d->id, 'cat_id' => $cat_id, 'cat_name' => $cat_name]) }}"
+                                            color="red" size="sm">
+                                            Del
+                                        </x-element.linkbutton2>
+
+                                        @endisset
                                     </td>
                                 @else
                                     <td class="p-2 hover:text-blue-600 hover:bg-slate-200 clicktoedit  dark:hover:bg-slate-700 dark:hover:text-blue-500"
