@@ -172,7 +172,8 @@ class PaperController extends Controller
         }
         // ファイルがないので、作成する。
         $im = imagecreatetruecolor(300, 100);
-        $bg = imagecolorallocate($im, 153, 102, 255);
+        // $bg = imagecolorallocate($im, 153, 102, 255);
+        $bg = imagecolorallocate($im, 255, 255, 230);
         imagefilledrectangle($im, 0, 0, 300, 100, $bg);
         imageAlphaBlending($im, true);
         imageSaveAlpha($im, true);
