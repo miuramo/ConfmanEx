@@ -1,4 +1,5 @@
 <x-app-layout>
+    <!-- review.edit -->
     @php
         $catspans = App\Models\Category::spans();
     @endphp
@@ -10,6 +11,12 @@
         </div>
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
 
+            @php
+                $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META', 'value');
+            @endphp
+            @if($review->ismeta)
+                {{$nameofmeta}}
+            @endif
             {{ __('査読（編集）') }}
 
             <x-element.paperid size=2 :paper_id="$review->paper->id">

@@ -13,7 +13,7 @@
         }
     }
 @endphp
-<!-- components.element.linkbutton -->
+<!-- components.element.linkbutton2 -->
 <a href="{!! $href !!}" target="{{ $target}}" onclick="return {{ confirm_func($confirm) }}" class="inline-flex justify-center py-1 px-2 mb-0.5
  border border-transparent shadow-sm text-{{$size}} font-medium rounded-md
  text-{{$color}}-700 bg-{{$color}}-300 hover:text-{{$color}}-50 hover:bg-{{$color}}-500

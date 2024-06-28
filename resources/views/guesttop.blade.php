@@ -1,31 +1,5 @@
 <x-app-layout>
-    {{-- <x-slot name="header"> --}}
-    {{-- <h2 class="font-semibold text-2xl text-gray-800 leading-tight">
-            <a href="/" title="トップページへのリンク"
-            class="font-semibold text-gray-800 hover:text-blue-700 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">{{ env('APP_NAME')}}</a>
-
-        </h2> --}}
-    {{-- </x-slot> --}}
-
-    {{-- <div class="py-2">
-        @if (Route::has('login'))
-            <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">
-                @auth
-                    {{-- <a href="{{ url('/dashboard') }}"
-                        class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</a>
-                @else
-                    @if (Route::has('entry0'))
-                        <a href="{{ route('entry0') }}"
-                            class="mx-3 font-semibold bg-white p-3 rounded-md text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">投稿者アカウントの作成</a>
-                    @endif
-
-                    <a href="{{ route('login') }}"
-                        class="mx-3 font-semibold bg-white p-3 rounded-md text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log
-                        in</a>
-                @endauth
-            </div>
-        @endif
-    </div> --}}
+    <!-- guesttop -->
     @php
         $conf = App\Models\Setting::where('name', 'CONFTITLE')->first();
         $confurl = App\Models\Setting::where('name', 'CONF_URL')->where('valid', true)->first();

@@ -2,6 +2,7 @@
     'id' => null,
     'paper' => [],
 ])
+<!-- components.paper.contactemail -->
 
 <div class="mx-6 my-0">
     {{-- <div class="text-lg mt-2 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">

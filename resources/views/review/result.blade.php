@@ -1,4 +1,5 @@
 <x-app-layout>
+    <!-- review.result -->
     @php
         $catspans = App\Models\Category::spans();
         $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();

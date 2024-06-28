@@ -3,7 +3,7 @@
 
     $cat_paper_count = App\Models\Category::withCount('papers')->get();
 @endphp
-<!-- components.role.reviewer -->
+<!-- components.role.pub -->
 <style>
     .hidden-content {
         opacity: 0;

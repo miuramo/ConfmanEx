@@ -1,4 +1,5 @@
 <x-app-layout>
+    <!-- revcon.revstatus -->
     <x-slot name="header">
         <div class="mb-4">
             <x-element.linkbutton href="{{ route('role.top', ['role' => 'pc']) }}" color="gray" size="sm">

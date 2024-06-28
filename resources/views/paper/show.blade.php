@@ -1,10 +1,10 @@
 <x-app-layout>
+    <!-- paper.show -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
             {{ __('投稿情報の確認') }}
         </h2>
     </x-slot>
-    <!-- paper.show -->
 
     @if (session('feedback.success'))
         <x-alert.success>{{ session('feedback.success') }}</x-alert.success>

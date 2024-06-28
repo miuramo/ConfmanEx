@@ -3,6 +3,7 @@
     $catcolors = App\Models\Category::select('id', 'name')->get()->pluck('bgcolor', 'id')->toArray();
 @endphp
 <x-app-layout>
+    <!-- pub.bibinfochk -->
     @push('localcss')
         <link rel="stylesheet" href="{{ asset('/css/dragtext.css') }}">
         <link rel="stylesheet" href="{{ asset('/css/localflash.css') }}">

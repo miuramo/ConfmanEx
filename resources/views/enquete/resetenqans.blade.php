@@ -1,3 +1,4 @@
+<!-- components.enquete.resetenqans -->
 <x-app-layout>
     <x-slot name="header">
         <div class="mb-4">

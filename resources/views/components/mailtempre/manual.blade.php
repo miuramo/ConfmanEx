@@ -1,3 +1,4 @@
+<!-- components.mailtempre.manual -->
 <div class="flex">
     <div class="mx-2 my-5 flex-grow">
         雛形(subject,body)で使える埋め込み文字列

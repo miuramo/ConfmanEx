@@ -162,6 +162,20 @@ class EnqueteController extends Controller
         //
     }
 
+    public function edit_dummy(Enquete $enq)
+    {
+        //Paperアンケートのときは、Paperのカテゴリが要求するアンケート→それぞれの質問項目、の順に集めたが、プレビューなので後者のみ。
+        if (!auth()->user()->can('role', 'pc')) return abort(403);
+        $itms = EnqueteItem::where('enquete_id', $enq->id)->orderBy('orderint');
+        $enqans = [];
+        $enqs["canedit"][$enq->id] = $enq;
+        $enqs["until"][$enq->id] = "(dummy)";
+        $paper = new Paper();
+        $paper->id = 0; 
+        $paper->category_id = 1;
+        return view("enquete.pageedit")->with(compact("enq", "enqs", "enqans", "paper"));
+    }
+
     /**
      * Update the specified resource in storage.
      */

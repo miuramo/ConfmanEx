@@ -6,7 +6,7 @@
     $rigais = App\Models\RevConflict::arr_pu_rigai();
     $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
 @endphp
-<!-- components.role.members -->
+<!-- components.review.resultmap -->
 <table class="min-w-full divide-y divide-gray-200 mb-2">
     <thead>
         <tr>

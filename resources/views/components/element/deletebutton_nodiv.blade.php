@@ -4,7 +4,7 @@
     'confirm' => '削除してよいですか？',
     'align' => 'left',
 ])
-<!-- components.element.deletebutton -->
+<!-- components.element.deletebutton_nodiv -->
 <form action="{{ $action }}" method="post" class="inline-flex">
     @method('DELETE')
     @csrf

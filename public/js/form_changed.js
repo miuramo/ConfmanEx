@@ -1,3 +1,5 @@
+var reduce_404_error_for_dummyform = false;
+
 function changed(formName, name) {
     var form = $("#" + formName);
     $.ajax({
@@ -8,7 +10,6 @@ function changed(formName, name) {
         beforeSend: function (xhr, settings) { },
         complete: function (xhr, textStatus) { },
         success: function (result, textStatus, xhr) {
-            console.log(result);
             var ary = JSON.parse(result);
             var elem = $("#" + name + "_answer");
             if (ary[name] == null) {
@@ -23,7 +24,16 @@ function changed(formName, name) {
             }, 1000); // フラッシュの時間
         },
         error: function (xhr, textStatus, error) {
-            alert("error enq submit");
+            if (xhr.status == 404) {
+                if (!reduce_404_error_for_dummyform) {
+                    if (confirm("プレビュー用フォームでは送信できません。そのため、なにか入力しても「未入力」のままになります。\nこのメッセージを短期的に表示しないようにするには、OKをおしてください")) {
+                        reduce_404_error_for_dummyform = true;
+                    }
+                }
+                return; // ダミーフォーム、プレビュー用フォームのとき
+            }
+            alert("error form submit (form changed)");
+            console.log(textStatus);
         }
     });
 }

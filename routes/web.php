@@ -71,6 +71,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('enq', EnqueteController::class); // ここはenq.index, enq.store 等。
     Route::get('/enq/{enq}/answers', [EnqueteController::class, 'answers'])->name('enq.answers');
     Route::get('/enq_enqitmsetting', [EnqueteController::class, 'enqitmsetting'])->name('enq.enqitmsetting');
+    Route::get('/enq/{enq}/preview', [EnqueteController::class, 'edit_dummy'])->name('enq.preview');
     Route::get('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');
     Route::post('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');
 
@@ -96,6 +97,7 @@ Route::middleware('auth')->group(function () {
     // Route::resource('review', ReviewController::class);
     // put /review/{review} -> review.update
     // get review.index で仮に作成
+    Route::get('/review/{cat}/edit_dummy/{ismeta}', [ReviewController::class, 'edit_dummy'])->name('review.edit_dummy');
 
     // admin
     Route::get('/admin_dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');

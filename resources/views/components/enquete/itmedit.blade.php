@@ -4,7 +4,7 @@
     'formid' => '',
     'current' => null,
 ])
-
+<!-- components.enquete.itmedit -->
 @php
     $ary = explode(App\Models\Viewpoint::$separator, $itm->content); //改行ではなく、セミコロン ; で区切っていることに注意
     $item_title = nl2br(trim($ary[0])); // 最初の要素は、説明

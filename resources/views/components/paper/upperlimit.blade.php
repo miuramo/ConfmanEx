@@ -1,6 +1,7 @@
 @props([
     'cats' => [],
 ])
+<!-- components.paper.upperlimit -->
 
 @php
     $cur_left = [];

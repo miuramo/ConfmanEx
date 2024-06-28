@@ -1,4 +1,4 @@
-<!-- role.top -->
+<!-- part.edit -->
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
@@ -24,7 +24,7 @@
     @if ($part->valid)
         <x-alert.success>参加登録は完了しています。</x-alert.success>
     @else
-        <x-alert.error>まだ参加登録は完了していません。以下の項目に回答し、ページ下の「登録」を押してください。</x-alert.error>
+        <x-alert.error>まだ参加登録は完了していません。以下の項目に回答し、ページ下の「登録する」ボタンを押してください。</x-alert.error>
     @endif
 
     <div class="m-6">
@@ -70,17 +70,24 @@
                 </div>
             @endif
         @endforeach
-    </div>
 
 
-    <div class="mx-20 pb-10">
-        <form action="{{ route('part.update', ['part' => $part]) }}" method="post" id="addusertorole">
-            @csrf
-            @method('put')
-            <x-element.submitbutton value="regist" color="cyan">
-                登録
-            </x-element.submitbutton>
-        </form>
+        <x-element.h1>
+            <span class="mx-20 pb-10 text-red-500 text-lg">
+                まだ登録は完了していません。かならず→
+                <form action="{{ route('part.update', ['part' => $part]) }}" method="post" id="addusertorole"
+                    class="inline-block">
+                    @csrf
+                    @method('put')
+                    <x-element.submitbutton2 value="regist" color="orange" size="4xl">
+                        登録する
+                    </x-element.submitbutton2>
+                </form>
+                をおして、エラーがでないことをご確認ください。
+            </span>
+            <div class="mx-1 my-10"> </div>
+        </x-element.h1>
+
     </div>
 
     @push('localjs')

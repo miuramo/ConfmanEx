@@ -1,10 +1,10 @@
 <x-app-layout>
+    <!-- paper.review -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
             {{ __('査読結果') }}
         </h2>
     </x-slot>
-    <!-- paper.show -->
     @section('title', '査読結果')
     @if (session('feedback.success'))
         <x-alert.success>{{ session('feedback.success') }}</x-alert.success>

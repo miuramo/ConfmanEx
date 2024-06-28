@@ -154,6 +154,8 @@ class ReviewController extends Controller
     public function show(Review $review)
     {
         if (!auth()->user()->can('role', 'reviewer')) return abort(403);
+        if ($review->user_id != auth()->id()) return abort(403, "THIS IS NOT YOUR REVIEW");
+
         $viewpoints = Viewpoint::where("category_id", $review->category_id)->orderBy("orderint")->get();
         // 既存回答
         $scoreobj = Score::where('review_id', $review->id)->get();
@@ -166,13 +168,37 @@ class ReviewController extends Controller
     }
 
     /**
+     * for test (dummy)
+     */
+    public function edit_dummy($cat_id, $ismeta = 0){
+        if (!auth()->user()->can('role', 'pc')) return abort(403);
+        $rev = new Review();
+        $rev->category_id = $cat_id;
+        $rev->submit_id = 0;
+        $rev->user_id = auth()->id();
+        $rev->ismeta = $ismeta;
+        $rev->paper = new Paper();
+        $rev->paper->id = 0;
+        $rev->paper->category_id = $cat_id;
+        $rev->id = 0;
+        return $this->edit($rev);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Review $review)
     {
         if (!auth()->user()->can('role', 'reviewer')) return abort(403);
+        if ($review->user_id != auth()->id()) return abort(403, "THIS IS NOT YOUR REVIEW");
 
-        $viewpoints = Viewpoint::where("category_id", $review->category_id)->orderBy("orderint")->get();
+        $query = Viewpoint::where("category_id", $review->category_id);
+        if ($review->ismeta){
+            $query->where("formeta",1);
+        } else {
+            $query->where("forrev",1);
+        }
+        $viewpoints = $query->orderBy("orderint")->get();
         // 既存回答
         $scoreobj = Score::where('review_id', $review->id)->get();
         $scores = [];
@@ -190,6 +216,10 @@ class ReviewController extends Controller
     public function update(UpdateReviewRequest $request, Review $review)
     {
         if (!auth()->user()->can('role', 'reviewer')) return abort(403);
+        if ($review->user_id != auth()->id()) return abort(403, "THIS IS NOT YOUR REVIEW");
+
+        if ($review->id == 0) return "dummy";
+
         if ($request->ajax()) return $request->shori();
         else {
             // input type=numberでEnterをおすと、submitしてしまうので、ここでリダイレクトしてあげる

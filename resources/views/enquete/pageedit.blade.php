@@ -1,31 +1,37 @@
+<!-- components.enquete.pageedit -->
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
             {{-- <a href="/" title="トップページへのリンク"
                 class="font-semibold text-gray-800 hover:text-blue-700 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">{{ env('APP_NAME') }}</a> --}}
 
-            {{ $enq->name . __('の編集') }}
+            「{{ $enq->name}}」{{__('の編集')}}
 
+            @if($paper->id > 0)
             <x-element.paperid size=2 :paper_id="$paper->id">
             </x-element.paperid>
-            &nbsp;
-            &nbsp;
+            <span class="mx-2"></span>
             <x-element.category :cat="$paper->category_id">
             </x-element.category>
-            &nbsp;
-            &nbsp;
-
+            @else
+            <span class="mx-4 p-2 border-2 border-blue-500 bg-cyan-100 text-blue-500">プレビュー</span>
+            @endif
         </h2>
     </x-slot>
-    <!-- paper.edit -->
     @push('localcss')
         <link rel="stylesheet" href="{{ asset('/css/localflash.css') }}">
     @endpush
 
     <div class="mt-4 px-6 mb-10">
+        @if($paper->id > 0)
         <x-element.linkbutton href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="gray" size="lg">
             &larr; 投稿{{ $paper->id_03d() }} 編集に戻る
         </x-element.linkbutton>
+        @else
+        <x-element.linkbutton href="{{ route('enq.index') }}" color="gray" size="sm">
+            &larr; アンケート一覧に戻る
+        </x-element.linkbutton>
+        @endif
     </div>
 
     <div class="py-2">
@@ -68,15 +74,21 @@
     </div>
 
     <div class="mt-4 px-6 pb-10">
+        @if($paper->id > 0)
         <x-element.linkbutton href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="gray" size="lg">
             &larr; 投稿{{ $paper->id_03d() }} 編集に戻る
         </x-element.linkbutton>
+        @else
+        <x-element.linkbutton href="{{ route('enq.index') }}" color="gray" size="sm">
+            &larr; アンケート一覧に戻る
+        </x-element.linkbutton>
+        @endif
     </div>
 
 
     @push('localjs')
         <script src="/js/jquery.min.js"></script>
-        <script src="/js/drop_zone_upload.js"></script>
+        {{-- <script src="/js/drop_zone_upload.js"></script> --}}
         <script src="/js/form_changed.js"></script>
     @endpush
 

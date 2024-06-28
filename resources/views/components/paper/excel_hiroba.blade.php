@@ -4,7 +4,7 @@
     'pagenums' = [],
 ]) --}}
 
-<!-- components.admin.excel_hiroba -->
+<!-- components.paper.excel_hiroba -->
 @php
     $year = App\Models\Setting::findByIdOrName("CONFTITLE_YEAR","value");
     $startpage = 1;

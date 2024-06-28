@@ -3,6 +3,7 @@
     $catcolors = App\Models\Category::select('id', 'name')->get()->pluck('bgcolor', 'id')->toArray();
 @endphp
 <x-app-layout>
+    <!-- pub.bibinfo -->
     @push('localcss')
         <link rel="stylesheet" href="{{ asset('/css/dragtext.css') }}">
         <link rel="stylesheet" href="{{ asset('/css/localflash.css') }}">
@@ -43,41 +44,5 @@
         </div>
 
     </div>
-
-
-    {{-- @if (session('feedback.success'))
-        <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
-    @endif
-    @if (session('feedback.error'))
-        <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
-    @endif --}}
-
-    {{-- @push('localjs')
-        <script src="/js/jquery.min.js"></script>
-        <script src="/js/openclose.js"></script>
-        <script src="/js/crud_table.js"></script>
-        <script src="/js/crud_where.js"></script>
-    @endpush
-    <form action="{{ route('admin.crudpost') }}" method="post" id="admincrudpost">
-        @csrf
-        @method('post')
-    </form>
-    <script>
-        var table = "papers";
-        var origData = {};
-        var mode_br = true; // 改行反映する
-        var sizecols = 90; // 横幅
-    </script>
- --}}
-    {{-- @push('localjs')
-        <script src="/js/jquery.min.js"></script>
-        <script src="https://d3js.org/d3.v5.min.js"></script>
-        <script src="/js/d3groupedit.js"></script>
-        <script src="/js/d3contextmenu.js"></script>
-        <script src="/js/d3booth.js"></script>
-    @endpush --}}
-    {{-- <script>
-        var subpapers = {!! json_encode($subs) !!};
-    </script> --}}
 
 </x-app-layout>

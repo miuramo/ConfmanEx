@@ -1,4 +1,5 @@
 <x-app-layout>
+    <!-- paper.edit -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
             {{-- <a href="/" title="トップページへのリンク"
@@ -23,7 +24,6 @@
             }
         </style>
     </x-slot>
-    <!-- paper.edit -->
     @push('localcss')
         <link rel="stylesheet" href="{{ asset('/css/localflash.css') }}">
     @endpush

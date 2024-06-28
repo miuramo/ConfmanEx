@@ -1,4 +1,5 @@
 <x-app-layout>
+<!-- user.entry -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
             <a href="/" title="トップページへのリンク"

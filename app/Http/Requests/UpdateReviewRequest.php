@@ -39,6 +39,7 @@ class UpdateReviewRequest extends FormRequest
     {
         $data = $this->all();
         $rev_id = $data['review_id'];
+        if ($rev_id == 0) return "dummy";
         $viewpoint_id = $data['viewpoint_id'];
         unset($data['_token']);
         unset($data['_method']);

@@ -8,7 +8,7 @@
     $rigais = App\Models\RevConflict::arr_pu_rigai();
     $stars = App\Models\Review::arr_pu_star();
 @endphp
-<!-- components.role.members -->
+<!-- components.role.revmap -->
 <table class="min-w-full divide-y divide-gray-200">
     <thead>
         <tr>

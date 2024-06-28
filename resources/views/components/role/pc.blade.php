@@ -242,6 +242,34 @@
         @endforeach
         <span class="text-sm mx-2 mr-10">編集画面をひらくとき、orderintを自動再調整します。</span>
 
+        <br>
+        プレビュー用査読フォーム
+        <span class="mx-2"></span>
+        @php
+            $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META', 'value');
+        @endphp
+        @foreach ($cats as $catid => $catname)
+            @isset($cat_arrange_review[$catid])
+                @foreach (['一般', $nameofmeta] as $ismeta => $revtype)
+                    <x-element.linkbutton2 href="{{ route('review.edit_dummy', ['cat' => $catid, 'ismeta' => $ismeta]) }}"
+                        color="blue" size="sm" target="_blank">
+                        {{ $catname }}({{ $revtype }})
+                    </x-element.linkbutton2>
+
+                    {{-- <form class="inline" action="{{ route('admin.crud') }}?table=viewpoints" method="post"
+                    id="admincrudwhere{{ $catid }}">
+                    @csrf
+                    @method('post')
+                    <input id="whereby" type="hidden"
+                        class="whereBy text-sm bg-slate-100 font-thin mr-2 p-0 h-5 w-full" name="whereBy__category_id"
+                        value={{ $catid }}>
+                    <x-element.submitbutton color="yellow" size="sm">{{ $catname }}
+                    </x-element.submitbutton>
+                </form> --}}
+                    <span class="mx-2"></span>
+                @endforeach
+            @endisset
+        @endforeach
         {{-- <div class="my-2 px-6 py-2 dark:text-gray-300 bg-slate-300 text-sm">
             <x-element.linkbutton href="{{ route('viewpoint.export') }}" color="yellow">
                 Viewpoint Download

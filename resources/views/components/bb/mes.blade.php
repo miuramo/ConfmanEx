@@ -1,8 +1,7 @@
 @props([
     'mes' => [],
 ])
-
-<!-- components.enquete.edit (呼び出し元は主に paper.edit) -->
+<!-- components.bb.mes  -->
 @php
     $mes->mes = preg_replace_callback("/(<a [^>]+?>.+?<\/a>)|(https?:\/\/[a-zA-Z0-9_\.\/\~\%\:\#\?=&\;\-]+)/i", "urllink", $mes->mes);
     $mes->mes = strip_tags($mes->mes,"<a>");

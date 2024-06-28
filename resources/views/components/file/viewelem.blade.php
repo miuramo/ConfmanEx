@@ -2,7 +2,7 @@
     'all' => [],
 ])
 
-<!-- components.file.elem -->
+<!-- components.file.viewelem -->
 @foreach ($all as $file)
     <div @if ($file->deleted) class="bg-red-300 dark:bg-red-500
     @elseif ($file->locked)

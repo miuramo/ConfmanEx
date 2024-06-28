@@ -1,17 +1,10 @@
 <x-app-layout>
+    <!-- paper.index -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
             {{ __('投稿一覧') }}
-            {{-- &nbsp;
-            <x-element.linkbutton href="{{ route('file.create') }}" color="cyan">
-                Upload New File</x-element.linkbutton>
-
-            <x-element.deletebutton action="{{ route('file.delall') }}" color="red" confirm="全部削除してよいですか？"> Delete All
-            </x-element.deletebutton> --}}
-
         </h2>
     </x-slot>
-    <!-- paper.index -->
     @php
         $revreturn = App\Models\Category::select('status__revreturn_on', 'id')
             ->get()

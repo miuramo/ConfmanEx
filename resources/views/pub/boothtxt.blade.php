@@ -3,7 +3,7 @@
     $catcolors = App\Models\Category::select('id', 'name')->get()->pluck('bgcolor', 'id')->toArray();
 @endphp
 <x-app-layout>
-
+    <!-- pub.boothtxt -->
     <x-slot name="header">
         <div class="mb-4">
             <x-element.linkbutton href="{{ route('role.top', ['role' => 'pub']) }}" color="gray" size="sm">

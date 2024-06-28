@@ -1,3 +1,4 @@
+<!-- components.enquete.index -->
 <x-app-layout>
     <x-slot name="header">
         <div class="mb-4">
@@ -38,15 +39,13 @@
                         size="sm">
                         回答をみる
                     </x-element.linkbutton>
+                    <span class="mx-1"></span>
                     <x-element.linkbutton href="{{ route('enq.answers', ['enq' => $enq->id, 'action' => 'excel']) }}"
                         color="teal" size="sm">
                         Excel
                     </x-element.linkbutton>
 
-                    <x-element.linkbutton2 href="{{ route('enq.enqitmsetting', ['enq_id' => $enq->id, 'enq_name' => $enq->name]) }}"
-                        color="yellow" size="sm">
-                        項目編集
-                    </x-element.linkbutton2>
+
 
                     {{-- <form class="inline" action="{{ route('admin.crud') }}?table=enquete_items" method="post"
                         id="admincrudwhere{{ $enq->id }}">
@@ -60,16 +59,28 @@
                     </form> --}}
                 </div>
 
-                <div class="text-sm ml-8 text-gray-400">
+                <div class="text-sm ml-0 text-gray-400">
                     {{ count($enq->items) }}個の質問項目
-                    <span class="mx-4"></span>
 
-                    <ul class="ml-8">
+                    <ul class="ml-2 mb-2">
                         @foreach ($enq->items as $itm)
-                            <li>{{ $itm->desc }} ({{ $itm->name }}) {{$itm->orderint}}</li>
+                            <li>{{ $itm->desc }} ({{ $itm->name }})</li>
                         @endforeach
                     </ul>
+
+                    <x-element.linkbutton2 href="{{ route('enq.enqitmsetting', ['enq_id' => $enq->id, 'enq_name' => $enq->name]) }}"
+                        color="yellow" size="sm">
+                        項目編集
+                    </x-element.linkbutton2>
+                    <span class="mx-1"></span>
+                    <x-element.linkbutton2 href="{{ route('enq.preview', ['enq' => $enq->id]) }}"
+                        color="blue" size="sm">
+                        プレビュー
+                    </x-element.linkbutton2>
+    
                 </div>
+
+
 
             </div>
         @endforeach

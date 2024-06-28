@@ -1,4 +1,5 @@
 <x-app-layout>
+    <!-- review.conflict -->
     @php
         $catspans = App\Models\Category::spans();
     @endphp

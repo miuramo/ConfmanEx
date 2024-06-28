@@ -3,7 +3,7 @@
 
     $cat_paper_count = App\Models\Category::withCount('papers')->get();
 @endphp
-<!-- components.role.reviewer -->
+<!-- components.role.award -->
 <div class="px-6 py-4">
     <x-element.h1>
         表彰用JSON →
