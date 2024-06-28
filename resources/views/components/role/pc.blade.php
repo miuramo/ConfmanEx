@@ -119,7 +119,7 @@
         </x-element.linkbutton>
         <span class="px-2"></span>
         <x-element.linkbutton2 href="{{ route('admin.catsetting', ['leadtext' => 'on']) }}" color="gray" target="_blank">
-            カテゴリ固有の案内(リード文)
+            カテゴリ固有の案内(リード文など)
         </x-element.linkbutton2>
     </x-element.h1>
 

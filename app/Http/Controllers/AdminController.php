@@ -408,7 +408,7 @@ class AdminController extends Controller
                 $cold2[$f] = $coldetails[$f];
             }
             $coldetails = $cold2;
-            $title = "カテゴリ固有の案内(リード文)";
+            $title = "カテゴリ固有の案内(リード文など)";
         } else { // 査読関係
             foreach ($coldetails as $field => $type) {
                 if (strpos($field, "status__") !== 0 && $field != 'name') {
