@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('categories', function (Blueprint $table) {
-            $table->mediumText('leadtext')->nullable()->default("__memo 投稿カテゴリ固有の案内は、ここに設定してください。<b>HTMLタグ</b>もつかえますし、<span class='underline bg-yellow-200'>TailwindCSSの記法</span>もだいたいはつかえます。<br>先頭が__ではじまっているか、空にすると、非表示になります。")->comment("カテゴリ固有の案内(リード文)")->after("status__revreturn_on");
-            //
+            $table->mediumText('leadtext')->nullable()->comment("カテゴリ固有の案内(リード文)")->after("status__revreturn_on");
+            // "__memo 投稿カテゴリ固有の案内は、ここに設定してください。<b>HTMLタグ</b>もつかえますし、TailwindCSSの記法もだいたいはつかえます。<br>先頭が__ではじまっているか、空にすると、非表示になります。"
         });
     }
 
