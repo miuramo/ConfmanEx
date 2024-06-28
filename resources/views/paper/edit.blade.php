@@ -37,7 +37,7 @@
         @endif
 
         {{-- 最初のsuccess がなく、かつ、エラーがあれば --}}
-        @if ( (count($fileerrors) > 0 || count($enqerrors) > 0) && !session('feedback.success') )
+        @if ((count($fileerrors) > 0 || count($enqerrors) > 0) && !session('feedback.success'))
             <x-alert.error2>投稿はまだ完了していません。</x-alert.error2>
         @endif
         @foreach ($fileerrors as $er)
@@ -76,9 +76,9 @@
                     <div class="text-sm mx-4 mt-2">
                         複数のファイルをまとめてアップロードできます。ファイル種別は自動で認識します。
                         @php
-                            $gendo = array_map("intval", explode("-", $cat->pdf_accept_end));
+                            $gendo = array_map('intval', explode('-', $cat->pdf_accept_end));
                         @endphp
-                        <x-element.gendospan>{{$gendo[0]}}月{{$gendo[1]}}日まで修正可</x-element.gendospan>
+                        <x-element.gendospan>{{ $gendo[0] }}月{{ $gendo[1] }}日まで修正可</x-element.gendospan>
                     </div>
                 </x-element.h1>
 
@@ -150,6 +150,15 @@
                     href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="lime">再読み込み
                 </x-element.linkbutton2> を押してください。
             </div>
+
+            <!-- Category:midtext -->
+            @isset($cat->midtext)
+                @if (strpos($cat->midtext, '__') !== 0)
+                    <div class="m-6">
+                        <x-element.h1>{!! $cat->midtext !!}</x-element.h1>
+                    </div>
+                @endif
+            @endisset
 
             <div class="m-6">
                 <div class="text-lg my-5 p-1 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">

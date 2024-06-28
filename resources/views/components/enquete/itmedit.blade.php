@@ -39,6 +39,25 @@
             <div class="my-3"></div>
             {!! $after !!}
         </td>
+    @elseif ($type == 'checkbox')  
+    {{-- 注：checkbox は項目1つのみ対応。  --}}
+        <td id="{{ $itm->name }}_answer" class="text-xl p-4">
+            {!! $current ?? '<span class="text-red-600 font-extrabold">(未入力)</span>' !!}</td>
+        <td class="p-2 pl-10">
+            {!! $item_title !!}<br>
+            @foreach ($sel as $choice)
+                {{-- 未チェックのときに未入力に戻すためのhidden input  --}}
+                <input type="hidden" id="_{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}" value="" > 
+                <input type="checkbox" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
+                    value="{{ $choice }}" onchange="changed('{{ $formid }}','{{ $itm->name }}');"
+                    @if (isset($current) && $choice == $current) checked @endif>
+                <label for="{{ $itm->name }}{{ $loop->iteration }}"
+                    class="hover:bg-lime-100">{{ $choice }}</label>
+                &nbsp;<br>
+            @endforeach
+            <div class="my-3"></div>
+            {!! $after !!}
+        </td>
     @elseif($type == 'number')
         <td id="{{ $itm->name }}_answer" class="text-lg p-4">
             {!! $current ?? '<span class="text-red-600 font-extrabold">(未入力)</span>' !!}</td>

@@ -402,7 +402,7 @@ class AdminController extends Controller
             $coldetails = $cold2;
             $title = "サプリメントファイル受付管理";
         } else if ($req->has("leadtext")) { // 必須ファイル関係
-            $ary = ['name', 'leadtext'];
+            $ary = ['name', 'leadtext','midtext'];
             $cold2 = [];
             foreach ($ary as $f) {
                 $cold2[$f] = $coldetails[$f];
