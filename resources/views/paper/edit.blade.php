@@ -74,7 +74,11 @@
                 <x-element.h1>ファイルをアップロードするには <span class="bg-lime-200 text-green-700 px-1 dark:bg-lime-500">Drop Files
                         Here</span> にドラッグ＆ドロップしてください。
                     <div class="text-sm mx-4 mt-2">
-                        複数ファイルまとめてアップロードできます。ファイル種別は自動で認識します。
+                        複数のファイルをまとめてアップロードできます。ファイル種別は自動で認識します。
+                        @php
+                            $gendo = array_map("intval", explode("-", $cat->pdf_accept_end));
+                        @endphp
+                        <x-element.gendospan>{{$gendo[0]}}月{{$gendo[1]}}日まで修正可</x-element.gendospan>
                     </div>
                 </x-element.h1>
 
@@ -196,11 +200,11 @@
                 </div>
 
 
-                <div class="mt-4 px-6 mb-10">
+                {{-- <div class="mt-4 px-6 mb-10">
                     <x-element.linkbutton href="{{ route('paper.index') }}" color="gray" size="lg">
                         &larr; 投稿一覧に戻る
                     </x-element.linkbutton>
-                </div>
+                </div> --}}
 
                 {{-- <x-element.sankou>
                     参考：投稿締め切り後の流れは、およそ以下のようになります。
@@ -236,11 +240,11 @@
             </div>
         </div>
 
-        {{-- <div class="mt-4 px-6 pb-10">
+        <div class="mt-0 px-6 pb-10">
             <x-element.linkbutton href="{{ route('paper.index') }}" color="gray" size="lg">
                 &larr; 投稿一覧に戻る
             </x-element.linkbutton>
-        </div> --}}
+        </div>
 
         @push('localjs')
             <script src="/js/jquery.min.js"></script>
