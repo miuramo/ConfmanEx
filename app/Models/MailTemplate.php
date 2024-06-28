@@ -19,7 +19,7 @@ class MailTemplate extends Model
         $targets = User::whereIn('id', $uids)->get();
         $mt = MailTemplate::create();
         $mt->from = "[:MAILFROM:]";
-        $mt->to = "userid(" . implode(",", $uids) . ")";
+        $mt->to = "userid(" . implode(", ", $uids) . ")";
         $mt->subject = $sub;
         $mt->body = $body;
         $mt->lastsent = date("Y-m-d H:i:s");

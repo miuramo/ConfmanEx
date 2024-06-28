@@ -44,6 +44,9 @@ class RoleController extends Controller
         return view('role/edit', ["role" => $name])->with(compact("users", "role", "roles"));
     }
 
+    /**
+     * role.editpost
+     */
     public function editpost(Request $req, string $name)
     {
         $role = Role::findByIdOrName($name);

@@ -47,6 +47,10 @@
         <x-role.acc :role="$role">
         </x-role.acc>
         @endif
+        @if ($role->name == 'demo')
+        <x-role.demo :role="$role">
+        </x-role.demo>
+        @endif
     @endcan
 
 

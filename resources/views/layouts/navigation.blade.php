@@ -27,25 +27,33 @@
                     @can('role', 'reviewer')
                         @php
                             $navs_href['査読'] = route('role.top', ['role' => 'reviewer']);
-                            $navs_active['査読'] = request()->routeIs('role.top', ['role' => 'reviewer']);
+                            $navs_active['査読'] = url()->current() === $navs_href['査読'];
                         @endphp
                     @endcan
                     @can('role', 'pc')
                         @php
-                            $navs_href['PC長'] = route('role.pc', ['role' => 'pc']);
-                            $navs_active['PC長'] = request()->routeIs('role.pc', ['role' => 'pc']);
+                            $navs_href['PC長'] = route('role.top', ['role' => 'pc']);
+                            $navs_active['PC長'] = url()->current() === $navs_href['PC長'];
+                            // request()->routeIs('role.pc', ['role' => 'pc']);
                         @endphp
                     @endcan
                     @can('role', 'pub')
                         @php
-                            $navs_href['出版'] = route('role.pub', ['role' => 'pub']);
-                            $navs_active['出版'] = request()->routeIs('role.pub', ['role' => 'pub']);
+                            $navs_href['出版'] = route('role.top', ['role' => 'pub']);
+                            $navs_active['出版'] = url()->current() === $navs_href['出版'];
+                            // request()->routeIs('role.pub', ['role' => 'pub']);
+                        @endphp
+                    @endcan
+                    @can('role', 'demo')
+                        @php
+                            $navs_href['デモ'] = route('role.top', ['role' => 'demo']);
+                            $navs_active['デモ'] = url()->current() === $navs_href['デモ'];
                         @endphp
                     @endcan
                     @can('role', 'acc')
                         @php
                             $navs_href['会計'] = route('role.top', ['role' => 'acc']);
-                            $navs_active['会計'] = request()->routeIs('role.top', ['role' => 'acc']);
+                            $navs_active['会計'] = url()->current() === $navs_href['会計'];
                         @endphp
                     @endcan
                     @can('admin')
