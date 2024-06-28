@@ -127,6 +127,13 @@ class Setting extends Model
             'isbool' => false,
         ]);
         Setting::firstOrCreate([
+            'name' => "CFP_LINKTEXT",
+        ], [
+            'value' => "論文募集 / Call for Paper に戻る",
+            'isnumber' => false,
+            'isbool' => false,
+        ]);
+        Setting::firstOrCreate([
             'name' => "CROP_YHWX",
         ], [
             'value' => "[80,500, 1100,-1]",

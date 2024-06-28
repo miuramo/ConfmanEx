@@ -18,11 +18,14 @@
         @endisset
     </div>
 
+    @php
+        $cfplinktext = App\Models\Setting::findByIdOrName('CFP_LINKTEXT', 'value');
+    @endphp
     @isset($cfpurl)
         <div class="my-4 mx-8 px-6">
+            <!-- CFPリンクの設定は、Setting:CFP_LINKTEXT CFP_URL -->
             <a href="{{ $cfpurl->value }}"
-                class="hover:underline hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-500 text-2xl p-2"
-                target="_blank">論文募集 / Call for Paper</a>
+                class="hover:underline hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-500 text-2xl p-2">{{ $cfplinktext }}</a>
         </div>
     @endisset
 
@@ -36,6 +39,7 @@
                 ->orderBy('name')
                 ->get();
         @endphp
+        <!-- 免責事項の設定は、Confirms grp=0 にあります。 -->
         <ol class="list-decimal px-8 pt-4">
             @foreach ($itms as $itm)
                 <li>{!! $itm->mes !!}
