@@ -54,7 +54,7 @@
                     <x-alert.error>（このほかに、ご回答いただく項目が、{{ count($enqerrors) - 3 }}項目あります。）</x-alert.error>
                 @endif
             @else
-                <x-alert.success>投稿に必要なファイルと情報は、そろっています。<br>投稿完了通知は「投稿状況メールを送信」をおすと送信します。<br>締め切り日時までは、ひきつづき修正可能です。</x-alert.success>
+                <x-alert.success>投稿に必要なファイルと情報は、そろっています。<br>投稿完了通知は「投稿状況メールを送信」を押すと送信します。<br>締め切り日時までは、ひきつづき修正可能です。</x-alert.success>
 
             @endif
 
@@ -165,7 +165,7 @@
                     <div class="mx-5 my-5">
                         投稿が正しく完了しているとき、
                         <x-element.linkbutton href="{{ route('paper.sendsubmitted', ['paper' => $paper->id]) }}"
-                            color="cyan" confirm="本当にメール送信する？">
+                            color="cyan" confirm="本当にメール送信しますか？">
                             投稿状況メールを送信
                         </x-element.linkbutton> を押すと、現在の投稿状況をメールで受け取ることができます。
                     </div>
@@ -188,7 +188,7 @@
                     <div class="mx-6 my-2">
                         <div class="container">
                             <x-element.button class="" id="toggleButton" value="投稿連絡用メールアドレス修正画面の開閉"
-                                color='yellow' size='sm' onclick="openclose('editcontact')">
+                                color='yellow' size='md' onclick="openclose('editcontact')">
                             </x-element.button>
 
                             <span class="mx-2"></span>

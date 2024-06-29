@@ -86,7 +86,7 @@
             </x-element.linkbutton2>
             <span class="px-2"></span>
             <x-element.linkbutton href="{{ route('mt.show', ['mt' => $mt, 'dosend' => 'do']) }}" color="pink"
-                target="_blank" confirm="本当にメール送信する？">
+                target="_blank" confirm="本当にメール送信しますか？">
                 この雛形をつかって送信
             </x-element.linkbutton>
 
@@ -113,7 +113,7 @@
         </div>
         <div class="my-5">
             <x-element.linkbutton href="{{ route('mt.show', ['mt' => $mt, 'dosend' => 'do']) }}" color="pink"
-                target="_blank" confirm="本当にメール送信する？">
+                target="_blank" confirm="本当にメール送信しますか？">
                 この雛形をつかって送信
             </x-element.linkbutton>
         </div>
