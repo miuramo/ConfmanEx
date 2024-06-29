@@ -49,7 +49,7 @@ class Submitted extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '投稿状況の確認メール PaperID : '.$this->paper->id_03d(),
+            subject: '投稿完了通知メール PaperID : '.$this->paper->id_03d(),
         );
     }
 
