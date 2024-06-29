@@ -352,13 +352,13 @@ class PaperController extends Controller
 
         $pdftext = $paper->pdf_file->getPdfText();
         // 書誌情報の設定項目
-        $koumoku = ['title' => '和文タイトル', 'abst' => '和文アブストラクト', 'keyword' => '和文キーワード', 'etitle' => '英文Title', 'eabst' => '英文Abstract', 'ekeyword' => '英文Keyword'];
+        $koumoku = ['title' => '和文タイトル', 'abst' => '和文アブストラクト', 'keyword' => '和文キーワード', 'authorlist'=>'和文著者名', 'etitle' => '英文Title', 'eabst' => '英文Abstract', 'ekeyword' => '英文Keyword','eauthorlist'=>'英文Author(s)'];
         $skip_bibinfo = Setting::findByIdOrName("SKIP_BIBINFO", "value");
         $skip_bibinfo = json_decode($skip_bibinfo);
         foreach($skip_bibinfo as $key){
             unset($koumoku[$key]);
         }
-        $koumokucolor = ['title' => 'teal', 'abst' => 'teal', 'keyword' => 'teal', 'etitle' => 'lime', 'eabst' => 'lime', 'ekeyword' => 'lime'];
+        $koumokucolor = ['title' => 'teal', 'abst' => 'teal', 'keyword' => 'teal', 'authorlist'=>'teal', 'etitle' => 'lime', 'eabst' => 'lime', 'ekeyword' => 'lime','eauthorlist'=>'lime'];
         // $pdftext = mb_ereg_replace('\n+',"\n",$pdftext);
         $reps = ["ﬁ" => "fi", "ﬀ" => "ff", "ﬃ" => "ffi"];
         foreach ($reps as $riga => $non) {

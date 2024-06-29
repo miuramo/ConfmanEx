@@ -39,10 +39,12 @@
 
             @isset($paper->pdf_file)
                 <img src="{{ route('paper.headimgshow', ['paper' => $paper->id, 'file' => substr($paper->pdf_file->key, 0, 8)]) }}"
-                    title="{{ $paper->title }}" loading="lazy" class="w-full mt-2 rounded-lg dark:bg-slate-800 dark:text-slate-400 shadow-lg">
+                    title="{{ $paper->title }}" loading="lazy"
+                    class="w-full mt-2 rounded-lg dark:bg-slate-800 dark:text-slate-400 shadow-lg">
             @else
                 <img src="{{ route('paper.headimgshow', ['paper' => $paper->id, 'file' => 'nofile']) }}"
-                    title="{{ $paper->title }}" loading="lazy" class="w-full mt-2 rounded-lg dark:bg-slate-800 dark:text-slate-400 shadow-lg">
+                    title="{{ $paper->title }}" loading="lazy"
+                    class="w-full mt-2 rounded-lg dark:bg-slate-800 dark:text-slate-400 shadow-lg">
             @endisset
         </div>
     </div>
@@ -109,41 +111,55 @@
 
     <div class="m-6">
         @php
-        $koumoku = ['title' => '和文タイトル', 'abst' => '和文アブストラクト', 'keyword' => '和文キーワード', 'etitle' => '英文Title', 'eabst' => '英文Abstract', 'ekeyword' => '英文Keyword'];
+            $koumoku = [
+                'title' => '和文タイトル',
+                'abst' => '和文アブストラクト',
+                'keyword' => '和文キーワード',
+                'authorlist' => '和文著者名',
+                'etitle' => '英文Title',
+                'eabst' => '英文Abstract',
+                'ekeyword' => '英文Keyword',
+                'eauthorlist' => '英文Author(s)',
+            ];
+            $skip_bibinfo = App\Models\Setting::findByIdOrName('SKIP_BIBINFO', 'value');
+            $skip_bibinfo = json_decode($skip_bibinfo);
+            foreach ($skip_bibinfo as $key) {
+                unset($koumoku[$key]);
+            }
         @endphp
         <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
             書誌情報
-            <x-element.gendospan>採択後に入力</x-element.gendospan>
+            {{-- <x-element.gendospan>採択後に入力</x-element.gendospan> --}}
         </div>
         <div class="text-md mx-6 mt-3">
             <table class="border-cyan-500 border-2">
                 @foreach ($koumoku as $k => $v)
                     <tr class="{{ $loop->iteration % 2 === 1 ? 'bg-cyan-50' : 'bg-white dark:bg-cyan-100' }}">
                         <td class="px-2 py-1">{{ $v }}</td>
-                        <td class="px-2 py-1" id="confirm_{{ $k }}">{{ $paper->{$k} }}</td>
+                        <td class="px-2 py-1" id="confirm_{{ $k }}">{!! nl2br($paper->{$k}) !!}</td>
                     </tr>
                 @endforeach
             </table>
         </div>
     </div>
 
-    <div class="m-6">
+    {{-- <div class="m-6">
         <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
             著者・所属
-            <x-element.gendospan>採択後に入力</x-element.gendospan>
+            {{-- <x-element.gendospan>採択後に入力</x-element.gendospan> 
         </div>
         <div class="text-md mx-6 mt-3 grid grid-cols-2 dark:text-gray-400">
-            @foreach (['authorlist'=>'和文','eauthorlist'=>'英文'] as $f=>$desc)
+            @foreach (['authorlist' => '和文', 'eauthorlist' => '英文'] as $f => $desc)
                 <div>
                     @isset($paper->{$f})
-                    {!!nl2br($paper->{$f})!!}
-                        @else
-                        ({{$desc}}著者名 未入力)
+                        {!! nl2br($paper->{$f}) !!}
+                    @else
+                        ({{ $desc }}著者名 未入力)
                     @endisset
                 </div>
             @endforeach
         </div>
-    </div>
+    </div> --}}
 
     <div class="mt-4 px-6 pb-10">
         <x-element.linkbutton href="{{ route('paper.index') }}" color="gray" size="lg">
