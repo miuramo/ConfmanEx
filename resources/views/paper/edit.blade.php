@@ -36,6 +36,9 @@
             <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
         @endif
 
+        @php
+            $submit_finished = false;
+        @endphp
         {{-- 最初のsuccess がなく、かつ、エラーがあれば --}}
         @if ((count($fileerrors) > 0 || count($enqerrors) > 0) && !session('feedback.success'))
             <x-alert.error2>投稿はまだ完了していません。</x-alert.error2>
@@ -54,9 +57,11 @@
                     <x-alert.error>（このほかに、ご回答いただく項目が、{{ count($enqerrors) - 3 }}項目あります。）</x-alert.error>
                 @endif
             @else
-                <x-alert.success>投稿に必要なファイルと情報は、そろっています。<br>投稿完了通知は「投稿状況メールを送信」を押すと送信します。<br>締め切り日時までは、ひきつづき修正可能です。</x-alert.success>
-
-            @endif
+                <x-alert.success>投稿に必要なファイルと情報は、そろっています。<br>投稿完了通知は「投稿完了通知メールを送信」を押すと送信します。<br>締め切り日時までは、ひきつづき修正可能です。</x-alert.success>
+                @php
+                    $submit_finished = true;
+                @endphp
+                @endif
 
         @endif
 
@@ -162,13 +167,29 @@
 
             <div class="m-6">
                 <div class="text-lg my-5 p-1 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
-                    <div class="mx-5 my-5">
-                        投稿が正しく完了しているとき、
+                    @if($submit_finished)
+                    <div class="mx-5 my-5 bg-cyan-200 p-5">
+                        投稿は完了しています。
                         <x-element.linkbutton href="{{ route('paper.sendsubmitted', ['paper' => $paper->id]) }}"
                             color="cyan" confirm="本当にメール送信しますか？">
-                            投稿状況メールを送信
-                        </x-element.linkbutton> を押すと、現在の投稿状況をメールで受け取ることができます。
+                            投稿完了通知メールを送信
+                        </x-element.linkbutton> を押すと、投稿完了通知をメールで受け取ることができます。
+                    <div class="my-4"></div>
+                    カメラレディ投稿の締め切り時までに <x-element.linkbutton href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}"
+                        color="blue" size="md">
+                        書誌情報の設定
+                    </x-element.linkbutton> 
+                    をしてください。（登壇発表の投稿時は必須ではありません。）
+                    @if ($paper->locked)
+                        <span class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、書誌情報の設定はできません。）</span>
+                    @endif
+                </div>
+
+                    @else
+                    <div class="mx-5 my-5 bg-red-600 p-5 text-white font-bold text-2xl">
+                        投稿はまだ完了していません。画面上部の指示に従ってください。
                     </div>
+                    @endif
 
                     @if ($paper->locked)
                         <div class="mx-5 my-5">
@@ -191,14 +212,6 @@
                                 color='yellow' size='md' onclick="openclose('editcontact')">
                             </x-element.button>
 
-                            <span class="mx-2"></span>
-                            <x-element.linkbutton2 href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}"
-                                color="cyan" size="md">
-                                書誌情報の設定
-                            </x-element.linkbutton2>
-                            @if ($paper->locked)
-                                <span class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、書誌情報の設定はできません。）</span>
-                            @endif
                         </div>
                         <div class="hidden-content mt-2 bg-yellow-200 dark:bg-cyan-600 p-2" id="editcontact"
                             style="display:none;">
