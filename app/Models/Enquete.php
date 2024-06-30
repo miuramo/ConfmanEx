@@ -14,6 +14,12 @@ class Enquete extends Model
         // 並び順を orderint にする
         return $this->hasMany(EnqueteItem::class, 'enquete_id')->orderBy('orderint');
     }
+
+    public function roles()
+    {
+        $tbl = 'enquete_roles';
+        return $this->belongsToMany(Role::class, $tbl);
+    }
     /**
      * 必要なアンケートを返す
      */
@@ -30,7 +36,7 @@ class Enquete extends Model
             $willDemo = false;
         }
         $matcher = ($willDemo) ? "d" . $cat_id : $cat_id;
-        $configs = EnqueteConfig::where('valid',1)->get();
+        $configs = EnqueteConfig::where('valid', 1)->get();
         $canedit = [];
         $readonly = [];
         $until = []; //enqid=>deadline
@@ -136,16 +142,34 @@ class Enquete extends Model
     /**
      * OrderInt をstep ずつで再設定する
      */
-    public static function reorderint($step=10)
+    public static function reorderint($step = 10)
     {
         $all = Enquete::all();
-        foreach($all as $enq){
+        foreach ($all as $enq) {
             $num = $step;
-            foreach($enq->items as $enqitm){
+            foreach ($enq->items as $enqitm) {
                 $enqitm->orderint = $num;
                 $enqitm->save();
                 $num += $step;
-            }    
+            }
         }
+    }
+    /**
+     * ユーザが参照・編集可能なアンケートを返す
+     */
+    public static function accessibleEnquetes()
+    {
+        $uid = auth()->id();
+        $rolename_id = User::find($uid)
+            ->roles->pluck("id", "name")
+            ->toArray();
+        // PCをもっていれば、ぜんぶみれる
+        if (isset($rolename_id['pc'])) {
+            return Enquete::with("roles")->get();
+        }
+        // それ以外は、自分が所属しているroleから、参照許可されているアンケートをかえす。
+        return Enquete::with("roles")->whereHas('roles', function ($query) use ($rolename_id) {
+            $query->whereIn('roles.id', array_values($rolename_id));
+        })->get();
     }
 }

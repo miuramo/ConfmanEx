@@ -10,6 +10,7 @@ use App\Models\Enquete;
 use App\Models\EnqueteAnswer;
 use App\Models\EnqueteItem;
 use App\Models\Paper;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -23,9 +24,9 @@ class EnqueteController extends Controller
      */
     public function index()
     {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc|demo|acc')) abort(403);
         Enquete::reorderint(10); // orderint を再割り当てする
-        $enqs = Enquete::all();
+        $enqs = Enquete::accessibleEnquetes();
         return view("enquete.index")->with(compact("enqs"));
         //
     }
@@ -196,6 +197,39 @@ class EnqueteController extends Controller
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
 
+        //
+    }
+
+    /**
+     * アンケートの管理権限をRoleにわりあてる
+     */
+    public function map_to_roles(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        $roles = Role::all();
+        $enqs = Enquete::all();
+        $roleid_desc = Role::select("id","desc")->pluck("desc","id")->toArray();
+        $enqid_name = Enquete::select("id","name")->pluck("name","id")->toArray();
+
+        if ($req->method()==='POST'){
+            $all = $req->all();
+            DB::table('enquete_roles')->truncate();
+            foreach($all as $name=>$val){
+                if (strpos($name,"map_")===0 && $val==='on'){
+                    $ary = explode("_",$name);
+                    $enq = Enquete::find($ary[1]);
+                    $enq->roles()->attach($ary[2]);
+                }
+            }
+        }
+
+        $row = DB::select("SELECT `role_id`,`enquete_id` FROM enquete_roles ");
+        $enq_role_map = [];
+        foreach($row as $r){
+            $enq_role_map[$r->enquete_id][$r->role_id] = 1;
+        }
+        // info($enq_role_map);
+        return view("enquete.maptoroles")->with(compact("roles","enqs","roleid_desc","enqid_name","enq_role_map"));
         //
     }
 

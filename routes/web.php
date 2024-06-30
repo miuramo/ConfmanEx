@@ -71,6 +71,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('enq', EnqueteController::class); // ここはenq.index, enq.store 等。
     Route::get('/enq/{enq}/answers', [EnqueteController::class, 'answers'])->name('enq.answers');
     Route::get('/enq_enqitmsetting', [EnqueteController::class, 'enqitmsetting'])->name('enq.enqitmsetting');
+    Route::get('/enq_maptoroles', [EnqueteController::class, 'map_to_roles'])->name('enq.maptoroles');
+    Route::post('/enq_maptoroles', [EnqueteController::class, 'map_to_roles'])->name('enq.maptoroles');
     Route::get('/enq/{enq}/preview', [EnqueteController::class, 'edit_dummy'])->name('enq.preview');
     Route::get('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');
     Route::post('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');

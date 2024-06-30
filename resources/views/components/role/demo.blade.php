@@ -11,7 +11,7 @@
         アンケート
         <span class="px-3"></span>
         <x-element.linkbutton href="{{ route('enq.index') }}" color="green">
-            アンケート一覧
+            （デモRoleおよび自分のRoleで参照可能な）アンケート一覧
         </x-element.linkbutton>
 
     </x-element.h1>

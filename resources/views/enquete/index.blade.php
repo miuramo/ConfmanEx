@@ -68,26 +68,37 @@
                         @endforeach
                     </ul>
 
-                    <x-element.linkbutton2 href="{{ route('enq.enqitmsetting', ['enq_id' => $enq->id, 'enq_name' => $enq->name]) }}"
+                    <x-element.linkbutton2
+                        href="{{ route('enq.enqitmsetting', ['enq_id' => $enq->id, 'enq_name' => $enq->name]) }}"
                         color="yellow" size="sm">
                         項目編集
                     </x-element.linkbutton2>
                     <span class="mx-1"></span>
-                    <x-element.linkbutton2 href="{{ route('enq.preview', ['enq' => $enq->id]) }}"
-                        color="blue" size="sm">
+                    <x-element.linkbutton2 href="{{ route('enq.preview', ['enq' => $enq->id]) }}" color="blue"
+                        size="sm">
                         プレビュー
                     </x-element.linkbutton2>
-    
+
                 </div>
-
-
+                <div class="text-sm ml-0 my-1 text-gray-800">
+                    管理権限：PC<span class="mx-1"></span>
+                    @foreach ($enq->roles as $rl)
+                        {{ $rl->desc }} <span class="mx-1"></span>
+                    @endforeach
+                </div>
 
             </div>
         @endforeach
     </div>
 
     <div class="py-2 px-6">
-
+        @can('role', 'pc')
+        <x-element.h1>PCのみ <span class="mx-2"></span>
+                <x-element.linkbutton href="{{ route('enq.maptoroles') }}" color="pink" size="md">
+                    アンケート管理権限の設定
+                </x-element.linkbutton>
+        </x-element.h1>
+        @endcan
 
         <div class="mb-4 my-10">
             <x-element.linkbutton href="{{ route('role.top', ['role' => 'pc']) }}" color="gray" size="sm">
