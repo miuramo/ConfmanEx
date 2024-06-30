@@ -81,7 +81,7 @@
 
                 </div>
                 <div class="text-sm ml-0 my-1 text-gray-800">
-                    管理権限：PC<span class="mx-1"></span>
+                    管理権限：<span class="mx-1"></span>
                     @foreach ($enq->roles as $rl)
                         {{ $rl->desc }} <span class="mx-1"></span>
                     @endforeach
