@@ -160,8 +160,8 @@
             </div>
 
             <div class="m-6  dark:text-gray-400">
-                投稿に必要な情報は、項目ごとに自動保存されます。正しく保存されているかどうか確認するには <x-element.linkbutton2
-                    href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="lime">再読み込み
+                投稿に必要な情報は、項目ごとに自動保存されます。情報を修正したあとは <x-element.linkbutton2
+                    href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="lime">提出物の確認（再読み込み）
                 </x-element.linkbutton2> を押してください。
             </div>
 
