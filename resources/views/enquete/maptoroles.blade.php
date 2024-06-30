@@ -61,7 +61,7 @@
             </table>
             <div class="text-center my-4">
                 <x-element.submitbutton color="blue" value="mapupdate">
-                    設定する
+                    チェックしたEnq-Roleについて管理権限を設定
                 </x-element.submitbutton>
             </div>
         </form>
