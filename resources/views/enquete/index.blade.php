@@ -93,7 +93,7 @@
 
     <div class="py-2 px-6">
         @can('role', 'pc')
-        <x-element.h1>PCのみ <span class="mx-2"></span>
+        <x-element.h1>PC長のみ <span class="mx-2"></span>
                 <x-element.linkbutton href="{{ route('enq.maptoroles') }}" color="pink" size="md">
                     アンケート管理権限の設定
                 </x-element.linkbutton>
