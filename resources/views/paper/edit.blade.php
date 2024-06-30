@@ -35,6 +35,15 @@
         @if (session('feedback.error'))
             <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
         @endif
+        @if ($errors->any())
+            <x-alert.error>
+                投稿連絡用メールアドレスの更新に失敗しました。
+                @foreach($errors->all() as $err)
+                {{$err}}
+                @endforeach
+            </x-alert.error>
+        @endif
+
 
         @php
             $submit_finished = false;

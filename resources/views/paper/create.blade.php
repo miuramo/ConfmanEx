@@ -1,7 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2
-            class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400 ">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400 ">
             {{ __('新規投稿') }}
         </h2>
     </x-slot>
@@ -13,7 +12,7 @@
         @endif
 
         @if ($errors->any())
-            <x-alert.error>すべてのチェック項目を確認し、チェックをいれてください。</x-alert.error>
+            <x-alert.error>入力エラーがあります。ご確認ください。</x-alert.error>
         @endif
 
         <div class="py-2 px-6">
@@ -26,10 +25,11 @@
                     <ul class="m-4">
                         @foreach ($kakunin as $name => $mes)
                             {{-- <input type="hidden" name="{{ $name }}" value="off"> --}}
-                            <li><input type="checkbox" id="{{ $name }}" name="{{ $name }}"
-                                    class="dark:bg-slate-300"> <label for="{{ $name }}"
+                            <li><x-input-error class="mt-2 px-1" :messages="$errors->get($name)" />
+                                <input type="checkbox" id="{{ $name }}" name="{{ $name }}"
+                                    {{ old($name) == 'on' ? 'checked' : '' }} class="dark:bg-slate-300"> <label
+                                    for="{{ $name }}"
                                     class="hover:bg-yellow-100 dark:text-slate-400 dark:hover:bg-yellow-950">{{ $mes }}</label>
-                                <x-input-error class="mt-2" :messages="$errors->get($name)" />
                             </li>
                         @endforeach
                     </ul>
@@ -48,13 +48,15 @@
                         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
                     @endif
                     <div class="mb-3">
-
-                        <label for="contact" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Email
+                        <label for="contact"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Email
                             addresses for notifications: Please enter one email address per line. At least one item is
                             required. The maximum is {{ env('CONTACTEMAILS_MAX', 5) }}.</label>
+                        <x-input-error class="mx-2 mt-2 px-1" :messages="$errors->get('ema.0')" />
+                        <x-input-error-md class="mx-2 mt-2 px-1" :messages="$errors->get('contactemails')" />
                         <textarea id="contact" name="contactemails" rows="5"
                             class="mx-2 block p-2.5 w-3/4 text-lg text-gray-900 bg-gray-50 rounded-lg  border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="your-secondary@email.com&#10;coauthor1@email.com&#10;coauthor2@email.com"></textarea>
+                            placeholder="your-secondary@email.com&#10;coauthor1@email.com&#10;coauthor2@email.com">{{ old('contactemails') }}</textarea>
 
                     </div>
                     <x-element.h1>
@@ -62,10 +64,11 @@
                     <div class="mb-3 mx-2">
                         <ul class="m-4">
                             @foreach ($mailkakunin as $name => $mes)
-                                <li><input type="checkbox" id="{{ $name }}" name="{{ $name }}"
-                                        class="dark:bg-slate-300"> <label for="{{ $name }}"
+                                <li><x-input-error class="mt-2 px-1" :messages="$errors->get($name)" />
+                                    <input type="checkbox" id="{{ $name }}" name="{{ $name }}"
+                                        {{ old($name) == 'on' ? 'checked' : '' }} class="dark:bg-slate-300"> <label
+                                        for="{{ $name }}"
                                         class="hover:bg-lime-100 dark:text-slate-400 dark:hover:bg-lime-950">{{ $mes }}</label>
-                                    <x-input-error class="mt-2" :messages="$errors->get($name)" />
                                 </li>
                             @endforeach
                         </ul>
@@ -99,7 +102,7 @@
                         @if ($anyopen)
                             チェック事項を了解したうえで、
                             @foreach ($cats as $c)
-                            @if ($c->isOpen() && $c->isnotUpperLimit())
+                                @if ($c->isOpen() && $c->isnotUpperLimit())
                                     <x-element.submitbutton value="{{ $c->id }}" color="{{ $c->color }}">
                                         {{ $c->name }}に新規投稿する
                                     </x-element.submitbutton>
@@ -112,8 +115,8 @@
                         @endif
                     </x-element.h1>
 
-                    @if($anylimit)
-                    <x-paper.upperlimit :cats=$cats></x-paper.upperlimit>
+                    @if ($anylimit)
+                        <x-paper.upperlimit :cats=$cats></x-paper.upperlimit>
                     @endif
 
                 </div>
