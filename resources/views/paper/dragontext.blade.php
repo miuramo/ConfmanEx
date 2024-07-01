@@ -157,6 +157,7 @@
         <script src="/js/jquery.min.js"></script>
         <script src="/js/dragontext.js"></script>
         <script src="/js/openclose.js"></script>
+        <script src="/js/replace_kuten_in_page.js"></script>
     @endpush
 
 </x-app-layout>

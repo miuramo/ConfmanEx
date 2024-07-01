@@ -9,6 +9,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -46,17 +47,17 @@ use ZipArchive;
  * @property bool $demoifrejected
  * @property bool $donotwantshortaccept
  * @property int $finalizecount
- * @property Carbon|null $created
- * @property Carbon|null $modified
+ * @property Carbon|null $created_at
+ * @property Carbon|null $modified_at
  * @property int $owner
- * @property bool $deleted
+ * @property Carbon|null $deleted_at
  *
  * @package App\Models
  */
 class Paper extends Model
 {
     use HasFactory;
-
+    use SoftDeletes;
     // protected $table = 'papers';
     // public $timestamps = false;
 
@@ -71,7 +72,8 @@ class Paper extends Model
         'status' => 'int',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'deleted' => 'bool',
+        'deleted_at' => 'datetime',
+        // 'deleted' => 'bool',
         'maydirty' => 'json',
     ];
 
@@ -100,7 +102,7 @@ class Paper extends Model
         'status',
         'created_at',
         'updated_at',
-        'deleted'
+        'deleted_at'
     ];
 
     public function addFilesToZip(ZipArchive $zip, array $filetypes)

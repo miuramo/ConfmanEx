@@ -57,7 +57,7 @@ class Category extends Model
      */
     public function isnotUpperLimit(){
         if ($this->upperlimit == 0) return true;
-        $papercount = Paper::where("category_id", $this->id)->where("deleted",0)->count();
+        $papercount = Paper::where("category_id", $this->id)->count();
         return ($papercount < $this->upperlimit );
     }
 }

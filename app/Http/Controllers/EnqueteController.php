@@ -41,7 +41,7 @@ class EnqueteController extends Controller
         $enqans = EnqueteAnswer::where('enquete_id', $enq_id)->orderBy('paper_id')->get();
 
         // eans にふくまれる paper_id について、Paperをもってくる
-        $papers = Paper::with('paperowner')->with('submits')->where('deleted', 0)->orderBy('category_id')->orderBy('id')->get();
+        $papers = Paper::with('paperowner')->with('submits')->orderBy('category_id')->orderBy('id')->get();
 
         if ($req->has("action") && $req->input("action") == "excel") {
             return Excel::download(new EnqExportFromView($enq), "enqans_{$enq->name}.xlsx");

@@ -103,7 +103,7 @@ class PaperStoreRequest extends FormRequest
         }
         if ($cat->upperlimit > 0) {
             // 重複投稿の禁止： すでに投稿があるか？
-            $count = Paper::where("category_id", $cat->id)->where("deleted", 0)->where("owner", auth()->id())->count();
+            $count = Paper::where("category_id", $cat->id)->where("owner", auth()->id())->count();
             if ($count > 0) return redirect()->route('paper.create')->with('feedback.error', "申し訳ありませんが、{$cat->name}の投稿は一人一件に制限されているため、投稿情報を作成できませんでした。");
         }
         // バリデーションが成功した場合の処理

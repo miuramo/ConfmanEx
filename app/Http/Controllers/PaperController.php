@@ -425,7 +425,7 @@ class PaperController extends Controller
             if ($req->has('action')) { // action is lock or unlock
                 foreach ($req->all() as $k => $v) {
                     if (strpos($k, "targetcat") === 0) {
-                        $papers = Paper::where("category_id", $v)->where("deleted", 0)->get();
+                        $papers = Paper::where("category_id", $v)->get();
                         foreach ($papers as $paper) {
                             $paper->locked = ($req->input('action') === 'lock');
                             $paper->save();
@@ -436,22 +436,22 @@ class PaperController extends Controller
             return redirect()->route('paper.adminlock')->with('feedback.success', "選択カテゴリの投稿Paperを{$req->input('action')}にしました。（ただし、deleted=0 が対象）");
         }
 
-        $fs = ["valid", "deleted", "locked"];
+        $fs = ["valid", "locked"];
         $sql1 = "select count(id) as cnt, " . implode(",", $fs);
-        $sql1 .= " ,category_id from papers group by " . implode(",", $fs);
+        $sql1 .= " ,category_id from papers where deleted_at is NULL group by " . implode(",", $fs);
         $sql1 .= " ,category_id order by category_id, " . implode(",", $fs);
         $cols = DB::select($sql1);
 
         $sql2 = "select id, " . implode(",", $fs);
-        $sql2 .= " ,category_id from papers order by category_id, " . implode(",", $fs);
+        $sql2 .= " ,category_id from papers where deleted_at is NULL order by category_id, " . implode(",", $fs);
         $res2 = DB::select($sql2);
         $pids = [];
         foreach ($res2 as $res) {
-            if (is_array(@$pids[$res->category_id][$res->valid][$res->deleted][$res->locked])) {
-                $pids[$res->category_id][$res->valid][$res->deleted][$res->locked][] = sprintf("%03d", $res->id);
+            if (is_array(@$pids[$res->category_id][$res->valid][$res->locked])) {
+                $pids[$res->category_id][$res->valid][$res->locked][] = sprintf("%03d", $res->id);
             } else {
-                $pids[$res->category_id][$res->valid][$res->deleted][$res->locked] = [];
-                $pids[$res->category_id][$res->valid][$res->deleted][$res->locked][] = sprintf("%03d", $res->id);
+                $pids[$res->category_id][$res->valid][$res->locked] = [];
+                $pids[$res->category_id][$res->valid][$res->locked][] = sprintf("%03d", $res->id);
             }
         }
         return view('admin.paperlock')->with(compact("cols", "pids"));

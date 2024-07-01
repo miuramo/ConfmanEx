@@ -9,7 +9,7 @@
     foreach ($cats as $c) {
         if ($c->isOpen() && $c->upperlimit > 0) {
             $count = App\Models\Paper::where('category_id', $c->id)
-                ->where('deleted', 0)
+                // ->where('deleted', 0)
                 ->count();
             $cur_left[$c->id] = 90 - $count;
             $cnames[$c->id] = $c->name;

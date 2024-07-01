@@ -16,7 +16,7 @@
     </x-slot>
 
     @php
-        $fs = ['category_id', 'valid', 'deleted', 'locked', 'cnt'];
+        $fs = ['category_id', 'valid', 'locked', 'cnt'];
     @endphp
     <div class="px-4 py-4">
         <div class="py-2">
@@ -43,8 +43,8 @@
                             <td class="p-1 text-center">{{ $col->{$f} }}</td>
                         @endforeach
                         <td>
-                            @if (isset($pids[$col->category_id][$col->valid][$col->deleted][$col->locked]))
-                                @foreach ($pids[$col->category_id][$col->valid][$col->deleted][$col->locked] as $pid)
+                            @if (isset($pids[$col->category_id][$col->valid][$col->locked]))
+                                @foreach ($pids[$col->category_id][$col->valid][$col->locked] as $pid)
                                     @if ($col->locked)
                                         <span class="bg-green-200 px-1 hover:bg-yellow-100">{{ $pid }}</span>
                                     @else
@@ -74,7 +74,7 @@
             </x-element.submitbutton>
             <x-element.submitbutton value="unlock" color="orange">アンロックする
             </x-element.submitbutton>
-            <x-element.gendospan>操作対象は、deleted=0 のみです。</x-element.gendospan>
+            <x-element.gendospan>操作対象は、deleted_at is null のみです。</x-element.gendospan>
         </form>
     </div>
     @if (session('feedback.success'))

@@ -38,7 +38,7 @@ class ExportHintFileJob implements ShouldQueue
         }
 
         // 有効な投稿のPDFファイル
-        $validPapers = Paper::whereNotNull("pdf_file_id")->where("deleted",0)->get();
+        $validPapers = Paper::whereNotNull("pdf_file_id")->get();
         foreach($validPapers as $p){
             $p->writeHintFile();
             info($p->id);

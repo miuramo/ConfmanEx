@@ -204,7 +204,7 @@ class FileController extends Controller
                         // 採択状態を調査
                         $acc = MailTemplate::mt_accept(intval($v));
                         $rej = MailTemplate::mt_reject(intval($v));
-                        $papers = Paper::with("pdf_file")->where("category_id", $v)->where("deleted", 0)->get();
+                        $papers = Paper::with("pdf_file")->where("category_id", $v)->get();
                         $ta = $req->input("targetaccept");
                         if ($ta == "accepted") {
                             $papers = $acc;

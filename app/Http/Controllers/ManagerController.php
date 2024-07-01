@@ -107,7 +107,7 @@ class ManagerController extends Controller
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         $sets = Setting::where("name", "like", "SKIP_HEAD_%")->where("valid", true)->get();
-        $papers = Paper::whereNotNull("pdf_file_id")->where("deleted", 0)->get();
+        $papers = Paper::whereNotNull("pdf_file_id")->get();
         if ($req->input('action')=='titleupdate'){
             foreach($papers as $paper){
                 $title = $paper->title_candidate();

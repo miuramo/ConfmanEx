@@ -19,7 +19,7 @@ class EnqExportFromView implements FromView, ShouldAutoSize, WithHeadings
     }
     public function view(): View
     {
-        $papers = Paper::with('paperowner')->with('submits')->where('deleted', 0)->orderBy('category_id')->orderBy('id')->get();
+        $papers = Paper::with('paperowner')->with('submits')->orderBy('category_id')->orderBy('id')->get();
         $enq = $this->enq;
         $enq_id = $this->enq->id; 
         $enqans = EnqueteAnswer::where('enquete_id', $enq_id)->orderBy('paper_id')->get();
