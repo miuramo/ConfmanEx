@@ -21,7 +21,7 @@
             </x-element.button>
             を押してください。（もう一度押すと、説明を閉じます。）
             <span class="mx-2"></span>
-            <x-element.button id="toggleButton" value="和文著者名の設定方法を表示" color='gray' size='sm'
+            <x-element.button id="toggleButton" value="和文著者名の設定方法を表示" color='gray' size='md'
                 onclick="openclose('ex_authorlist')">
             </x-element.button>
 
@@ -127,7 +127,7 @@
             @endforeach
         </table>
 
-        <div class="mx-10 mt-2">
+        {{-- <div class="mx-10 mt-2">
             <div class="text-sm px-2  dark:text-gray-400">和文著者名の設定方法：一名につき、一行ずつ記入してください。氏名のあいだには半角スペースをいれてください。
                 氏名のあとに、所属を半角 ( ) または全角（ ）で囲って記載してください。複数の所属がある場合は半角スラッシュ / で区切ってください。<br>
                 とくに外国人の氏名については、論文PDFでの表記（カナ/英文）とおなじであることを確認してください。共著者のかたも、投稿一覧からご確認いただけます。</div>
@@ -139,7 +139,7 @@
                 placeholder="投稿 太郎 (投稿大学)&#10;和布蕪 二郎 (和布蕪大学)&#10;昆布 巻子 (ダシ大学/昆布研究所)" readonly></textarea>
         </div>
         <div class="px-10 text-red-800 text-sm">
-            シンポジウムの予稿集・出版担当が所属表記の短縮や修正を行う場合があります。ご了承ください。</div>
+            シンポジウムの予稿集・出版担当が所属表記の短縮や修正を行う場合があります。ご了承ください。</div> --}}
     </div>
 
     <form action="{{ route('paper.dragontextpost', ['paper' => $paper->id]) }}" method="post" id="dragontextpost">
