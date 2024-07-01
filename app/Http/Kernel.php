@@ -11,10 +11,13 @@ class Kernel extends HttpKernel
      *
      * These middleware are run during every request to your application.
      *
+     * ミドルウェアの追加は、bootstrap/app.php でおこないます。
+     * 
      * @var array<int, class-string|string>
      */
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
+        // \App\Http\Middleware\ReplaceKutenMiddleware::class,
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
@@ -30,6 +33,7 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
+            // \App\Http\Middleware\ReplaceKutenMiddleware::class,
             \App\Http\Middleware\CheckDomain::class,
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
@@ -66,5 +70,6 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'kuten' => \App\Http\Middleware\ReplaceKutenMiddleware::class,
     ];
 }

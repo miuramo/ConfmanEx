@@ -39,7 +39,9 @@
                     <div class="my-2 mx-4 bg-pink-50 px-4 py-1">
                         <b>半角スペース以外の文字の追加や修正はできません。ただし、PDFテキストのコピーのみで正しく設定できない場合は</b>
                         <x-element.button onclick="maydirty_mode(true);" value="直接入力モードに切替" size="sm"
-                            color="purple" confirm="本当に直接入力モードにしますか？必要がなければキャンセルを押してください。"></x-element.button>
+                            color="purple" >
+                            {{-- color="purple" confirm="本当に直接入力モードにしますか？必要がなければキャンセルを押してください。"> --}}
+                        </x-element.button>
                         {{-- <span class="border border-gray-600 bg-purple-200 p-0.5">直接入力モードに切替</span> --}}
                         <b>を押して編集してください。直接入力モードの使用は必要最小限でお願いします。和文著者名・所属を入力する際は改行が必要となるため、</b>
                         <span class="bg-purple-200 p-0.5">直接入力モード</span> <b>を使用してください。</b><br>
@@ -91,11 +93,13 @@
         <div class="mb-2">
             <x-element.button onclick="return removespaces();" value="半角スペースを除去" size="sm"
                 color="orange"></x-element.button>
-            <x-element.button onclick="return replacekutouten();" value="句読点『 。 、 』を『 ． ， 』に置換" size="sm"
+            <x-element.button onclick="return replacekutouten();" value="句読点を『 ． ， 』に置換" size="sm"
                 color="yellow"></x-element.button>
             <span class="mx-10"></span>
             <x-element.button onclick="maydirty_mode(true);" value="直接入力モードに切替" size="sm" color="purple"
-                confirm="本当に直接入力モードにしますか？必要がなければキャンセルを押してください。"></x-element.button>
+                {{-- confirm="本当に直接入力モードにしますか？必要がなければキャンセルを押してください。" --}}
+                >
+            </x-element.button>
         </div>
 
         <div class="mb-2  dark:text-gray-400">
