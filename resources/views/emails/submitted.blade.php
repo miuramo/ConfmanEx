@@ -19,7 +19,9 @@
 
 注：システムが抽出したタイトルに誤りがある場合は、（投稿編集画面下→書誌情報の設定）で修正してください。
 
-<img src="{{ $datauri }}" width="800" style="border: 5px solid #edf2f7;; padding: 2px;">
+![Embedded Image](cid:titleimage.png)
+{{-- <img src="{{ $datauri }}" width="800" style="border: 5px solid #edf2f7;; padding: 2px;"> --}}
+{{-- <img src="{{ $message->embed($imagePath) }}" width="800" style="border: 5px solid #edf2f7;; padding: 2px;"> --}}
 
 
 ---

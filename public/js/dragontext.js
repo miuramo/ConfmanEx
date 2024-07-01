@@ -111,6 +111,10 @@ function replacekutouten() {
 }
 
 function removespaces() {
+    if (maydirty) {
+        alert("直接入力モードでは使用できません");
+        return;
+    }
     var val = $("#seltext").val();
     val = val.trim();
     val = val.replace(/ /g, "");
