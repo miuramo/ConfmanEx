@@ -46,9 +46,11 @@
                                 color="red" confirm="削除してよいですか？"> Delete File
                             </x-element.deletebutton>
                         </x-dropdown-div>
+                        @if ($file->mime == 'application/pdf')
                         <x-dropdown-link target="_blank" :href="route('file.pdftext', ['file' => $file->id])">
                             (参考) PDF抽出テキスト
                         </x-dropdown-link>
+                        @endif
                     </x-slot>
                 </x-dropdown2>
                 <br>

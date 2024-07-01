@@ -122,7 +122,11 @@ class FileController extends Controller
             $file = File::findOrFail($pdffileid);
             $aT = $file->paper->getAuthorType();
             if ($aT < 0) abort(403);
-            return response()->file($file->getPdfTextPath());
+            return response()->file($file->getPdfTextPath(),
+                [
+                    'Content-Disposition' => 'attachment; filename="'.$file->paper->id_03d()."_".$pdffileid.'.txt"',
+                ]
+            );
             // ->header("Content-Disposition", $file->origname);
         } catch (ModelNotFoundException $e) {
             return "error";
