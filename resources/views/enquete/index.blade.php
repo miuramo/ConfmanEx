@@ -33,7 +33,7 @@
         @foreach ($enqs as $enq)
             <div class="bg-white mx-2 my-4 px-4 py-2 inline-block">
                 {{-- {{$enq->id}} --}}
-                {{ $enq->name }}
+                {{ $enq->name }} (enqID:{{$enq->id}})
                 <div class="my-2">
                     <x-element.linkbutton href="{{ route('enq.answers', ['enq' => $enq->id]) }}" color="green"
                         size="sm">
