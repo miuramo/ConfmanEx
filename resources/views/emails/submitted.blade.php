@@ -3,6 +3,9 @@
     table.inner-body {
         width: 90%;
     }
+    img {
+        border: 1px solid #777;
+    }
 </style>
 
 {{ $owner->name }} さま（および、投稿連絡用メールアドレスに登録された共著者のみなさま）
