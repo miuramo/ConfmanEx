@@ -29,6 +29,17 @@
     @endpush
 
     <div class="py-2">
+        <div class="py-2 px-6">
+            <!-- Category:leadtext -->
+            @isset($cat->leadtext)
+                @if (strpos($cat->leadtext, '__') !== 0)
+                    <div class="m-6">
+                        <x-element.h1>{!! $cat->leadtext !!}</x-element.h1>
+                    </div>
+                @endif
+            @endisset
+        </div>
+
         @if (session('feedback.success'))
             <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
         @endif
@@ -38,8 +49,8 @@
         @if ($errors->any())
             <x-alert.error>
                 投稿連絡用メールアドレスの更新に失敗しました。
-                @foreach($errors->all() as $err)
-                {{$err}}
+                @foreach ($errors->all() as $err)
+                    {{ $err }}
                 @endforeach
             </x-alert.error>
         @endif
@@ -70,20 +81,10 @@
                 @php
                     $submit_finished = true;
                 @endphp
-                @endif
-
+            @endif
         @endif
 
         <div class="py-2 px-6">
-            <!-- Category:leadtext -->
-            @isset($cat->leadtext)
-                @if (strpos($cat->leadtext, '__') !== 0)
-                    <div class="m-6">
-                        <x-element.h1>{!! $cat->leadtext !!}</x-element.h1>
-                    </div>
-                @endif
-            @endisset
-
             <div class="m-6">
                 <x-element.h1>ファイルをアップロードするには <span class="bg-lime-200 text-green-700 px-1 dark:bg-lime-500">Drop Files
                         Here</span> にドラッグ＆ドロップしてください。
@@ -176,28 +177,28 @@
 
             <div class="m-6">
                 <div class="text-lg my-5 p-1 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
-                    @if($submit_finished)
-                    <div class="mx-5 my-5 bg-cyan-200 p-5">
-                        投稿は完了しています。
-                        <x-element.linkbutton href="{{ route('paper.sendsubmitted', ['paper' => $paper->id]) }}"
-                            color="cyan" confirm="本当にメール送信しますか？">
-                            投稿完了通知メールを送信
-                        </x-element.linkbutton> を押すと、投稿完了通知をメールで受け取ることができます。
-                    <div class="my-4"></div>
-                    カメラレディ投稿の締め切り時までに <x-element.linkbutton href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}"
-                        color="blue" size="md">
-                        書誌情報の設定
-                    </x-element.linkbutton> 
-                    をしてください。（登壇発表の投稿時は必須ではありません。）
-                    @if ($paper->locked)
-                        <span class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、書誌情報の設定はできません。）</span>
-                    @endif
-                </div>
-
+                    @if ($submit_finished)
+                        <div class="mx-5 my-5 bg-cyan-200 p-5">
+                            投稿は完了しています。
+                            <x-element.linkbutton href="{{ route('paper.sendsubmitted', ['paper' => $paper->id]) }}"
+                                color="cyan" confirm="本当にメール送信しますか？">
+                                投稿完了通知メールを送信
+                            </x-element.linkbutton> を押すと、投稿完了通知をメールで受け取ることができます。
+                            <div class="my-4"></div>
+                            カメラレディ投稿の締め切り時までに <x-element.linkbutton
+                                href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}" color="blue"
+                                size="md">
+                                書誌情報の設定
+                            </x-element.linkbutton>
+                            をしてください。（登壇発表の投稿時は必須ではありません。）
+                            @if ($paper->locked)
+                                <span class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、書誌情報の設定はできません。）</span>
+                            @endif
+                        </div>
                     @else
-                    <div class="mx-5 my-5 bg-red-600 p-5 text-white font-bold text-2xl">
-                        投稿はまだ完了していません。画面上部の指示に従ってください。
-                    </div>
+                        <div class="mx-5 my-5 bg-red-600 p-5 text-white font-bold text-2xl">
+                            投稿はまだ完了していません。画面上部の指示に従ってください。
+                        </div>
                     @endif
 
                     @if ($paper->locked)
