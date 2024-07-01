@@ -184,15 +184,18 @@
                                 color="cyan" confirm="本当にメール送信しますか？">
                                 投稿完了通知メールを送信
                             </x-element.linkbutton> を押すと、投稿完了通知をメールで受け取ることができます。
-                            <div class="my-4"></div>
-                            カメラレディ投稿の締め切り時までに <x-element.linkbutton
-                                href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}" color="blue"
-                                size="md">
-                                書誌情報の設定
-                            </x-element.linkbutton>
-                            をしてください。（登壇発表の投稿時は必須ではありません。）
-                            @if ($paper->locked)
-                                <span class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、書誌情報の設定はできません。）</span>
+                            @if ($cat->show_bibinfo_btn)
+                                <div class="my-4"></div>
+                                カメラレディ投稿の締め切り時までに <x-element.linkbutton
+                                    href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}" color="blue"
+                                    size="md">
+                                    書誌情報の設定
+                                </x-element.linkbutton>
+                                をしてください。（登壇発表の投稿時は必須ではありません。）
+                                @if ($paper->locked)
+                                    <span
+                                        class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、書誌情報の設定はできません。）</span>
+                                @endif
                             @endif
                         </div>
                     @else
