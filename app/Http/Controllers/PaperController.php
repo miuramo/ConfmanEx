@@ -433,7 +433,7 @@ class PaperController extends Controller
                     }
                 }
             }
-            return redirect()->route('paper.adminlock')->with('feedback.success', "選択カテゴリの投稿Paperを{$req->input('action')}にしました。（ただし、deleted=0 が対象）");
+            return redirect()->route('paper.adminlock')->with('feedback.success', "選択カテゴリの投稿Paperを{$req->input('action')}にしました。（ただし、deleted is null が対象）");
         }
 
         $fs = ["valid", "locked"];
