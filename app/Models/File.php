@@ -62,6 +62,9 @@ class File extends Model
             @unlink(substr($fullpath, 0, -4) . ".png");
             $this->removeDirectory(substr($fullpath, 0, -4));
         }
+        if (strpos($this->mime,"video")===0){
+            @unlink(substr($fullpath, 0, -4) . ".png");
+        }
     }
     public function fullpath()
     {
