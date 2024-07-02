@@ -237,7 +237,7 @@ class FileController extends Controller
         $fs = ["files.valid", "files.deleted", "files.pending", "files.locked"];
         $sql1 = "select count(files.id) as cnt, " . implode(",", $fs);
         $sql1 .= " ,category_id from files left join papers on files.paper_id = papers.id group by " . implode(",", $fs);
-        $sql1 .= " ,category_id order by category_id, " . implode(",", $fs);
+        $sql1 .= " ,category_id order by deleted, category_id, " . implode(",", $fs);
         $cols = DB::select($sql1);
 
         // 個別項目

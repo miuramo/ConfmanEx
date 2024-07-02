@@ -16,7 +16,14 @@
     </x-slot>
 
     @php
-        $fs = ['category_id', 'valid', 'deleted', 'pending', 'locked', 'cnt'];
+        $fs = [
+            'category_id' => 'カテゴリ',
+            'valid' => 'valid',
+            'deleted' => 'deleted',
+            'pending' => 'pending',
+            'locked' => 'locked',
+            'cnt' => 'cnt',
+        ];
         // サプリメントファイルのmimeタイプを集める
         $mimes = App\Models\File::select('mime')->distinct()->orderBy('mime')->get();
     @endphp
@@ -30,7 +37,7 @@
         <table class="divide-y divide-gray-200">
             <thead>
                 <tr>
-                    @foreach ($fs as $h)
+                    @foreach ($fs as $f => $h)
                         <th class="p-1 bg-slate-300">{{ $h }}</th>
                     @endforeach
                     <th class="p-1 bg-slate-300">pid (fid mime)</th>
@@ -41,19 +48,26 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 @foreach ($cols as $col)
                     <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200' : 'bg-white dark:bg-slate-400' }}">
-                        @foreach ($fs as $f)
-                            <td class="p-1 text-center">{{ $col->{$f} }}</td>
+                        @foreach ($fs as $f => $h)
+                            @if ($f == 'category_id')
+                                <td class="p-1 text-center">{{ $cats[$col->{$f}] }}</td>
+                            @else
+                                <td class="p-1 text-center">{{ $col->{$f} }}</td>
+                            @endif
                         @endforeach
                         <td>
                             @if (isset($pids[$col->category_id][$col->valid][$col->deleted][$col->pending][$col->locked]))
                                 @foreach ($pids[$col->category_id][$col->valid][$col->deleted][$col->pending][$col->locked] as $pid)
-                                <a href="{{ route('file.showhash', ['file' => $fileids[$pid], 'hash' => substr($filekeys[$pid], 0, 8)]) }}" target="_blank">
-                                    @if ($col->locked)
-                                        <span class="bg-green-200 px-1 hover:bg-yellow-100">{{ $pid }}</span>
-                                    @else
-                                        <span class="bg-orange-200 px-1 hover:bg-yellow-100">{{ $pid }}</span>
-                                    @endif
-                                </a>
+                                    <a href="{{ route('file.showhash', ['file' => $fileids[$pid], 'hash' => substr($filekeys[$pid], 0, 8)]) }}"
+                                        target="_blank">
+                                        @if ($col->locked)
+                                            <span
+                                                class="bg-green-200 px-1 hover:bg-yellow-100">{{ $pid }}</span>
+                                        @else
+                                            <span
+                                                class="bg-orange-200 px-1 hover:bg-yellow-100">{{ $pid }}</span>
+                                        @endif
+                                    </a>
                                 @endforeach
                             @endif
                         </td>
@@ -98,8 +112,8 @@
                 @foreach ($mimes as $nn => $mime)
                     <input type="checkbox" name="targetmime{{ $nn }}" value="{{ $mime['mime'] }}"
                         id="labelmime{{ $nn }}">
-                    <label for="labelmime{{ $nn }}" class="dark:text-gray-300">{{ $mime['mime'] }}</label><span
-                        class="mx-2"></span>
+                    <label for="labelmime{{ $nn }}"
+                        class="dark:text-gray-300">{{ $mime['mime'] }}</label><span class="mx-2"></span>
                 @endforeach
 
             </div>
