@@ -24,7 +24,9 @@ class EnqueteController extends Controller
      */
     public function index()
     {
-        if (!auth()->user()->can('role_any', 'pc|demo|acc')) abort(403);
+        $aEnq = Enquete::accessibleEnquetes(true);
+        if (count($aEnq) < 1) abort(403);
+        // if (!auth()->user()->can('role_any', 'pc|demo|acc')) abort(403);
         Enquete::reorderint(10); // orderint を再割り当てする
         $enqs = Enquete::accessibleEnquetes();
         return view("enquete.index")->with(compact("enqs"));
@@ -35,7 +37,9 @@ class EnqueteController extends Controller
      */
     public function answers(int $enq_id, Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        $aEnq = Enquete::accessibleEnquetes(true);
+        if (!isset($aEnq[$enq_id])) abort(403);
+        // if (!auth()->user()->can('role_any', 'pc')) abort(403);
 
         $enq = Enquete::find($enq_id);
         $enqans = EnqueteAnswer::where('enquete_id', $enq_id)->orderBy('paper_id')->get();
@@ -53,6 +57,9 @@ class EnqueteController extends Controller
      */
     public function enqitmsetting(Request $req)
     {
+        $aEnq = Enquete::accessibleEnquetes(true);
+        if (count($aEnq) < 1) abort(403);
+
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         $tableName = 'enquete_items';
         // copy_id がセットされていたら、行をコピーする
@@ -166,13 +173,15 @@ class EnqueteController extends Controller
     public function edit_dummy(Enquete $enq)
     {
         //Paperアンケートのときは、Paperのカテゴリが要求するアンケート→それぞれの質問項目、の順に集めたが、プレビューなので後者のみ。
-        if (!auth()->user()->can('role', 'pc')) return abort(403);
+        $aEnq = Enquete::accessibleEnquetes(true);
+        if (!isset($aEnq[$enq->id])) abort(403);
+        // if (!auth()->user()->can('role', 'pc')) return abort(403);
         $itms = EnqueteItem::where('enquete_id', $enq->id)->orderBy('orderint');
         $enqans = [];
         $enqs["canedit"][$enq->id] = $enq;
         $enqs["until"][$enq->id] = "(dummy)";
         $paper = new Paper();
-        $paper->id = 0; 
+        $paper->id = 0;
         $paper->category_id = 1;
         return view("enquete.pageedit")->with(compact("enq", "enqs", "enqans", "paper"));
     }
@@ -205,18 +214,18 @@ class EnqueteController extends Controller
      */
     public function map_to_roles(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc|manager|admin')) abort(403);
         $roles = Role::all();
         $enqs = Enquete::all();
-        $roleid_desc = Role::select("id","desc")->pluck("desc","id")->toArray();
-        $enqid_name = Enquete::select("id","name")->pluck("name","id")->toArray();
+        $roleid_desc = Role::select("id", "desc")->pluck("desc", "id")->toArray();
+        $enqid_name = Enquete::select("id", "name")->pluck("name", "id")->toArray();
 
-        if ($req->method()==='POST'){
+        if ($req->method() === 'POST') {
             $all = $req->all();
             DB::table('enquete_roles')->truncate();
-            foreach($all as $name=>$val){
-                if (strpos($name,"map_")===0 && $val==='on'){
-                    $ary = explode("_",$name);
+            foreach ($all as $name => $val) {
+                if (strpos($name, "map_") === 0 && $val === 'on') {
+                    $ary = explode("_", $name);
                     $enq = Enquete::find($ary[1]);
                     $enq->roles()->attach($ary[2]);
                 }
@@ -225,11 +234,11 @@ class EnqueteController extends Controller
 
         $row = DB::select("SELECT `role_id`,`enquete_id` FROM enquete_roles ");
         $enq_role_map = [];
-        foreach($row as $r){
+        foreach ($row as $r) {
             $enq_role_map[$r->enquete_id][$r->role_id] = 1;
         }
         // info($enq_role_map);
-        return view("enquete.maptoroles")->with(compact("roles","enqs","roleid_desc","enqid_name","enq_role_map"));
+        return view("enquete.maptoroles")->with(compact("roles", "enqs", "roleid_desc", "enqid_name", "enq_role_map"));
         //
     }
 
@@ -238,7 +247,7 @@ class EnqueteController extends Controller
      */
     public function resetenqans(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc|manager|admin')) abort(403);
         if ($req->has("action")) {
             // Formからのカテゴリ選択を配列にいれる
             $targets = [];

@@ -23,6 +23,11 @@
         $col = ['blue', 'red'];
         $col2 = ['cyan', 'orange'];
         $catspans = App\Models\Category::spans();
+        // 査読プロセスをまわす（査読者を割り当てる）カテゴリ
+        $cat_arrange_review = App\Models\Category::where('status__arrange_review', true)
+            ->get()
+            ->pluck('name', 'id')
+            ->toArray();
     @endphp
 
 
@@ -58,67 +63,69 @@
 
 
         @foreach ($cats as $cid => $cname)
-            <div class="my-8"></div>
-            <x-element.h1>{!! $catspans[$cid] !!} のみ </x-element.h1>
-            <div class="my-2 p-1">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead>
-                        <tr>
-                            <th class="p-1 bg-slate-200">\
-                            </th>
-                            @foreach ($reviewers as $rev)
-                                <th class="p-1 bg-slate-300">{{ $rev->name }}</th>
-                            @endforeach
-                        </tr>
-                    </thead>
-
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach (['一般', 'メタ'] as $n => $lbl)
+            @isset($cat_arrange_review[$cid])
+                <div class="my-8"></div>
+                <x-element.h1>{!! $catspans[$cid] !!} のみ </x-element.h1>
+                <div class="my-2 p-1">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
                             <tr>
-                                <td class="p-0 text-center text-sm text-{{ $col[$n] }}-500">{{ $lbl }}
-                                </td>
+                                <th class="p-1 bg-slate-200">\
+                                </th>
                                 @foreach ($reviewers as $rev)
-                                    <td
-                                        class="p-1 text-center bg-{{ $col2[$n] }}-50 text-{{ $col[$n] }}-500 font-bold">
-                                        {{ @$cnt_users[$cid][$rev->id][$n] }}</td>
+                                    <th class="p-1 bg-slate-300">{{ $rev->name }}</th>
                                 @endforeach
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
 
-            <div class="my-2 p-1">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead>
-                        <tr>
-                            @foreach (['メタ', '一般', 'pid', 'title'] as $h)
-                                <th class="p-1 bg-slate-300 text-sm">{{ $h }}</th>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach (['一般', 'メタ'] as $n => $lbl)
+                                <tr>
+                                    <td class="p-0 text-center text-sm text-{{ $col[$n] }}-500">{{ $lbl }}
+                                    </td>
+                                    @foreach ($reviewers as $rev)
+                                        <td
+                                            class="p-1 text-center bg-{{ $col2[$n] }}-50 text-{{ $col[$n] }}-500 font-bold">
+                                            {{ @$cnt_users[$cid][$rev->id][$n] }}</td>
+                                    @endforeach
+                                </tr>
                             @endforeach
-                        </tr>
-                    </thead>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach ($papers_in_cat[$cid] as $pid => $pname)
-                            <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200' : 'bg-white' }}">
-                                <td class="p-1 text-center text-red-500 font-bold">
-                                    {{ @$cnt_papers[$cid][$pid][1] }}
-                                </td>
-                                <td
-                                    class="p-1 text-center text-blue-500 font-bold
+                <div class="my-2 p-1">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                @foreach (['メタ', '一般', 'pid', 'title'] as $h)
+                                    <th class="p-1 bg-slate-300 text-sm">{{ $h }}</th>
+                                @endforeach
+                            </tr>
+                        </thead>
+
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach ($papers_in_cat[$cid] as $pid => $pname)
+                                <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200' : 'bg-white' }}">
+                                    <td class="p-1 text-center text-red-500 font-bold">
+                                        {{ @$cnt_papers[$cid][$pid][1] }}
+                                    </td>
+                                    <td
+                                        class="p-1 text-center text-blue-500 font-bold
                                 @if (@$cnt_papers[$cid][$pid][0] == 2) bg-cyan-100 @endif
                                 ">
-                                    {{ @$cnt_papers[$cid][$pid][0] }}
-                                </td>
-                                <td class="p-1 text-center">{{ sprintf('%03d', $pid) }}
-                                </td>
-                                <td class="p-1 text-sm">{{ $pname }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                                        {{ @$cnt_papers[$cid][$pid][0] }}
+                                    </td>
+                                    <td class="p-1 text-center">{{ sprintf('%03d', $pid) }}
+                                    </td>
+                                    <td class="p-1 text-sm">{{ $pname }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endisset
         @endforeach
     </div>
 

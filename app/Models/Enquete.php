@@ -156,8 +156,10 @@ class Enquete extends Model
     }
     /**
      * ユーザが参照・編集可能なアンケートを返す
+     * 
+     * 配列で返すなら、$returnAry = true
      */
-    public static function accessibleEnquetes()
+    public static function accessibleEnquetes($returnAry = false)
     {
         $uid = auth()->id();
         $rolename_id = User::find($uid)
@@ -165,7 +167,13 @@ class Enquete extends Model
             ->toArray();
         // PCをもっていれば、ぜんぶみれる
         if (isset($rolename_id['pc'])) {
+            if ($returnAry) return Enquete::select("id","name")->get()->pluck("name","id")->toArray();
             return Enquete::with("roles")->get();
+        }
+        if ($returnAry){
+            return Enquete::select("id","name")->whereHas('roles', function ($query) use ($rolename_id) {
+                $query->whereIn('roles.id', array_values($rolename_id));
+            })->get()->pluck("name","id")->toArray();
         }
         // それ以外は、自分が所属しているroleから、参照許可されているアンケートをかえす。
         return Enquete::with("roles")->whereHas('roles', function ($query) use ($rolename_id) {
