@@ -1,5 +1,11 @@
 @php
     $cats = App\Models\Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+    // 査読プロセスをまわす（査読者を割り当てる）カテゴリ
+    $cat_arrange_review = App\Models\Category::where('status__arrange_review', true)
+        ->get()
+        ->pluck('name', 'id')
+        ->toArray();
+
     $bidon = App\Models\Category::select('id', 'status__bidding_on')
         ->get()
         ->pluck('status__bidding_on', 'id')
@@ -27,18 +33,20 @@
 
     <div class="px-6 py-2 pb-6">
         @foreach ($cats as $n => $cat)
-            @if ($bidon[$n])
-                @if ($bidoff[$n])
-                    <div class="p-1 pt-3 text-blue-400  dark:bg-slate-400">{{ $cat }}の利害表明 / Bidding 期間は、終了しました。
-                    </div>
+            @isset($cat_arrange_review[$n])
+                @if ($bidon[$n])
+                    @if ($bidoff[$n])
+                        <div class="p-1 pt-3 text-blue-400  dark:bg-slate-400">{{ $cat }}の利害表明 / Bidding 期間は、終了しました。
+                        </div>
+                    @else
+                        <x-element.linkbutton href="{{ route('review.conflict', ['cat' => $n]) }}" color="cyan">
+                            利害表明 ({{ $cat }})
+                        </x-element.linkbutton> <span class="mx-2"></span>
+                    @endif
                 @else
-                    <x-element.linkbutton href="{{ route('review.conflict', ['cat' => $n]) }}" color="cyan">
-                        利害表明 ({{ $cat }})
-                    </x-element.linkbutton> <span class="mx-2"></span>
+                    <div class="p-1 pt-3 text-gray-400">{{ $cat }}の利害表明 / Bidding は、まだ開始していません。</div>
                 @endif
-            @else
-                <div class="p-1 pt-3 text-gray-400">{{ $cat }}の利害表明 / Bidding は、まだ開始していません。</div>
-            @endif
+            @endisset
         @endforeach
     </div>
 
@@ -78,8 +86,8 @@
         <div class="mx-6 my-4">
             @foreach ($cats as $n => $cat)
                 @if ($revlist[$n])
-                <x-element.linkbutton href="{{ route('review.result', ['cat' => $n]) }}" color="purple"
-                    target="_blank">
+                    <x-element.linkbutton href="{{ route('review.result', ['cat' => $n]) }}" color="purple"
+                        target="_blank">
                         査読結果・スコアの一覧 ({{ $cat }})
                     </x-element.linkbutton> <span class="mx-2"></span>
                 @endif
