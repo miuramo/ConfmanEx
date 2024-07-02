@@ -262,8 +262,6 @@ class FileController extends Controller
             $fileids [$label] = $res->id;
             $filekeys [$label] = $res->key;
         }
-        // dd($pids);
-
 
         return view('admin.filelock')->with(compact("cols", "pids","fileids","filekeys"));
     }

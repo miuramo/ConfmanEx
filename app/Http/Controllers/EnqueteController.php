@@ -248,21 +248,49 @@ class EnqueteController extends Controller
     public function resetenqans(Request $req)
     {
         if (!auth()->user()->can('role_any', 'pc|manager|admin')) abort(403);
-        if ($req->has("action")) {
-            // Formからのカテゴリ選択を配列にいれる
-            $targets = [];
-            foreach ($req->all() as $k => $v) {
-                if (strpos($k, "targetcat") === 0) $targets[] = $v;
-            }
-            if (count($targets) == 0) $targets =  [1, 2, 3];
+        if ($req->method() === 'POST') {
+            if ($req->has("action")) {
+                foreach ($req->all() as $k => $v) {
+                    if (strpos($k, "map_") === 0) {
+                        $ary = explode("_", $k);
+                        $enqId = $ary[1];
+                        $catId = $ary[2];
 
-            $pidary = Paper::select('id')->whereIn('category_id', $targets)
-                ->get()->pluck('title', 'id')->toArray();
-            $enqans = EnqueteAnswer::whereIn("paper_id", array_keys($pidary))->get();
-            foreach ($enqans as $enqa) {
-                EnqueteAnswer::destroy($enqa->id);
+                        EnqueteAnswer::where("enquete_id", $enqId)
+                            ->whereHas("papers", function ($query) use ($catId) {
+                                $query->where('papers.category_id', $catId);
+                            })->delete();
+                    }
+                }
+
+                // // Formからのカテゴリ選択を配列にいれる
+                // $targets = [];
+                // foreach ($req->all() as $k => $v) {
+                //     if (strpos($k, "targetcat") === 0) $targets[] = $v;
+                // }
+                // if (count($targets) == 0) $targets =  [1, 2, 3];
+
+                // $pidary = Paper::select('id')->whereIn('category_id', $targets)
+                //     ->get()->pluck('title', 'id')->toArray();
+                // $enqans = EnqueteAnswer::whereIn("paper_id", array_keys($pidary))->get();
+                // foreach ($enqans as $enqa) {
+                //     EnqueteAnswer::destroy($enqa->id);
+                // }
             }
         }
-        return view("enquete.resetenqans");
+
+        // 集約でカウント→cnt 
+        $fs = ["enquete_answers.enquete_id", "papers.category_id"];
+        $sql1 = "select count(enquete_answers.id) as cnt, " . implode(",", $fs);
+        $sql1 .= " from enquete_answers left join papers on enquete_answers.paper_id = papers.id group by " . implode(",", $fs);
+        $sql1 .= " order by " . implode(",", $fs);
+        $cols = DB::select($sql1);
+        $cnts = []; // enquete_id, category_id
+        foreach ($cols as $c) {
+            $cnts[$c->enquete_id][$c->category_id] = $c->cnt;
+        }
+        $enqs = Enquete::select('id', 'name')->get()->pluck("name", "id")->toArray("name", "id");
+        $cats = Category::select('id', 'name')->get()->pluck("name", "id")->toArray("name", "id");
+        return view("enquete.resetenqans")->with(compact("cnts", "enqs", "cats"));
     }
 }

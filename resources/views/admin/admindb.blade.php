@@ -32,7 +32,13 @@
                     CRUD
                 </x-element.linkbutton>
                 @php
-                    $shortcuts = ['Setting' => 'settings', 'LogAccess' => 'log_accesses', 'EnqueteConfig'=>'enquete_configs', 'Enquete'=>'enquetes', 'EnqueteItems'=>'enquete_items'];
+                    $shortcuts = [
+                        'Setting' => 'settings',
+                        'LogAccess' => 'log_accesses',
+                        'EnqueteConfig' => 'enquete_configs',
+                        'Enquete' => 'enquetes',
+                        'EnqueteItems' => 'enquete_items',
+                    ];
                 @endphp
                 @foreach ($shortcuts as $key => $tbl)
                     <span class="mx-2"></span>
@@ -65,12 +71,12 @@
                     $db_name = config('database.connections.' . str_replace('.', '_', $domain) . '.database');
                     $apf = App\Models\File::apf();
                     $pf = App\Models\File::pf();
-                    $queuework_date = App\Models\Setting::findByIdOrName("LAST_QUEUEWORK_DATE","value");
+                    $queuework_date = App\Models\Setting::findByIdOrName('LAST_QUEUEWORK_DATE', 'value');
                 @endphp
                 App::environment(APP_ENV): {{ config('app.env') }} <span class="mx-4"></span>
                 (use "production" for https)<br>
                 DB_Setting FILEPUT_DIR: {{ $fileput_dir }} <br>
-                DB_Setting LAST_QUEUEWORK_DATE: {{$queuework_date}}<br>
+                DB_Setting LAST_QUEUEWORK_DATE: {{ $queuework_date }}<br>
                 config('database.default'): {{ $domain }} <br>
                 config('database.connections.[default].database'): {{ $db_name }} <br>
                 File::$filedir: {{ App\Models\File::$filedir }}<br>
@@ -80,7 +86,7 @@
                 PHP: v{{ PHP_VERSION }}<br>
                 upload_max_filesize: {{ ini_get('upload_max_filesize') }}<br>
                 post_max_size: {{ ini_get('post_max_size') }}<br>
-            
+
 
             </div>
         </div>
@@ -145,7 +151,7 @@
             </x-element.linkbutton>
             <span class="px-5"></span>
             <x-element.linkbutton href="{{ route('enq.resetenqans') }}" color="blue">
-                アンケート・参加登録 を部分的にリセットする画面に遷移
+                アンケート・参加登録回答の選択的削除
             </x-element.linkbutton>
             <span class="px-5"></span>
             <x-element.linkbutton href="{{ route('admin.forcedelete') }}" color="lime"

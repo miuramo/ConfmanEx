@@ -22,6 +22,14 @@ class EnqueteAnswer extends Model
     {
         return $this->belongsTo(EnqueteItem::class, 'enquete_item_id');
     }
+    /**
+     * PDFファイルがないものも含めて返す。
+     */
+    public function papers()
+    {
+        return $this->belongsTo(Paper::class, 'paper_id');
+    }
+
 
     // アンケート showonpaperindex
     // [paperid][enqid][name1] = value1
