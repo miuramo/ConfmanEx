@@ -66,8 +66,8 @@
 
         <x-element.h1>{{ $mt->to }} →
             @php
-                eval("\$papers = App\Models\MailTemplate::mt_{$mt->to}; ");
-                $count = count($papers);
+                $papers = $mt->handle_to();
+                $count = $mt->numpaper();
                 $to_cc = $first_item->get_mail_to_cc();
             @endphp
             @if ($count > 0)

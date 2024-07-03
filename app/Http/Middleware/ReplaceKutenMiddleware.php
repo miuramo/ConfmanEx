@@ -49,7 +49,7 @@ class ReplaceKutenMiddleware
             $content = $response->getContent();
 
             $replacesetting = Setting::findByIdOrName("REPLACE_PUNCTUATION");
-            if ($replacesetting->valid) {
+            if ($replacesetting != null && $replacesetting->valid) {
                 $replaceary = json_decode($replacesetting->value);
                 foreach ($replaceary as $old => $new) {
                     $content = str_replace($old, $new, $content);

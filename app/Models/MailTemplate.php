@@ -66,9 +66,32 @@ class MailTemplate extends Model
         $body .= "\n\n-----\n[" . env("APP_NAME") . "](" . env("APP_URL") . ")";
         return $body;
     }
+    public function handle_to()
+    {
+        // toをセミコロンで分割する
+        $toary = explode(";", $this->to);
+        $toary = array_map("trim", $toary);
+        $merged = []; // new Collection(); // Papersという名前だが、Users が混じる可能性もある。
+        foreach ($toary as $one_to) {
+            if (strlen($one_to) > 1) {
+                eval("\$tmppapers = \App\Models\MailTemplate::mt_{$one_to} ;");
+                if (isset($tmppapers)) $merged[] = $tmppapers;
+                unset($tmppapers);
+            }
+        }
+        $col = new Collection();
+        foreach ($merged as $m) {
+            if (is_array($m)) {
+                foreach ($m as $n) $col->add($n);
+            } else if (get_class($m) == 'Illuminate\Database\Eloquent\Collection') {
+                $col = $col->merge($m);
+            }
+        }
+        return $col;
+    }
     public function first_item(): Paper|User|null
     {
-        eval("\$papers = App\Models\MailTemplate::mt_{$this->to} ; ");
+        $papers = $this->handle_to();
         if (isset($papers) && isset($papers[0])) return $papers[0];
         else return null;
     }
@@ -78,13 +101,13 @@ class MailTemplate extends Model
      */
     public function targets()
     {
-        eval("\$papers = App\Models\MailTemplate::mt_{$this->to} ; ");
+        $papers = $this->handle_to();
         if (isset($papers)) return $papers;
         return null;
     }
     public function numpaper(): int
     {
-        eval("\$papers = App\Models\MailTemplate::mt_{$this->to} ; ");
+        $papers = $this->handle_to();
         if (isset($papers)) return count($papers);
         return 0;
     }
