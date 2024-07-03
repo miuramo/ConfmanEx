@@ -17,6 +17,7 @@ class Setting extends Model
         'isnumber',
         'isbool',
         'valid',
+        'misc',
     ];
 
 
@@ -146,7 +147,15 @@ class Setting extends Model
             'value' => "[80,500, 1100,-1]",
             'isnumber' => false,
             'isbool' => false,
-            'misc' => '最後のXが負数だとセンタリング計算でXを求める'
+            'misc' => '最後のXが負数だとセンタリング計算でXを求める',
+        ]);
+        Setting::firstOrCreate([
+            'name' => "REPLACE_PUNCTUATION",
+        ], [
+            'value' => '{"。":"．","、":"，"}',
+            'isnumber' => false,
+            'isbool' => false,
+            'misc' => '句読点。ReplaceKutenMiddlewareで使用する。valid=0で無効にできる。',
         ]);
 
         // Viewpoint::change_separator();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -30,15 +31,15 @@ class ReplaceKutenMiddleware
         $excludedRoutes = [
             route('paper.dragontext', ['paper' => 'NUM']),
             route('admin.paperlist'),
-            route('review.result',['cat'=>'NUM']),
+            route('review.result', ['cat' => 'NUM']),
         ];
 
         $baseurl = url('/');
         $currenturl = str_replace($baseurl, "", url()->current());
         $currenturl = preg_replace('/\b\d+\b/', 'NUM', $currenturl);
-        foreach($excludedRoutes as $url){
-            $url = str_replace($baseurl, "",$url);
-            if ($url===$currenturl) {
+        foreach ($excludedRoutes as $url) {
+            $url = str_replace($baseurl, "", $url);
+            if ($url === $currenturl) {
                 // info(url()->current());
                 return $response;
             }
@@ -46,9 +47,15 @@ class ReplaceKutenMiddleware
         // レスポンスがビューの場合の処理
         if ($response instanceof \Illuminate\Http\Response) {
             $content = $response->getContent();
-            $content = str_replace('。', '．', $content);
-            $content = str_replace('、', '，', $content);
-            // $content = str_replace('検索文字列', '置換後の文字列', $content);
+
+            $replacesetting = Setting::findByIdOrName("REPLACE_PUNCTUATION");
+            if ($replacesetting->valid) {
+                $replaceary = json_decode($replacesetting->value);
+                foreach ($replaceary as $old => $new) {
+                    $content = str_replace($old, $new, $content);
+                    // $content = str_replace('検索文字列', '置換後の文字列', $content);
+                }
+            }
             $response->setContent($content);
         }
         // 置換後の内容をレスポンスに設定

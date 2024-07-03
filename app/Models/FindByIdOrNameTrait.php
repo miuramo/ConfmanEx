@@ -15,7 +15,7 @@ trait FindByIdOrNameTrait
      */
     public static function findByIdOrName(object|string $id, string $getfield = null, string $field = 'name')
     {
-        if (is_object($id)) {
+        if (is_object($id)) { // オブジェクトなら、そのまま返す
             return $id;
         } else {
             $class_name = get_class();
