@@ -154,6 +154,10 @@
                 アンケート・参加登録回答の選択的削除
             </x-element.linkbutton>
             <span class="px-5"></span>
+            <x-element.linkbutton href="{{ route('score.resetscore') }}" color="purple">
+                査読回答の選択的削除
+            </x-element.linkbutton>
+            <span class="px-5"></span>
             <x-element.linkbutton href="{{ route('admin.forcedelete') }}" color="lime"
                 confirm="ソフトデリートしたUserがすべて消えますが、よろしいですか？">
                 ソフトデリート済みUserの削除

@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RevConflictController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ScoreController;
 use App\Http\Controllers\SubmitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewpointController;
@@ -74,6 +75,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/enq_maptoroles', [EnqueteController::class, 'map_to_roles'])->name('enq.maptoroles');
     Route::post('/enq_maptoroles', [EnqueteController::class, 'map_to_roles'])->name('enq.maptoroles');
     Route::get('/enq/{enq}/preview', [EnqueteController::class, 'edit_dummy'])->name('enq.preview');
+    // アンケートの選択的削除 (EnqueteAnswer)
     Route::get('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');
     Route::post('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');
 
@@ -100,6 +102,9 @@ Route::middleware('auth')->group(function () {
     // put /review/{review} -> review.update
     // get review.index で仮に作成
     Route::get('/review/{cat}/edit_dummy/{ismeta}', [ReviewController::class, 'edit_dummy'])->name('review.edit_dummy');
+    // 査読結果の選択的削除 (Score)
+    Route::get('/resetscore', [ScoreController::class, 'resetscore'])->name('score.resetscore');
+    Route::post('/resetscore', [ScoreController::class, 'resetscore'])->name('score.resetscore');
 
     // admin
     Route::get('/admin_dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
