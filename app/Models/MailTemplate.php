@@ -245,7 +245,11 @@ class MailTemplate extends Model
     public static function mt_norev()
     {
         Review::validateAllRev(); // statusを更新
-        $norev_userids = Review::where('status', '!=', 2)->pluck("user_id", "submit_id")->toArray();
+        $norev_userids = Review::select(["user_id"])
+            ->whereNot("status", 2)
+            ->groupBy("user_id")
+            ->pluck("user_id")
+            ->toArray();
         return User::whereIn('id', $norev_userids)->get();
     }
     /**
@@ -254,7 +258,12 @@ class MailTemplate extends Model
     public static function mt_norev_cat($catid)
     {
         Review::validateAllRev(); // statusを更新
-        $norev_userids = Review::where('status', '!=', 2)->where('category_id', $catid)->pluck("user_id", "submit_id")->toArray();
+        $norev_userids = Review::select(["user_id"])
+            ->whereNot("status", 2)
+            ->where('category_id', $catid)
+            ->groupBy("user_id")
+            ->pluck("user_id")
+            ->toArray();
         return User::whereIn('id', $norev_userids)->get();
     }
     /**
@@ -263,7 +272,13 @@ class MailTemplate extends Model
     public static function mt_norev_catmeta($catid, $ismeta)
     {
         Review::validateAllRev(); // statusを更新
-        $norev_userids = Review::where('status', '!=', 2)->where('category_id', $catid)->where('ismeta', $ismeta)->pluck("user_id", "submit_id")->toArray();
+        $norev_userids = Review::select(["user_id"])
+            ->whereNot("status", 2)
+            ->where('category_id', $catid)
+            ->where('ismeta', $ismeta)
+            ->groupBy("user_id")
+            ->pluck("user_id")
+            ->toArray();
         return User::whereIn('id', $norev_userids)->get();
     }
 }
