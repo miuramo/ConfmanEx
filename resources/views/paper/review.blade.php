@@ -55,7 +55,7 @@
                                     {{ $vpdesc }}
                                 </td>
                                 <td class="p-2">
-                                    {{ $valstr }}
+                                    {!! nl2br(htmlspecialchars($valstr)) !!}
                                 </td>
                             </tr>
                         @endforeach

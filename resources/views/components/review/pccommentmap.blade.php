@@ -72,7 +72,7 @@
                             </td>
                             @foreach ($rev->scores_and_comments() as $vpdesc => $valstr)
                                 <td>
-                                    {{ $valstr }}
+                                    {!! nl2br(htmlspecialchars($valstr)) !!}
                                 </td>
                             @endforeach
                         @endforeach
