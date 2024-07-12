@@ -76,7 +76,7 @@ class ReviewController extends Controller
     }
 
     /**
-     * 査読結果
+     * 査読結果 reviewresult
      */
     public function result(Category $cat)
     {

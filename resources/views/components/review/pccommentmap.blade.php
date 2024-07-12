@@ -70,8 +70,8 @@
                             <td class="bg-orange-200">
                                 査{{ $rev->id }}
                             </td>
-                            @foreach ($rev->scores_and_comments() as $vpdesc => $valstr)
-                                <td>
+                            @foreach ($rev->scores_and_comments(0) as $vpdesc => $valstr)
+                                <td class="hover:bg-lime-50 transition-colors">
                                     {!! nl2br(htmlspecialchars($valstr)) !!}
                                 </td>
                             @endforeach

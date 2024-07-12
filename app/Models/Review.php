@@ -186,12 +186,13 @@ class Review extends Model
     /**
      * 未回答があると $rev->scores は抜けてしまうので、viewpoints をつかってKey->value として確実に配列で返す。
      */
-    public function scores_and_comments()
+    public function scores_and_comments($only_doreturn=1)
     {
         $aryscores = $this->scores->pluck("valuestr", "viewpoint_id")->toArray();
         $vps = Viewpoint::where('category_id', $this->category_id)->orderBy('orderint')->get();
         $ret = [];
         foreach($vps as $vp){
+            if ($only_doreturn && !$vp->doReturn) continue;
             $ret[$vp->desc] = (isset($aryscores[$vp->id])) ? $aryscores[$vp->id] : "(未入力)";
         }
         return $ret;

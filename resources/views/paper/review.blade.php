@@ -54,7 +54,7 @@
                                 <td nowrap class="p-2">
                                     {{ $vpdesc }}
                                 </td>
-                                <td class="p-2">
+                                <td class="p-2 hover:bg-lime-50 transition-colors">
                                     {!! nl2br(htmlspecialchars($valstr)) !!}
                                 </td>
                             </tr>
