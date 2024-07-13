@@ -33,7 +33,7 @@ class Score extends Model
             $this->review->validateOneRev();
             return;
         }
-
+        if ($this->review == null) return;
         // 対応するSubmitは、review_id -> Review
         $sub_id = $this->review->submit_id;
         //すべてのsub_id をもつReview idを探索 TODO: 会議によってはメタの点数を含めるかも。
