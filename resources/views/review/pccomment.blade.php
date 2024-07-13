@@ -17,7 +17,7 @@
     </x-slot>
 
     <div class="py-2 px-6">
-            <x-review.pccommentmap :subs="$subs" :cat_id="$cat_id">
+            <x-review.pccommentmap :subs="$subs" :cat_id="$cat_id" :scoreonly="$scoreonly">
             </x-review.pccommentmap>
     </div>
 

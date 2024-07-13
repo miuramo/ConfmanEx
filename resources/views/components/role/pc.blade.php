@@ -151,6 +151,26 @@
         @endforeach
     </x-element.h1>
 
+    <x-element.h1>査読結果（コメント非表示・スコアのみ） <span class="px-2"></span>
+        @foreach ($cats as $catid => $catname)
+            @isset($cat_arrange_review[$catid])
+                <x-element.linkbutton href="{{ route('review.comment_scoreonly', ['cat' => $catid]) }}" color="purple"
+                    target="_blank">
+                    {{ $catname }}
+                </x-element.linkbutton>
+            @endisset
+        @endforeach
+        <span class="mx-2"></span>
+        @foreach ($cats as $catid => $catname)
+            @isset($cat_arrange_review[$catid])
+                <x-element.linkbutton href="{{ route('review.comment_scoreonly', ['cat' => $catid, 'excel' => 'dl']) }}"
+                    color="teal">
+                    {{ $catname }}Excel
+                </x-element.linkbutton>
+            @endisset
+        @endforeach
+    </x-element.h1>
+
     <x-element.h1>査読結果＋コメント <span class="px-2"></span>
         @foreach ($cats as $catid => $catname)
             @isset($cat_arrange_review[$catid])

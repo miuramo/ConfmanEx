@@ -118,17 +118,24 @@ class ReviewController extends Controller
 
     /**
      * 査読コメント for PC  name('review.comment')
+     * scoreonly=0 だと、コメントも表示するが、横に長くなる。
      */
-    public function comment(Request $req, Category $cat)
+    public function comment(Request $req, Category $cat, $scoreonly = 0)
     {
         if (!auth()->user()->can('role', 'pc')) return abort(403);
+        Score::updateAllScoreStat();
         if ($req->has("excel")) {
-            return Excel::download(new ReviewCommentExportFromView($cat), "reviewcomments_{$cat->id}.xlsx");
+            return Excel::download(new ReviewCommentExportFromView($cat, $scoreonly), "reviewcomments_{$cat->id}.xlsx");
         }
         // Submitの一覧を返す
         $subs = Submit::with('paper')->where('category_id', $cat->id)->orderBy('score', 'desc')->get();
         $cat_id = $cat->id;
-        return view("review.pccomment")->with(compact("subs", "cat_id", "cat"));
+        return view("review.pccomment")->with(compact("subs", "cat_id", "cat", "scoreonly"));
+    }
+    public function comment_scoreonly(Request $req, Category $cat)
+    {
+        if (!auth()->user()->can('role', 'pc')) return abort(403);
+        return $this->comment($req, $cat, 1);
     }
 
 
@@ -170,7 +177,8 @@ class ReviewController extends Controller
     /**
      * for test (dummy)
      */
-    public function edit_dummy($cat_id, $ismeta = 0){
+    public function edit_dummy($cat_id, $ismeta = 0)
+    {
         if (!auth()->user()->can('role', 'pc')) return abort(403);
         $rev = new Review();
         $rev->category_id = $cat_id;
@@ -193,10 +201,10 @@ class ReviewController extends Controller
         if ($review->user_id != auth()->id()) return abort(403, "THIS IS NOT YOUR REVIEW");
 
         $query = Viewpoint::where("category_id", $review->category_id);
-        if ($review->ismeta){
-            $query->where("formeta",1);
+        if ($review->ismeta) {
+            $query->where("formeta", 1);
         } else {
-            $query->where("forrev",1);
+            $query->where("forrev", 1);
         }
         $viewpoints = $query->orderBy("orderint")->get();
         // 既存回答

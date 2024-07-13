@@ -130,7 +130,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/reviewresult/{cat}', [ReviewController::class, 'result'])->name('review.result');
     Route::post('/reviewresult/{cat}', [ReviewController::class, 'resultpost'])->name('review.resultpost');
     Route::get('/reviewcomment/{cat}', [ReviewController::class, 'comment'])->name('review.comment'); // ?excel=dl でExcel
-
+    Route::get('/reviewcomment_scoreonly/{cat}', [ReviewController::class, 'comment_scoreonly'])->name('review.comment_scoreonly'); // ?excel=dl でExcel
+    
     // 出版担当
     Route::get('pub/{cat}/booth', [SubmitController::class, 'booth'])->name('pub.booth');
     Route::post('pub/{cat}/booth', [SubmitController::class, 'booth'])->name('pub.booth');

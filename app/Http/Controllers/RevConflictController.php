@@ -63,6 +63,8 @@ class RevConflictController extends Controller
     public function revstatus()
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        Review::validateAllRev(); // statusを更新
+        
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
         $sum_cm_tmp = Review::select(DB::raw("count(id) as count, category_id, ismeta"))
             ->groupBy("category_id")

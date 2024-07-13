@@ -66,8 +66,8 @@
                 @if ($revon[$rev->category_id])
                     @if ($rev->status == 2)
                         <div class="bg-cyan-100 px-3 pt-4">
-                        @else
-                            <div class="bg-yellow-50 px-3 pt-4">
+                    @else
+                        <div class="bg-yellow-50 px-3 pt-4">
                     @endif
                     <x-element.paperid size=1 :paper_id="$rev->paper->id">
                     </x-element.paperid>
@@ -96,8 +96,9 @@
                     {!! $catspans[$rev->paper->category_id] !!}
 
                     @if ($rev->status == 2)
-                        <span class="inline-block border-2 border-blue-600 p-0.5 text-blue-600 font-bold text-sm">査読完了</span>
-                    @else
+                        <span class="inline-block border-2 border-blue-600 p-0.5 text-blue-600 font-bold text-sm">
+                            査読完了
+                        </span>
                     @endif
 
                     @if ($rev->paper->pdf_file_id != null)

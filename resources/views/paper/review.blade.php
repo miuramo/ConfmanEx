@@ -42,6 +42,10 @@
                         <tr>
                             <th class="bg-slate-300 border-4 border-slate-300">
                                 査読者 {{ $count }}
+
+                                @if ($rev->ismeta)
+                                    <span class="mx-2 text-blue-500">(メタ査読者) </span>
+                                @endif
                             </th>
                             <th class="bg-slate-300 border-4 border-slate-300">
                             </th>
@@ -51,14 +55,17 @@
                         @foreach ($rev->scores_and_comments() as $vpdesc => $valstr)
                             <tr
                                 class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200' : 'bg-white-50' }}">
-                                <td nowrap class="p-2">
+                                <td nowrap class="p-2 bg-slate-100 border-2 border-slate-300">
                                     {{ $vpdesc }}
                                 </td>
-                                <td class="p-2 hover:bg-lime-50 transition-colors">
-                                    {!! nl2br(htmlspecialchars($valstr)) !!}
+                                <td class="p-2 hover:bg-lime-50 transition-colors text-left">
+                                    @if ($valstr == '(未入力)')
+                                        （とくにお伝えする事項は、ありません）
+                                    @else
+                                        {!! nl2br(htmlspecialchars($valstr)) !!}
+                                    @endif
                                 </td>
                             </tr>
-                        @endforeach
                     </tbody>
                 </table>
             @endforeach

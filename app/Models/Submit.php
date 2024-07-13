@@ -25,10 +25,6 @@ class Submit extends Model
         return $this->belongsTo(Paper::class);
     }
 
-    // public static function make()
-    // {
-
-    // }
     public function reviews()
     {
         return $this->hasMany(Review::class, "submit_id");
