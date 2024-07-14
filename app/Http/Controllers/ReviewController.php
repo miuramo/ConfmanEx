@@ -182,13 +182,13 @@ class ReviewController extends Controller
         if (!auth()->user()->can('role', 'pc')) return abort(403);
         $rev = new Review();
         $rev->category_id = $cat_id;
-        $rev->submit_id = 0;
+        $rev->submit_id = 9999;
         $rev->user_id = auth()->id();
         $rev->ismeta = $ismeta;
         $rev->paper = new Paper();
-        $rev->paper->id = 0;
+        $rev->paper->id = 9999;
         $rev->paper->category_id = $cat_id;
-        $rev->id = 0;
+        $rev->id = 0; // ダミーはかならずReviewID = 0 にする。
         return $this->edit($rev);
     }
 
@@ -221,12 +221,12 @@ class ReviewController extends Controller
      * Update the specified resource in storage.
      * じっさいにはScoreを作成する
      */
-    public function update(UpdateReviewRequest $request, Review $review)
+    public function update(UpdateReviewRequest $request, int $reviewid)
     {
+        if ($reviewid == 0) return $request->shori_dummy(); // ダミーはかならずReviewID = 0 にする。
         if (!auth()->user()->can('role', 'reviewer')) return abort(403);
+        $review = Review::find($reviewid);
         if ($review->user_id != auth()->id()) return abort(403, "THIS IS NOT YOUR REVIEW");
-
-        if ($review->id == 0) return "dummy";
 
         if ($request->ajax()) return $request->shori();
         else {

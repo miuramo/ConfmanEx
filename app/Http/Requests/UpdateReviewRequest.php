@@ -39,7 +39,6 @@ class UpdateReviewRequest extends FormRequest
     {
         $data = $this->all();
         $rev_id = $data['review_id'];
-        if ($rev_id == 0) return "dummy";
         $viewpoint_id = $data['viewpoint_id'];
         unset($data['_token']);
         unset($data['_method']);
@@ -66,6 +65,20 @@ class UpdateReviewRequest extends FormRequest
             $scr->save();
         }
 
+        return json_encode($data);
+    }
+
+    public function shori_dummy()
+    {
+        $data = $this->all();
+        // $rev_id = $data['review_id'];
+        // $viewpoint_id = $data['viewpoint_id'];
+        unset($data['_token']);
+        unset($data['_method']);
+        unset($data['paper_id']);
+        unset($data['review_id']);
+        unset($data['viewpoint_id']);
+        unset($data['url']);
         return json_encode($data);
     }
 }

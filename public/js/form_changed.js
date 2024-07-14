@@ -1,4 +1,4 @@
-var reduce_404_error_for_dummyform = false;
+// var reduce_404_error_for_dummyform = false;
 
 function changed(formName, name) {
     var form = $("#" + formName);
@@ -24,15 +24,15 @@ function changed(formName, name) {
             }, 1000); // フラッシュの時間
         },
         error: function (xhr, textStatus, error) {
-            if (xhr.status == 404) {
-                if (!reduce_404_error_for_dummyform) {
-                    if (confirm("プレビュー用フォームでは送信できません。そのため、なにか入力しても「未入力」のままになります。\nこのメッセージを短期的に表示しないようにするには、OKをおしてください")) {
-                        reduce_404_error_for_dummyform = true;
-                    }
-                }
-                return; // ダミーフォーム、プレビュー用フォームのとき
-            }
-            alert("error form submit (form changed)");
+            // if (xhr.status == 404) {
+            //     if (!reduce_404_error_for_dummyform) {
+            //         if (confirm("プレビュー用フォームでは送信できません。そのため、なにか入力しても「未入力」のままになります。\nこのメッセージを短期的に表示しないようにするには、OKをおしてください")) {
+            //             reduce_404_error_for_dummyform = true;
+            //         }
+            //     }
+            //     return; // ダミーフォーム、プレビュー用フォームのとき
+            // }
+            alert("error form submit (form changed, but not saved.)");
             console.log(textStatus);
         }
     });
