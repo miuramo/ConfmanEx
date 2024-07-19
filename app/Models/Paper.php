@@ -425,6 +425,13 @@ class Paper extends Model
      */
     public function extractTitleAndAuthors(string $text)
     {
+        // もし、カテゴリの投稿受付設定 extract_title が　0　だったら、実行しない。
+        $cat = Category::find($this->category_id);
+        if (!$cat->extract_title) {
+            // info("note: category->extract_title is 0. SKIPPING.");
+            return; 
+        }
+
         // 下処理として、改行をとりのぞく
         if (function_exists("mb_strpos")) {
             $nocr_text = str_replace(["\r", "\n"], "", $text);

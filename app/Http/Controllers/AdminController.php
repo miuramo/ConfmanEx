@@ -387,7 +387,7 @@ class AdminController extends Controller
         $coldetails = $this->column_details('categories');
         if ($req->has("toukou")) { // 投稿関係
             $ary = ['name', 'pdf_page_min', 'pdf_page_max', 'pdf_accept_start', 'pdf_accept_end',
-             'pdf_accept_revise', 'openstart', 'openend', 'upperlimit','show_bibinfo_btn'];
+             'pdf_accept_revise', 'openstart', 'openend', 'upperlimit','show_bibinfo_btn','extract_title'];
             $cold2 = [];
             foreach ($ary as $f) {
                 $cold2[$f] = $coldetails[$f];
