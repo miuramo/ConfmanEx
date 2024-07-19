@@ -13,6 +13,12 @@
 
 <div class="px-6 py-4">
     <x-element.h1>
+        <x-element.linkbutton href="{{ route('pub.addsubmit') }}" color="cyan" target="_blank">
+            別カテゴリでの採否を追加する
+        </x-element.linkbutton>
+    </x-element.h1>
+    
+    <x-element.h1>
         セッション割り当て
         @foreach ($cats as $cid => $cname)
             <span class="px-2"></span>
@@ -44,25 +50,24 @@
 
         <span class="px-2"></span>
         <x-element.button id="toggleButton" value="出力をカスタマイズしたい場合" color='cyan' size='sm'
-                            onclick="openclose('awardjson')">
-                        </x-element.button>
+            onclick="openclose('awardjson')">
+        </x-element.button>
 
-                        <div class="hidden-content bg-slate-300 p-2 mt-2 dark:text-gray-600" id="awardjson"
-                            style="display:none;">
-                            書誌情報JSON
-                            @php
-                                $dkey = App\Models\Setting::findByIdOrName('AWARDJSON_DLKEY','value');
-                            @endphp
-                            <x-element.linkbutton href="{{ route('pub.json_booth_title_author', ['key' => $dkey]) }}" color="cyan" size="sm"
-                                target="_blank">
-                                JSON
-                            </x-element.linkbutton>
-                            <div class="text-sm">
-                                ダウンロードURLは {{ route('pub.json_booth_title_author', ['key' => $dkey]) }} <br>
-                                ダウンロードキーは {{ $dkey }}<br>
-                                以下のようなプログラムを作成して、出力をカスタマイズしてください。
-                            </div>
-                            <textarea name="custom_program" cols="90" rows="5">
+        <div class="hidden-content bg-slate-300 p-2 mt-2 dark:text-gray-600" id="awardjson" style="display:none;">
+            書誌情報JSON
+            @php
+                $dkey = App\Models\Setting::findByIdOrName('AWARDJSON_DLKEY', 'value');
+            @endphp
+            <x-element.linkbutton href="{{ route('pub.json_booth_title_author', ['key' => $dkey]) }}" color="cyan"
+                size="sm" target="_blank">
+                JSON
+            </x-element.linkbutton>
+            <div class="text-sm">
+                ダウンロードURLは {{ route('pub.json_booth_title_author', ['key' => $dkey]) }} <br>
+                ダウンロードキーは {{ $dkey }}<br>
+                以下のようなプログラムを作成して、出力をカスタマイズしてください。
+            </div>
+            <textarea name="custom_program" cols="90" rows="5">
 &lt;?php
   $url = "{{ route('pub.json_booth_title_author', ['key' => $dkey]) }}" ;
   $json = file_get_contents($url) ;
@@ -81,7 +86,7 @@
       echo "\n" ;
     }
   }</textarea>
-                        </div>
+        </div>
 
     </x-element.h1>
 
@@ -99,7 +104,7 @@
                 @method('post')
                 <div>
                     @foreach ($cats as $catid => $catname)
-                        <input type="checkbox" name="targetcat{{ $catid }}" value="{{ $catid }}"
+                        <input type="radio" name="targetcat" value="{{ $catid }}"
                             id="label{{ $catid }}" @if ($catid == 1) checked="checked" @endif>
                         <label for="label{{ $catid }}"
                             class="dark:text-gray-300">{{ $catname }}</label>&nbsp;
@@ -114,7 +119,8 @@
                     @endforeach
                 </div>
                 <div>
-                    ファイル名は、Prefix→ <input type="text" name="fn_prefix" value="{{ env("PUB_DL_PREFIX","IPSJ-SSS2024_") }}" class="p-1"> +
+                    ファイル名は、Prefix→ <input type="text" name="fn_prefix"
+                        value="{{ env('PUB_DL_PREFIX', 'IPSJ-SSS2024_') }}" class="p-1"> +
                     [ブース記番].pdf になります。ファイル名が重複するため、pdf と altpdf は同時に選択しないでください。
                 </div>
 
@@ -151,5 +157,3 @@
     <script src="/js/jquery.min.js"></script>
     <script src="/js/openclose.js"></script>
 @endpush
-
-

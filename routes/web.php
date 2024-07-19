@@ -131,7 +131,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/reviewresult/{cat}', [ReviewController::class, 'resultpost'])->name('review.resultpost');
     Route::get('/reviewcomment/{cat}', [ReviewController::class, 'comment'])->name('review.comment'); // ?excel=dl でExcel
     Route::get('/reviewcomment_scoreonly/{cat}', [ReviewController::class, 'comment_scoreonly'])->name('review.comment_scoreonly'); // ?excel=dl でExcel
-    
+
+    // 別カテゴリでの採否を追加
+    Route::get('addsubmit', [SubmitController::class, 'addsubmit'])->name('pub.addsubmit');
+    Route::post('addsubmit', [SubmitController::class, 'addsubmit'])->name('pub.addsubmit');
+
     // 出版担当
     Route::get('pub/{cat}/booth', [SubmitController::class, 'booth'])->name('pub.booth');
     Route::post('pub/{cat}/booth', [SubmitController::class, 'booth'])->name('pub.booth');

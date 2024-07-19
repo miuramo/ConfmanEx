@@ -219,7 +219,7 @@ function parententer() {
         .attr("class", function (d) { return "parent gid" + d.gid; })
         .attr("x", function (d) { return 0; })
         .attr("y", function (d) { return 0; })
-        .attr("width", 420)
+        .attr("width", 620)
         .attr("height", 100);
 
     parentNodes.append("text").text(function (d) { return d.name; }).attr("font-family", "sans-serif").attr("font-size", "12px").attr("x", 5).attr("y", 13).attr("fill", "black");
@@ -298,7 +298,7 @@ function kjenter() {
         .style("opacity", 1.0);
 
     grp.append("rect")
-        .attr("x", 5).attr("y", 5).attr("rx", 7).attr("ry", 7).attr("width", 400).attr("height", 30)
+        .attr("x", 5).attr("y", 5).attr("rx", 7).attr("ry", 7).attr("width", 600).attr("height", 30)
         .style("fill", "white").style("stroke", function (d) { return d.stroke; }).style("stroke-width", 3).style("opacity", 0.0)
         .transition().duration(1000)
         .style("fill", "white").style("stroke", function (d) { return d.stroke; }).style("stroke-width", 3).style("opacity", 0.8);

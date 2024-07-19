@@ -58,7 +58,7 @@
                 <!-- SubmitController.booth()  -->
             </form>
         </div>
-        <svg id="chart" width="100%" height="1200" style="background:#ffe;"></svg>
+        <svg id="chart" width="100%" height="2200" style="background:#ffe;"></svg>
     </div>
 
 

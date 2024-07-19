@@ -15,13 +15,18 @@ class Submit extends Model
         'canceled',
         'award',
         'orderint',
+        'accept_id',
+        'category_id',
+        'paper_id',
     ];
 
-    public function accept(){
-        return $this->belongsTo(Accept::class);//逆はbelongsTo
+    public function accept()
+    {
+        return $this->belongsTo(Accept::class); //逆はbelongsTo
     }
 
-    public function paper(){
+    public function paper()
+    {
         return $this->belongsTo(Paper::class);
     }
 
@@ -30,4 +35,11 @@ class Submit extends Model
         return $this->hasMany(Review::class, "submit_id");
     }
 
+    public static function subs_accepted(int $cat_id, string $ord = "orderint")
+    {
+        $subs = Submit::with('paper')->where("category_id", $cat_id)->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->orderBy($ord)->get();
+        return $subs;
+    }
 }

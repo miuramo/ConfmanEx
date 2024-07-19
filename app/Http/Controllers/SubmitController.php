@@ -93,10 +93,11 @@ class SubmitController extends Controller
                     $num++;
                 }
             }
-            return "OK"; 
+            return "OK";
         }
 
-        $subs = Submit::with('paper')->where("category_id", $catid)->where("accept_id", "<", 20)->orderBy("orderint")->get();
+        $subs = Submit::subs_accepted($catid);
+
         return view('pub.booth', ["cat" => $catid])->with(compact("subs"));
     }
 
@@ -129,7 +130,7 @@ class SubmitController extends Controller
                     return redirect()->route('pub.boothtxt', ["cat" => $catid])->with("sbmap", $sbmap)->with('feedback.error', ($n + 1) . '行目付近にエラーがあります。要素は3つである必要があります。');
                 }
                 //
-                if (!is_numeric($ary[0]) || !is_numeric($ary[1])){
+                if (!is_numeric($ary[0]) || !is_numeric($ary[1])) {
                     return redirect()->route('pub.boothtxt', ["cat" => $catid])->with("sbmap", $sbmap)->with('feedback.error', ($n + 1) . '行目付近にエラーがあります。sessionidとpaperidは整数である必要があります。');
                 }
                 if (isset($paper_session_map[$ary[1]])) {
@@ -145,23 +146,23 @@ class SubmitController extends Controller
                 $paper_booth_map[$ary[1]] = $ary[2];
             }
             //割り当て実行
-            foreach($paper_session_map as $paperid=>$sessionid){
-                $sub = Submit::where("category_id",$catid)->where("paper_id", $paperid)->first();
+            foreach ($paper_session_map as $paperid => $sessionid) {
+                $sub = Submit::where("category_id", $catid)->where("paper_id", $paperid)->first();
                 $sub->booth = $paper_booth_map[$paperid];
                 $sub->psession_id = $sessionid;
                 $sub->save();
             }
             // orderint を自動で更新
-            $subs = Submit::with('paper')->where("category_id", $catid)->where("accept_id", "<", 20)->orderBy("booth")->get();
+            $subs = Submit::subs_accepted($catid, "booth");    
             $num = 1;
-            foreach($subs as $sub){
+            foreach ($subs as $sub) {
                 $sub->orderint = $num;
                 $sub->save();
                 $num++;
             }
             return redirect()->route('pub.boothtxt', ["cat" => $catid])->with("sbmap", $sbmap)->with('feedback.success', '割り当て実行しました。');
         }
-        $subs = Submit::with('paper')->where("category_id", $catid)->where("accept_id", "<", 20)->orderBy("orderint")->get();
+        $subs = Submit::subs_accepted($catid);
         return view('pub.boothtxt', ["cat" => $catid])->with(compact("subs", "sbmap"));
     }
 
@@ -180,21 +181,27 @@ class SubmitController extends Controller
             if (strpos($k, "filetype") === 0) $filetypes[] = $v;
         }
         // 採択submits→paper_id list
-        $accept_ids = Accept::where('judge', '>', 0)->pluck("id")->toArray();
-        $accept_papers = Submit::whereIn('accept_id', $accept_ids)->pluck("paper_id")->toArray();
+        $accept_papers = Submit::with('paper')->whereIn("category_id", $targets)->whereHas("accept", function($query) {
+            $query->where("judge", ">", 0);
+        })->orderBy("orderint")->pluck("booth","paper_id")->toArray();
 
+        $addcount_tozip = 0;
         if (count($targets) > 0) {
             // find Target Papers
-            $papers = Paper::whereIn('category_id', $targets)->whereIn('id', $accept_papers)->get();
+            $papers = Paper::whereIn('id', array_keys($accept_papers))->get();
             $zipFN = 'files.zip';
             $zipFP = storage_path('app/' . $zipFN);
             $zip = new ZipArchive();
             if ($zip->open($zipFP, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
                 foreach ($papers as $paper) {
-                    $paper->addFilesToZip_ForPub($zip, $filetypes, $req->input("fn_prefix") . $paper->submits()->first()->booth);
+                    $paper->addFilesToZip_ForPub($zip, $filetypes, $req->input("fn_prefix") . $accept_papers[$paper->id]);
+                    $addcount_tozip++;
                 }
                 $zip->close();
 
+                if ($addcount_tozip==0){
+                    return redirect()->route('role.top',['role' => 'pub'])->with('feedback.error', 'まだ該当ファイルがないため、Zipファイルを作成できませんでした。');
+                }
                 // Zipアーカイブをダウンロード
                 return response()->download($zipFP)->deleteFileAfterSend(true);
             } else {
@@ -212,7 +219,7 @@ class SubmitController extends Controller
     {
         if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
 
-        $subs = Submit::with('paper')->where("category_id", $catid)->where("accept_id", "<", 20)->orderBy("orderint")->get();
+        $subs = Submit::subs_accepted($catid);
 
         return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs"));
     }
@@ -224,9 +231,74 @@ class SubmitController extends Controller
     {
         if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
 
-        $subs = Submit::with('paper')->where("category_id", $catid)->where("accept_id", "<", 20)->orderBy("orderint")->get();
+        $subs = Submit::with('paper')->where("category_id", $catid)->whereHas("accept", function($query) {
+            $query->where("judge", ">", 0);
+        })->orderBy("orderint")->get();
 
         return view('pub.bibinfo', ["cat" => $catid])->with(compact("subs", "catid", "abbr"));
+    }
+
+    /**
+     * 別カテゴリでの採否を追加する
+     */
+    public function addsubmit(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
+        if ($req->method() === 'POST') {
+            // Submitsから、Paperをあつめていく
+            $catid = $req->input("catid");
+            $accid = $req->input("accid");
+            $papers = Paper::whereHas("submits", function ($query) use ($catid, $accid) {
+                $query->where("category_id", $catid)->where("accept_id", $accid)->where("canceled", 0);
+            })->get()->pluck('title', 'id')->toArray();
+
+            if ($req->has("action") && $req->input("action") == "addsubmit") {
+                $newcatid = $req->input("newcatid");
+                $newaccid = $req->input("newaccid");
+                foreach ($papers as $pid => $title) {
+                    $sub = Submit::firstOrCreate([
+                        'paper_id' => $pid,
+                        'category_id' => $newcatid,
+                    ], [
+                        'accept_id' => $newaccid,
+                    ]);
+                    $sub->accept_id = $newaccid;
+                    $sub->save();
+                }
+                return redirect()->route('pub.addsubmit')->with('feedback.success', '採否を追加しました。');
+            }
+        } else {
+            $papers = [];
+        }
+        foreach (["catid", "accid", "newcatid", "newaccid"] as $k) {
+            if (isset(${$k})) $old[$k] = ${$k};
+            else $old[$k] = 1;
+        }
+        $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+        $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+        return view('pub.addsubmit')->with(compact("cats", "accepts", "papers", "old"));
+
+        // 現在の採択フラグ状況
+        $fs = ["category_id", "accept_id", "name", "judge"];
+        $sql1 = "select count(submits.id) as cnt, " . implode(",", $fs);
+        $sql1 .= " from submits left join accepts on submits.accept_id = accepts.id where canceled = 0 group by " . implode(",", $fs);
+        $sql1 .= " order by " . implode(",", $fs);
+        $cols = DB::select($sql1);
+
+        $sql2 = "select paper_id, category_id, accept_id ";
+        $sql2 .= "from submits where canceled = 0 order by category_id, accept_id, paper_id";
+        $res2 = DB::select($sql2);
+        $pids = [];
+        foreach ($res2 as $res) {
+            if (is_array(@$pids[$res->category_id][$res->accept_id])) {
+                $pids[$res->category_id][$res->accept_id][] = sprintf("%03d", $res->paper_id);
+            } else {
+                $pids[$res->category_id][$res->accept_id] = [];
+                $pids[$res->category_id][$res->accept_id][] = sprintf("%03d", $res->paper_id);
+            }
+        }
+
+        return view('pub.addsubmit')->with(compact("cats", "accepts", "papers", "old", "cols", "pids"));
     }
 
     /**
@@ -236,7 +308,7 @@ class SubmitController extends Controller
      */
     public function json_bta(string $key = null)
     {
-        $downloadkey = Setting::findByIdOrName("AWARDJSON_DLKEY","value");
+        $downloadkey = Setting::findByIdOrName("AWARDJSON_DLKEY", "value");
         if ($key != $downloadkey) abort(403);
 
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();

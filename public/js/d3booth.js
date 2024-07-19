@@ -31,7 +31,7 @@ function onNodeDragEnd(json) {
 
 $(document).ready(function () {
     for (let i = 1; i < 13; i++) {
-        new Oya(30, i * 150, i, i, "session " + i);
+        new Oya(10, i * 150, i, i, "session " + i);
     }
 
     // console.log(subpapers);
@@ -44,7 +44,7 @@ $(document).ready(function () {
         // console.log(sub);
         var ud = {
             "uid": sub.paper.id,
-            "x": 500,
+            "x": 670, // 最初、未配属の発表のx
             "y": yy, // sub.paper_id*100,
             "txt": sub.paper.id,
             "txt2": sub.orderint+" "+sub.paper.title + " ["+sub.booth+"]",
