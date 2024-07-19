@@ -75,9 +75,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/enq_maptoroles', [EnqueteController::class, 'map_to_roles'])->name('enq.maptoroles');
     Route::post('/enq_maptoroles', [EnqueteController::class, 'map_to_roles'])->name('enq.maptoroles');
     Route::get('/enq/{enq}/preview', [EnqueteController::class, 'edit_dummy'])->name('enq.preview');
-    // アンケートの選択的削除 (EnqueteAnswer)
-    Route::get('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');
-    Route::post('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');
 
     Route::get('/paper/{paper}/enq/{enq}/edit', [EnqueteController::class, 'edit'])->name('enquete.pageedit'); //インラインではなく個別のpageで表示
     Route::get('/paper/{paper}/enq/{enq}', [EnqueteController::class, 'show'])->name('enquete.pageview');
@@ -102,9 +99,6 @@ Route::middleware('auth')->group(function () {
     // put /review/{review} -> review.update
     // get review.index で仮に作成
     Route::get('/review/{cat}/edit_dummy/{ismeta}', [ReviewController::class, 'edit_dummy'])->name('review.edit_dummy');
-    // 査読結果の選択的削除 (Score)
-    Route::get('/resetscore', [ScoreController::class, 'resetscore'])->name('score.resetscore');
-    Route::post('/resetscore', [ScoreController::class, 'resetscore'])->name('score.resetscore');
 
     // admin
     Route::get('/admin_dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -156,10 +150,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin_crud', [AdminController::class, 'crud'])->name('admin.crudpost');
     Route::post('/admin_crudpost', [AdminController::class, 'crudpost'])->name('admin.crudpost');
     Route::get('/admin_catsetting', [AdminController::class, 'catsetting'])->name('admin.catsetting');
-    Route::get('/admin_resetpaper', [AdminController::class, 'resetpaper'])->name('admin.resetpaper');
-    Route::get('/admin_resetbidding', [AdminController::class, 'resetbidding'])->name('admin.resetbidding');
     Route::get('/admin_chkexefiles', [AdminController::class, 'check_exefiles'])->name('admin.chkexefiles');
-    Route::get('/admin_forcedelete', [AdminController::class, 'forcedelete'])->name('admin.forcedelete');
+    
+    Route::get('/admin_resetpaper', [AdminController::class, 'resetpaper'])->name('admin.resetpaper');             // Danger Zone
+    Route::get('/admin_resetaccesslog', [AdminController::class, 'resetaccesslog'])->name('admin.resetaccesslog'); // Danger Zone
+    Route::get('/admin_resetbidding', [AdminController::class, 'resetbidding'])->name('admin.resetbidding');       // Danger Zone
+    Route::get('/admin_forcedelete', [AdminController::class, 'forcedelete'])->name('admin.forcedelete');      // Danger Zone
+    // 査読結果の選択的削除 (Score)
+    Route::get('/resetscore', [ScoreController::class, 'resetscore'])->name('score.resetscore');       // Danger Zone
+    Route::post('/resetscore', [ScoreController::class, 'resetscore'])->name('score.resetscore');      // Danger Zone
+    // アンケートの選択的削除 (EnqueteAnswer)
+    Route::get('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');    // Danger Zone
+    Route::post('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');   // Danger Zone
+
     Route::get('/admin_passdumpsql', [AdminController::class, 'passdumpsql'])->name('admin.passdumpsql');
 
     Route::get('/man_rebuildpdf', [ManagerController::class, 'rebuildPDFThumb'])->name('admin.rebuildpdf');

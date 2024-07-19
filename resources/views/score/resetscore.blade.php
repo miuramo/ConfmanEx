@@ -7,7 +7,7 @@
             </x-element.linkbutton>
         </div>
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
-            アンケート回答の選択的削除
+            査読回答の選択的削除
         </h2>
     </x-slot>
     @push('localcss')

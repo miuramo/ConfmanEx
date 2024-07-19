@@ -164,8 +164,13 @@
             </x-element.linkbutton>
             <span class="px-5"></span>
             <x-element.linkbutton href="{{ route('admin.resetpaper') }}" color="red"
-                confirm="ユーザやロール、設定以外、すべて消えます。ファイルを含め、事前にバックアップをとってください。本当に、リセットしてよいですか？">
+                confirm="ユーザやロール、設定、アクセスログ以外、すべて消えます。ファイルを含め、事前にバックアップをとってください。本当に、リセットしてよいですか？">
                 投稿をすべてリセットする
+            </x-element.linkbutton>
+            <span class="px-5"></span>
+            <x-element.linkbutton href="{{ route('admin.resetaccesslog') }}" color="orange"
+                confirm="アクセスログが消えます。本当に、リセットしてよいですか？">
+                アクセスログをすべてリセットする
             </x-element.linkbutton>
         </x-element.h1>
 

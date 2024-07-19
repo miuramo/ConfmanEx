@@ -23,6 +23,7 @@ use App\Models\Paper;
 use App\Models\RevConflict;
 use App\Models\Review;
 use App\Models\Role;
+use App\Models\Score;
 use App\Models\Setting;
 use App\Models\Submit;
 use App\Models\User;
@@ -466,10 +467,11 @@ class AdminController extends Controller
         Submit::truncate();
         RevConflict::truncate();
         Review::truncate();
+        Score::truncate();
         DB::table('paper_contact')->truncate();
 
         LogModify::truncate();
-        LogAccess::truncate();
+        // LogAccess::truncate();
         LogCreate::truncate();
         LogForbidden::truncate();
 
@@ -477,6 +479,12 @@ class AdminController extends Controller
         BbMes::truncate();
 
         return redirect()->route('admin.dashboard')->with('feedback.success', '投稿をすべてリセットしました');
+    }
+    public function resetaccesslog()
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        LogAccess::truncate();
+        return redirect()->route('admin.dashboard')->with('feedback.success', 'アクセスログをすべてリセットしました');
     }
 
     /**

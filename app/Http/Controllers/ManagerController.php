@@ -103,6 +103,7 @@ class ManagerController extends Controller
         // OcrJob::dispatch();
         return redirect()->route('admin.dashboard')->with('feedback.success', 'OCR Queueを実行しました。');
     }
+    
     public function paperauthorhead(Request $req)
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
@@ -140,68 +141,5 @@ class ManagerController extends Controller
 
         return view('admin.paperauthorhead')->with(compact("papers","sets"));
     }
-    /**
-     * RevConflict を truncate する。
-     */
-    public function resetbidding()
-    {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
-        RevConflict::truncate();
-        return redirect()->route('admin.dashboard')->with('feedback.success', '利害表明とBiddingをすべてリセットしました');
-    }
-    /**
-     * UserのsoftDeleted を 完全削除 する。
-     */
-    public function forcedelete()
-    {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
-        User::onlyTrashed()->whereNotNull('id')->forceDelete();
-        return redirect()->route('admin.dashboard')->with('feedback.success', 'User softDeleted を完全削除しました');
-    }
-    /**
-     * 投稿をすべてリセットする。ファイルも消す。ログも消す。
-     */
-    public function resetpaper()
-    {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
 
-        $all = File::all();
-        foreach ($all as $f) {
-            $f->remove_the_file();
-            $f->delete_me();
-        }
-        Paper::truncate();
-        Contact::truncate();
-        EnqueteAnswer::truncate();
-        Submit::truncate();
-        RevConflict::truncate();
-        Review::truncate();
-        DB::table('paper_contact')->truncate();
-
-        LogModify::truncate();
-        LogAccess::truncate();
-        LogCreate::truncate();
-        LogForbidden::truncate();
-
-        Bb::truncate();
-        BbMes::truncate();
-
-        return redirect()->route('admin.dashboard')->with('feedback.success', '投稿をすべてリセットしました');
-    }
-
-    /**
-     * 必要なプログラムがインストールされているか？の確認
-     */
-    public function check_exefiles()
-    {
-        $in = [
-            "pdftoppm -v", "convert -version", "md5sum --version", "file -v", "pdfinfo -v", "node -v", "npm -v",
-            "composer -V", "tesseract -v", "tesseract --list-langs", "php -i"
-        ];
-        $out = [];
-        foreach ($in as $com) {
-            $out[$com] = shell_exec($com . " 2>&1");
-        }
-        return view('admin.chkexefiles')->with(compact("in", "out"));
-    }
 }
