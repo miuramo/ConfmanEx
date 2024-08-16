@@ -59,8 +59,10 @@ class EnqueteController extends Controller
     {
         $aEnq = Enquete::accessibleEnquetes(true);
         if (count($aEnq) < 1) abort(403);
-
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        // info($aEnq);
+        $enq_id = $req->input('enq_id');
+        if (!isset($aEnq[$enq_id])) abort(403);
+        // if (!auth()->user()->can('role_any', 'pc')) abort(403);
         $tableName = 'enquete_items';
         // copy_id がセットされていたら、行をコピーする
         if ($req->has('copy_id')) {
