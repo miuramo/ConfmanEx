@@ -160,5 +160,25 @@ class Setting extends Model
 
         // Viewpoint::change_separator();
 
+        Setting::firstOrCreate([
+            'name' => "VOTING",
+        ], [
+            'value' => "false",
+            'isnumber' => false,
+            'isbool' => true,
+        ]);
+        Setting::firstOrCreate([
+            'name' => "REDIRECT",
+        ], [
+            'value' => "/paper",
+            'isnumber' => false,
+            'isbool' => false,
+            'misc' => '/paper/create | /paper | /vote',
+        ]);
+
+        Vote::init();
+        VoteItem::init();
+
+
     }
 }

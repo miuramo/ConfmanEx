@@ -75,13 +75,17 @@
                 </x-element.linkbutton>
             </div>
 
-
             <div class="mt-4">
                 <x-element.linkbutton href="{{ route('admin.crud') }}" color="gray" size="sm">
                     &larr; Crud Tables に戻る
                 </x-element.linkbutton>
             </div>
 
+            <div class="mt-4">
+                <x-element.linkbutton href="{{ route('admin.crudtruncate',['table'=>$tableName]) }}" color="red" size="sm" confirm="本当に、すべての行を削除(truncate)しますか?">
+                    すべての行を削除(truncate)
+                </x-element.linkbutton>
+            </div>
         </div>
     </div>
     <form action="{{ route('admin.crudpost') }}" method="post" id="admincrudpost">

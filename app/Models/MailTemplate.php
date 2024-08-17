@@ -44,6 +44,7 @@ class MailTemplate extends Model
             $accid = Submit::find($subid)->accept_id;
             $replacetxt["ACCNAME"] = Accept::find($accid)->name;
             $replacetxt["CATNAME"] = Category::find($p_or_u->category_id)->name;
+            $replacetxt["OWNER"] = $p_or_u->paperowner->affil." ".$p_or_u->paperowner->name." 様";
         }
         $replacetxt["CONFTITLE"] = Setting::findByIdOrName("CONFTITLE", "value");
         $replacetxt["APP_URL"] = env('APP_URL');

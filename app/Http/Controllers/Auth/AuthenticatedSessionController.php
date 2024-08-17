@@ -29,7 +29,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        // ログインしたときのデフォルト
+        // ここはデータベースにするほうがよさそう
+        return redirect()->intended(RouteServiceProvider::home());
     }
 
     /**

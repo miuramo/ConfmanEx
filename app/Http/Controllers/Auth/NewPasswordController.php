@@ -60,7 +60,8 @@ class NewPasswordController extends Controller
         $user = User::where('email', $request->input('email'))->first();
         if ($status == Password::PASSWORD_RESET) {
             Auth::login($user); // パスワード再設定後、すぐにログインさせちゃう
-            return redirect()->route('paper.create')->with('status', __($status));
+            // return redirect()->route('paper.create')->with('status', __($status));
+            return redirect()->route('vote.index')->with('status', __($status));
         } else {
             return back()->withInput($request->only('email'))
                 ->withErrors(['email' => __($status)]);

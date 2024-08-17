@@ -17,6 +17,7 @@ use App\Http\Controllers\ScoreController;
 use App\Http\Controllers\SubmitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewpointController;
+use App\Http\Controllers\VoteController;
 use App\Models\RevConflict;
 use Illuminate\Support\Facades\Route;
 
@@ -148,6 +149,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_crudcopy', [AdminController::class, 'crudcopy'])->name('admin.crudcopy');
     Route::get('/admin_cruddelete', [AdminController::class, 'cruddelete'])->name('admin.cruddelete');
     Route::get('/admin_crudnew', [AdminController::class, 'crudnew'])->name('admin.crudnew');
+    Route::get('/admin_crudtruncate', [AdminController::class, 'crudtruncate'])->name('admin.crudtruncate');
     Route::post('/admin_crud', [AdminController::class, 'crud'])->name('admin.crudpost');
     Route::post('/admin_crudpost', [AdminController::class, 'crudpost'])->name('admin.crudpost');
     Route::get('/admin_catsetting', [AdminController::class, 'catsetting'])->name('admin.catsetting');
@@ -198,9 +200,17 @@ Route::middleware('auth')->group(function () {
     Route::resource('part', ParticipantController::class);
     // Route::get('part/create', [ParticipantController::class, 'create'])->name('part.create');
 
+    // 投票結果
+    Route::get('down_voteanswers', [VoteController::class, 'download_answers'])->name('vote.download_answers');
+    Route::get('resetall_voteanswers/{isclose}', [VoteController::class, 'resetall'])->name('vote.resetall'); // すべて削除
+
 });
 
-// Route::middleware('role.dyn')->group(function(){ });
+// 投票
+Route::get('vote', [VoteController::class, 'index'])->name('vote.index');
+Route::post('vote', [VoteController::class, 'index'])->name('vote.index');
+Route::get('vote/{vote}/vote', [VoteController::class, 'vote'])->name('vote.vote');
+Route::post('vote/{vote}/vote', [VoteController::class, 'vote'])->name('vote.vote');
 
 Route::middleware('guest')->group(function () {
     Route::get('/entry', [UserController::class, 'entry0'])->name('entry0');

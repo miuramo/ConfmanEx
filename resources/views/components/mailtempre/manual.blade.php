@@ -3,7 +3,7 @@
     <div class="mx-2 my-5 flex-grow">
         雛形(subject,body)で使える埋め込み文字列
         @php
-            $a = ['PID' => 'PaperID', 'TITLE' => 'タイトル', 'ACCNAME'=>'採択Name', 'CATNAME'=>'投稿カテゴリ'];
+            $a = ['PID' => 'PaperID', 'TITLE' => 'タイトル', 'OWNER'=>'投稿者の「所属 氏名 様」', 'ACCNAME'=>'採択Name', 'CATNAME'=>'投稿カテゴリ'];
         @endphp
         <table class="border-pink-200 border-2">
             @foreach ($a as $k => $v)

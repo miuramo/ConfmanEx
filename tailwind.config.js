@@ -19,6 +19,8 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
                 monaca: ['Monacakomi', 'sans-serif'],
             },
+            backgroundColor: ['hover', 'focus'],
+            opacity: ['hover', 'focus'],
         },
     },
 

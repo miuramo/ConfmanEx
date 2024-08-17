@@ -28,6 +28,8 @@ use App\Models\Setting;
 use App\Models\Submit;
 use App\Models\User;
 use App\Models\Viewpoint;
+use App\Models\Vote;
+use App\Models\VoteItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -346,6 +348,16 @@ class AdminController extends Controller
         $eloModelName = 'App\\Models\\' . Str::studly(Str::singular($tableName)); //　studly でUpperCamelCaseにする
         if (class_exists($eloModelName)) {
             eval("{$eloModelName}::factory()->create();");
+        }
+        return redirect()->route('admin.crud', ['table' => $tableName]);
+    }
+    public function crudtruncate(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);
+        $tableName = $req->input("table");
+        $eloModelName = 'App\\Models\\' . Str::studly(Str::singular($tableName)); //　studly でUpperCamelCaseにする
+        if (class_exists($eloModelName)) {
+            eval("{$eloModelName}::truncate();");
         }
         return redirect()->route('admin.crud', ['table' => $tableName]);
     }

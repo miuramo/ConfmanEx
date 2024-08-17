@@ -62,7 +62,7 @@
                         $booth = $sub->booth;
 +                   }
                 @endphp
-                <td class="p-1">IPSJ-SSS{{$year}}_{{ $booth }}.pdf
+                <td class="p-1">IPSJ-SSS{{$year}}{{ $booth }}.pdf
                 </td>
                 <td class="p-1">
                 </td>

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Role;
+use App\Models\Setting;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -21,7 +22,15 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/paper/create';
+    // public const HOME = '/paper/create';
+    // public const HOME = '/paper';
+    // public const HOME = '/vote';
+    public static function home()
+    {
+        $redirect = Setting::findByIdOrName("REDIRECT","value");
+        if ($redirect == null) return "/paper";
+        return $redirect;
+    }
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
