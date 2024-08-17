@@ -325,7 +325,7 @@ class AdminController extends Controller
      */
     public function crudpost(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403); // Note: 出版担当もbibinfochkから修正できる。
+        if (!auth()->user()->can('role_any', 'admin|manager|pc|pub|demo')) abort(403); // Note: 出版担当もbibinfochkから修正できる。
         if ($req->input("dtype") == "tinyint") {
             $row = DB::select("SELECT `{$req->input("field")}` as field FROM {$req->input("table")} WHERE id={$req->input("data_id")} limit 1");
             $currentVal = intval($row[0]->field);
