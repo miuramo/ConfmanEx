@@ -36,6 +36,9 @@
                 'acc_id(accid1,accid2, ...)' => '採択IDの羅列',
                 'acc_judge(j1,j2, ...)' => '採択ジャッジ値の羅列',
                 'nofile(catid1,catid2,...)' => 'ファイル無し',
+                'noauthorlist(catid)' => '著者リスト未記入',
+                'oldfile(catid, "2024-07-10")' => '期日以前のファイル',
+                'nobib(catid1,catid2,...)' => '書誌情報なし(和文アブスト、和文キーワード、英文Titleのうち1つ以上)',
                 '' => '',
             ];
         @endphp

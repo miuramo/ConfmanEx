@@ -281,4 +281,59 @@ class MailTemplate extends Model
             ->toArray();
         return User::whereIn('id', $norev_userids)->get();
     }
+    /**
+     * 著者名未入力（採択分のみ）
+     */
+    public static function mt_noauthorlist($catid)
+    {
+        $papers = [];
+        $accept_ids = Accept::where('judge', '>', 0)->pluck("id")->toArray();
+        $subs = Submit::where('category_id', $catid)->whereIn('accept_id', $accept_ids)->get();
+        // info($subs);
+        foreach ($subs as $sub) {
+            if (strlen($sub->paper->authorlist) < 3) {
+                $papers[] = $sub->paper;
+            }
+        }
+        return $papers;
+    }
+    /**
+     * 書誌情報（和文アブスト、和文キーワード、英文Title）がない
+     */
+    public static function mt_nobib(...$args)
+    {
+        $accPIDs = Submit::with('paper')->whereIn("category_id", $args)->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->get()->pluck("paper_id")->toArray();
+
+        $papers = [];
+        // $cols = Paper::whereIn('category_id', $args)->whereNull("abst")->orWhereNull("keyword")->orWhereNull("etitle")->get();
+        $cols = Paper::whereIn('id', $accPIDs)
+            ->where(function ($query) {
+                $query->whereNull("abst")->orWhereNull("keyword")->orWhereNull("etitle");
+            })->get();
+        foreach ($cols as $paper) {
+            $papers[] = $paper;
+        }
+        return $papers;
+    }
+    /**
+     * 期日以前にアップされたPDFファイルのまま
+     */
+    public static function mt_oldfile($catid, $date)
+    {
+        $subs = Submit::subs_accepted($catid);
+        $pid2sub = [];
+        foreach ($subs as $sub) {
+            $pid2sub[$sub->paper->id] = $sub;
+        }
+        $files = File::whereIn('paper_id', array_keys($pid2sub))
+            ->where('valid', 1)->where('deleted', 0)
+            ->where('created_at', '<', $date)->get()->sortByDesc('created_at');
+        $papers = [];
+        foreach ($files as $file) {
+            $papers[] = Paper::find($file->paper_id);
+        }
+        return $papers;
+    }
 }

@@ -25,7 +25,7 @@ class PapersExport4Hiroba implements FromView, WithHeadings
     {
         $submits = Submit::with("accept")->with("paper")->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
-        })->whereIn("category_id", [1, 2, 3])->orderBy("orderint", "asc")->get();
+        })->whereIn("category_id", [1, 2, 3])->orderBy("category_id", "asc")->orderBy("orderint", "asc")->get();
         // 順番=orderint  submission=paper_id
 
         // pagenum array

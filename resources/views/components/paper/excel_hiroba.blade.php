@@ -22,7 +22,7 @@
     <tbody class="bg-white divide-y divide-gray-200">
         @foreach ($submits as $sub)
             <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200' : 'bg-white' }}">
-                <td class="p-1">{{ $sub->orderint }}
+                <td class="p-1">{{ $sub->category_id * 100 + $sub->orderint }}
                 </td>
                 <td class="p-1">{{ $sub->paper_id }}
                 </td>
@@ -58,7 +58,9 @@
                     if (!$sub->booth) $sub->booth = 0;
                     if (is_numeric($sub->booth)){
                         $booth = sprintf("%03d", $sub->booth);
-                    }
+                    } else {
+                        $booth = $sub->booth;
++                   }
                 @endphp
                 <td class="p-1">IPSJ-SSS{{$year}}_{{ $booth }}.pdf
                 </td>

@@ -32,12 +32,21 @@
     </div>
 
     <div class="px-4 py-4">
+        @php
+            $psessionid = 0;
+        @endphp
         @foreach ($subs as $sub)
+            @if ($psessionid != $sub->psession_id)
+                <div class="mt-4 mb-2">セッション{{$sub->psession_id}}：</div>
+            @endif
             <div>({{ $sub->booth }}) {{ $sub->paper->title }}</div>
             <div class="mx-7"> {{ $sub->paper->bibauthors($abbr) }}</div>
+            @php
+            $psessionid = $sub->psession_id;
+        @endphp
         @endforeach
 
-        <div class="mb-4">
+        <div class="my-4">
             <x-element.linkbutton href="{{ route('role.top', ['role' => 'pub']) }}" color="gray" size="sm">
                 &larr; 出版 Topに戻る
             </x-element.linkbutton>

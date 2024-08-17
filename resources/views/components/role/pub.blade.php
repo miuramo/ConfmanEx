@@ -91,7 +91,16 @@
     </x-element.h1>
 
 
+    <x-element.h1>採択論文・ファイルのタイムスタンプ
+        @foreach ($cats as $cid => $cname)
+        <span class="mx-2"></span>
+        <x-element.linkbutton2 href="{{ route('pub.fileinfochk', ['cat' => $cid]) }}" color="lime" target="_blank">
+            {{ $cname }}
+        </x-element.linkbutton2>
+        @endforeach
+    </x-element.h1>
 
+    
     <x-element.h1>採択論文・ファイルダウンロード</x-element.h1>
 
     <div class="px-6 py-0 flex">
@@ -120,7 +129,7 @@
                 </div>
                 <div>
                     ファイル名は、Prefix→ <input type="text" name="fn_prefix"
-                        value="{{ env('PUB_DL_PREFIX', 'IPSJ-SSS2024_') }}" class="p-1"> +
+                        value="{{ env('PUB_DL_PREFIX', 'IPSJ-SSS2024') }}" class="p-1"> +
                     [ブース記番].pdf になります。ファイル名が重複するため、pdf と altpdf は同時に選択しないでください。
                 </div>
 

@@ -133,7 +133,7 @@ class Paper extends Model
 
     public function files()
     {
-        return $this->hasMany(File::class, 'paper_id');
+        return $this->hasMany(File::class, 'paper_id')->where('valid',1)->where('deleted',0);
     }
 
     public function contacts()

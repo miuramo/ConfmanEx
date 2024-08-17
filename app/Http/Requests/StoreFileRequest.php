@@ -43,16 +43,16 @@ class StoreFileRequest extends FormRequest
         $file = new File();
         $uid = $file->user_id = Auth::user()->id;
         $pid = $file->paper_id = $this->input("paper_id");
+        if (Paper::getAT($uid, $pid) != 1) {
+            return redirect()->route('paper.edit', ['paper' => $pid])->with('feedback.error', "投稿者以外はアップロードできません。");
+        }
         // fnameは暫定として、一回保存して、fileid を確定する
-        $file->fname = "zantei";
+        $file->fname = "zantei.pdf";
         $file->save();
         // $hashname = sprintf("%03d", $this->input("paper_id"))."_".Auth::user()->id."_".$tmp->hashName();
         $hashname = sprintf("%03d", $this->input("paper_id")) . "_" . $file->id . "_" . $tmp->hashName();
         $tmp->storeAs(File::pf(), $hashname);
 
-        if (Paper::getAT($uid, $pid) != 1) {
-            return redirect()->route('paper.edit', ['paper' => $pid])->with('feedback.error', "投稿者以外はアップロードできません。");
-        }
         $file->fname = $hashname;
         $fullpath = storage_path(File::apf() . '/' . $hashname);
         $file->key = shell_exec("md5sum {$fullpath}");

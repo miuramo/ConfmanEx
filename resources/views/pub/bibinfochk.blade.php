@@ -70,8 +70,9 @@
 
                         <x-file.link_pdfthumb :fileid="$sub->paper->pdf_file_id" page=1></x-file.link_pdfthumb>
                         <x-file.link_pdffile :fileid="$sub->paper->pdf_file_id"></x-file.link_pdffile>
+                        @isset($sub->paper->pdf_file)
                         {{ $sub->paper->pdf_file->pagenum }} pages
-
+                        @endisset
                     </td>
                 </tr>
             </table>

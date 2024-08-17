@@ -6,6 +6,8 @@ use App\Http\Requests\StoresubmitRequest;
 use App\Http\Requests\UpdatesubmitRequest;
 use App\Models\Accept;
 use App\Models\Category;
+use App\Models\EnqueteAnswer;
+use App\Models\File;
 use App\Models\Paper;
 use App\Models\Setting;
 use App\Models\Submit;
@@ -80,24 +82,48 @@ class SubmitController extends Controller
         if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
 
         if ($req->method() === 'POST') {
-            if (!preg_match("/%[0-9]*d/", $req->input("print_format"))) return "ERROR: sprintfフォーマットを見直してください。" . $req->input("print_format");
-            $ary = json_decode($req->input("json"), true);
-            $num = 1;
-            foreach ($ary as $sessionid => $presens) { // [0=>pid1, 1=>pid2, ...]
-                foreach ($presens as $pid) {
-                    $sub = Submit::where("category_id", $catid)->where("paper_id", $pid)->first();
-                    $sub->psession_id = $sessionid;
-                    $sub->orderint = $num;
-                    if ($req->has("copy_orderint_to_booth")) $sub->booth = sprintf($req->input("print_format"), $num);
-                    $sub->save();
-                    $num++;
+            if ($req->has("json")){ // set session
+                $ary = json_decode($req->input("json"), true);
+                $num = 1;
+                foreach ($ary as $sessionid => $presens) { // [0=>pid1, 1=>pid2, ...]
+                    $in_session_num = 1;
+                    foreach ($presens as $pid) {
+                        $sub = Submit::where("category_id", $catid)->where("paper_id", $pid)->first();
+                        $sub->psession_id = $sessionid;
+                        $sub->orderint = $num;
+                        $sub->save();
+                        $num++;
+                        $in_session_num++;
+                    }
                 }
+                return "OK"; // json_encode($req->all());
+            } else {
+                if (!preg_match("/%[0-9]*d/", $req->input("print_format"))) return "ERROR: sprintfフォーマットを見直してください。" . $req->input("print_format");
+                $subs = Submit::subs_accepted($catid);
+                $num = 1 + $req->input("additional");
+                $last_session_num = -1;
+                $in_session_num = 1;
+                foreach($subs as $sub){
+                    if ($req->input("action")=="byorder"){
+                        $sub->booth = sprintf($req->input("print_format"), $num);
+                        $num++;
+                    } else if ($req->input("action")=="bysession"){
+                        $session_num = $sub->psession_id;
+                        if ($last_session_num != $session_num) {
+                            $in_session_num = 1;
+                        }
+                        $sub->booth = sprintf($req->input("print_format"), $session_num, $in_session_num);
+                        $in_session_num++;
+                        $last_session_num = $session_num;
+                    }
+                    $sub->save();
+                }
+                return redirect()->route('pub.booth', ["cat" => $catid]);
             }
-            return "OK";
         }
 
         $subs = Submit::subs_accepted($catid);
-
+        // info($subs);
         return view('pub.booth', ["cat" => $catid])->with(compact("subs"));
     }
 
@@ -153,7 +179,7 @@ class SubmitController extends Controller
                 $sub->save();
             }
             // orderint を自動で更新
-            $subs = Submit::subs_accepted($catid, "booth");    
+            $subs = Submit::subs_accepted($catid, "booth");
             $num = 1;
             foreach ($subs as $sub) {
                 $sub->orderint = $num;
@@ -181,9 +207,9 @@ class SubmitController extends Controller
             if (strpos($k, "filetype") === 0) $filetypes[] = $v;
         }
         // 採択submits→paper_id list
-        $accept_papers = Submit::with('paper')->whereIn("category_id", $targets)->whereHas("accept", function($query) {
+        $accept_papers = Submit::with('paper')->whereIn("category_id", $targets)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
-        })->orderBy("orderint")->pluck("booth","paper_id")->toArray();
+        })->orderBy("orderint")->pluck("booth", "paper_id")->toArray();
 
         $addcount_tozip = 0;
         if (count($targets) > 0) {
@@ -199,8 +225,8 @@ class SubmitController extends Controller
                 }
                 $zip->close();
 
-                if ($addcount_tozip==0){
-                    return redirect()->route('role.top',['role' => 'pub'])->with('feedback.error', 'まだ該当ファイルがないため、Zipファイルを作成できませんでした。');
+                if ($addcount_tozip == 0) {
+                    return redirect()->route('role.top', ['role' => 'pub'])->with('feedback.error', 'まだ該当ファイルがないため、Zipファイルを作成できませんでした。');
                 }
                 // Zipアーカイブをダウンロード
                 return response()->download($zipFP)->deleteFileAfterSend(true);
@@ -231,11 +257,28 @@ class SubmitController extends Controller
     {
         if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
 
-        $subs = Submit::with('paper')->where("category_id", $catid)->whereHas("accept", function($query) {
+        $subs = Submit::with('paper')->where("category_id", $catid)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
         })->orderBy("orderint")->get();
 
         return view('pub.bibinfo', ["cat" => $catid])->with(compact("subs", "catid", "abbr"));
+    }
+
+    /**
+     * ファイルのタイムスタンプ確認（カメラレディ投稿されたか？）
+     */
+    public function fileinfochk(Request $req, int $catid)
+    {
+        if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
+
+        $subs = Submit::subs_accepted($catid);
+        $pid2sub = [];
+        foreach ($subs as $sub) {
+            $pid2sub[$sub->paper->id] = $sub;
+        }
+        $files = File::whereIn('paper_id', array_keys($pid2sub))->where('valid', 1)->where('deleted', 0)->get()->sortByDesc('created_at');
+
+        return view('pub.fileinfochk', ["cat" => $catid])->with(compact("pid2sub", "files"));
     }
 
     /**
@@ -312,15 +355,30 @@ class SubmitController extends Controller
         if ($key != $downloadkey) abort(403);
 
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+
+        $enqans = EnqueteAnswer::getAnswers();
+
         $out = [];
         foreach ($cats as $catid => $cname) {
-            $subs = Submit::with('paper')->where("category_id", $catid)->where("accept_id", "<", 20)->orderBy("orderint")->get();
+            $subs = Submit::subs_accepted($catid, "orderint");
             foreach ($subs as $sub) {
                 $booth = $sub->booth;
                 //  $ary['title']
                 //  $ary['authors'] = [ "著者1" , "著者2", ...]
                 //  $ary['affils'] = [ 著者1の所属, 著者2の所属, ... ]
                 $out[$booth] = $sub->paper->bibinfo(); // title=>xxx  authors = [xxx,xxx]  affils = [xxx,xxx]
+                $out[$booth]['session'] = $sub->psession_id;
+                $out[$booth]['accept'] = $sub->accept_id;
+                $out[$booth]['category'] = $sub->category_id;
+                $out[$booth]['paperid'] = $sub->paper_id;
+
+                if (isset($enqans[$sub->paper_id])) {
+                    foreach ($enqans[$sub->paper_id] as $enqid => $ary) {
+                        foreach ($ary as $name => $val) {
+                            $out[$booth][$name] = $val;
+                        }
+                    }
+                }
             }
         }
         return json_encode($out, JSON_THROW_ON_ERROR);
