@@ -75,8 +75,9 @@ function boothpost(json) {
     var fd = new FormData();
     fd.append('_token', $('meta[name="csrf-token"]').attr("content"));
     fd.append('json', json);
-    fd.append('copy_orderint_to_booth', $('#copy_ordint_to_booth').prop('checked'));
-    fd.append('print_format', $('#print_format').val());
+    // fd.append('copy_orderint_to_booth', $('#copy_ordint_to_booth').prop('checked'));
+    // fd.append('set_booth_with_session_id', $('#set_booth_with_session_id').prop('checked'));
+    // fd.append('print_format', $('#print_format').val());
     var formDataObject = {};
     for (var pair of fd.entries()) {
         formDataObject[pair[0]] = pair[1];
