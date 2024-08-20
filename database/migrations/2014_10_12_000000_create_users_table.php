@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->comment("氏名（半角スペース区切り）");
             $table->string('affil')->nullable()->comment("所属");
-            $table->string('email')->unique();
+            $table->string('email', 191)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->integer('contact_id')->nullable();
