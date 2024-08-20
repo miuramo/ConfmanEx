@@ -22,6 +22,7 @@ use App\Observers\PaperObserver;
 use App\Observers\ScoreObserver;
 use App\Observers\UserObserver;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
