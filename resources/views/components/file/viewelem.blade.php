@@ -31,7 +31,7 @@
                     </a>
                     {{ $file->origname }}
                     <div>
-                        <span class="sm:rounded-lg bg-red-100 p-1">{{ $file->pagenum }}
+                        <span class="sm:rounded-lg bg-red-100 p-1 whitespace-nowrap">{{ $file->pagenum }}
                             @if ($file->pagenum > 1)
                                 pages
                             @else

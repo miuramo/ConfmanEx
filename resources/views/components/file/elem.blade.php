@@ -81,7 +81,7 @@
                     {{ $file->origname }}
                     &nbsp;
                     <span
-                        class="sm:rounded-lg  bg-cyan-100 p-1 dark:bg-cyan-300 dark:text-gray-500">{{ $file->pagenum }}
+                        class="sm:rounded-lg  bg-cyan-100 p-1 dark:bg-cyan-300 dark:text-gray-500 whitespace-nowrap">{{ $file->pagenum }}
                         @if ($file->pagenum > 1)
                             pages
                         @else
