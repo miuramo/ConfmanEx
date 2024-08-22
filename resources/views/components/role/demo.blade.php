@@ -30,7 +30,7 @@
             $user = App\Models\User::find(auth()->id());
         @endphp
         @foreach ($user->roles as $ro)
-            <span class="inline-block bg-slate-300 rounded-md p-1 mb-0.5">{{ $ro->desc }}
+            <span class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }}
                 ({{ $ro->name }})
             </span>
         @endforeach

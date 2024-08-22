@@ -19,7 +19,7 @@
         $fs = ['category_id', 'valid', 'locked', 'cnt'];
     @endphp
     <div class="px-4 py-4">
-        <div class="py-2">
+        <div class="py-2 dark:text-gray-400">
             凡例： <span class="bg-orange-200 px-1 hover:bg-yellow-100">アンロック状態 PaperID</span>
             <span class="bg-green-200 px-1 hover:bg-yellow-100">ロック状態 PaperID</span>
             <span class="mx-3">cntは件数(count)</span>

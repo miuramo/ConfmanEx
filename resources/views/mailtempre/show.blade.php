@@ -73,7 +73,7 @@
             @if ($count > 0)
                 送信対象は{{ $count }}件：
                 @foreach ($papers as $paper)
-                    <span class="mr-1 px-1 bg-slate-100">{{ $paper->id_03d() }}</span>
+                    <span class="mr-1 px-1 bg-slate-100 dark:bg-slate-500">{{ $paper->id_03d() }}</span>
                 @endforeach
             @else
                 送信対象はありません。to に指定できるのは、accept(catid), reject(catid), paperid(pid1,pid2, ...),

@@ -28,7 +28,7 @@
         $mimes = App\Models\File::select('mime')->distinct()->orderBy('mime')->get();
     @endphp
     <div class="px-4 py-4">
-        <div class="py-2">
+        <div class="py-2 dark:text-gray-400">
             凡例： <span class="bg-orange-200 px-1 hover:bg-yellow-100">アンロック状態 PaperID (FileId)</span>
             <span class="bg-green-200 px-1 hover:bg-yellow-100">ロック状態 PaperID (FileId)</span>
             <span class="mx-3">cntは件数(count)</span>
@@ -101,13 +101,13 @@
                     <span class="mx-2"></span>
                 @endforeach
             </div>
-            <div class="my-2 border-slate-400 border-2 bg-slate-200 p-2">
+            <div class="my-2 border-slate-400 border-2 bg-slate-200 p-2 dark:bg-gray-500">
                 <input type="checkbox" name="targetmainpdf" value="1" checked="checked" id="labelmain">
                 <label for="labelmain" class="dark:text-gray-300">メインの論文PDFファイルをロック／アンロック対象とする</label><span
                     class="mx-1"></span>
             </div>
 
-            <div class="mx-8 my-2 border-slate-400 border-2 bg-slate-200 p-2">
+            <div class="mx-8 my-2 border-slate-400 border-2 bg-slate-200 p-2 dark:bg-gray-500">
                 サプリメントファイルをロック／アンロック対象に含めるときは、以下にチェックをいれてください。<br>
                 @foreach ($mimes as $nn => $mime)
                     <input type="checkbox" name="targetmime{{ $nn }}" value="{{ $mime['mime'] }}"
@@ -122,7 +122,7 @@
                 @foreach (['すべて' => 'all', '採択のみ' => 'accepted', '不採択のみ' => 'rejected'] as $lbl => $val)
                     <input type="radio" name="targetaccept" id="id_{{ $val }}" value="{{ $val }}"
                         @if ($val == 'all') checked="checked" @endif>
-                    <label for="id_{{ $val }}">{{ $lbl }}</label>
+                    <label for="id_{{ $val }}" class="dark:text-gray-400">{{ $lbl }}</label>
                 @endforeach
                 <span class="mx-2"></span>
                 <x-element.submitbutton value="lock" color="green">ロックする

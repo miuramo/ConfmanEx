@@ -127,9 +127,9 @@
                             class="dark:text-gray-300">{{ $ft }}</label>&nbsp;
                     @endforeach
                 </div>
-                <div>
+                <div class="dark:text-gray-400">
                     ファイル名は、Prefix→ <input type="text" name="fn_prefix"
-                        value="{{ env('PUB_DL_PREFIX', 'IPSJ-SSS2024') }}" class="p-1"> +
+                        value="{{ env('PUB_DL_PREFIX', 'IPSJ-SSS2024') }}" class="p-1 dark:bg-slate-600"> +
                     [ブース記番].pdf になります。ファイル名が重複するため、pdf と altpdf は同時に選択しないでください。
                 </div>
 
@@ -152,7 +152,7 @@
         $user = App\Models\User::find(auth()->id());
     @endphp
     @foreach ($user->roles as $ro)
-        <span class="inline-block bg-slate-300 rounded-md p-1 mb-0.5">{{ $ro->desc }} ({{ $ro->name }})</span>
+        <span class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }} ({{ $ro->name }})</span>
     @endforeach
 
     <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
