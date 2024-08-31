@@ -241,12 +241,13 @@ class FileController extends Controller
         $cols = DB::select($sql1);
 
         // 個別項目
-        $sql2 = "select paper_id, files.id, mime, pagenum, files.key, " . implode(",", $fs);
+        $sql2 = "select paper_id, files.id, mime, pagenum, files.key, files.created_at, " . implode(",", $fs);
         $sql2 .= " ,category_id from files left join papers on files.paper_id = papers.id order by category_id, paper_id, " . implode(",", $fs);
         $res2 = DB::select($sql2);
         $pids = [];
         $fileids = [];
         $filekeys = [];
+        $timestamps = [];
         foreach ($res2 as $res) {
             $shortmime = explode("/", $res->mime)[1];
             if (!is_array(@$pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked])) {
@@ -261,9 +262,10 @@ class FileController extends Controller
 
             $fileids [$label] = $res->id;
             $filekeys [$label] = $res->key;
+            $timestamps[$label] = $res->created_at;
         }
 
-        return view('admin.filelock')->with(compact("cols", "pids","fileids","filekeys"));
+        return view('admin.filelock')->with(compact("cols", "pids","fileids","filekeys","timestamps"));
     }
 
     public function favicon()

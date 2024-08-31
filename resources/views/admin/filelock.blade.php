@@ -62,10 +62,10 @@
                                         target="_blank">
                                         @if ($col->locked)
                                             <span
-                                                class="bg-green-200 px-1 hover:bg-yellow-100">{{ $pid }}</span>
+                                                class="bg-green-200 px-1 hover:bg-yellow-100" >{{ $pid }}</span>
                                         @else
                                             <span
-                                                class="bg-orange-200 px-1 hover:bg-yellow-100">{{ $pid }}</span>
+                                                class="bg-orange-200 px-1 hover:bg-yellow-100" title="{{$timestamps[$pid]}}">{{ $pid }}</span>
                                         @endif
                                     </a>
                                 @endforeach
