@@ -17,16 +17,24 @@
             @php
                 $roles = App\Models\Role::where('name', 'like', '%reviewer')->get();
 
-                $nameofmeta = App\Models\Setting::findByIdOrName("NAME_OF_META","value");
+                $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META', 'value');
+
+                // 査読プロセスをまわす（査読者を割り当てる）カテゴリ
+                $cat_arrange_review = App\Models\Category::where('status__arrange_review', true)
+                    ->get()
+                    ->pluck('name', 'id')
+                    ->toArray();
             @endphp
             @foreach ($roles as $role)
                 @if ($role->users->count() > 1)
                     @foreach ($cats as $catid => $catname)
-                        <x-element.linkbutton href="{{ route('role.revassign', ['cat' => $catid, 'role' => $role]) }}"
-                            color="lime">
-                            {{ $catname }}→{{ $role->desc }}
-                        </x-element.linkbutton>
-                        <span class="mx-2"></span>
+                        @isset($cat_arrange_review[$catid])
+                            <x-element.linkbutton href="{{ route('role.revassign', ['cat' => $catid, 'role' => $role]) }}"
+                                color="lime">
+                                {{ $catname }}→{{ $role->desc }}
+                            </x-element.linkbutton>
+                            <span class="mx-2"></span>
+                        @endisset
                     @endforeach
                 @endif
             @endforeach
@@ -51,7 +59,7 @@
         <div class="saihi" id="saihimenu_cancel">（Close Menu）</div>
         <div class="saihi" id="saihimenu_99">---------------</div>
         <div class="saihi" id="saihimenu_1">一般査読者にする</div>
-        <div class="saihi" id="saihimenu_2">{{$nameofmeta}}にする</div>
+        <div class="saihi" id="saihimenu_2">{{ $nameofmeta }}にする</div>
         <div class="saihi" id="saihimenu_0">割り当て解除</div>
     </div>
 
