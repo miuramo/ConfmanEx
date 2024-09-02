@@ -8,6 +8,7 @@
 /vendor
 .env
 .env_*
+dotenv_*
 .env.testing
 .env.backup
 .env.production
