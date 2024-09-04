@@ -138,6 +138,14 @@
                                 </tr>
                             @endforeach
                         </table>
+
+                        <div class="mt-2 text-sm px-2  dark:text-gray-400">注：和文著者名の書き方は、以下の例に合わせてください。詳細は [書誌情報の設定]→[和文著者名の設定方法を表示] を参照してください。</div>
+                        <textarea id="jpex" name="jpexample" rows="3"
+                            class="inline-flex mb-1 block p-2.5 w-full text-md text-gray-900 bg-gray-200 rounded-lg border border-gray-300
+                             focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
+                              dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="投稿 太郎 (投稿大学)&#10;和布蕪 二郎 (和布蕪大学)&#10;昆布 巻子 (ダシ大学/昆布研究所)" readonly></textarea>
+        
                     </div>
                 </x-element.h1>
             </div>
