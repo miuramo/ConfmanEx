@@ -133,7 +133,7 @@ class Paper extends Model
 
     public function files()
     {
-        return $this->hasMany(File::class, 'paper_id')->where('valid',1)->where('deleted',0);
+        return $this->hasMany(File::class, 'paper_id')->where('valid', 1)->where('deleted', 0);
     }
 
     public function contacts()
@@ -373,12 +373,12 @@ class Paper extends Model
         $file_desc = Setting::findByIdOrName("FILE_DESCRIPTIONS", "value");
         $file_desc = json_decode($file_desc);
 
-        foreach ($file_desc as $ft=>$ffname) {
+        foreach ($file_desc as $ft => $ffname) {
             if (!$this->between($minnum[$ft], count($checkary[$ft]), $maxnum[$ft])) {
                 if ($minnum[$ft] == 1 && $maxnum[$ft] == 1) {
                     $errorary[] = "{$ffname}は必須です（1つのファイルのみ受け付けます）。";
                 } else {
-                    if ($minnum[$ft]==0) {
+                    if ($minnum[$ft] == 0) {
                         $errorary[] = "{$ffname}は {$maxnum[$ft]}個以下にしてください。";
                     } else {
                         $errorary[] = "{$ffname}は {$minnum[$ft]}個〜{$maxnum[$ft]}個にしてください。";
@@ -407,11 +407,38 @@ class Paper extends Model
         if ($this->pdf_file()->deleted) {
             $this->validateFiles();
             $this->refresh(); // validate reload
-            if ($this->pdf_file()->delted) {
+            if ($this->pdf_file()->deleted) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * 書誌情報のチェック。足りないものを配列で返す。
+     */
+    public function validateBibinfo()
+    {
+        // 何が必須か？は、全部から、SKIP_BIBINFOを引く。
+        // $manda = ["title", "etitle", "authorlist", "eauthorlist", "abst", "eabst", "keyword", "ekeyword"];
+        // 書誌情報の設定項目
+        $koumoku = ['title' => '和文タイトル', 'abst' => '和文アブストラクト', 
+        'keyword' => '和文キーワード', 'authorlist' => '和文著者名', 
+        'etitle' => '英文Title', 'eabst' => '英文Abstract', 
+        'ekeyword' => '英文Keyword', 'eauthorlist' => '英文Author(s)'];
+        $skip_bibinfo = Setting::findByIdOrName("SKIP_BIBINFO", "value");
+        $skip_bibinfo = json_decode($skip_bibinfo);
+        foreach ($skip_bibinfo as $key) {
+            unset($koumoku[$key]);
+        }
+        // 設定されていないものがあれば、error配列として返す。
+        $errors = [];
+        foreach($koumoku as $key=>$expr){
+            if ($this->{$key} == null || strlen($this->{$key}) < 2){
+                $errors[$key] = "書誌情報の設定から、".$expr." を入力してください。";
+            }
+        }
+        return $errors;
     }
 
 
@@ -429,7 +456,7 @@ class Paper extends Model
         $cat = Category::find($this->category_id);
         if (!$cat->extract_title) {
             // info("note: category->extract_title is 0. SKIPPING.");
-            return; 
+            return;
         }
 
         // 下処理として、改行をとりのぞく
@@ -456,8 +483,8 @@ class Paper extends Model
         }
         // SKIP_HEAD_n を適用する。（先頭にあれば、削除する
         $sets = Setting::where("name", "like", "SKIP_HEAD_%")->where("valid", true)->get();
-        foreach($sets as $set){
-            $title_candidate = str_replace($set->value,"",$title_candidate);
+        foreach ($sets as $set) {
+            $title_candidate = str_replace($set->value, "", $title_candidate);
         }
         $this->title = $title_candidate;
         $this->save();
@@ -514,7 +541,7 @@ class Paper extends Model
         $ret['affils'] = [];
         foreach ($this->authorlist_ary() as $uu) {
             $ret['authors'][] = $uu[0];
-            $ret['affils'][] = (isset($uu[1]))? $uu[1] : "未設定";
+            $ret['affils'][] = (isset($uu[1])) ? $uu[1] : "未設定";
         }
         return $ret;
     }
@@ -551,28 +578,31 @@ class Paper extends Model
         return implode("，", $ret); // カンマでつなげて出力
     }
 
-    public function writeHintFile(){
-        $txt = "pdf_file_id\t" . $this->pdf_file_id."\n";
-        $txt .= "title\t" . $this->title."\n";
-        $txt .= "titletail\t" . $this->titletail."\n";
-        $txt .= "authorhead\t" . $this->authorhead."\n";
-        $txt .= "updated\t" . date("Y-m-d_H:i:s")."\n";
+    public function writeHintFile()
+    {
+        $txt = "pdf_file_id\t" . $this->pdf_file_id . "\n";
+        $txt .= "title\t" . $this->title . "\n";
+        $txt .= "titletail\t" . $this->titletail . "\n";
+        $txt .= "authorhead\t" . $this->authorhead . "\n";
+        $txt .= "updated\t" . date("Y-m-d_H:i:s") . "\n";
 
         $this->pdf_file->writeHintFile($txt);
     }
 
-    public function pdftotext(){
+    public function pdftotext()
+    {
         if ($this->pdf_file)
-        return $this->pdf_file->getPdfText();
+            return $this->pdf_file->getPdfText();
         return "(pdftotext準備中)";
     }
-    public function title_candidate(){
-        $title = str_replace("\n","",$this->pdftotext());
+    public function title_candidate()
+    {
+        $title = str_replace("\n", "", $this->pdftotext());
         // owner name
         $owner = $this->paperowner->name;
         $pos1 = mb_strpos($title, $owner);
-        if ($pos1 > -1){
-            $title = mb_substr($title,0, $pos1);
+        if ($pos1 > -1) {
+            $title = mb_substr($title, 0, $pos1);
         }
         return $title;
     }

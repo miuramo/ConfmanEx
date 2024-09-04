@@ -300,6 +300,8 @@ class MailTemplate extends Model
     }
     /**
      * 書誌情報（和文アブスト、和文キーワード、英文Title）がない
+     * 引数：catids
+     * 採択分のみ、ということに注意。投稿時のチェックはPaper.validateBibinfo()で行う。
      */
     public static function mt_nobib(...$args)
     {

@@ -113,6 +113,22 @@
                 </div>
             </div>
 
+            @if ($cat->show_bibinfo_btn)
+            <div class="m-6">
+                <x-element.h1>
+                論文ファイルをアップロードしたあとで、 <x-element.linkbutton href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}"
+                    color="blue" size="md">
+                    書誌情報の設定
+                </x-element.linkbutton>
+                を行ってください。
+                @if ($paper->locked)
+                    <span class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、書誌情報の設定はできません。）</span>
+                @endif
+            </x-element.h1>
+            </div>
+            @endif
+
+
             <div class="m-6">
                 @foreach ($enqs['canedit'] as $enq)
                     <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-gray-400">

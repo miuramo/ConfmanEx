@@ -288,13 +288,22 @@ class PaperController extends Controller
             $fileerrors = $paper->validateFiles();
             // アンケートエラー
             $enqerrors = Enquete::validateEnquetes($paper);
+
+            $cat = Category::find($paper->category_id);
+            // 書誌情報エラー(もしshow_bibinfo_btnが1かつ、書誌情報が無い場合)
+            if ($cat->show_bibinfo_btn){
+                $biberrors = $paper->validateBibinfo();
+            } else {
+                $biberrors = [];
+            }
+            $enqerrors = array_merge($enqerrors, $biberrors);
+
             // paper->validate_accepted()でもよいが、せっかくエラーを調べたので、それを使う。
             $paper->accepted = (count($fileerrors) == 0 && count($enqerrors) == 0);
             $paper->save();
 
-            $cat = Category::find($paper->category_id);
 
-            return view("paper.edit", ["paper" => $id])->with(compact("id", "id_03d", "all", "paper", "enqs", "enqans", "fileerrors", "enqerrors","cat"));
+            return view("paper.edit", ["paper" => $id])->with(compact("id", "id_03d", "all", "paper", "enqs", "enqans", "fileerrors", "enqerrors","biberrors","cat"));
         } catch (ModelNotFoundException $ex) {
         }
     }
