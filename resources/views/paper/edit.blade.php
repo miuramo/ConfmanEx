@@ -114,17 +114,32 @@
             </div>
 
             @if ($cat->show_bibinfo_btn)
-            <div class="m-6">
-                <x-element.h1>
-                論文ファイルをアップロードしたあとで、 <x-element.linkbutton href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}"
-                    color="blue" size="md">
-                    書誌情報の設定
-                </x-element.linkbutton>
-                を行ってください。
-                @if ($paper->locked)
-                    <span class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、書誌情報の設定はできません。）</span>
-                @endif
-            </x-element.h1>
+                <div class="m-6">
+                    <x-element.h1>
+                        PDFファイルをアップロードしたあとで、 <x-element.linkbutton
+                            href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}" color="blue"
+                            size="md">
+                            書誌情報の設定
+                        </x-element.linkbutton>
+                        を行ってください。
+                        @if ($paper->locked)
+                            <span class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、書誌情報の設定はできません。）</span>
+                        @endif
+                    <div class="text-lg mt-2 ml-6 p-1 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
+                        現在設定されている書誌情報の確認
+                        {{-- <x-element.gendospan>採択後に入力</x-element.gendospan> --}}
+                    </div>
+                    <div class="text-md mx-6 mt-0">
+                        <table class="border-cyan-500 border-2">
+                            @foreach ($koumoku as $k => $v)
+                                <tr class="{{ $loop->iteration % 2 === 1 ? 'bg-cyan-50' : 'bg-white dark:bg-cyan-100' }}">
+                                    <td class="px-2 py-1">{{ $v }}</td>
+                                    <td class="px-2 py-1" id="confirm_{{ $k }}">{!! nl2br($paper->{$k}) !!}</td>
+                                </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                </x-element.h1>
             </div>
             @endif
 
@@ -200,7 +215,7 @@
                                 color="cyan" confirm="本当にメール送信しますか？">
                                 投稿完了通知メールを送信
                             </x-element.linkbutton> を押すと、投稿完了通知をメールで受け取ることができます。
-                            @if ($cat->show_bibinfo_btn)
+                            {{-- @if ($cat->show_bibinfo_btn)
                                 <div class="my-4"></div>
                                 カメラレディ投稿の締め切り時までに <x-element.linkbutton
                                     href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}" color="blue"
@@ -212,7 +227,7 @@
                                     <span
                                         class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、書誌情報の設定はできません。）</span>
                                 @endif
-                            @endif
+                            @endif --}}
                         </div>
                     @else
                         <div class="mx-5 my-5 bg-red-600 p-5 text-white font-bold text-2xl">

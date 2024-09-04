@@ -298,12 +298,23 @@ class PaperController extends Controller
             }
             $enqerrors = array_merge($enqerrors, $biberrors);
 
+            $koumoku = ['title' => '和文タイトル', 'abst' => '和文アブストラクト', 
+            'keyword' => '和文キーワード', 'authorlist' => '和文著者名', 
+            'etitle' => '英文Title', 'eabst' => '英文Abstract', 
+            'ekeyword' => '英文Keyword', 'eauthorlist' => '英文Author(s)'];
+            $skip_bibinfo = Setting::findByIdOrName("SKIP_BIBINFO", "value");
+            $skip_bibinfo = json_decode($skip_bibinfo);
+            foreach ($skip_bibinfo as $key) {
+                unset($koumoku[$key]);
+            }
+    
+
             // paper->validate_accepted()でもよいが、せっかくエラーを調べたので、それを使う。
             $paper->accepted = (count($fileerrors) == 0 && count($enqerrors) == 0);
             $paper->save();
 
 
-            return view("paper.edit", ["paper" => $id])->with(compact("id", "id_03d", "all", "paper", "enqs", "enqans", "fileerrors", "enqerrors","biberrors","cat"));
+            return view("paper.edit", ["paper" => $id])->with(compact("id", "id_03d", "all", "paper", "enqs", "enqans", "fileerrors", "enqerrors","biberrors","cat","koumoku"));
         } catch (ModelNotFoundException $ex) {
         }
     }
