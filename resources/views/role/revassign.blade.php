@@ -38,6 +38,21 @@
                     @endforeach
                 @endif
             @endforeach
+            <span class="mx-4"></span>
+            {{-- Excel出力 --}}
+            @foreach ($roles as $role)
+            @if ($role->users->count() > 1)
+                @foreach ($cats as $catid => $catname)
+                    @isset($cat_arrange_review[$catid])
+                        <x-element.linkbutton href="{{ route('role.revassign_excel', ['cat' => $catid, 'role' => $role]) }}"
+                            color="teal">
+                            {{ $catname }}→{{ $role->desc }}Excel 
+                        </x-element.linkbutton>
+                        <span class="mx-2"></span>
+                    @endisset
+                @endforeach
+            @endif
+        @endforeach
 
         </div>
     </div>

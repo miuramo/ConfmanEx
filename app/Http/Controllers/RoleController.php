@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BiddingResultExportFromView;
 use App\Exports\RoleMembersExportFromView;
 use App\Models\Category;
 use App\Models\MailTemplate;
@@ -162,6 +163,7 @@ class RoleController extends Controller
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
         return view('role.revassign', ["role" => $role, "cat" => $cat])->with(compact("reviewers", "role", "roles", "cat", "papers", "cats"));
     }
+
     public function revassignpost(Request $req, Role $role, Category $cat)
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
@@ -176,5 +178,16 @@ class RoleController extends Controller
         } else {
             return "FAILED";
         }
+    }
+
+    public function revassign_excel(Role $role, Category $cat)
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        Review::extractAllCoAuthorRigais();
+        // $reviewers = $role->users;
+        // $roles = Role::where("name", "like", "%reviewer")->get();
+        // $papers = $cat->paperswithpdf;
+        // $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+        return Excel::download(new BiddingResultExportFromView($cat, $role), "bidding_{$cat->name}.xlsx");
     }
 }

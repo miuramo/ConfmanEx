@@ -121,6 +121,8 @@ Route::middleware('auth')->group(function () {
     // 査読割り当て
     Route::get('/role/{role}/revassign/{cat}', [RoleController::class, 'revassign'])->name('role.revassign');
     Route::post('/role/{role}/revassign/{cat}', [RoleController::class, 'revassignpost'])->name('role.revassignpost');
+    // Bidding結果のExcel
+    Route::get('/role/{role}/revassign_excel/{cat}', [RoleController::class, 'revassign_excel'])->name('role.revassign_excel');
     // 査読結果
     Route::get('/reviewresult/{cat}', [ReviewController::class, 'result'])->name('review.result');
     Route::post('/reviewresult/{cat}', [ReviewController::class, 'resultpost'])->name('review.resultpost');
