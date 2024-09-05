@@ -298,16 +298,7 @@ class PaperController extends Controller
             }
             $enqerrors = array_merge($enqerrors, $biberrors);
 
-            $koumoku = ['title' => '和文タイトル', 'abst' => '和文アブストラクト', 
-            'keyword' => '和文キーワード', 'authorlist' => '和文著者名', 
-            'etitle' => '英文Title', 'eabst' => '英文Abstract', 
-            'ekeyword' => '英文Keyword', 'eauthorlist' => '英文Author(s)'];
-            $skip_bibinfo = Setting::findByIdOrName("SKIP_BIBINFO", "value");
-            $skip_bibinfo = json_decode($skip_bibinfo);
-            foreach ($skip_bibinfo as $key) {
-                unset($koumoku[$key]);
-            }
-    
+            $koumoku = Paper::mandatory_bibs();//必須書誌情報            
 
             // paper->validate_accepted()でもよいが、せっかくエラーを調べたので、それを使う。
             $paper->accepted = (count($fileerrors) == 0 && count($enqerrors) == 0);
@@ -372,12 +363,7 @@ class PaperController extends Controller
 
         $pdftext = $paper->pdf_file->getPdfText();
         // 書誌情報の設定項目
-        $koumoku = ['title' => '和文タイトル', 'abst' => '和文アブストラクト', 'keyword' => '和文キーワード', 'authorlist'=>'和文著者名', 'etitle' => '英文Title', 'eabst' => '英文Abstract', 'ekeyword' => '英文Keyword','eauthorlist'=>'英文Author(s)'];
-        $skip_bibinfo = Setting::findByIdOrName("SKIP_BIBINFO", "value");
-        $skip_bibinfo = json_decode($skip_bibinfo);
-        foreach($skip_bibinfo as $key){
-            unset($koumoku[$key]);
-        }
+        $koumoku = Paper::mandatory_bibs();
         $koumokucolor = ['title' => 'teal', 'abst' => 'teal', 'keyword' => 'teal', 'authorlist'=>'teal', 'etitle' => 'lime', 'eabst' => 'lime', 'ekeyword' => 'lime','eauthorlist'=>'lime'];
         // $pdftext = mb_ereg_replace('\n+',"\n",$pdftext);
         $reps = ["ﬁ" => "fi", "ﬀ" => "ff", "ﬃ" => "ffi"];

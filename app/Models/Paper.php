@@ -105,6 +105,19 @@ class Paper extends Model
         'deleted_at'
     ];
 
+    public static function mandatory_bibs(){
+        $koumoku = ['title' => '和文タイトル', 'abst' => '和文アブストラクト', 
+        'keyword' => '和文キーワード', 'authorlist' => '和文著者名', 
+        'etitle' => '英文Title', 'eabst' => '英文Abstract', 
+        'ekeyword' => '英文Keyword', 'eauthorlist' => '英文Author(s)'];
+        $skip_bibinfo = Setting::findByIdOrName("SKIP_BIBINFO", "value");
+        $skip_bibinfo = json_decode($skip_bibinfo);
+        foreach ($skip_bibinfo as $key) {
+            unset($koumoku[$key]);
+        }
+        return $koumoku;
+    }
+
     public function addFilesToZip(ZipArchive $zip, array $filetypes)
     {
         $count = 0;
@@ -422,15 +435,7 @@ class Paper extends Model
         // 何が必須か？は、全部から、SKIP_BIBINFOを引く。
         // $manda = ["title", "etitle", "authorlist", "eauthorlist", "abst", "eabst", "keyword", "ekeyword"];
         // 書誌情報の設定項目
-        $koumoku = ['title' => '和文タイトル', 'abst' => '和文アブストラクト', 
-        'keyword' => '和文キーワード', 'authorlist' => '和文著者名', 
-        'etitle' => '英文Title', 'eabst' => '英文Abstract', 
-        'ekeyword' => '英文Keyword', 'eauthorlist' => '英文Author(s)'];
-        $skip_bibinfo = Setting::findByIdOrName("SKIP_BIBINFO", "value");
-        $skip_bibinfo = json_decode($skip_bibinfo);
-        foreach ($skip_bibinfo as $key) {
-            unset($koumoku[$key]);
-        }
+        $koumoku = Paper::mandatory_bibs();
         // 設定されていないものがあれば、error配列として返す。
         $errors = [];
         foreach($koumoku as $key=>$expr){

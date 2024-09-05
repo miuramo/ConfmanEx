@@ -111,21 +111,7 @@
 
     <div class="m-6">
         @php
-            $koumoku = [
-                'title' => '和文タイトル',
-                'abst' => '和文アブストラクト',
-                'keyword' => '和文キーワード',
-                'authorlist' => '和文著者名',
-                'etitle' => '英文Title',
-                'eabst' => '英文Abstract',
-                'ekeyword' => '英文Keyword',
-                'eauthorlist' => '英文Author(s)',
-            ];
-            $skip_bibinfo = App\Models\Setting::findByIdOrName('SKIP_BIBINFO', 'value');
-            $skip_bibinfo = json_decode($skip_bibinfo);
-            foreach ($skip_bibinfo as $key) {
-                unset($koumoku[$key]);
-            }
+            $koumoku = \App\Models\Paper::mandatory_bibs(); 
         @endphp
         <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
             書誌情報
