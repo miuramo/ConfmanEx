@@ -76,7 +76,7 @@
             @php
                 $fts = ['pdf', 'img', 'video', 'altpdf'];
             @endphp
-            <form action="{{ route('admin.zipdownload') }}" method="post" id="admin_zipdownload">
+            <form action="{{ route('admin.zipstream') }}" method="post" id="admin_zipdownload">
                 @csrf
                 @method('post')
                 <div>

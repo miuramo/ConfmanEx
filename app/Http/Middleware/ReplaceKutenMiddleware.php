@@ -23,7 +23,7 @@ class ReplaceKutenMiddleware
 
         if ($response instanceof BinaryFileResponse) return $response;
         // レスポンスが文字列でない場合はそのまま返す
-        if (!is_string($response->content())) {
+        if (method_exists($response, 'content') === false || !is_string($response->content())) {
             return $response;
         }
 

@@ -12,6 +12,7 @@ use App\Models\Paper;
 use App\Models\Setting;
 use App\Models\Submit;
 use Illuminate\Http\Request;
+use STS\ZipStream\Facades\Zip;
 use ZipArchive;
 
 class SubmitController extends Controller
@@ -82,7 +83,7 @@ class SubmitController extends Controller
         if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
 
         if ($req->method() === 'POST') {
-            if ($req->has("json")){ // set session
+            if ($req->has("json")) { // set session
                 $ary = json_decode($req->input("json"), true);
                 $num = 1;
                 foreach ($ary as $sessionid => $presens) { // [0=>pid1, 1=>pid2, ...]
@@ -103,11 +104,11 @@ class SubmitController extends Controller
                 $num = 1 + $req->input("additional");
                 $last_session_num = -1;
                 $in_session_num = 1;
-                foreach($subs as $sub){
-                    if ($req->input("action")=="byorder"){
+                foreach ($subs as $sub) {
+                    if ($req->input("action") == "byorder") {
                         $sub->booth = sprintf($req->input("print_format"), $num);
                         $num++;
-                    } else if ($req->input("action")=="bysession"){
+                    } else if ($req->input("action") == "bysession") {
                         $session_num = $sub->psession_id;
                         if ($last_session_num != $session_num) {
                             $in_session_num = 1;
@@ -216,23 +217,17 @@ class SubmitController extends Controller
             // find Target Papers
             $papers = Paper::whereIn('id', array_keys($accept_papers))->get();
             $zipFN = 'files.zip';
-            $zipFP = storage_path('app/' . $zipFN);
-            $zip = new ZipArchive();
-            if ($zip->open($zipFP, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
-                foreach ($papers as $paper) {
-                    $paper->addFilesToZip_ForPub($zip, $filetypes, $req->input("fn_prefix") . $accept_papers[$paper->id]);
-                    $addcount_tozip++;
-                }
-                $zip->close();
-
-                if ($addcount_tozip == 0) {
-                    return redirect()->route('role.top', ['role' => 'pub'])->with('feedback.error', 'まだ該当ファイルがないため、Zipファイルを作成できませんでした。');
-                }
-                // Zipアーカイブをダウンロード
-                return response()->download($zipFP)->deleteFileAfterSend(true);
-            } else {
-                return response()->json(['message' => 'Zipファイルを作成できませんでした。'], 500);
+            $zipstream = Zip::create($zipFN);
+            foreach ($papers as $paper) {
+                $paper->addFilesToZip_ForPub($zipstream, $filetypes, $req->input("fn_prefix") . $accept_papers[$paper->id]);
+                $addcount_tozip++;
             }
+
+            if ($addcount_tozip == 0) {
+                return redirect()->route('role.top', ['role' => 'pub'])->with('feedback.error', 'まだ該当ファイルがないため、Zipファイルを作成できませんでした。');
+            }
+            // Zipアーカイブをダウンロード
+            return $zipstream;
         }
         return response()->json(['message' => 'ここは実行されない。'], 500);
         // return view('admin.zipdownload')->with(compact("targets","filetypes"));

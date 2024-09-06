@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use STS\ZipStream\Builder;
+use STS\ZipStream\Models\File as ZipFile;
 use ZipArchive;
 
 /**
@@ -130,19 +132,32 @@ class Paper extends Model
         }
         return $count;
     }
-    public function addFilesToZip_ForPub(ZipArchive $zip, array $filetypes, string $fn)
+    // https://github.com/stechstudio/laravel-zipstream を使用
+    public function addFilesToZipStream(Builder $zip, array $filetypes)
     {
         $count = 0;
         foreach ($filetypes as $ft) {
             $fti = "{$ft}_file_id"; // file_id for $ft (filetype)
             $file = File::find($this->{$fti});
             if ($file == null) continue;
-            $zip->addFile($file->fullpath(), $fn . "." . $file->extension());
+            $zip->add(ZipFile::make($file->fullpath(), $this->id_03d() . "_{$ft}." . $file->extension()));
             $count++;
         }
         return $count;
     }
-
+    // こちらも https://github.com/stechstudio/laravel-zipstream を使用
+    public function addFilesToZip_ForPub(Builder $zip, array $filetypes, string $fn)
+    {
+        $count = 0;
+        foreach ($filetypes as $ft) {
+            $fti = "{$ft}_file_id"; // file_id for $ft (filetype)
+            $file = File::find($this->{$fti});
+            if ($file == null) continue;
+            $zip->add(ZipFile::make($file->fullpath(), $fn . "." . $file->extension()));
+            $count++;
+        }
+        return $count;
+    }
 
     public function files()
     {

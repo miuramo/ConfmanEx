@@ -11,7 +11,8 @@
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
-        "maatwebsite/excel": "^3.1"
+        "maatwebsite/excel": "^3.1",
+        "stechstudio/laravel-zipstream": "^5.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
-
+use STS\ZipStream\Facades\Zip;
 use ZipArchive;
 
 class AdminController extends Controller
@@ -145,6 +145,33 @@ class AdminController extends Controller
     /**
      * ZIP file download for PC
      */
+    public function zipdownloadstream(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        // Formからのカテゴリ選択を配列にいれる
+        $targets = [];
+        $filetypes = []; // pdf, video, img, altpdf
+        foreach ($req->all() as $k => $v) {
+            if (strpos($k, "targetcat") === 0) $targets[] = $v;
+            if (strpos($k, "filetype") === 0) $filetypes[] = $v;
+        }
+        if (count($targets) > 0) {
+            // find Target Papers
+            $papers = Paper::whereIn('category_id', $targets)->get();
+            $zipFN = 'files.zip';
+            $zipstream = Zip::create($zipFN);
+            foreach ($papers as $paper) {
+                $paper->addFilesToZipStream($zipstream, $filetypes);
+            }
+            // Zipアーカイブをストリーミングでダウンロード
+            return $zipstream;
+        }
+        return response()->json(['message' => 'ここは実行されない。'], 500);
+        // return view('admin.zipdownload')->with(compact("targets","filetypes"));
+    }
+    /**
+     * ZIP file download for PC
+     */
     public function zipdownload(Request $req)
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
@@ -176,6 +203,8 @@ class AdminController extends Controller
         return response()->json(['message' => 'ここは実行されない。'], 500);
         // return view('admin.zipdownload')->with(compact("targets","filetypes"));
     }
+
+
 
     /**
      * ファイルの状況を表示する。また、ロックをしたり、解除したりする。
@@ -399,8 +428,19 @@ class AdminController extends Controller
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         $coldetails = $this->column_details('categories');
         if ($req->has("toukou")) { // 投稿関係
-            $ary = ['name', 'pdf_page_min', 'pdf_page_max', 'pdf_accept_start', 'pdf_accept_end',
-             'pdf_accept_revise', 'openstart', 'openend', 'upperlimit','show_bibinfo_btn','extract_title'];
+            $ary = [
+                'name',
+                'pdf_page_min',
+                'pdf_page_max',
+                'pdf_accept_start',
+                'pdf_accept_end',
+                'pdf_accept_revise',
+                'openstart',
+                'openend',
+                'upperlimit',
+                'show_bibinfo_btn',
+                'extract_title'
+            ];
             $cold2 = [];
             foreach ($ary as $f) {
                 $cold2[$f] = $coldetails[$f];
@@ -408,7 +448,7 @@ class AdminController extends Controller
             $coldetails = $cold2;
             $title = "投稿受付管理";
         } else if ($req->has("mandatoryfile")) { // 必須ファイル関係
-            $ary = ['name', 'accept_video','accept_pptx','accept_img','img_max_width','img_max_height','accept_altpdf','altpdf_page_min','altpdf_page_max'];
+            $ary = ['name', 'accept_video', 'accept_pptx', 'accept_img', 'img_max_width', 'img_max_height', 'accept_altpdf', 'altpdf_page_min', 'altpdf_page_max'];
             $cold2 = [];
             foreach ($ary as $f) {
                 $cold2[$f] = $coldetails[$f];
@@ -416,7 +456,7 @@ class AdminController extends Controller
             $coldetails = $cold2;
             $title = "サプリメントファイル受付管理";
         } else if ($req->has("leadtext")) { // 必須ファイル関係
-            $ary = ['name', 'leadtext','midtext'];
+            $ary = ['name', 'leadtext', 'midtext'];
             $cold2 = [];
             foreach ($ary as $f) {
                 $cold2[$f] = $coldetails[$f];
@@ -505,9 +545,18 @@ class AdminController extends Controller
     public function check_exefiles()
     {
         $in = [
-            "pdftoppm -v", "convert -version", "md5sum --version", "file -v", "pdfinfo -v", "node -v", "npm -v",
+            "pdftoppm -v",
+            "convert -version",
+            "md5sum --version",
+            "file -v",
+            "pdfinfo -v",
+            "node -v",
+            "npm -v",
             "ffmpeg -version",
-            "composer -V", "tesseract -v", "tesseract --list-langs", "php -i"
+            "composer -V",
+            "tesseract -v",
+            "tesseract --list-langs",
+            "php -i"
         ];
         $out = [];
         foreach ($in as $com) {
