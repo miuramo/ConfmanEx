@@ -43,10 +43,11 @@
                                 {{ $mt->id }}
                             </td>
                             <td class="px-2 py-1">
-                                {{ $mt->to }}
+                                <a class="hover:font-bold hover:text-blue-600" href="{{ route('admin.crud', ['table' => 'mail_templates', 'row' => $mt->id])}}" target="_blank">
+                                    {{ $mt->to }}</a>
                             </td>
                             <td class="px-2 py-1">
-                                {{ $mt->subject }}
+                                <a class="hover:font-bold hover:text-lime-600" href="{{ route('mt.show', ['mt' => $mt]) }}">{{ $mt->subject }}</a>
                             </td>
                             <td class="px-2 py-1">
                                 {{ $mt->name }}
@@ -76,7 +77,11 @@
                 </tbody>
             </table>
             <div class="mt-2">
-                <x-element.submitbutton value="delete" color="red">
+                <x-element.submitbutton value="copy" color="yellow">
+                    チェックをいれた雛形をコピー
+                </x-element.submitbutton>
+                <span class="mx-2"></span>
+                <x-element.submitbutton value="delete" color="red" confirm="本当に削除する？">
                     チェックをいれた雛形を削除
                 </x-element.submitbutton>
             </div>

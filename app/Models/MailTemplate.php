@@ -44,7 +44,7 @@ class MailTemplate extends Model
             $accid = Submit::find($subid)->accept_id;
             $replacetxt["ACCNAME"] = Accept::find($accid)->name;
             $replacetxt["CATNAME"] = Category::find($p_or_u->category_id)->name;
-            $replacetxt["OWNER"] = $p_or_u->paperowner->affil." ".$p_or_u->paperowner->name." 様";
+            $replacetxt["OWNER"] = $p_or_u->paperowner->affil . " " . $p_or_u->paperowner->name . " 様";
         }
         $replacetxt["CONFTITLE"] = Setting::findByIdOrName("CONFTITLE", "value");
         $replacetxt["APP_URL"] = env('APP_URL');
@@ -111,6 +111,17 @@ class MailTemplate extends Model
         $papers = $this->handle_to();
         if (isset($papers)) return count($papers);
         return 0;
+    }
+
+    /**
+     * 雛形のコピーを作成
+     */
+    public static function makecopy(int $mtid)
+    {
+        $mt = MailTemplate::find($mtid);
+        $newmt = $mt->replicate(); // copy data
+        $newmt->save();
+        return $newmt;
     }
 
     /**

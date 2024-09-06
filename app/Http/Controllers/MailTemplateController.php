@@ -92,25 +92,36 @@ class MailTemplateController extends Controller
         //
     }
     /**
-     * まとめて削除
+     * まとめてコピー、または削除
      */
     public function bundle(Request $req)
     {
-        if ($req->has("action") && $req->input("action") == "delete") {
-            // valueがonの要素をあつめる。mt_{mtid}になっているので、とりだす。
-            $targetmts = [];
-            foreach ($req->all() as $k => $v) {
-                if ($v == 'on' && strpos($k, 'mt_') === 0) {
-                    $mtid = explode("_", $k)[1];
-                    if (is_numeric($mtid)) $targetmts[] = $mtid;
-                }
+        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
+        // valueがonの要素をあつめる。mt_{mtid}になっているので、とりだす。
+        $targetmts = [];
+        foreach ($req->all() as $k => $v) {
+            if ($v == 'on' && strpos($k, 'mt_') === 0) {
+                $mtid = explode("_", $k)[1];
+                if (is_numeric($mtid)) $targetmts[] = $mtid;
             }
-            if (count($targetmts) > 0) {
-                foreach($targetmts as $mtid){
-                    MailTemplate::destroy($mtid);
-                }
-            }
-            return redirect()->route('mt.index')->with('feedback.success', "メール雛形を削除しました。");
         }
+        if ($req->has("action")) {
+            if ($req->input("action") == "delete") {
+                if (count($targetmts) > 0) {
+                    foreach ($targetmts as $mtid) {
+                        MailTemplate::destroy($mtid);
+                    }
+                    return redirect()->route('mt.index')->with('feedback.success', "メール雛形を削除しました。");
+                }
+            } else if ($req->input("action") == "copy") {
+                if (count($targetmts) > 0) {
+                    foreach ($targetmts as $mtid) {
+                        MailTemplate::makecopy($mtid);
+                    }
+                    return redirect()->route('mt.index')->with('feedback.success', "メール雛形をコピーしました。");
+                }
+            }
+        }
+        return redirect()->route('mt.index')->with('feedback.error', "メール雛形を選択してから操作してください。");
     }
 }
