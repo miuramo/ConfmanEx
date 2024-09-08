@@ -6,10 +6,31 @@
                 &larr; 査読者Topに戻る
             </x-element.linkbutton>
         </div>
+        @php
+            $catspans = App\Models\Category::spans();
+            $revon = App\Models\Category::select('id', 'status__revedit_on')
+                ->get()
+                ->pluck('status__revedit_on', 'id')
+                ->toArray();
+            $revoff = App\Models\Category::select('id', 'status__revedit_off')
+                ->get()
+                ->pluck('status__revedit_off', 'id')
+                ->toArray();
+
+            // 査読掲示板On
+            $revbbon = App\Models\Category::select('id', 'status__revbb_on')
+                ->get()
+                ->pluck('status__revbb_on', 'id')
+                ->toArray();
+
+            $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META', 'value');
+        @endphp
+
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
 
             {{ __('担当査読論文一覧') }}
-
+            <span class="mx-2"></span>
+            {!! $catspans[$cat_id] !!}
 
         </h2>
     </x-slot>
@@ -24,34 +45,13 @@
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
 
-    @php
-        $catspans = App\Models\Category::spans();
-        $revon = App\Models\Category::select('id', 'status__revedit_on')
-            ->get()
-            ->pluck('status__revedit_on', 'id')
-            ->toArray();
-        $revoff = App\Models\Category::select('id', 'status__revedit_off')
-            ->get()
-            ->pluck('status__revedit_off', 'id')
-            ->toArray();
-
-        // 査読掲示板On
-        $revbbon = App\Models\Category::select('id', 'status__revbb_on')
-            ->get()
-            ->pluck('status__revbb_on', 'id')
-            ->toArray();
-
-        $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META', 'value');
-    @endphp
 
     <div class="py-4 px-6  dark:text-gray-400">
-        @foreach ($cats as $cat)
-            @if ($revon[$cat->id] && count($revbycat[$cat->id]) > 0)
-                <x-element.linkbutton href="{{ route('review.downzip', ['cat' => $cat]) }}" color="yellow">
-                    担当査読論文ファイルをダウンロード ({{ $cat->name }})
-                </x-element.linkbutton>
-            @endif
-        @endforeach
+        @if ($revon[$cat_id] && count($reviews) > 0)
+            <x-element.linkbutton href="{{ route('review.downzip', ['cat' => $cat_id]) }}" color="yellow">
+                担当査読論文ファイルをダウンロード ({{ $cat->name }})
+            </x-element.linkbutton>
+        @endif
         @if (count($reviews) > 0)
         @else
             担当査読論文はまだありません。
@@ -60,7 +60,7 @@
 
     <div class="py-2 px-6">
 
-        <div id="revlist" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div id="revlist" class="grid sm:grid-cols-2 lg:grid-cols-2 gap-4">
 
             @foreach ($reviews as $rev)
                 @if ($revon[$rev->category_id])
@@ -71,6 +71,7 @@
                     @endif
                     <x-element.paperid size=1 :paper_id="$rev->paper->id">
                     </x-element.paperid>
+                    <span class="mx-2"></span>
 
                     @if (!$revoff[$rev->category_id])
                         @if ($rev->ismeta)
@@ -87,13 +88,13 @@
                             View
                         </x-element.linkbutton>
                     @endif
+                    <span class="mx-2"></span>
 
                     @if ($revbbon[$rev->paper->category_id])
                         <x-element.bblink :rev="$rev">
                         </x-element.bblink>
+                        <span class="mx-2"></span>
                     @endif
-
-                    {!! $catspans[$rev->paper->category_id] !!}
 
                     @if ($rev->status == 2)
                         <span class="inline-block border-2 border-blue-600 p-0.5 text-blue-600 font-bold text-sm">
@@ -107,6 +108,8 @@
                         @else
                             <a href="{{ route('review.show', ['review' => $rev]) }}">
                         @endif
+                        {{-- <a href="{{ route('file.altimgshow', ['file' => $rev->paper->pdf_file_id, 'hash' => substr($rev->paper->pdf_file->key, 0, 8)]) }}"
+                                target="_blank"> --}}
                     @endif
                     <x-file.paperheadimg :paper="$rev->paper">
                     </x-file.paperheadimg>
@@ -114,11 +117,11 @@
                         </a>
                     @endif
 
-                    {{-- <div class="text-sm mt-2 ml-2">
+                    <div class="text-sm mt-2 ml-2">
                         {{-- まず、showonreviewerindex アンケートをあつめる。 --}}
-                        {{-- <x-enquete.Rev_enqview :rev="$rev">
-                        </x-enquete.Rev_enqview> --}}
-                    {{-- </div> --}} 
+                        <x-enquete.Rev_enqview :rev="$rev">
+                        </x-enquete.Rev_enqview>
+                    </div>
         </div>
         @endif
         @endforeach

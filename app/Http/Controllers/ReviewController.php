@@ -74,6 +74,24 @@ class ReviewController extends Controller
         return view("review.index")->with(compact("reviews", "revbycat", "cats"));
         //
     }
+    /**
+     * Display a listing of the resource.
+     */
+    public function indexcat($cat_id)
+    {
+        if (!auth()->user()->can('role', 'reviewer')) return abort(403);
+        if (!is_numeric($cat_id)) return abort(404);
+        $reviews = Review::where("user_id", auth()->user()->id)->where("category_id",$cat_id)->orderBy("paper_id")->get();
+        // $revbycat = [];
+        $cat = Category::find($cat_id);
+        // foreach ($cats as $cat) {
+        //     $revbycat[$cat->id] = Review::where("user_id", auth()->user()->id)->where("category_id", $cat->id)->orderBy("paper_id")->get();
+        // }
+        // 査読掲示板URLの生成は、index のなかで、必要があればrevからcomponentをよびだす
+
+        return view("review.indexcat")->with(compact("reviews", "cat","cat_id"));
+        //
+    }
 
     /**
      * 査読結果 reviewresult

@@ -18,6 +18,10 @@
         ->get()
         ->pluck('status__revedit_on', 'id')
         ->toArray();
+    $revoff = App\Models\Category::select('id', 'status__revedit_off')
+        ->get()
+        ->pluck('status__revedit_off', 'id')
+        ->toArray();
     // 査読結果スコア一覧
     $revlist = App\Models\Category::select('id', 'status__revlist_on')
         ->get()
@@ -66,6 +70,19 @@
             <x-element.linkbutton href="{{ route('review.index') }}" color="lime">
                 査読を担当していただく投稿の一覧
             </x-element.linkbutton>
+        </div>
+        <div class="px-6 py-2 pb-6">
+            @foreach ($cats as $n => $cat)
+                @isset($cat_arrange_review[$n])
+                    @if ($revon[$n])
+                        <x-element.linkbutton href="{{ route('review.indexcat', ['cat' => $n]) }}" color="lime">
+                             {{ $cat }}のみ
+                        </x-element.linkbutton> <span class="mx-2"></span>
+                    @else
+                        <div class="p-1 pt-3 text-gray-400">{{ $cat }}の利害表明 / Bidding は、まだ開始していません。</div>
+                    @endif
+                @endisset
+            @endforeach
         </div>
     @else
         <div class="m-2 p-2 text-gray-400">まだ査読割り当て作業中、または査読開始前です</div>
