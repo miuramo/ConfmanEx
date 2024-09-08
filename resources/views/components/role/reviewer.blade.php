@@ -28,6 +28,12 @@
         ->pluck('status__revlist_on', 'id')
         ->toArray();
 
+    $count_revassigned = App\Models\Review::select(DB::raw('count(id) as count, category_id'))
+        ->where('user_id', auth()->user()->id)
+        ->groupBy('category_id')
+        ->get()
+        ->pluck('count', 'category_id');
+
 @endphp
 <!-- components.role.reviewer -->
 <div class="px-6 py-4">
@@ -75,13 +81,18 @@
             @foreach ($cats as $n => $cat)
                 @isset($cat_arrange_review[$n])
                     @if ($revon[$n])
-                        <x-element.linkbutton href="{{ route('review.indexcat', ['cat' => $n]) }}" color="lime">
-                             {{ $cat }}のみ
-                        </x-element.linkbutton> <span class="mx-2"></span>
+                        @if(isset($count_revassigned[$n]) && $count_revassigned[$n] > 0)
+                            <x-element.linkbutton href="{{ route('review.indexcat', ['cat' => $n]) }}" color="lime">
+                                {{ $cat }}のみの一覧
+                            </x-element.linkbutton>
+                        @else
+                            <span class="p-1 pt-3 text-gray-400">{{ $cat }}の査読担当はありません</span>
+                        @endisset
                     @else
-                        <div class="p-1 pt-3 text-gray-400">{{ $cat }}の査読は、まだ開始していません。</div>
+                        <span class="p-1 pt-3 text-gray-400">{{ $cat }}の査読開始前です</span>
                     @endif
                 @endisset
+                <span class="mx-2"></span>
             @endforeach
         </div>
     @else
