@@ -79,7 +79,7 @@
                              {{ $cat }}のみ
                         </x-element.linkbutton> <span class="mx-2"></span>
                     @else
-                        <div class="p-1 pt-3 text-gray-400">{{ $cat }}の利害表明 / Bidding は、まだ開始していません。</div>
+                        <div class="p-1 pt-3 text-gray-400">{{ $cat }}の査読は、まだ開始していません。</div>
                     @endif
                 @endisset
             @endforeach
