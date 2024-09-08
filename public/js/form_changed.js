@@ -38,34 +38,41 @@ function changed(formName, name) {
     });
 }
 
+function validateAndSubmit4NumberInput(input) {
+    // このままでは、min〜max外の値も送信してしまうので、
+    // 入力値を取得
+    let value = parseInt(input.value);
+    // min と max の値を取得
+    const min = parseInt(input.getAttribute('min'));
+    const max = parseInt(input.getAttribute('max'));
+
+    // min と max の範囲に収める
+    if (value < min) {
+        value = min;
+    } else if (value > max) {
+        value = max;
+    }
+    input.value = value;
+
+    // changeイベントを擬似的に発火させる
+    const changeEvent = new Event('change', {
+        bubbles: true,
+        cancelable: true
+    });
+    input.dispatchEvent(changeEvent);
+}
+
 const numberInputs = document.querySelectorAll('input[type="number"]');
 // 各 <input type="number"> 要素に対してイベントリスナーを追加
 numberInputs.forEach(input => {
     input.addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-
-            // このままでは、min〜max外の値も送信してしまうので、
-            // 入力値を取得
-            let value = parseInt(input.value);
-            // min と max の値を取得
-            const min = parseInt(input.getAttribute('min'));
-            const max = parseInt(input.getAttribute('max'));
-
-            // min と max の範囲に収める
-            if (value < min) {
-                value = min;
-            } else if (value > max) {
-                value = max;
-            }
-            input.value = value;
-
-            // changeイベントを擬似的に発火させる
-            const changeEvent = new Event('change', {
-                bubbles: true,
-                cancelable: true
-            });
-            input.dispatchEvent(changeEvent);
+            validateAndSubmit4NumberInput(input);
         }
+    });
+    input.addEventListener('blur', function (event) {
+        event.preventDefault();
+        validateAndSubmit4NumberInput(input);
     });
 });
