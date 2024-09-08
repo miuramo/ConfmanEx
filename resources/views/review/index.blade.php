@@ -50,6 +50,7 @@
                 <x-element.linkbutton href="{{ route('review.downzip', ['cat' => $cat]) }}" color="yellow">
                     担当査読論文ファイルをダウンロード ({{ $cat->name }})
                 </x-element.linkbutton>
+                <span class="mx-2"></span>
             @endif
         @endforeach
         @if (count($reviews) > 0)
