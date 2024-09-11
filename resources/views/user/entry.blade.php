@@ -54,7 +54,8 @@
             </ol>
 
             @php
-                $tutorial_url = App\Models\Setting::findByIdOrName('TUTORIAL_URL', 'value');
+                $tutorial_url_obj = App\Models\Setting::findByIdOrName('TUTORIAL_URL');
+                if ($tutorial_url_obj->valid) $tutorial_url = $tutorial_url_obj->value;
             @endphp
             @isset($tutorial_url)
             <div class="mt-4">
