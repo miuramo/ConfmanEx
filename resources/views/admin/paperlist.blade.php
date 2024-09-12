@@ -63,7 +63,6 @@
     <div class="mx-10 py-4">
         <x-admin.papertable :all="$all" :enqans="$enqans">
         </x-admin.papertable>
-
     </div>
 
 </x-app-layout>

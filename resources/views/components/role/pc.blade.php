@@ -65,11 +65,15 @@
                         &nbsp;
                     @endforeach
                 </div>
-                <x-element.submitbutton value="view" color="green">↑選択カテゴリの投稿論文リスト
+                <x-element.submitbutton value="view" color="green">↑ 選択カテゴリの投稿論文リスト
                 </x-element.submitbutton><br>
-                <x-element.submitbutton value="excel" color="teal">↑選択カテゴリのExcel Download
+                <x-element.submitbutton value="excel" color="teal">↑ 選択カテゴリのExcel Download
                 </x-element.submitbutton>
             </form>
+            <div class="py-1"></div>
+            <x-element.linkbutton2 href="{{ route('admin.deletepaper',['cat'=>1]) }}" color="yellow">
+                投稿とファイルの状況（削除済みを含む）
+            </x-element.linkbutton2>
         </div>
 
         <div class="px-2 py-2 flex-grow">
@@ -96,7 +100,7 @@
                     @endforeach
                 </div>
 
-                <x-element.submitbutton value="view" color="yellow">↑選択したファイルをDownload
+                <x-element.submitbutton value="view" color="yellow">↑ 選択したファイルをDownload
                 </x-element.submitbutton>
             </form>
 

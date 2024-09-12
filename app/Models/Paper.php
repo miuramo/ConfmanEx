@@ -191,6 +191,18 @@ class Paper extends Model
     {
         return $this->belongsTo(File::class, 'pdf_file_id');
     }
+    public function img_file()
+    {
+        return $this->belongsTo(File::class, 'img_file_id');
+    }
+    public function video_file()
+    {
+        return $this->belongsTo(File::class, 'video_file_id');
+    }
+    public function altpdf_file()
+    {
+        return $this->belongsTo(File::class, 'altpdf_file_id');
+    }
     public function enqans()
     {
         return $this->hasMany(EnqueteAnswer::class, 'paper_id');
@@ -332,6 +344,11 @@ class Paper extends Model
     {
         $this->contacts()->detach(); //belongsToManyリレーションを削除する
         Paper::destroy($this->id);
+    }
+
+    public function softdelete_me()
+    {
+        $this->delete();
     }
 
     /**

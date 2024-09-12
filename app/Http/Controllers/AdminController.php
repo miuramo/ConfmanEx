@@ -131,6 +131,33 @@ class AdminController extends Controller
     }
 
     /**
+     * 指定したPaper、および関連付けされたファイルを、論理削除する。また、ファイル状況を確認する。
+     */
+    public function deletepaper(int $cat_id, Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        $all = Paper::withTrashed()->where("category_id", $cat_id)->orderBy('deleted_at', 'asc')->orderBy('id')->get();
+        if ($req->has("action") ) {
+            foreach ($req->input("pid") as $n => $pid) {
+                $paper = Paper::withTrashed()->find($pid);
+                if ($paper != null) {
+                    if ($req->input("action") == "revoke"){
+                        $paper->deleted_at = null;
+                        $paper->save();
+                        $mes = "復活";
+                    } else if ($req->input("action") == "delete"){
+                        $paper->softdelete_me();
+                        $mes = "論理削除";
+                    }
+                }
+            }
+            return redirect()->route('admin.deletepaper', ['cat' => $cat_id])->with('feedback.success', '投稿を'.$mes.'しました');
+        }
+        return view('admin.deletepaper')->with(compact("all", "cat_id"));
+    }
+
+
+    /**
      * 情報学広場
      */
     public function hiroba_excel()
@@ -501,6 +528,8 @@ class AdminController extends Controller
         User::onlyTrashed()->whereNotNull('id')->forceDelete();
         return redirect()->route('admin.dashboard')->with('feedback.success', 'User softDeleted を完全削除しました');
     }
+
+
     /**
      * 投稿をすべてリセットする。ファイルも消す。ログも消す。
      */
