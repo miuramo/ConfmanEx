@@ -5,7 +5,8 @@
     @endphp
     <x-slot name="header">
         <div class="mb-4">
-            <x-element.linkbutton href="{{ route('review.index') }}" color="gray" size="sm">
+            <x-element.linkbutton href="{{ route('review.indexcat', ['cat' => $review->paper->category_id]) }}"
+                color="gray" size="sm">
                 &larr; 担当査読一覧に戻る
             </x-element.linkbutton>
         </div>
@@ -14,8 +15,8 @@
             @php
                 $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META', 'value');
             @endphp
-            @if($review->ismeta)
-                {{$nameofmeta}}
+            @if ($review->ismeta)
+                {{ $nameofmeta }}
             @endif
             {{ __('査読（編集）') }}
 
@@ -32,7 +33,7 @@
     <div class="py-2 px-6">
         <x-element.h1>コメント欄を空にすると <span class="text-red-600 font-extrabold">(未入力)</span>
             となります。<b>未入力が一つでもあると査読未完了として扱われます。未入力を避けるため、一言でもよいのでなにか書いてください。</b><br>
-        各項目は、編集後フォーカスを外すと緑色にフラッシュして自動保存されます。本当に保存されたかどうか確認したいときはページを再読み込みしてください。（フォーム全体の保存ボタンはありません。）
+            各項目は、編集後フォーカスを外すと緑色にフラッシュして自動保存されます。本当に保存されたかどうか確認したいときはページを再読み込みしてください。（フォーム全体の保存ボタンはありません。）
         </x-element.h1>
 
         <table class="table-auto">
@@ -76,7 +77,8 @@
         </div>
 
         <div class="mb-4 my-10">
-            <x-element.linkbutton href="{{ route('review.index') }}" color="gray" size="sm">
+            <x-element.linkbutton href="{{ route('review.indexcat', ['cat' => $review->paper->category_id]) }}"
+                color="gray" size="sm">
                 &larr; 担当査読一覧に戻る
             </x-element.linkbutton>
         </div>
