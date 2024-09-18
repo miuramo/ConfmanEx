@@ -105,8 +105,8 @@
                     @if ($rev->paper->pdf_file_id != null)
                         @if (!$revoff[$rev->category_id])
                             <a href="{{ route('review.edit', ['review' => $rev]) }}">
-                        @else
-                            <a href="{{ route('review.show', ['review' => $rev]) }}">
+                            @else
+                                <a href="{{ route('review.show', ['review' => $rev]) }}">
                         @endif
                         {{-- <a href="{{ route('file.altimgshow', ['file' => $rev->paper->pdf_file_id, 'hash' => substr($rev->paper->pdf_file->key, 0, 8)]) }}"
                                 target="_blank"> --}}
@@ -131,6 +131,9 @@
             &larr; 査読者Topに戻る
         </x-element.linkbutton>
     </div>
+    <div class="mb-4 my-10">
+        <x-review.myscores :cat_id="$cat_id">
+        </x-review.myscores>
     </div>
     @push('localjs')
         <script src="/js/jquery.min.js"></script>
