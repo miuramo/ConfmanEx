@@ -431,11 +431,13 @@ class PaperController extends Controller
             if ($req->has('action')) { // action is lock or unlock
                 foreach ($req->all() as $k => $v) {
                     if (strpos($k, "targetcat") === 0) {
-                        $papers = Paper::where("category_id", $v)->get();
-                        foreach ($papers as $paper) {
-                            $paper->locked = ($req->input('action') === 'lock');
-                            $paper->save();
-                        }
+                        DB::transaction(function () use ($req, $v) {
+                            $papers = Paper::where("category_id", $v)->get();
+                            foreach ($papers as $paper) {
+                                $paper->locked = ($req->input('action') === 'lock');
+                                $paper->save();
+                            }
+                        });
                     }
                 }
             }

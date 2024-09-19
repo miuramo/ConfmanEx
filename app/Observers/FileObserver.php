@@ -6,6 +6,7 @@ use App\Jobs\PdfJob;
 use App\Models\Contact;
 use App\Models\File;
 use App\Models\Paper;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class FileObserver
@@ -41,10 +42,24 @@ class FileObserver
     {
         $this->meta_deleted($file);
         // Log::info("[FileObserver@deleted] ", ["file" => $file]);
-        $paper = Paper::find($file->paper_id);
-        if ($paper->pdf_file_id != null && $paper->pdf_file_id == $file->id) {
-            $paper->pdf_file_id = null;
-            $paper->save();
-        }
+        DB::transaction(function () use ($file) {
+            $paper = Paper::find($file->paper_id);
+            if ($paper->pdf_file_id != null && $paper->pdf_file_id == $file->id) {
+                $paper->pdf_file_id = null;
+                $paper->save();
+            }
+            if ($paper->img_file_id != null && $paper->img_file_id == $file->id) {
+                $paper->img_file_id = null;
+                $paper->save();
+            }
+            if ($paper->video_file_id != null && $paper->video_file_id == $file->id) {
+                $paper->video_file_id = null;
+                $paper->save();
+            }
+            if ($paper->altpdf_file_id != null && $paper->altpdf_file_id == $file->id) {
+                $paper->altpdf_file_id = null;
+                $paper->save();
+            }
+        });
     }
 }

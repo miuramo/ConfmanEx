@@ -37,22 +37,24 @@ class Review extends Model
         $paper = Paper::find($paper_id);
         $status = intval($status);
         if ($status > 0) {
-            // 既存のデータがあれば、それを読み取って修正する
-            $rev = Review::where('user_id', $user_id)->where('paper_id', $paper_id)->first();
-            if ($rev != null) {
-                $rev->submit_id = $paper->submits->first()->id;
-                $rev->category_id = $paper->category_id;
-                $rev->ismeta = ($status == 2);
-                $rev->save();
-            } else { //データがないので作成する
-                Review::firstOrCreate([
-                    'submit_id' => $paper->submits->first()->id,
-                    'paper_id' => $paper_id,
-                    'user_id' => $user_id,
-                    'category_id' => $paper->category_id,
-                    'ismeta' => ($status == 2),
-                ]);
-            }
+            DB::transaction(function () use ($paper, $user_id, $status) {
+                // 既存のデータがあれば、それを読み取って修正する
+                $rev = Review::where('user_id', $user_id)->where('paper_id', $paper->id)->first();
+                if ($rev != null) {
+                    $rev->submit_id = $paper->submits->first()->id;
+                    $rev->category_id = $paper->category_id;
+                    $rev->ismeta = ($status == 2);
+                    $rev->save();
+                } else {
+                    Review::firstOrCreate([
+                        'submit_id' => $paper->submits->first()->id,
+                        'paper_id' => $paper->id,
+                        'user_id' => $user_id,
+                        'category_id' => $paper->category_id,
+                        'ismeta' => ($status == 2),
+                    ]);
+                }
+            });
         } else {
             $dat = Review::where([['user_id', $user_id], ['paper_id', $paper_id]])->get();
             foreach ($dat as $r) {
@@ -64,16 +66,16 @@ class Review extends Model
     /**
      * 数をしらべる。( field = paper_id or user_id )
      */
-    public static function revass_stat($catid,$field="user_id")
+    public static function revass_stat($catid, $field = "user_id")
     {
         $tmp = Review::select(DB::raw("count(id) as count, {$field}, ismeta"))
-        ->where('category_id', $catid)
-        ->groupBy($field)
-        ->groupBy("ismeta")
-        ->orderBy($field)
-        ->get();
+            ->where('category_id', $catid)
+            ->groupBy($field)
+            ->groupBy("ismeta")
+            ->orderBy($field)
+            ->get();
         $ret = [];
-        foreach($tmp as $n=>$t){
+        foreach ($tmp as $n => $t) {
             $ret[$t->{$field}][$t->ismeta] = $t->count;
         }
         return $ret;
@@ -82,12 +84,12 @@ class Review extends Model
     {
         $field = "user_id";
         $tmp = Review::select(DB::raw("count(id) as count, {$field}, ismeta"))
-        ->groupBy($field)
-        ->groupBy("ismeta")
-        ->orderBy($field)
-        ->get();
+            ->groupBy($field)
+            ->groupBy("ismeta")
+            ->orderBy($field)
+            ->get();
         $ret = [];
-        foreach($tmp as $n=>$t){
+        foreach ($tmp as $n => $t) {
             $ret[$t->{$field}][$t->ismeta] = $t->count;
         }
         return $ret;
@@ -169,13 +171,13 @@ class Review extends Model
         $finish_vpids = Score::where('review_id', $this->id)->whereNotNull('valuestr')->get()->pluck('viewpoint_id')->count();
         // 自分が　ismeta なら、formetaの項目を数える。そうでなければ、forrev の項目を数える。
         $all_vpids = Viewpoint::where('category_id', $this->category_id)->count();
-        if (!$this->ismeta){
-            $all_vpids = Viewpoint::where('category_id', $this->category_id)->where('forrev',1)->count();
+        if (!$this->ismeta) {
+            $all_vpids = Viewpoint::where('category_id', $this->category_id)->where('forrev', 1)->count();
         }
         // ->whereNotIn('id', $finish_vpids)->
-        if ($finish_vpids ==0){
+        if ($finish_vpids == 0) {
             $this->status = 0;
-        } else if ($finish_vpids == $all_vpids){
+        } else if ($finish_vpids == $all_vpids) {
             $this->status = 2;
         } else {
             $this->status = 1;
@@ -186,14 +188,14 @@ class Review extends Model
     /**
      * 未回答があると $rev->scores は抜けてしまうので、viewpoints をつかってKey->value として確実に配列で返す。
      */
-    public function scores_and_comments($only_doreturn=1, $only_score=0)
+    public function scores_and_comments($only_doreturn = 1, $only_score = 0)
     {
         $aryscores = $this->scores->pluck("valuestr", "viewpoint_id")->toArray();
         $vps = Viewpoint::where('category_id', $this->category_id)->orderBy('orderint')->get();
         $ret = [];
-        foreach($vps as $vp){
+        foreach ($vps as $vp) {
             if ($only_doreturn && !$vp->doReturn) continue;
-            if ($only_score && strpos($vp->content,"number")===false) continue;
+            if ($only_score && strpos($vp->content, "number") === false) continue;
             $ret[$vp->desc] = (isset($aryscores[$vp->id])) ? $aryscores[$vp->id] : "(未入力)";
         }
         return $ret;
@@ -205,7 +207,7 @@ class Review extends Model
     public static function validateAllRev()
     {
         $all = Review::all();
-        foreach($all as $rev){
+        foreach ($all as $rev) {
             $rev->validateOneRev();
         }
     }

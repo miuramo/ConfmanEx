@@ -122,9 +122,10 @@ class FileController extends Controller
             $file = File::findOrFail($pdffileid);
             $aT = $file->paper->getAuthorType();
             if ($aT < 0) abort(403);
-            return response()->file($file->getPdfTextPath(),
+            return response()->file(
+                $file->getPdfTextPath(),
                 [
-                    'Content-Disposition' => 'attachment; filename="'.$file->paper->id_03d()."_".$pdffileid.'.txt"',
+                    'Content-Disposition' => 'attachment; filename="' . $file->paper->id_03d() . "_" . $pdffileid . '.txt"',
                 ]
             );
             // ->header("Content-Disposition", $file->origname);
@@ -212,20 +213,22 @@ class FileController extends Controller
                             $papers = $rej;
                         }
                         foreach ($papers as $paper) {
-                            if (is_numeric($paper)) {
-                                $paper = Paper::with("pdf_file")->find($paper);
-                            }
-                            if ($paper->pdf_file_id && $targetmainpdf) {
-                                $paper->pdf_file->locked = ($req->input('action') === 'lock');
-                                $paper->pdf_file->save();
-                            }
-                            // サプリメントファイルを操作する。ただし、PaperPDFは除外する。
-                            $files = File::where("paper_id", $paper->id)->whereNot("id", $paper->pdf_file_id)->whereIn("mime", array_keys($targetmimes))->get();
-                            foreach ($files as $file) {
-                                if ($file->id == $paper->pdf_file_id) continue; // PaperPDFは除外
-                                $file->locked = ($req->input('action') === 'lock');
-                                $file->save();
-                            }
+                            DB::transaction(function () use ($paper, $req, $targetmimes, $targetmainpdf) {
+                                if (is_numeric($paper)) {
+                                    $paper = Paper::with("pdf_file")->find($paper);
+                                }
+                                if ($paper->pdf_file_id && $targetmainpdf) {
+                                    $paper->pdf_file->locked = ($req->input('action') === 'lock');
+                                    $paper->pdf_file->save();
+                                }
+                                // サプリメントファイルを操作する。ただし、PaperPDFは除外する。
+                                $files = File::where("paper_id", $paper->id)->whereNot("id", $paper->pdf_file_id)->whereIn("mime", array_keys($targetmimes))->get();
+                                foreach ($files as $file) {
+                                    if ($file->id == $paper->pdf_file_id) continue; // PaperPDFは除外
+                                    $file->locked = ($req->input('action') === 'lock');
+                                    $file->save();
+                                }
+                            });
                         }
                     }
                 }
@@ -254,18 +257,18 @@ class FileController extends Controller
                 $pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked] = [];
             }
             $label = sprintf("%03d", $res->paper_id) . " (f{$res->id} {$shortmime}";
-            if ($res->mime === 'application/pdf'){
-                $label .= $res->pagenum."p";
+            if ($res->mime === 'application/pdf') {
+                $label .= $res->pagenum . "p";
             }
             $label .= ")";
             $pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->locked][] = $label;
 
-            $fileids [$label] = $res->id;
-            $filekeys [$label] = $res->key;
+            $fileids[$label] = $res->id;
+            $filekeys[$label] = $res->key;
             $timestamps[$label] = $res->created_at;
         }
 
-        return view('admin.filelock')->with(compact("cols", "pids","fileids","filekeys","timestamps"));
+        return view('admin.filelock')->with(compact("cols", "pids", "fileids", "filekeys", "timestamps"));
     }
 
     public function favicon()

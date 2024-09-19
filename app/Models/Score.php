@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Score extends Model
 {
@@ -66,11 +67,12 @@ class Score extends Model
 
         // $stddev = Score::whereIn('review_id', $other_reviews)->selectRaw('STDDEV(value)')->value('STDDEV(value)');
         // $avg = Score::whereIn('review_id', $other_reviews)->selectRaw('AVERAGE(value)')->value('AVERAGE(value)');
-
-        $sub = Submit::find($sub_id);
-        $sub->score = $mean;
-        $sub->stddevscore = $standardDeviation;
-        $sub->save();
+        DB::transaction(function () use ($sub_id, $mean, $standardDeviation) {
+            $sub = Submit::find($sub_id);
+            $sub->score = $mean;
+            $sub->stddevscore = $standardDeviation;
+            $sub->save();
+        });
     }
 
     public static function updateAllScoreStat()

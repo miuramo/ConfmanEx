@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -180,11 +181,13 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function fix_broken_contact()
     {
-        $con = Contact::firstOrCreate([
-            'email' => $this->email,
-        ]);
-        $this->contact_id = $con->id;
-        $this->save();
+        DB::transaction(function () {
+            $con = Contact::firstOrCreate([
+                'email' => $this->email,
+            ]);
+            $this->contact_id = $con->id;
+            $this->save();
+        });
     }
     /**
      * Userが存在しないContactを参照していたら、直す

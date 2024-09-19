@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Contact;
 use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class UserObserver
@@ -22,11 +23,13 @@ class UserObserver
     {
         $this->meta_created($user);
 
-        $con = Contact::firstOrCreate([
-            'email' => $user->email,
-        ]);
-        $user->contact_id = $con->id;
-        $user->save();
+        DB::transaction(function () use ($user) {
+            $con = Contact::firstOrCreate([
+                'email' => $user->email,
+            ]);
+            $user->contact_id = $con->id;
+            $user->save();
+        });
     }
 
     /**
@@ -39,13 +42,15 @@ class UserObserver
         if ($user->contact_id == 0) {
             $this->created($user);
         } else {
-            $con = Contact::firstOrCreate([
-                'email' => $user->email,
-            ]);
-            if ($con->id != $user->contact_id) {
-                $user->contact_id = $con->id;
-                $user->save();
-            }
+            DB::transaction(function () use ($user) {
+                $con = Contact::firstOrCreate([
+                    'email' => $user->email,
+                ]);
+                if ($con->id != $user->contact_id) {
+                    $user->contact_id = $con->id;
+                    $user->save();
+                }
+            });
             Setting::auto_role_member(); // 設定をみて、自動でロールをわりあてる。
         }
         //

@@ -16,6 +16,7 @@ use App\Models\Submit;
 use App\Models\User;
 use App\Models\Viewpoint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
@@ -125,10 +126,12 @@ class ReviewController extends Controller
         $all = $req->all();
         foreach ($all as $k => $v) {
             if ($v == 'on') {
-                $subid = explode("_", $k)[1];
-                $sub = Submit::find($subid);
-                $sub->accept_id = $uprev;
-                $sub->save();
+                DB::transaction(function () use ($k, $uprev) {
+                    $subid = explode("_", $k)[1];
+                    $sub = Submit::find($subid);
+                    $sub->accept_id = $uprev;
+                    $sub->save();
+                });
             }
         }
         return redirect()->route("review.result", ["cat" => $cat]);

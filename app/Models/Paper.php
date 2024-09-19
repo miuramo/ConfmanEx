@@ -16,6 +16,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\PendingMail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -248,14 +249,16 @@ class Paper extends Model
         //contactemails から、Contactを作成する（重複はtableのunique制約で保証される）
         $ema = explode("\n", trim($this->contactemails));
         foreach ($ema as $e) {
-            $con = Contact::firstOrCreate([
-                'email' => $e,
-            ]);
-            if ($con->infoprovider == null) {
-                $con->infoprovider = $this->owner;
-                $con->save();
-            }
-            $this->contacts()->attach($con->id);
+            DB::transaction(function () use ($e) {
+                $con = Contact::firstOrCreate([
+                    'email' => $e,
+                ]);
+                if ($con->infoprovider == null) {
+                    $con->infoprovider = $this->owner;
+                    $con->save();
+                }
+                $this->contacts()->attach($con->id);
+            });
         }
         $this->refresh();
     }
@@ -296,13 +299,6 @@ class Paper extends Model
         $this->save();
         $this->updateContacts();
     }
-    // public function categories()
-    // {
-    //     $tbl = 'papers_categories';
-    //     $table_fields = Schema::getColumnListing($tbl);
-    //     return $this->belongsToMany(Category::class, $tbl, 'paper_id', 'category_id')->withPivot($table_fields)->using(PapersCategory::class);
-
-    // }
 
     public function get_mail_to_cc()
     {

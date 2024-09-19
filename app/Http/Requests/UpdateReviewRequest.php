@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\Score;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class UpdateReviewRequest extends FormRequest
@@ -46,23 +47,27 @@ class UpdateReviewRequest extends FormRequest
         unset($data['review_id']);
         unset($data['viewpoint_id']);
         unset($data['url']);
+        // 基本的には、ひとつのviewpointに対するデータしかはいらない
         foreach ($data as $key => $value) {
-            $scr = Score::firstOrCreate([
-                'review_id' => $rev_id,
-                'user_id' => Auth::id(),
-                'viewpoint_id' => $viewpoint_id,
-            ]);
-            if (is_numeric($value)) {
-                $scr->value = $value;
-                $scr->valuestr = $value;
-            } else if (is_string($value)){
-                $scr->value = null;
-                $scr->valuestr = $value;
-            } else if (is_null($value)){
-                $scr->value = null;
-                $scr->valuestr = null;
-            }
-            $scr->save();
+            // info($key." => ".$value);
+            DB::transaction(function () use ($rev_id, $viewpoint_id, $value) {
+                $scr = Score::firstOrCreate([
+                    'review_id' => $rev_id,
+                    'user_id' => Auth::id(),
+                    'viewpoint_id' => $viewpoint_id,
+                ]);
+                if (is_numeric($value)) {
+                    $scr->value = $value;
+                    $scr->valuestr = $value;
+                } else if (is_string($value)){
+                    $scr->value = null;
+                    $scr->valuestr = $value;
+                } else if (is_null($value)){
+                    $scr->value = null;
+                    $scr->valuestr = null;
+                }
+                $scr->save();                    
+            });
         }
 
         return json_encode($data);

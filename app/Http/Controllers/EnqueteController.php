@@ -66,11 +66,13 @@ class EnqueteController extends Controller
         $tableName = 'enquete_items';
         // copy_id がセットされていたら、行をコピーする
         if ($req->has('copy_id')) {
-            $copy_id = $req->input('copy_id');
-            $enqitm = EnqueteItem::find($copy_id);
-            $newdatum = $enqitm->replicate(); // copy data
-            $newdatum->orderint++;
-            $newdatum->save();
+            DB::transaction(function () use ($req) {
+                $copy_id = $req->input('copy_id');
+                $enqitm = EnqueteItem::find($copy_id);
+                $newdatum = $enqitm->replicate(); // copy data
+                $newdatum->orderint++;
+                $newdatum->save();
+            });
         }
         // del_id がセットされていたら、行を削除する
         if ($req->has('del_id')) {

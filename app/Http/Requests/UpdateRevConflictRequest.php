@@ -6,6 +6,7 @@ use App\Models\Bidding;
 use App\Models\RevConflict;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class UpdateRevConflictRequest extends FormRequest
@@ -35,12 +36,14 @@ class UpdateRevConflictRequest extends FormRequest
         $data = $this->all();
         $paper_id = $data['paper_id'];
         $bidding_id = $data['bidding_id'];
-        $revcon = RevConflict::firstOrCreate([
-            'user_id' => Auth::id(),
-            'paper_id' => $paper_id,
-        ]);
-        $revcon->bidding_id = $bidding_id;
-        $revcon->save();
+        DB::transaction(function () use ($paper_id, $bidding_id) {
+            $revcon = RevConflict::firstOrCreate([
+                'user_id' => Auth::id(),
+                'paper_id' => $paper_id,
+            ]);
+            $revcon->bidding_id = $bidding_id;
+            $revcon->save();
+        });
 
         // 色と文字をjsonで返す
         $bid = Bidding::find($bidding_id);

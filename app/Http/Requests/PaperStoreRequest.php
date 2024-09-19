@@ -7,6 +7,7 @@ use App\Models\Confirm;
 use App\Models\Paper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -150,10 +151,11 @@ class PaperStoreRequest extends FormRequest
         // バリデーションが成功した場合の処理
         $em = implode("\n", $this->emlist());
         try {
-            $paper = Paper::findOrFail($id);
-            $paper->contactemails = $em;
-            $paper->save();
-
+            DB::transaction(function () use ($id, $em) {
+                $paper = Paper::findOrFail($id);
+                $paper->contactemails = $em;
+                $paper->save();
+            });
             // $paper->updateContacts();
         } catch (QueryException $e) {
             return redirect()->route('paper.edit')->with('feedback.error', "QueryException on Paper create");
