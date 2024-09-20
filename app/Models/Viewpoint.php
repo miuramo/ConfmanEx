@@ -37,21 +37,29 @@ class Viewpoint extends Model
         $vps = Viewpoint::all();
 
         $log = "Viewpoint\n";
+        // もし ;(post) が含まれていない and  :(pre) が含まれている場合のみ変更
         // 各レコードのcontentフィールドの「:」を「;」に置換
         foreach ($vps as $vp) {
-            $vp->content = str_replace($pre, $post, $vp->content);
-            // $vp->contentafter = str_replace($pre, $post, $vp->contentafter);
-            $vp->save();
-            $log .= $vp->id . " ";
+            if (strpos($vp->content, $post) === false) {
+                if (strpos($vp->content, $pre) !== false) {
+                    $vp->content = str_replace($pre, $post, $vp->content);
+                    $vp->save();
+                    $log .= $vp->id . " ";
+                }
+            }
         }
         // アンケート項目も同様に。
         $log .= "\nEnqueteItem\n";
         $enqitems = EnqueteItem::all();
         foreach ($enqitems as $vp) {
-            $vp->content = str_replace($pre, $post, $vp->content);
-            // $vp->contentafter = str_replace($pre, $post, $vp->contentafter);
-            $vp->save();
-            $log .= $vp->id . " ";
+            // もし ;(post) が含まれていない and  :(pre) が含まれている場合のみ変更
+            if (strpos($vp->content, $post) === false) {
+                if (strpos($vp->content, $pre) !== false) {
+                    $vp->content = str_replace($pre, $post, $vp->content);
+                    $vp->save();
+                    $log .= $vp->id . " ";
+                }
+            }
         }
         return $log;
     }
