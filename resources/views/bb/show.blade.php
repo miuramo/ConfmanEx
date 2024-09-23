@@ -26,6 +26,7 @@
     @endif
 
     @php
+if (!function_exists('urllink')) {
 function urllink($match){
             if ($match[1]) {
                 // 最初から<a>タグで囲まれている場合
@@ -47,6 +48,7 @@ function urllink($match){
             htmlspecialchars($match[2]),
         );
     }
+}
 }
 @endphp
     <div class="py-2 px-6">
@@ -81,6 +83,9 @@ function urllink($match){
 
         </div>
         <div class="my-10"></div>
+
+        {{-- bb.type == 1 and メタのみに表示される査読者 --}}
+        {{-- <x-review.iammeta :bb_id="$bb->id"></x-review.iammeta> --}}
     </div>
 
 
