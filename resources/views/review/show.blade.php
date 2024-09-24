@@ -3,7 +3,7 @@
     @php
         $catspans = App\Models\Category::spans();
     @endphp
-
+@section('title', '査'.$review->id)
     <x-slot name="header">
         <div class="mb-4">
             <x-element.linkbutton href="{{ route('review.index') }}" color="gray" size="sm">

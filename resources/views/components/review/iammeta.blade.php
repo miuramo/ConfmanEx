@@ -5,13 +5,14 @@
     $bb = App\Models\Bb::find($bb_id);
     $ismeta = $bb->ismeta_myself();
     if ($bb->type == 1 && $ismeta) {
-        $revs = $bb->get_reviewers();
+        $revus = $bb->get_reviewers();
+        $revuid2rev = $bb->revuid2rev();
         $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
     }
 @endphp
 
 <!-- components.review.iammeta 自分がメタのときだけ、査読者 -->
-@isset($revs)
+@isset($revus)
     <div class="text-sm p-2 rounded-md bg-pink-200 inline-block">
         <table class="divide-y divide-gray-200 mb-2">
             <thead>
@@ -22,14 +23,15 @@
             </thead>
 
             <tbody class="bg-white divide-y divide-gray-200">
-                @foreach ($revs as $rev)
+                @foreach ($revus as $revu)
                     <tr
                         class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200 dark:bg-slate-300 text-slate-200 dark:text-slate-100 hover:text-slate-500' : 'bg-white dark:bg-slate-500 text-slate-50 dark:text-slate-500 hover:text-slate-400' }}">
                         <td class="p-1 text-center ">
-                            {{ $rev->name }} ({{ $rev->affil }})
+                            {{ $revu->name }} ({{ $revu->affil }})
                         </td>
                         <td class="p-1 text-center">
-                            {{ $rev->id }}
+                            {{-- {{ $revuid2rev[$revu->id] }} --}}
+                            <x-review.pubshow_link :rev_id="$revuid2rev[$revu->id]"></x-review.pubshow_link>
                         </td>
                     </tr>
                 @endforeach

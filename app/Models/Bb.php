@@ -129,6 +129,11 @@ class Bb extends Model
         $revuids = Review::where("paper_id", $this->paper_id)->where("category_id",$this->category_id)->where("ismeta", 0)->pluck("user_id", "id")->toArray();
         return User::whereIn("id", $revuids)->get();
     }
+    public function revuid2rev()
+    {
+        $revuid2rev = Review::where("paper_id", $this->paper_id)->where("category_id",$this->category_id)->where("ismeta", 0)->pluck("id", "user_id")->toArray();
+        return $revuid2rev;
+    }
     public function ismeta_myself()
     {
         // 自分がメタ査読者かどうかを返す

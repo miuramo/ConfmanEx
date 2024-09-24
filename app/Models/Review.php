@@ -29,6 +29,13 @@ class Review extends Model
     }
 
     /**
+     * この査読のトークンを生成（査読者同士の参照用）
+     */
+    public function token()
+    {
+        return sha1($this->id . $this->user_id . $this->paper_id . $this->category_id);
+    }
+    /**
      * 査読割り当て
      * status 2がメタ 1が通常 0が解除
      */

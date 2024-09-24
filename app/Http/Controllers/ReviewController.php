@@ -177,7 +177,7 @@ class ReviewController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * 査読者自身の参照用
      */
     public function show(Review $review)
     {
@@ -193,6 +193,24 @@ class ReviewController extends Controller
         }
         return view("review.show")->with(compact("review", "viewpoints", "scores"));
         //
+    }
+
+    /**
+     * 査読者同士の参照用
+     */
+    public function pubshow(Review $review, string $token)
+    {
+        if (!auth()->user()->can('role', 'pc')) return abort(403);
+        if ($review->token() != $token) return abort(403, "Review Browse TOKEN ERROR");
+
+        $viewpoints = Viewpoint::where("category_id", $review->category_id)->orderBy("orderint")->get();
+        // 既存回答
+        $scoreobj = Score::where('review_id', $review->id)->get();
+        $scores = [];
+        foreach ($scoreobj as $ea) {
+            $scores[$ea->viewpoint_id] = $ea;
+        }
+        return view("review.show")->with(compact("review", "viewpoints", "scores"));
     }
 
     /**

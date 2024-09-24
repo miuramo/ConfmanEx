@@ -94,6 +94,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/review/{review}/edit', [ReviewController::class, 'edit'])->name('review.edit');
     Route::put('/review/{review}', [ReviewController::class, 'update'])->name('review.update'); //査読フォームの変更を受けとる
     Route::get('/review/{review}', [ReviewController::class, 'show'])->name('review.show');
+    Route::get('/review/pubkey/{review}/{token}', [ReviewController::class, 'pubshow'])->name('review.pubshow'); // 査読者同士の相互参照用
+
     Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
     Route::get('/review/indexcat/{cat}', [ReviewController::class, 'indexcat'])->name('review.indexcat');
     Route::get('/review_downzip/{cat}', [ReviewController::class, 'zipdownload_for_rev'])->name('review.downzip');

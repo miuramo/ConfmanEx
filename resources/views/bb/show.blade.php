@@ -85,7 +85,7 @@ function urllink($match){
         <div class="my-10"></div>
 
         {{-- bb.type == 1 and メタのみに表示される査読者 --}}
-        {{-- <x-review.iammeta :bb_id="$bb->id"></x-review.iammeta> --}}
+        <x-review.iammeta :bb_id="$bb->id"></x-review.iammeta>
     </div>
 
 
