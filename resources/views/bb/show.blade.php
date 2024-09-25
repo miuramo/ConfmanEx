@@ -61,10 +61,6 @@ function urllink($match){
                 @csrf
                 @method('post')
                 <input type="hidden" name="key" value="{{ $bb->key }}">
-                {{-- <div>
-                    <label for="bbsub">Subject:</label>
-                </div> --}}
-                {{-- <span class="w-1/4">aa</span> --}}
 
                 <div class="inline-block w-3/4 bg-green-300 p-2 rounded-md mt-5 hover:bg-green-400 hover:transition-colors">
                     <div class="px-2 text-left text-sm">送信フォーム</div>
@@ -85,7 +81,10 @@ function urllink($match){
         <div class="my-10"></div>
 
         {{-- bb.type == 1 and メタのみに表示される査読者 --}}
-        <x-review.iammeta :bb_id="$bb->id"></x-review.iammeta>
+        {{-- <x-review.iammeta :bb_id="$bb->id"></x-review.iammeta> --}}
+        @if($bb->type == 1)
+        <x-review.paperscores :paper_id="$bb->paper_id" :cat_id="$bb->category_id" :bb_id="$bb->id"></x-review.paperscores>
+        @endif
     </div>
 
 

@@ -2,31 +2,10 @@
     'cat_id' => 1,
 ])
 @php
-    // review list
-    $sql1 =
-        'select reviews.id, paper_id, title from reviews left join papers on reviews.paper_id = papers.id where reviews.user_id = ' .
-        auth()->id() .
-        " and reviews.category_id = $cat_id order by paper_id";
-    $res1 = DB::select($sql1);
-    $titles = [];
-    foreach ($res1 as $res) {
-        $titles[$res->paper_id] = $res->title;
-    }
-    $sql2 =
-        'select paper_id, viewpoint_id, value, orderint, `desc` from scores ' .
-        ' left join reviews on scores.review_id = reviews.id' .
-        ' left join viewpoints on scores.viewpoint_id = viewpoints.id' .
-        ' where reviews.user_id = ' .
-        auth()->id() .
-        " and reviews.category_id = $cat_id " .
-        ' and value is not null order by paper_id, orderint';
-    $res2 = DB::select($sql2);
-    $scores = [];
-    $descs = [];
-    foreach ($res2 as $res) {
-        $scores[$res->paper_id][$res->viewpoint_id] = $res->value;
-        $descs[$res->viewpoint_id] = $res->desc;
-    }
+    $ret = \App\Models\Review::my_scores(auth()->id(), $cat_id);
+    $scores = $ret['scores'];
+    $titles = $ret['titles'];
+    $descs = $ret['descs'];
 @endphp
 
 <!-- components.review.myscores 自分が入力したスコア一覧 -->
@@ -67,9 +46,3 @@
         </tbody>
     </table>
 </div>
-{{-- @foreach ($titles as $pid => $title)
-    {{ $pid }} {{ $title }} <br>
-    @foreach ($scores[$pid] as $vp => $score)
-        {{ $descs[$vp] }} {{ $score }} <br>
-    @endforeach
-@endforeach --}}

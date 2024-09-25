@@ -140,5 +140,11 @@ class Bb extends Model
         $rev = Review::where("paper_id", $this->paper_id)->where("category_id", $this->category_id)->where("user_id", auth()->id())->where("ismeta", 1)->first();
         return $rev != null;
     }
+    public function metauser()
+    {
+        // メタ査読者を返す
+        $rev = Review::where("paper_id", $this->paper_id)->where("category_id", $this->category_id)->where("ismeta", 1)->first();
+        return $rev->user;
+    }
 
 }

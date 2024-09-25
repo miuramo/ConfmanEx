@@ -4,9 +4,13 @@
 @php
     $bb = App\Models\Bb::find($bb_id);
     $ismeta = $bb->ismeta_myself();
-    if ($bb->type == 1 && $ismeta) {
-        $revus = $bb->get_reviewers();
-        $revuid2rev = $bb->revuid2rev();
+    if ($bb->type == 1) {
+        if ($ismeta) {
+            $revus = $bb->get_reviewers();
+            $revuid2rev = $bb->revuid2rev();
+        } else {
+            $metauser = $bb->metauser();
+        }
         $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
     }
 @endphp
@@ -17,8 +21,8 @@
         <table class="divide-y divide-gray-200 mb-2">
             <thead>
                 <tr>
-                    <th class="p-1 bg-pink-200 text-pink-400"> （{{$nameofmeta}}のみに表示）担当した査読者 と</th>
-                    <th class="p-1 bg-pink-200 text-pink-400">  RevID</th>
+                    <th class="p-1 bg-pink-200 text-pink-400"> （{{ $nameofmeta }}のみに表示）担当した査読者 と</th>
+                    <th class="p-1 bg-pink-200 text-pink-400"> RevID</th>
                 </tr>
             </thead>
 
@@ -37,5 +41,14 @@
                 @endforeach
             </tbody>
         </table>
+    </div>
+@else
+    <div class="text-sm p-2 rounded-md bg-pink-200 inline-block">
+        <div class="text-center">
+            <span class="text-pink-400">{{ $nameofmeta }}の名前</span>
+        </div>
+        <div class="text-center">
+            {{ $metauser->name }} ({{ $metauser->affil }})
+        </div>
     </div>
 @endisset

@@ -27,6 +27,10 @@ class Review extends Model
     {
         return $this->hasMany(Score::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     /**
      * この査読のトークンを生成（査読者同士の参照用）
@@ -217,5 +221,89 @@ class Review extends Model
         foreach ($all as $rev) {
             $rev->validateOneRev();
         }
+    }
+
+    /**
+     * 自分が入力したスコア一覧 (indexcatの下に表示するmyscoresで使用)
+     * @param int $uid
+     * @param int $cat_id
+     * 
+     * @return array
+     * $ret['titles'] = $titles;
+     * $ret['scores'] = $scores;
+     * $ret['descs'] = $descs;
+     */
+    public static function my_scores($uid, $cat_id)
+    {
+        // review list
+        $sql1 =
+            'select reviews.id, paper_id, title from reviews left join papers on reviews.paper_id = papers.id where reviews.user_id = ' .
+            $uid .
+            " and reviews.category_id = $cat_id order by paper_id";
+        $res1 = DB::select($sql1);
+        $titles = [];
+        foreach ($res1 as $res) {
+            $titles[$res->paper_id] = $res->title;
+        }
+        $sql2 =
+            'select paper_id, viewpoint_id, value, orderint, `desc` from scores ' .
+            ' left join reviews on scores.review_id = reviews.id' .
+            ' left join viewpoints on scores.viewpoint_id = viewpoints.id' .
+            ' where reviews.user_id = ' .
+            auth()->id() .
+            " and reviews.category_id = $cat_id " .
+            ' and value is not null order by paper_id, orderint';
+        $res2 = DB::select($sql2);
+        $scores = [];
+        $descs = [];
+        foreach ($res2 as $res) {
+            $scores[$res->paper_id][$res->viewpoint_id] = $res->value;
+            $descs[$res->viewpoint_id] = $res->desc;
+        }
+        $ret['titles'] = $titles;
+        $ret['scores'] = $scores;
+        $ret['descs'] = $descs;
+        return $ret;
+    }
+
+    /**
+     * あるPaperIDに対して、査読者のスコアを取得する
+     * @param int $paper_id
+     * @param int $cat_id
+     * 
+     */
+    public static function get_scores($paper_id, $cat_id){
+        $sql1 =
+            'select reviews.id, paper_id, title, name, affil, ismeta, status from reviews '.
+            'left join papers on reviews.paper_id = papers.id '.
+            'left join users on reviews.user_id = users.id '.
+            'where reviews.paper_id = ' . $paper_id .
+            " and reviews.category_id = $cat_id order by ismeta desc, id";
+        $res1 = DB::select($sql1);
+        $names = [];
+        $ismeta = [];
+        foreach ($res1 as $res) {
+            $names[$res->id] = $res->name." (".$res->affil.")";
+            $ismeta[$res->id] = $res->ismeta;
+        }
+        $sql2 =
+            'select scores.review_id, viewpoint_id, value, orderint, `desc` from scores ' .
+            ' left join reviews on scores.review_id = reviews.id' .
+            ' left join viewpoints on scores.viewpoint_id = viewpoints.id' .
+            " where review_id in (select id from reviews where paper_id = {$paper_id}) ".
+            " and reviews.category_id = $cat_id " .
+            ' and value is not null order by review_id, orderint';
+        $res2 = DB::select($sql2);
+        $scores = [];
+        $descs = [];
+        foreach ($res2 as $res) {
+            $scores[$res->review_id][$res->viewpoint_id] = $res->value;
+            $descs[$res->viewpoint_id] = $res->desc;
+        }
+        $ret['names'] = $names;
+        $ret['ismeta'] = $ismeta;
+        $ret['scores'] = $scores;
+        $ret['descs'] = $descs;
+        return $ret;
     }
 }
