@@ -24,10 +24,18 @@
             {{-- TODO: Reviewerの数にあわせて、繰り返す。 --}}
             <th class="p-1 bg-slate-300"> Rev1</th>
             @php
+                if ($scoreonly){
                 $vps = App\Models\Viewpoint::where('category_id', $cat_id)
+                    ->where('content', 'like', '%number%')
                     ->orderBy('orderint')
                     ->pluck('desc', 'id')
                     ->toArray();
+                } else {
+                    $vps = App\Models\Viewpoint::where('category_id', $cat_id)
+                    ->orderBy('orderint')
+                    ->pluck('desc', 'id')
+                    ->toArray();
+                }
             @endphp
             @foreach ($vps as $id => $desc)
                 @if ($scoreonly == 1 && strpos($desc, 'コメント') > 0)
@@ -89,9 +97,7 @@
                             @foreach ($rev->scores_and_comments(0, $scoreonly) as $vpdesc => $valstr)
                                 <td
                                     class="hover:bg-lime-50 transition-colors
-                                    @if (is_numeric($valstr) && isset($colors[intval($valstr)])) 
-                                    bg-{{ $colors[intval($valstr)] }}-200 text-center 
-                                    @endif
+                                    @if (is_numeric($valstr) && isset($colors[intval($valstr)])) bg-{{ $colors[intval($valstr)] }}-200 text-center @endif
 +                                    ">
                                     {!! nl2br(htmlspecialchars($valstr)) !!}
                                 </td>

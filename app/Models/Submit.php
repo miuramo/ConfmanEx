@@ -32,7 +32,7 @@ class Submit extends Model
 
     public function reviews()
     {
-        return $this->hasMany(Review::class, "submit_id");
+        return $this->hasMany(Review::class, "submit_id")->orderBy('ismeta', 'desc');
     }
 
     public static function subs_accepted(int $cat_id, string $ord = "orderint")
