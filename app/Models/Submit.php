@@ -42,4 +42,38 @@ class Submit extends Model
         })->orderBy($ord)->get();
         return $subs;
     }
+
+/**
+ * このSubmitに関連するReviewの点数を更新する
+ */
+    public function updateScoreStat()
+    {
+        // まず、このSubmitに関連するReviewを取得
+        $scores = Score::whereHas('viewpoint', function ($query) {
+            $query->where('weight', 1);
+        })->whereIn('review_id', $this->reviews->pluck('id'))->pluck('value')->toArray();
+        $sum = array_sum($scores);
+        if (count($scores) > 0) {
+            $mean = $sum / count($scores);
+            $this->score = $mean;
+            $this->stddevscore = sqrt(array_sum(array_map(function ($value) use ($mean) {
+                return pow($value - $mean, 2);
+            }, $scores)) / count($scores));
+        } else {
+            $this->score = null;
+            $this->stddevscore = null;
+        }
+        $this->save();
+    }
+ 
+    /**
+     * すべてのSubmitの点数統計(score, stddevscore)を更新する
+     */
+    public static function updateAllScoreStat()
+    {
+        $subs = Submit::all();
+        foreach ($subs as $sub) {
+            $sub->updateScoreStat();
+        }
+    }
 }
