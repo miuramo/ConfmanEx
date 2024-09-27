@@ -50,7 +50,7 @@
             @isset($sub)
                 {{--  Reviewerの数にあわせて、繰り返す。 --}}
                 @foreach ($sub->reviews as $rev)
-                    <th class="p-1 bg-slate-300"> Rev{{ $loop->index + 1 }}</th>
+                    <th class="p-1 bg-slate-300"> Rev {{ $loop->index + 1 }}</th>
                     @foreach ($vps as $id => $desc)
                         @if ($scoreonly == 1 && strpos($desc, 'コメント') > 0)
                             {{-- // TODO: コメントではなく、scoreonlyなvpかどうかで判断すべき。 --}}
@@ -107,7 +107,11 @@
                                     <a href="{{ route('review.edit', ['review' => $rev]) }}"
                                         target="_blank">査{{ $rev->id }}</a>
                                 @else
-                                <td class="bg-slate-50 text-gray-200">
+                                @if($rev->status == 2)
+                                    <td class="bg-cyan-50 text-gray-200">
+                                        @else
+                                <td class="bg-yellow-50 text-gray-200">
+                                    @endif
                                     査{{ $rev->id }}
                             @endif
                             </td>
