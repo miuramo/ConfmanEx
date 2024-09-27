@@ -181,10 +181,14 @@ class ReviewController extends Controller
      */
     public function show(Review $review)
     {
-        if (!auth()->user()->can('role', 'reviewer')) return abort(403);
+        if (!auth()->user()->can('role_any', 'pc|reviewer',)) return abort(403);
         if ($review->user_id != auth()->id()) return abort(403, "THIS IS NOT YOUR REVIEW");
 
-        $viewpoints = Viewpoint::where("category_id", $review->category_id)->orderBy("orderint")->get();
+        if ($review->ismeta){
+            $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("formeta",1)->orderBy("orderint")->get();
+        } else {
+            $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("forrev",1)->orderBy("orderint")->get();
+        }
         // 既存回答
         $scoreobj = Score::where('review_id', $review->id)->get();
         $scores = [];
@@ -203,7 +207,11 @@ class ReviewController extends Controller
         if (!auth()->user()->can('role_any', 'pc|reviewer',)) return abort(403);
         if ($review->token() != $token) return abort(403, "Review Browse TOKEN ERROR");
 
-        $viewpoints = Viewpoint::where("category_id", $review->category_id)->orderBy("orderint")->get();
+        if ($review->ismeta){
+            $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("formeta",1)->orderBy("orderint")->get();
+        } else {
+            $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("forrev",1)->orderBy("orderint")->get();
+        }
         // 既存回答
         $scoreobj = Score::where('review_id', $review->id)->get();
         $scores = [];
