@@ -13,6 +13,7 @@
             <x-element.category :cat="$bb->category_id">
             </x-element.category>
         </h2>
+        <div class="text-lg mt-4 font-bold bg-slate-200 py-2 px-4 inline-block rounded-md">{{ $bb->paper->title }}</div>
     </x-slot>
     @section('title', $bb->paper->id_03d() . ' 掲示板')
 

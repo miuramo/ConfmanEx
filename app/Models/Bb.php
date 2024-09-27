@@ -38,7 +38,7 @@ class Bb extends Model
     public static function make_bb(int $type, int $pid, int $cid)
     {
         $subs = [
-            1 => "pc|reviewer|metareviewer",
+            1 => "reviewer|metareviewer",
             2 => "pc|metareviewer|author",
             3 => "pc|pub|author",
         ];
