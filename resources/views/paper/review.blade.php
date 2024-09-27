@@ -52,7 +52,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($rev->scores_and_comments() as $vpdesc => $valstr)
+                        @foreach ($rev->scores_and_comments(1, 0 , $sub->accept_id > 0) as $vpdesc => $valstr)
                             <tr
                                 class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200' : 'bg-white-50' }}">
                                 <td nowrap class="p-2 bg-slate-100 border-2 border-slate-300">
