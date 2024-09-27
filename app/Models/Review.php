@@ -207,6 +207,9 @@ class Review extends Model
         foreach ($vps as $vp) {
             if ($only_doreturn && !$vp->doReturn) continue;
             if ($only_score && strpos($vp->content, "number") === false) continue;
+            // Primaryじゃないとき(ismeta=0)、forrev=0のときは表示しない
+            if (!$this->ismeta && !$vp->forrev) continue;
+            
             $ret[$vp->desc] = (isset($aryscores[$vp->id])) ? $aryscores[$vp->id] : "(未入力)";
         }
         return $ret;

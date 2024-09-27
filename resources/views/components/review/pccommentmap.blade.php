@@ -21,30 +21,47 @@
             <th class="p-1 bg-slate-300"> stddev</th>
             <th class="p-1 bg-slate-300"> num finish</th>
             <th class="p-1 bg-slate-300"> num assign</th>
-            {{-- TODO: Reviewerの数にあわせて、繰り返す。 --}}
-            <th class="p-1 bg-slate-300"> Rev1</th>
             @php
-                if ($scoreonly){
-                $vps = App\Models\Viewpoint::where('category_id', $cat_id)
-                    ->where('content', 'like', '%number%')
-                    ->orderBy('orderint')
-                    ->pluck('desc', 'id')
-                    ->toArray();
+                if ($scoreonly) {
+                    $vps = App\Models\Viewpoint::where('category_id', $cat_id)
+                        ->where('content', 'like', '%number%')
+                        ->orderBy('orderint')
+                        ->pluck('desc', 'id')
+                        ->toArray();
                 } else {
                     $vps = App\Models\Viewpoint::where('category_id', $cat_id)
+                        ->orderBy('orderint')
+                        ->pluck('desc', 'id')
+                        ->toArray();
+                }
+                // Primary用か一般用か（scoreonlyによらず、配列[vp_id]にいれる）
+                $vpsismeta[1] = App\Models\Viewpoint::where('category_id', $cat_id)
                     ->orderBy('orderint')
-                    ->pluck('desc', 'id')
+                    ->pluck('formeta', 'id')
                     ->toArray();
+                $vpsismeta[0] = App\Models\Viewpoint::where('category_id', $cat_id)
+                    ->orderBy('orderint')
+                    ->pluck('forrev', 'id')
+                    ->toArray();
+                if (count($subs) > 0) {
+                    $sub = $subs[0];
                 }
             @endphp
-            @foreach ($vps as $id => $desc)
-                @if ($scoreonly == 1 && strpos($desc, 'コメント') > 0)
-                    {{-- // TODO: コメントではなく、scoreonlyなvpかどうかで判断すべき。 --}}
-                @else
-                    <th class="p-1 bg-slate-300">{{ $desc }}</th>
-                @endif
-            @endforeach
-            {{-- TODO: Reviewerの数にあわせて、繰り返す。 --}}
+            @isset($sub)
+                {{--  Reviewerの数にあわせて、繰り返す。 --}}
+                @foreach ($sub->reviews as $rev)
+                    <th class="p-1 bg-slate-300"> Rev{{ $loop->index + 1 }}</th>
+                    @foreach ($vps as $id => $desc)
+                        @if ($scoreonly == 1 && strpos($desc, 'コメント') > 0)
+                            {{-- // TODO: コメントではなく、scoreonlyなvpかどうかで判断すべき。 --}}
+                        @else
+                            @if ($vpsismeta[$rev->ismeta][$id] == 1)
+                                <th class="p-1 bg-slate-300">{{ $desc }}</th>
+                            @endif
+                        @endif
+                    @endforeach
+                @endforeach
+            @endisset
         </tr>
     </thead>
 
