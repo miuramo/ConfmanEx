@@ -38,7 +38,8 @@ class Score extends Model
         // 対応するSubmitは、review_id -> Review
         $sub_id = $this->review->submit_id;
         //すべてのsub_id をもつReview idを探索 TODO: 会議によってはメタの点数を含めるかも。
-        $other_reviews = Review::where('submit_id', $sub_id)->where('ismeta', 0)->pluck('id');
+        // $other_reviews = Review::where('submit_id', $sub_id)->where('ismeta', 0)->pluck('id');
+        $other_reviews = Review::where('submit_id', $sub_id)->pluck('id');
         // $other_reviews[] = $this->review->id; // 自分をいれてしまうと、メタがふくまれてしまうことがある
 
         $vptargets = Viewpoint::where("weight", 1)->pluck("id")->toArray();

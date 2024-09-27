@@ -200,7 +200,7 @@ class ReviewController extends Controller
      */
     public function pubshow(Review $review, string $token)
     {
-        if (!auth()->user()->can('role', 'pc')) return abort(403);
+        if (!auth()->user()->can('role_any', 'pc|reviewer',)) return abort(403);
         if ($review->token() != $token) return abort(403, "Review Browse TOKEN ERROR");
 
         $viewpoints = Viewpoint::where("category_id", $review->category_id)->orderBy("orderint")->get();
