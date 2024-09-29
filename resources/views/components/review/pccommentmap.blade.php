@@ -14,6 +14,7 @@
 <table class="min-w-full divide-y divide-gray-200 mb-2">
     <thead>
         <tr>
+            <th class="p-1 bg-slate-300"> i</th>
             <th class="p-1 bg-slate-300"> id</th>
             <th class="p-1 bg-slate-300"> title</th>
             <th class="p-1 bg-slate-300"> accept</th>
@@ -74,6 +75,9 @@
             @isset($sub->paper)
                 @isset($sub->paper->pdf_file)
                     <tr class="{{ $count % 2 === 0 ? 'bg-slate-200' : 'bg-white' }}">
+                        <td class="text-center text-gray-400 bg-slate-100">
+                            {{$loop->index + 1}}
+                        </td>
                         <td class="p-1 text-center">
                             {{ $sub->paper->id_03d() }}
                         </td>
