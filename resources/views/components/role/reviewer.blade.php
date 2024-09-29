@@ -114,7 +114,7 @@
         <div class="mx-6 my-4">
             @foreach ($cats as $n => $cat)
                 @if ($revlist[$n])
-                    <x-element.linkbutton href="{{ route('review.result', ['cat' => $n]) }}" color="purple"
+                    <x-element.linkbutton href="{{ route('review.comment_scoreonly', ['cat' => $n]) }}" color="purple"
                         target="_blank">
                         査読結果・スコアの一覧 ({{ $cat }})
                     </x-element.linkbutton> <span class="mx-2"></span>

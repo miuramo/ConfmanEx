@@ -82,7 +82,7 @@ class ReviewController extends Controller
     {
         if (!auth()->user()->can('role', 'reviewer')) return abort(403);
         if (!is_numeric($cat_id)) return abort(404);
-        $reviews = Review::where("user_id", auth()->user()->id)->where("category_id",$cat_id)->orderBy("paper_id")->get();
+        $reviews = Review::where("user_id", auth()->user()->id)->where("category_id", $cat_id)->orderBy("paper_id")->get();
         // $revbycat = [];
         $cat = Category::find($cat_id);
         // foreach ($cats as $cat) {
@@ -90,7 +90,7 @@ class ReviewController extends Controller
         // }
         // 査読掲示板URLの生成は、index のなかで、必要があればrevからcomponentをよびだす
 
-        return view("review.indexcat")->with(compact("reviews", "cat","cat_id"));
+        return view("review.indexcat")->with(compact("reviews", "cat", "cat_id"));
         //
     }
 
@@ -143,7 +143,10 @@ class ReviewController extends Controller
      */
     public function comment(Request $req, Category $cat, $scoreonly = 0)
     {
-        if (!auth()->user()->can('role', 'pc')) return abort(403);
+        if (!Category::isShowReview($cat->id)) {
+            return abort(403, 'review comment');
+        }
+
         Score::updateAllScoreStat();
         if ($req->has("excel")) {
             return Excel::download(new ReviewCommentExportFromView($cat, $scoreonly), "reviewcomments_{$cat->id}.xlsx");
@@ -155,8 +158,25 @@ class ReviewController extends Controller
     }
     public function comment_scoreonly(Request $req, Category $cat)
     {
-        if (!auth()->user()->can('role', 'pc')) return abort(403);
+        if (!Category::isShowReview($cat->id)) {
+            return abort(403, 'review comment');
+        }
+
         return $this->comment($req, $cat, 1);
+    }
+    // 査読会議でみる、詳細
+    public function comment_paper(Category $cat, Paper $paper)
+    {
+        if (!Category::isShowReview($cat->id)) {
+            return abort(403, 'review comment');
+        }
+        $rigais = RevConflict::arr_pu_rigai();
+        if ($rigais[$paper->id][auth()->id()] < 3) {
+            return abort(403, 'authors conflict');
+        }
+        $subs = Submit::with('paper')->where('category_id', $cat->id)->orderBy('score', 'desc')->get();
+        $cat_id = $cat->id;
+        return view("review.commentpaper")->with(compact("subs", "cat_id", "cat", "paper"));
     }
 
 
@@ -184,10 +204,10 @@ class ReviewController extends Controller
         if (!auth()->user()->can('role_any', 'pc|reviewer',)) return abort(403);
         if ($review->user_id != auth()->id()) return abort(403, "THIS IS NOT YOUR REVIEW");
 
-        if ($review->ismeta){
-            $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("formeta",1)->orderBy("orderint")->get();
+        if ($review->ismeta) {
+            $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("formeta", 1)->orderBy("orderint")->get();
         } else {
-            $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("forrev",1)->orderBy("orderint")->get();
+            $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("forrev", 1)->orderBy("orderint")->get();
         }
         // 既存回答
         $scoreobj = Score::where('review_id', $review->id)->get();
@@ -207,10 +227,10 @@ class ReviewController extends Controller
         if (!auth()->user()->can('role_any', 'pc|reviewer',)) return abort(403);
         if ($review->token() != $token) return abort(403, "Review Browse TOKEN ERROR");
 
-        if ($review->ismeta){
-            $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("formeta",1)->orderBy("orderint")->get();
+        if ($review->ismeta) {
+            $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("formeta", 1)->orderBy("orderint")->get();
         } else {
-            $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("forrev",1)->orderBy("orderint")->get();
+            $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("forrev", 1)->orderBy("orderint")->get();
         }
         // 既存回答
         $scoreobj = Score::where('review_id', $review->id)->get();

@@ -113,6 +113,7 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
 
     /**
      * 申告利害に、現在のユーザの共著関係をまとめたもの
+     * 3未満だと利害あり。
      */
     public static function arr_pu_rigai()
     {

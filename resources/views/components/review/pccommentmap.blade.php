@@ -47,6 +47,8 @@
                 if (count($subs) > 0) {
                     $sub = $subs[0];
                 }
+                // タイトルにリンクをつけるかどうか
+                $enableTitleLink = App\Models\Category::isShowReview($cat_id);
             @endphp
             @isset($sub)
                 {{--  Reviewerの数にあわせて、繰り返す。 --}}
@@ -76,13 +78,19 @@
                 @isset($sub->paper->pdf_file)
                     <tr class="{{ $count % 2 === 0 ? 'bg-slate-200' : 'bg-white' }}">
                         <td class="text-center text-gray-400 bg-slate-100">
-                            {{$loop->index + 1}}
+                            {{ $loop->index + 1 }}
                         </td>
                         <td class="p-1 text-center">
                             {{ $sub->paper->id_03d() }}
                         </td>
                         <td class="p-1">
-                            {{ $sub->paper->title }}
+                            @if ($enableTitleLink && $rigais[$sub->paper->id][auth()->id()] > 2)
+                                <a class="hover:underline" href="{{ route('review.paper', ['cat'=>$cat_id, 'paper' => $sub->paper]) }}" target="_blank">
+                                    {{ $sub->paper->title }}
+                                </a>
+                            @else
+                                {{ $sub->paper->title }}
+                            @endif
                         </td>
                         <td class="p-1 text-center">
                             {{ $accepts[$sub->accept_id] }}
@@ -111,22 +119,22 @@
                                     <a href="{{ route('review.edit', ['review' => $rev]) }}"
                                         target="_blank">査{{ $rev->id }}</a>
                                 @else
-                                @if($rev->status == 2)
-                                    <td class="bg-cyan-50 text-gray-200">
-                                        @else
+                                    @if ($rev->status == 2)
+                                <td class="bg-cyan-50 text-gray-200">
+                                @else
                                 <td class="bg-yellow-50 text-gray-200">
-                                    @endif
-                                    査{{ $rev->id }}
                             @endif
-                            </td>
-                            @foreach ($rev->scores_and_comments(0, $scoreonly) as $vpdesc => $valstr)
-                                <td
-                                    class="hover:bg-lime-50 transition-colors
+                            査{{ $rev->id }}
+                    @endif
+                    </td>
+                    @foreach ($rev->scores_and_comments(0, $scoreonly) as $vpdesc => $valstr)
+                        <td
+                            class="hover:bg-lime-50 transition-colors
                                     @if (is_numeric($valstr) && isset($colors[intval($valstr)])) bg-{{ $colors[intval($valstr)] }}-200 text-center @endif
 +                                    ">
-                                    {!! nl2br(htmlspecialchars($valstr)) !!}
-                                </td>
-                            @endforeach
+                            {!! nl2br(htmlspecialchars($valstr)) !!}
+                        </td>
+                    @endforeach
                     @endforeach
                     </tr>
                 @endisset

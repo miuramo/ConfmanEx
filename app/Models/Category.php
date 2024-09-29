@@ -60,4 +60,22 @@ class Category extends Model
         $papercount = Paper::where("category_id", $this->id)->count();
         return ($papercount < $this->upperlimit );
     }
+
+    /**
+     * 査読結果を表示するかどうか
+     */
+    public static function isShowReview($cat_id){
+        $canshow = false;
+        $revlist = Category::select('id', 'status__revlist_on')->get()->pluck('status__revlist_on', 'id')->toArray();
+        if (!auth()->user()->can('role', 'pc')) {
+            if (auth()->user()->can('role_any', 'reviewer|metareviewer') && $revlist[$cat_id]) {
+                $canshow = true;
+            } else {
+            }
+        } else {
+            $canshow = true;
+        }
+        return $canshow;
+    }
+
 }
