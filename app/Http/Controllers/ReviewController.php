@@ -165,7 +165,7 @@ class ReviewController extends Controller
         return $this->comment($req, $cat, 1);
     }
     // 査読会議でみる、詳細
-    public function comment_paper(Category $cat, Paper $paper)
+    public function comment_paper(Category $cat, Paper $paper, string $token)
     {
         if (!Category::isShowReview($cat->id)) {
             return abort(403, 'review comment');
@@ -174,9 +174,12 @@ class ReviewController extends Controller
         if ($rigais[$paper->id][auth()->id()] < 3) {
             return abort(403, 'authors conflict');
         }
-        $subs = Submit::with('paper')->where('category_id', $cat->id)->orderBy('score', 'desc')->get();
+        $sub = Submit::where('paper_id', $paper->id)
+            ->where('category_id', $paper->category_id)
+            ->first();
+        if ($sub->token() != $token) return abort(403, "TOKEN ERROR FOR SUBMIT");
         $cat_id = $cat->id;
-        return view("review.commentpaper")->with(compact("subs", "cat_id", "cat", "paper"));
+        return view("review.commentpaper")->with(compact("sub", "cat_id", "cat", "paper"));
     }
 
 

@@ -85,11 +85,11 @@
                         </td>
                         <td class="p-1">
                             @if ($enableTitleLink && $rigais[$sub->paper->id][auth()->id()] > 2)
-                                <a class="hover:underline" href="{{ route('review.paper', ['cat'=>$cat_id, 'paper' => $sub->paper]) }}" target="_blank">
-                                    {{ $sub->paper->title }}
-                                </a>
+                            <x-review.commentpaper_link :sub="$sub"></x-element.commentpaper_link>
                             @else
+                            <span class="text-gray-400">
                                 {{ $sub->paper->title }}
+                            </span>
                             @endif
                         </td>
                         <td class="p-1 text-center">

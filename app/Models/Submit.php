@@ -35,6 +35,14 @@ class Submit extends Model
         return $this->hasMany(Review::class, "submit_id")->orderBy('ismeta', 'desc');
     }
 
+    /**
+     * この査読のトークンを生成（査読者同士の参照用）
+     */
+    public function token()
+    {
+        return sha1($this->id . $this->paper_id . $this->category_id. $this->created_at);
+    }
+
     public static function subs_accepted(int $cat_id, string $ord = "orderint")
     {
         $subs = Submit::with('paper')->where("category_id", $cat_id)->whereHas("accept", function ($query) {

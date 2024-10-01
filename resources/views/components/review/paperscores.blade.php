@@ -1,7 +1,8 @@
 @props([
     'cat_id' => 1,
     'paper_id' => 999,
-    'bb_id' => 1,
+    'bb_id' => null,
+    'size' => 'sm'
 ])
 @php
     $ret = App\Models\Review::get_scores($paper_id, $cat_id);
@@ -10,15 +11,17 @@
     $names = $ret['names'];
     $descs = $ret['descs'];
 
-    $bb = App\Models\Bb::find($bb_id);
-    $ismeta_myself = $bb->ismeta_myself();
+    if ($bb_id !== null) {
+        $bb = App\Models\Bb::find($bb_id);
+        $ismeta_myself = $bb->ismeta_myself();
+    }
 
     $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
 @endphp
 
 <!-- components.review.myscores 自分が入力したスコア一覧 -->
 <div class="p-1 bg-slate-300 rounded-lg inline-block">
-    <table class="divide-y divide-gray-200 mb-1 text-sm">
+    <table class="divide-y divide-gray-200 mb-1 text-{{$size}}">
         <thead>
             <tr>
                 <th class="p-1 bg-slate-300"> Reviewer</th>
@@ -34,11 +37,15 @@
                 <tr
                     class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200 dark:bg-slate-300' : 'bg-white dark:bg-slate-500' }}">
                     <td class="p-1 text-center">
-                        @if ($ismeta_myself)
+                        @if (isset($ismeta_myself) && $ismeta_myself)
                             {{ $name }}
                         @else
                             @if ($ismeta[$revid])
-                                {{ $name }}
+                                @if (isset($ismeta_myself))
+                                    {{ $name }}
+                                @else
+                                    {{$nameofmeta}}
+                                @endif
                             @else
                                 (hidden)
                             @endif

@@ -212,10 +212,41 @@ class Review extends Model
             // Primaryじゃないとき(ismeta=0)、forrev=0のときは表示しない
             if (!$this->ismeta && !$vp->forrev) continue;
             if (!$accepted && $vp->doReturnAcceptOnly) continue;
-            
+
             $ret[$vp->desc] = (isset($aryscores[$vp->id])) ? $aryscores[$vp->id] : "(未入力)";
         }
         return $ret;
+    }
+
+    public static function urllink($txt)
+    {
+        $txt = preg_replace_callback("/(<a [^>]+?>.+?<\/a>)|(https?:\/\/[a-zA-Z0-9_\.\/\~\%\:\#\?=&\;\-]+)/i", ["App\Models\Review","urllink_callback"], $txt);
+        $txt = strip_tags($txt, "<a>");
+        return $txt;
+    }
+
+    public static function urllink_callback($match)
+    {
+        if ($match[1]) {
+            // 最初から<a>タグで囲まれている場合
+            if (preg_match('/<a .*?href *?= *\"(http[^\"]+?)\"[^>]*?>(.+?)<\/a>/i', $match[1], $matches)) {
+                //  <a>タグの href属性が http から始まっている場合（javascript対策）
+                return sprintf(
+                    '<a class="text-blue-600 hover:underline" href="%1$s" target="_blank">%2$s</a>',
+                    htmlspecialchars($matches[1]),
+                    htmlspecialchars($matches[2]),
+                );
+            } else {
+                //  <a>タグの href属性が http から始まっていない場合はエスケープして出力
+                return htmlspecialchars($match[1]);
+            }
+        } elseif ($match[2]) {
+            // <a>タグで囲まれていないけど http://～ から始まっている場合
+            return sprintf(
+                '<a class="text-blue-600 hover:underline" href="%1$s" target="_blank">%1$s</a>',
+                htmlspecialchars($match[2]),
+            );
+        }
     }
 
     /**
@@ -278,25 +309,26 @@ class Review extends Model
      * @param int $cat_id
      * 
      */
-    public static function get_scores($paper_id, $cat_id){
+    public static function get_scores($paper_id, $cat_id)
+    {
         $sql1 =
-            'select reviews.id, paper_id, title, name, affil, ismeta, status from reviews '.
-            'left join papers on reviews.paper_id = papers.id '.
-            'left join users on reviews.user_id = users.id '.
+            'select reviews.id, paper_id, title, name, affil, ismeta, status from reviews ' .
+            'left join papers on reviews.paper_id = papers.id ' .
+            'left join users on reviews.user_id = users.id ' .
             'where reviews.paper_id = ' . $paper_id .
             " and reviews.category_id = $cat_id order by ismeta desc, id";
         $res1 = DB::select($sql1);
         $names = [];
         $ismeta = [];
         foreach ($res1 as $res) {
-            $names[$res->id] = $res->name." (".$res->affil.")";
+            $names[$res->id] = $res->name . " (" . $res->affil . ")";
             $ismeta[$res->id] = $res->ismeta;
         }
         $sql2 =
             'select scores.review_id, viewpoint_id, value, orderint, `desc` from scores ' .
             ' left join reviews on scores.review_id = reviews.id' .
             ' left join viewpoints on scores.viewpoint_id = viewpoints.id' .
-            " where review_id in (select id from reviews where paper_id = {$paper_id}) ".
+            " where review_id in (select id from reviews where paper_id = {$paper_id}) " .
             " and reviews.category_id = $cat_id " .
             ' and value is not null order by review_id, orderint';
         $res2 = DB::select($sql2);
