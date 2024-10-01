@@ -156,10 +156,11 @@ class ReviewController extends Controller
         $cat_id = $cat->id;
         return view("review.pccomment")->with(compact("subs", "cat_id", "cat", "scoreonly"));
     }
+    // 査読会議で著者にみせる、スコアのみの表
     public function comment_scoreonly(Request $req, Category $cat)
     {
         if (!Category::isShowReview($cat->id)) {
-            return abort(403, 'review comment');
+            return abort(403, 'review summary table is not public to reviewers');
         }
 
         return $this->comment($req, $cat, 1);
