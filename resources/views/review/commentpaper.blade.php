@@ -61,10 +61,10 @@
     </div>
     {{-- //    プライマリの査読結果（Primary部分のみ6項目）を表示する。 --}}
     @php
-        $sub = App\Models\Submit::where('paper_id', $paper->id)
-            ->where('category_id', $paper->category_id)
-            ->first();
-            $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
+        // $sub = App\Models\Submit::where('paper_id', $paper->id)
+        //     ->where('category_id', $paper->category_id)
+        //     ->first();
+        $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
     @endphp
 
     @foreach ($sub->reviews as $rev)
@@ -84,7 +84,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($rev->scores_and_comments(1, 0, $sub->accept_id > 0) as $vpdesc => $valstr)
+                    {{-- 最初の引数が1だと、著者に帰るコメント・スコアのみが表示されるので、ここでは0にしている。 --}}
+                    @foreach ($rev->scores_and_comments(0, 0, $sub->accept_id > 0) as $vpdesc => $valstr)
                         <tr
                             class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200' : 'bg-white-50' }}">
                             <td class="p-2 bg-slate-100 border-2 border-slate-300 text-sm">

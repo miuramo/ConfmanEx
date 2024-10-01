@@ -175,7 +175,7 @@ class ReviewController extends Controller
             return abort(403, 'authors conflict');
         }
         $sub = Submit::where('paper_id', $paper->id)
-            ->where('category_id', $paper->category_id)
+            ->where('category_id', $cat->id)
             ->first();
         if ($sub->token() != $token) return abort(403, "TOKEN ERROR FOR SUBMIT");
         $cat_id = $cat->id;
