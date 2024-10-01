@@ -8,6 +8,7 @@ use App\Models\Bb;
 use App\Models\BbMes;
 use App\Models\MailTemplate;
 use App\Models\Paper;
+use App\Models\RevConflict;
 use App\Models\Review;
 use Illuminate\Http\Request;
 
@@ -69,6 +70,11 @@ class BbController extends Controller
             $rev = Review::where("paper_id", $bb->paper_id)->where("category_id", $bb->category_id)->where("user_id", auth()->id())->first();
             if ($rev==null) $revid = null;
             else $revid = $rev->id;
+            // 利害関係者は掲示板を見れないようにする
+            $rigais = RevConflict::arr_pu_rigai();
+            if ($rigais[$bb->paper->id][auth()->id()] < 3) {
+                return abort(403, 'authors conflict');
+            }
         } else {
             $revid = null;
         }

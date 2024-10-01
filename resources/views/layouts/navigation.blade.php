@@ -124,6 +124,10 @@
                                     {{ __('Log Out') }}
                                 </x-dropdown-link>
                             </form>
+                            {{-- UserIDを表示 --}}
+                            <div class="px-4 py-2 text-gray-400">
+                                (UserID: {{auth()->id()}})
+                            </div>
                         </x-slot>
                     </x-dropdown>
                 @else

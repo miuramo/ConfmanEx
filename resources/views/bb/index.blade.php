@@ -43,7 +43,8 @@
                         @isset($bb->paper)
                         <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb->id, 'key' => $bb->key]) }}"
                             :color="$colors[$i]" target="_blank" size="sm">
-                            {{ $bb->paper->id_03d() }} {{ $bb->paper->title }}
+                            {{ $bb->paper->id_03d() }} {{ $bb->paper->title }} 
+                            ({{ $bb->nummessages() }} messages)
                         </x-element.linkbutton>
                         @else
                         <div>Error: No Paper associated {{$bb->id}}</div>

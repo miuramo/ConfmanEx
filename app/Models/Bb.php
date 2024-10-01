@@ -35,6 +35,13 @@ class Bb extends Model
     {
         return $this->hasMany(BbMes::class, 'bb_id');
     }
+
+    public function nummessages()
+    {
+        // メッセージの数を返す
+        
+        return $this->hasMany(BbMes::class, 'bb_id')->count();
+    }
     public static function make_bb(int $type, int $pid, int $cid)
     {
         $subs = [
