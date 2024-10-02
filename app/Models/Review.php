@@ -218,6 +218,9 @@ class Review extends Model
         return $ret;
     }
 
+    /**
+     * txtに含まれるURLをリンクに変換する
+     */
     public static function urllink($txt)
     {
         $txt = preg_replace_callback("/(<a [^>]+?>.+?<\/a>)|(https?:\/\/[a-zA-Z0-9_\.\/\~\%\:\#\?=&\;\-]+)/i", ["App\Models\Review","urllink_callback"], $txt);

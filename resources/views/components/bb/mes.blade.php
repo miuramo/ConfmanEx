@@ -3,8 +3,8 @@
 ])
 <!-- components.bb.mes  -->
 @php
-    $mes->mes = preg_replace_callback("/(<a [^>]+?>.+?<\/a>)|(https?:\/\/[a-zA-Z0-9_\.\/\~\%\:\#\?=&\;\-]+)/i", "urllink", $mes->mes);
-    $mes->mes = strip_tags($mes->mes,"<a>");
+    $mes->mes = App\Models\Review::urllink($mes->mes);
+    $mes->mes = strip_tags($mes->mes, '<a>');
 @endphp
 
 @if ($mes->user_id == auth()->id())

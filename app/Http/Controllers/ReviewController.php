@@ -6,6 +6,7 @@ use App\Exports\ReviewCommentExportFromView;
 use App\Exports\ReviewResultExportFromView;
 use App\Http\Requests\StoreReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
+use App\Models\Bb;
 use App\Models\Bidding;
 use App\Models\Category;
 use App\Models\Paper;
@@ -180,7 +181,9 @@ class ReviewController extends Controller
             ->first();
         if ($sub->token() != $token) return abort(403, "TOKEN ERROR FOR SUBMIT");
         $cat_id = $cat->id;
-        return view("review.commentpaper")->with(compact("sub", "cat_id", "cat", "paper"));
+        // 掲示板
+        $bb = Bb::where('category_id', $cat_id)->where('paper_id', $paper->id)->where('type', 1)->first();
+        return view("review.commentpaper")->with(compact("sub", "cat_id", "cat", "paper", "bb"));
     }
 
 

@@ -24,22 +24,34 @@
                 PDF ({{ $paper->pdf_file->pagenum }}pages)
             </a>
         @endif
-        <span class="mx-4"></span>
         @if ($paper->video_file_id != 0 && $paper->video_file != null)
+            <span class="mx-4"></span>
             <a class="underline text-blue-600 hover:bg-lime-200 p-2"
                 href="{{ route('file.showhash', ['file' => $paper->video_file_id, 'hash' => substr($paper->video_file->key, 0, 8)]) }}"
                 target="_blank">
                 Video
             </a>
         @endif
-        <span class="mx-4"></span>
         @if ($paper->img_file_id != 0 && $paper->img_file != null)
+            <span class="mx-4"></span>
             <a class="underline text-blue-600 hover:bg-lime-200 p-2"
                 href="{{ route('file.showhash', ['file' => $paper->img_file_id, 'hash' => substr($paper->img_file->key, 0, 8)]) }}"
                 target="_blank">
                 Image
             </a>
         @endif
+        @isset($bb)
+            <span class="mx-4"></span>
+            @isset($bb->paper)
+                <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb->id, 'key' => $bb->key]) }}" color="cyan"
+                    target="_blank" size="sm">
+                    掲示板
+                    ({{ $bb->nummessages() }} messages)
+                </x-element.linkbutton>
+            @else
+                <div>Error: No Paper associated {{ $bb->id }}</div>
+            @endisset
+        @endisset
 
     </div>
 
@@ -76,7 +88,7 @@
                             査{{ $rev->id }}
 
                             @if ($rev->ismeta)
-                                <span class="mx-2 font-bold text-purple-500">({{$nameofmeta}}) </span>
+                                <span class="mx-2 font-bold text-purple-500">({{ $nameofmeta }}) </span>
                             @endif
                         </th>
                         {{-- <th class="bg-slate-300 border-4 border-slate-300">
@@ -95,7 +107,7 @@
                                 {{-- @if ($valstr == '(未入力)')
                                     （とくにお伝えする事項は、ありません）
                                 @else --}}
-                                    {!! nl2br( App\Models\Review::urllink($valstr) ) !!}
+                                {!! nl2br(App\Models\Review::urllink($valstr)) !!}
                                 {{-- @endif --}}
                             </td>
                         </tr>
