@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\RevNameExportFromView;
 use App\Http\Requests\StoreRevConflictRequest;
 use App\Http\Requests\UpdateRevConflictRequest;
 use App\Models\Category;
@@ -9,7 +10,9 @@ use App\Models\MailTemplate;
 use App\Models\RevConflict;
 use App\Models\Review;
 use App\Models\Role;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RevConflictController extends Controller
 {
@@ -103,6 +106,17 @@ class RevConflictController extends Controller
             $nd[$catid] = MailTemplate::mt_notdownloaded($catid)->toArray();
         }
         return view('revcon.revstatus')->with(compact("cats", "cmsc", "sum_cm", "nd","revusers","us","usary"));
+    }
+
+    /**
+     * 査読者の名前
+     */
+    public function revname(Request $req, Category $cat){
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if ($req->has("excel")) {
+            return Excel::download(new RevNameExportFromView($cat->id), "査読者一覧_{$cat->name}.xlsx");
+        }
+        return view('revcon.revname')->with(compact("cat"));
     }
 
     public function notdownloaded()

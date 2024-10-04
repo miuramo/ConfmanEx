@@ -189,6 +189,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/revcon/stat', [RevConflictController::class, 'stat'])->name('revcon.stat');
     Route::get('/revcon/revstat', [RevConflictController::class, 'revstat'])->name('revcon.revstat');
     Route::get('/revcon/revstatus', [RevConflictController::class, 'revstatus'])->name('revcon.revstatus');
+    Route::get('/revcon/revname/{cat}', [RevConflictController::class, 'revname'])->name('revcon.revname'); // 査読者の名前
     Route::get('/revcon/notdownloaded', [RevConflictController::class, 'notdownloaded'])->name('revcon.notdownloaded');
     Route::get('/revcon/norev', [RevConflictController::class, 'norev'])->name('revcon.norev');
     

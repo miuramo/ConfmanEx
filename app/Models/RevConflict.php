@@ -131,4 +131,27 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
         }
         return $ret;
     }
+
+    // /**
+    //  * 査読者の名前一覧を出す。
+    //  * $ret['review'][paper_id] = array( rev1, rev2,)
+    //  * $ret['rigai'][paper_id] = array( u1, u2,)
+    //  * 
+    //  */
+    // public static function reviewer_names()
+    // {
+    //     $ret = [];
+    //     foreach (RevConflict::all() as $a) {
+    //         $ret[$a->paper_id][$a->user_id] = $a->bidding_id; // 1が利害by著者,2が利害by査読者
+    //     }
+    //     // ユーザ自身の共著論文をとりよせる
+    //     $my_uid = auth()->id();
+    //     $me = User::find($my_uid);
+    //     foreach ($me->coauthor_papers() as $paper) {
+    //         if (isset($ret[$paper->paper_id][$my_uid])) {
+    //             $ret[$paper->paper_id][$my_uid] = 1;
+    //         }
+    //     }
+    //     return $ret;
+    // }
 }

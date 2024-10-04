@@ -200,6 +200,26 @@
         </x-element.linkbutton>
     </x-element.h1>
 
+    <x-element.h1>査読者一覧と利害表明者 <span class="px-2"></span>
+        @foreach ($cats as $catid => $catname)
+            @isset($cat_arrange_review[$catid])
+            <x-element.linkbutton href="{{ route('revcon.revname', ['cat' => $catid]) }}"
+                color="lime">
+                {{ $catname }} 
+            </x-element.linkbutton>
+                @endisset
+        @endforeach
+        @foreach ($cats as $catid => $catname)
+            @isset($cat_arrange_review[$catid])
+            <x-element.linkbutton href="{{ route('revcon.revname', ['cat' => $catid, 'excel' => 'dl']) }}"
+                color="teal">
+                {{ $catname }} Excel
+            </x-element.linkbutton>
+                @endisset
+        @endforeach
+    </x-element.h1>
+
+
     <x-element.h1>査読割り当て <span class="px-2"></span>
         @php
             $roles = App\Models\Role::where('name', 'like', '%reviewer')->get();
@@ -228,6 +248,7 @@
         <x-element.linkbutton href="{{ route('revcon.revstat') }}" color="lime" target="_blank">
             査読割り当て Stat
         </x-element.linkbutton>
+
 
     </x-element.h1>
 

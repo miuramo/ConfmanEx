@@ -147,6 +147,19 @@ class Review extends Model
     }
 
     /**
+     * 査読者名を取得する
+     * ret[paper_id][ismeta][user_id] = name
+     */
+    public static function arr_pu_revname()
+    {
+        $ret = [];
+        foreach (Review::all() as $a) {
+            $ret[$a->paper_id][$a->ismeta][$a->user_id] = $a->user->name;
+        }
+        return $ret;
+    }
+
+    /**
      * 査読割り当ての前に、全査読者の利害を抽出する
      */
     public static function extractAllCoAuthorRigais()
