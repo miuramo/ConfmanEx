@@ -6,9 +6,15 @@
 @php
     $rigais = App\Models\RevConflict::arr_pu_rigai();
     $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
-    $colors = ['white', 'red', 'yellow', 'gray', 'lime', 'cyan', 'purple', 'gray', 'gray', 'gray']; // TODO: 色の割り当ては会議によって異なるので環境設定でやる。
     // ユーザが担当しているrevがあれば、ハイライト
     $tantourev = App\Models\Review::where('user_id', auth()->id())->get()->pluck('paper_id', 'id')->toArray();
+    // $colors = ['white', 'red', 'yellow', 'gray', 'lime', 'cyan', 'purple', 'gray', 'gray', 'gray']; // TODO: 色の割り当ては会議によって異なるので環境設定でやる。
+    $jsoncolor = App\Models\Setting::findByIdOrName('SCOREMAP_COLORS');
+    if ($jsoncolor != null && $jsoncolor->valid) {
+        $scoremap_colors = json_decode($jsoncolor->value, true);
+    } else {
+        $scoremap_colors = [];
+    }
 @endphp
 <!-- components.review.pccommentmap -->
 <table class="min-w-full divide-y divide-gray-200 mb-2">
@@ -83,13 +89,13 @@
                         <td class="p-1 text-center">
                             {{ $sub->paper->id_03d() }}
                         </td>
-                        <td class="p-1">
+                        <td class="p-1 text-sm">
                             @if ($enableTitleLink && $rigais[$sub->paper->id][auth()->id()] > 2)
-                            <x-review.commentpaper_link :sub="$sub"></x-element.commentpaper_link>
-                            @else
-                            <span class="text-gray-400">
-                                {{ $sub->paper->title }}
-                            </span>
+                                <x-review.commentpaper_link :sub="$sub"></x-element.commentpaper_link>
+                                @else
+                                    <span class="text-gray-400">
+                                        {{ $sub->paper->title }}
+                                    </span>
                             @endif
                         </td>
                         <td class="p-1 text-center">
@@ -128,18 +134,28 @@
                     @endif
                     </td>
                     @foreach ($rev->scores_and_comments(0, $scoreonly) as $vpdesc => $valstr)
-                        <td
-                            class="hover:bg-lime-50 transition-colors
-                                    @if (is_numeric($valstr) && isset($colors[intval($valstr)])) bg-{{ $colors[intval($valstr)] }}-200 text-center @endif
-+                                    ">
+                        <td class="hover:bg-lime-50 transition-colors
+                            @php
+                            $colors = ['white'];
+                            foreach($scoremap_colors as $key => $value){
+                                if (preg_match('/'.$key.'/', $vpdesc)){
+                                    $colors = $value;
+                                    break;
+                                }
+                            }
+                            @endphp
+                            @if (is_numeric($valstr)) text-center @else text-xs @endif
+                            @isset($colors[intval($valstr)])) 
+                            bg-{{ $colors[intval($valstr)] }}-200
+                            @endif
+                        ">
                             {!! nl2br(htmlspecialchars($valstr)) !!}
                         </td>
                     @endforeach
-                    @endforeach
-                    </tr>
-                @endisset
-            @endisset
-            @endforeach
-        </tbody>
-
+                @endforeach
+            </tr>
+        @endisset
+    @endisset
+    @endforeach
+    </tbody>
     </table>
