@@ -47,14 +47,16 @@
                 @isset($revnames[$pid][1])
                     @foreach ($revnames[$pid][1] as $revuid => $revname)
                         <td class="p-1">
-                            {{ $revname }} ({{$revuid}})
+                            メタの名前が入ります
+                            {{-- {{ $revname }} ({{$revuid}}) --}}
                         </td>
                     @endforeach
                 @endisset
                 @isset($revnames[$pid][0])
                     @foreach ($revnames[$pid][0] as $revuid => $revname)
                         <td class="p-1">
-                            {{ $revname }} ({{$revuid}})
+                            査読者の名前が入ります
+                            {{-- {{ $revname }} ({{$revuid}}) --}}
                         </td>
                     @endforeach
                 @endisset
