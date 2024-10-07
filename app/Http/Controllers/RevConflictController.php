@@ -109,7 +109,7 @@ class RevConflictController extends Controller
     }
 
     /**
-     * 査読者の名前
+     * 査読者の名前 revcon.revname -> revname_table
      */
     public function revname(Request $req, Category $cat){
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
