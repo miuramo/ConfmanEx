@@ -6,6 +6,7 @@ use App\Http\Requests\StoresubmitRequest;
 use App\Http\Requests\UpdatesubmitRequest;
 use App\Models\Accept;
 use App\Models\Category;
+use App\Models\Enquete;
 use App\Models\EnqueteAnswer;
 use App\Models\File;
 use App\Models\Paper;
@@ -286,8 +287,13 @@ class SubmitController extends Controller
             // Submitsから、Paperをあつめていく
             $catid = $req->input("catid");
             $accid = $req->input("accid");
-            $papers = Paper::whereHas("submits", function ($query) use ($catid, $accid) {
+            $onlydemo = $req->input("onlydemo");
+            $paperids_demo = Enquete::paperids_demoifaccepted($catid);
+            $papers = Paper::whereHas("submits", function ($query) use ($catid, $accid, $onlydemo, $paperids_demo) {
                 $query->where("category_id", $catid)->where("accept_id", $accid)->where("canceled", 0);
+                if ($onlydemo) {
+                    $query->whereIn("id", $paperids_demo);
+                }
             })->get()->pluck('title', 'id')->toArray();
 
             if ($req->has("action") && $req->input("action") == "addsubmit") {
@@ -303,18 +309,22 @@ class SubmitController extends Controller
                     $sub->accept_id = $newaccid;
                     $sub->save();
                 }
-                return redirect()->route('pub.addsubmit')->with('feedback.success', '採否を追加しました。');
+                return redirect()->route('pub.addsubmit')->with('feedback.success', '別カテゴリでの採否を追加しました。');
             }
+            $checksubmit = true;
         } else {
             $papers = [];
+            $checksubmit = false;
         }
         foreach (["catid", "accid", "newcatid", "newaccid"] as $k) {
             if (isset(${$k})) $old[$k] = ${$k};
             else $old[$k] = 1;
         }
+        if (isset($onlydemo)) $old["onlydemo"] = $onlydemo;
+        else $old["onlydemo"] = 0;
         $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
-        return view('pub.addsubmit')->with(compact("cats", "accepts", "papers", "old"));
+        return view('pub.addsubmit')->with(compact("cats", "accepts", "papers", "old", "checksubmit"));
 
         // 現在の採択フラグ状況
         $fs = ["category_id", "accept_id", "name", "judge"];

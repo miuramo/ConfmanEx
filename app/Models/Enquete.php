@@ -21,6 +21,25 @@ class Enquete extends Model
         return $this->belongsToMany(Role::class, $tbl);
     }
     /**
+     * デモ希望をだしているPaperID を返す
+     */
+    public static function paperids_demoifaccepted($cat_id){
+        $demoenqitem = EnqueteItem::where("name", "demoifaccepted")->first();
+        if ($demoenqitem != null) {
+            $demoenqitemid = $demoenqitem->id;
+            $papers = Paper::where('category_id', $cat_id)->get();
+            $res = [];
+            foreach ($papers as $paper) {
+                $ans = $paper->enqans->where("enquete_item_id", $demoenqitemid)->first();
+                if ($ans != null && $ans->valuestr == "はい") {
+                    $res[] = $paper->id;
+                }
+            }
+            return $res;
+        }
+        return [];
+    }
+    /**
      * 必要なアンケートを返す
      */
     public static function needForSubmit(Paper $paper)

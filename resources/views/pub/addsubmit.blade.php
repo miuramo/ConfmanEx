@@ -37,20 +37,23 @@
                     @endforeach
                 </select>
                 の判定がついた論文について、
+                （ただし
+                <input type="checkbox" name="onlydemo" id="onlydemo" value="1" @if(isset($old['onlydemo']) && $old['onlydemo']==1) checked @endif>
+                <label for="onlydemo">デモ希望の論文に限定する</label>）
             </div>
             <div class="mx-4 my-4">
                 <x-element.submitbutton value="preview" color="lime">該当する論文タイトルを確認する
                 </x-element.submitbutton>
             </div>
             <div class="mx-4">
-                上記の条件に該当する論文について、
+                上記の条件に該当する論文について、当初カテゴリとは別の
                 <select id="newcatid" name="newcatid">
                     @foreach ($cats as $n => $cat)
                         <option value="{{ $n }}" @if (isset($old['newcatid']) && $old['newcatid'] == $n) selected @endif>
                             {{ $cat }}</option>
                     @endforeach
                 </select>
-                のカテゴリにおいて、<br>判定を
+                （＝第2カテゴリ）において、<br>判定を
                 <select id="newaccid" name="newaccid">
                     @foreach ($accepts as $n => $acc)
                         <option value="{{ $n }}" @if (isset($old['newaccid']) && $old['newaccid'] == $n) selected @endif>
@@ -61,6 +64,7 @@
                 <x-element.submitbutton value="addsubmit" color="orange">別カテゴリ採否を追加する
                 </x-element.submitbutton>
             </div>
+            <div class="mx-8 my-2">なお、すでに「第2カテゴリ」での採否がついている論文については、別途追加ではなく上書き変更になります。</div>
         </form>
     </div>
 
@@ -77,7 +81,12 @@
             </div>
         </div>
     @else
-        <div class="mx-4 p-4 bg-yellow-100">該当する論文はありません。</div>
+        @if (session('feedback.success'))
+        @else
+            @if ($checksubmit)
+                <div class="mx-4 p-4 bg-yellow-100">該当する論文はありません。</div>
+            @endif
+        @endif
     @endif
 
 
