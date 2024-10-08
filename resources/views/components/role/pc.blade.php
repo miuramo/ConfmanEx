@@ -74,6 +74,10 @@
             <x-element.linkbutton2 href="{{ route('admin.deletepaper',['cat'=>1]) }}" color="yellow">
                 投稿とファイルの状況（削除済みを含む）
             </x-element.linkbutton2>
+            <div class="py-1"></div>
+            <x-element.linkbutton2 href="{{ route('admin.timestamp',['cat'=>1]) }}" color="purple">
+                投稿とファイルのタイムスタンプ
+            </x-element.linkbutton2>
         </div>
 
         <div class="px-2 py-2 flex-grow">

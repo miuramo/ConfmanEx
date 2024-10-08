@@ -155,6 +155,11 @@ class AdminController extends Controller
         }
         return view('admin.deletepaper')->with(compact("all", "cat_id"));
     }
+    public function timestamp(int $cat_id){
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        $all = Paper::withTrashed()->where("category_id", $cat_id)->orderBy('deleted_at', 'asc')->orderBy('id')->get();
+        return view('admin.timestamp')->with(compact("all", "cat_id"));
+    }
 
 
     /**
