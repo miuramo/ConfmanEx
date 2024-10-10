@@ -32,15 +32,20 @@ class ReplaceKutenMiddleware
             route('paper.dragontext', ['paper' => 'NUM']),
             route('admin.paperlist'),
             route('review.result', ['cat' => 'NUM']),
+            route('review.commentpaper', ['cat' => 'NUM', 'paper' => 'NUM', 'token' => 'HEX']),
+            route('admin.crud'),
         ];
 
         $baseurl = url('/');
         $currenturl = str_replace($baseurl, "", url()->current());
         $currenturl = preg_replace('/\b\d+\b/', 'NUM', $currenturl);
+        $currenturl = preg_replace('/\b[0-9a-f]{6,}\b/', 'HEX', $currenturl);
+        $currenturl = preg_replace('/\?\w/', '', $currenturl);
         foreach ($excludedRoutes as $url) {
             $url = str_replace($baseurl, "", $url);
-            if ($url === $currenturl) {
-                // info(url()->current());
+            // info("url ".$url);
+            // info("CUR ".$currenturl);
+        if ($url === $currenturl) {
                 return $response;
             }
         }
