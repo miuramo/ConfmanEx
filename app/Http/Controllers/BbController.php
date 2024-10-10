@@ -72,9 +72,9 @@ class BbController extends Controller
             else $revid = $rev->id;
             // 利害関係者は掲示板を見れないようにする
             $rigais = RevConflict::arr_pu_rigai();
-            if (!isset($rigais[$bb->paper->id][auth()->id()])) {
-                return abort(403, 'missing rigai data (no bidding to the paper?)');
-            }
+            // if (!isset($rigais[$bb->paper->id][auth()->id()])) {
+            //     return abort(403, 'missing rigai data (no bidding to the paper?)');
+            // }
             if (isset($rigais[$bb->paper->id][auth()->id()]) && $rigais[$bb->paper->id][auth()->id()] < 3) {
                 return abort(403, 'authors conflict');
             }
