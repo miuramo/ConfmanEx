@@ -34,11 +34,13 @@ class ReplaceKutenMiddleware
             route('review.result', ['cat' => 'NUM']),
             route('review.commentpaper', ['cat' => 'NUM', 'paper' => 'NUM', 'token' => 'HEX']),
             route('admin.crud'),
+            route('bb.show', ['bb' => 'NUM', 'key' => 'ALPHANUM']),
         ];
 
         $baseurl = url('/');
         $currenturl = str_replace($baseurl, "", url()->current());
         $currenturl = preg_replace('/\b\d+\b/', 'NUM', $currenturl);
+        $currenturl = preg_replace('/\b[0-9a-zA-Z]{20,}\b/', 'ALPHANUM', $currenturl);
         $currenturl = preg_replace('/\b[0-9a-f]{6,}\b/', 'HEX', $currenturl);
         $currenturl = preg_replace('/\?\w/', '', $currenturl);
         foreach ($excludedRoutes as $url) {

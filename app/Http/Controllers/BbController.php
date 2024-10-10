@@ -66,19 +66,22 @@ class BbController extends Controller
         $bb = Bb::with("messages")->with("paper")->with("category")->where('id', $bbid)->where('key', $key)->first();
         if ($bb == null) abort(403, 'bb not found');
         // type=1(査読掲示板) のとき、ユーザのrevid をセット
-        if ($bb->type == 1){
+        if ($bb->type == 1) {
             $rev = Review::where("paper_id", $bb->paper_id)->where("category_id", $bb->category_id)->where("user_id", auth()->id())->first();
-            if ($rev==null) $revid = null;
+            if ($rev == null) $revid = null;
             else $revid = $rev->id;
             // 利害関係者は掲示板を見れないようにする
             $rigais = RevConflict::arr_pu_rigai();
-            if ($rigais[$bb->paper->id][auth()->id()] < 3) {
+            if (!isset($rigais[$bb->paper->id][auth()->id()])) {
+                return abort(403, 'missing rigai data (nologin or not reported ?)');
+            }
+            if (isset($rigais[$bb->paper->id][auth()->id()]) && $rigais[$bb->paper->id][auth()->id()] < 3) {
                 return abort(403, 'authors conflict');
             }
         } else {
             $revid = null;
         }
-        return view("bb.show")->with(compact("bb","revid"));
+        return view("bb.show")->with(compact("bb", "revid"));
     }
 
     /**
