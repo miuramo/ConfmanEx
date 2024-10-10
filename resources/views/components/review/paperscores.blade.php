@@ -2,7 +2,7 @@
     'cat_id' => 1,
     'paper_id' => 999,
     'bb_id' => null,
-    'size' => 'sm'
+    'size' => 'sm',
 ])
 @php
     $ret = App\Models\Review::get_scores($paper_id, $cat_id);
@@ -17,11 +17,13 @@
     }
 
     $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
+
+    $count_formeta = 0;
 @endphp
 
 <!-- components.review.myscores 自分が入力したスコア一覧 -->
 <div class="p-1 bg-slate-300 rounded-lg inline-block">
-    <table class="divide-y divide-gray-200 mb-1 text-{{$size}}">
+    <table class="divide-y divide-gray-200 mb-1 text-{{ $size }}">
         <thead>
             <tr>
                 <th class="p-1 bg-slate-300"> Reviewer</th>
@@ -44,7 +46,7 @@
                                 @if (isset($ismeta_myself))
                                     {{ $name }}
                                 @else
-                                    {{$nameofmeta}}
+                                    {{ $nameofmeta }}
                                 @endif
                             @else
                                 (hidden)
@@ -55,10 +57,13 @@
                         <x-review.pubshow_link :rev_id="$revid"></x-review.pubshow_link>
                     </td>
                     @isset($scores[$revid])
-                        @foreach ($scores[$revid] as $vp => $score)
-                            <td class="p-1 text-center">
-                                {{ $score }}
-                            </td>
+                    {{-- 表のヘッダの項目と対応させる --}}
+                        @foreach ($descs as $vpid => $desc)
+                            @isset($scores[$revid][$vpid])
+                                <td class="p-1 text-center">
+                                    {{ $scores[$revid][$vpid] }}
+                                </td>
+                            @endisset
                         @endforeach
                     @endisset
                 </tr>

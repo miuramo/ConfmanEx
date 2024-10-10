@@ -341,12 +341,12 @@ class Review extends Model
             $ismeta[$res->id] = $res->ismeta;
         }
         $sql2 =
-            'select scores.review_id, viewpoint_id, value, orderint, `desc` from scores ' .
+            'select scores.review_id, viewpoint_id, value, orderint, viewpoints.formeta, viewpoints.forrev, viewpoints.`desc` from scores ' .
             ' left join reviews on scores.review_id = reviews.id' .
             ' left join viewpoints on scores.viewpoint_id = viewpoints.id' .
             " where review_id in (select id from reviews where paper_id = {$paper_id}) " .
             " and reviews.category_id = $cat_id " .
-            ' and value is not null order by review_id, orderint';
+            ' and value is not null order by forrev desc, orderint'; // ここのforrev desc で、先にforrevを表示する。
         $res2 = DB::select($sql2);
         $scores = [];
         $descs = [];
