@@ -99,7 +99,7 @@
                     {{-- 最初の引数が1だと、著者に帰るコメント・スコアのみが表示されるので、ここでは0にしている。 --}}
                     @foreach ($rev->scores_and_comments(0, 0, $sub->accept_id > 0) as $vpdesc => $valstr)
                         <tr
-                            class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200 dark:bg-slate-600' : 'bg-white-50 dark:bg-slate-700' }}">
+                            class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200 dark:bg-slate-600' : 'bg-white-50 dark:bg-slate-800' }}">
                             <td class="p-2 bg-slate-100 border-2 border-slate-300 text-sm dark:bg-slate-400">
                                 {{ $vpdesc }}
                             </td>
