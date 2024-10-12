@@ -19,7 +19,8 @@
         {{-- ファイルアップロードがあると、#filelist の中身をAjaxでかきかえていく --}}
         <div id="mypaperlist" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             @if (count($all) == 0)
-                <div class="xs:text-sm sm:text-xl text-orange-400 bg-yellow-200 dark:bg-yellow-800 dark:text-orange-700 p-4 rounded-md text-center">
+                <div
+                    class="xs:text-sm sm:text-xl text-orange-400 bg-yellow-200 dark:bg-yellow-800 dark:text-orange-700 p-4 rounded-md text-center">
                     あなたが作成した投稿情報はまだありません。
                     <div class="mt-5 mb-2">
                         <x-element.linkbutton href="{{ route('paper.create') }}" color="yellow">
@@ -29,10 +30,12 @@
             @else
                 @foreach ($all as $paper)
                     @if ($paper->accepted)
-                        <div class="bg-cyan-100 p-3 motion-safe:hover:scale-[1.03] transition-all duration-250 dark:bg-cyan-300"> <span
-                                class="border-2 border-blue-600 p-1 text-blue-600 font-bold">投稿完了</span>
+                        <div
+                            class="bg-cyan-100 p-3 motion-safe:hover:scale-[1.03] transition-all duration-250 dark:bg-cyan-300">
+                            <span class="border-2 border-blue-600 p-1 text-blue-600 font-bold">投稿完了</span>
                         @else
-                            <div class="bg-slate-200 p-3 motion-safe:hover:scale-[1.03] transition-all duration-250 dark:bg-slate-700">
+                            <div
+                                class="bg-slate-200 p-3 motion-safe:hover:scale-[1.03] transition-all duration-250 dark:bg-slate-700">
                     @endif
                     <x-element.paperid size=2 :paper_id="$paper->id">
                     </x-element.paperid>
@@ -52,9 +55,10 @@
                     @if ($revreturn[$paper->category_id])
                         &nbsp;
                         &nbsp;
-                        <x-element.linkbutton href="{{ route('paper.review', ['paper' => $paper->id]) }}" color="orange"
+                        <x-element.linkbutton href="{{ route('paper.review', ['paper' => $paper->id, 'token' => $paper->token() ]) }}" color="orange"
                             target="_blank">
                             結果 </x-element.linkbutton>
+                        {{-- 議論掲示板があれば、ここにもリンクを表示する --}}
                     @endif
 
                     <a href="{{ route('paper.edit', ['paper' => $paper->id]) }}">
@@ -68,7 +72,8 @@
 
 
     @if (count($coauthor_all) == 0)
-        <div class="xs:text-sm sm:text-xl text-slate-400 bg-slate-200 p-4 rounded-md text-center mt-10  dark:bg-slate-700 dark:text-slate-400">
+        <div
+            class="xs:text-sm sm:text-xl text-slate-400 bg-slate-200 p-4 rounded-md text-center mt-10  dark:bg-slate-700 dark:text-slate-400">
             あなたが表示できる共著者投稿はありません。
             <div class="text-sm mt-5">
                 ここに共著の投稿を表示するには、あなたの登録メールアドレスを投稿者に伝え、投稿連絡用メールアドレスへの追加を依頼してください。
@@ -84,8 +89,9 @@
                     $id_03d = sprintf('%03d', $paper->id);
                 @endphp
                 @if ($paper->accepted)
-                    <div class="bg-cyan-100 p-3 motion-safe:hover:scale-[1.03] transition-all duration-250  dark:bg-cyan-300"> <span
-                            class="border-2 border-blue-600 p-1 text-blue-600 font-bold">投稿完了</span>
+                    <div
+                        class="bg-cyan-100 p-3 motion-safe:hover:scale-[1.03] transition-all duration-250  dark:bg-cyan-300">
+                        <span class="border-2 border-blue-600 p-1 text-blue-600 font-bold">投稿完了</span>
                     @else
                         <div class="bg-slate-200 p-3 motion-safe:hover:scale-[1.03] transition-all duration-250">
                 @endif

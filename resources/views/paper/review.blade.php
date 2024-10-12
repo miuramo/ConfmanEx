@@ -32,6 +32,8 @@
         <div class="m-6">
             @php
                 $count = 0;
+                $accept = App\Models\Accept::find($sub->accept_id);
+                $isaccepted = ($accept->judge > 0); // 不採択の場合、返さない項目があるので、ここで調べておく
             @endphp
             @foreach ($sub->reviews as $rev)
                 <table class="table-auto">
@@ -52,7 +54,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($rev->scores_and_comments(1, 0, $sub->accept_id > 0) as $vpdesc => $valstr)
+                        @foreach ($rev->scores_and_comments(1, 0, $isaccepted) as $vpdesc => $valstr)
                             <tr
                                 class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200' : 'bg-white-50' }}">
                                 <td nowrap class="p-2 bg-slate-100 border-2 border-slate-300">
@@ -69,6 +71,7 @@
                         @endforeach
                     </tbody>
                 </table>
+            @endforeach
         </div>
     @endforeach
 

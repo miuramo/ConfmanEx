@@ -214,6 +214,14 @@ class Paper extends Model
     }
 
     /**
+     * この論文の査読結果のトークンを生成（著者がみえる査読結果）
+     */
+    public function token()
+    {
+        return sha1($this->id . $this->user_id . $this->paper_id . $this->category_id . $this->title);
+    }
+
+    /**
      * getAuthorType
      */
     public function getAuthorType(): int

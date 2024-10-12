@@ -184,17 +184,17 @@ class PaperController extends Controller
 
         for ($x = -2; $x < 3; $x++)
             for ($y = -2; $y < 3; $y++)
-            ImageTTFText($im, 26, 0, 20 + $x, 47 + $y, $colr, $dejavu , "!!! Warning !!!" );
+                ImageTTFText($im, 26, 0, 20 + $x, 47 + $y, $colr, $dejavu, "!!! Warning !!!");
 
-        ImageTTFText($im, 26, 0, 20 , 47 , $colw, $dejavu , "!!! Warning !!!" );
+        ImageTTFText($im, 26, 0, 20, 47, $colw, $dejavu, "!!! Warning !!!");
         // imagestring($im, 16, 20, 20, "!!! Warning !!!", $colw);
         // imagestring($im, 5, 20, 20, "!!! Warning !!!", $colw);
 
         for ($x = -2; $x < 3; $x++)
             for ($y = -2; $y < 3; $y++)
-                ImageTTFText($im, 13, 0, 20+$x , 80+$y , $colb, $dejavu , "Paper PDF Not Uploaded Yet.");
+                ImageTTFText($im, 13, 0, 20 + $x, 80 + $y, $colb, $dejavu, "Paper PDF Not Uploaded Yet.");
 
-        ImageTTFText($im, 13, 0, 20 , 80 , $colw, $dejavu , "Paper PDF Not Uploaded Yet.");
+        ImageTTFText($im, 13, 0, 20, 80, $colw, $dejavu, "Paper PDF Not Uploaded Yet.");
 
         // imagestring($im, 5, 20, 60, , $colw);
         // ob_start();
@@ -291,21 +291,21 @@ class PaperController extends Controller
 
             $cat = Category::find($paper->category_id);
             // 書誌情報エラー(もしshow_bibinfo_btnが1かつ、書誌情報が無い場合)
-            if ($cat->show_bibinfo_btn){
+            if ($cat->show_bibinfo_btn) {
                 $biberrors = $paper->validateBibinfo();
             } else {
                 $biberrors = [];
             }
             $enqerrors = array_merge($enqerrors, $biberrors);
 
-            $koumoku = Paper::mandatory_bibs();//必須書誌情報            
+            $koumoku = Paper::mandatory_bibs(); //必須書誌情報            
 
             // paper->validate_accepted()でもよいが、せっかくエラーを調べたので、それを使う。
             $paper->accepted = (count($fileerrors) == 0 && count($enqerrors) == 0);
             $paper->save();
 
 
-            return view("paper.edit", ["paper" => $id])->with(compact("id", "id_03d", "all", "paper", "enqs", "enqans", "fileerrors", "enqerrors","biberrors","cat","koumoku"));
+            return view("paper.edit", ["paper" => $id])->with(compact("id", "id_03d", "all", "paper", "enqs", "enqans", "fileerrors", "enqerrors", "biberrors", "cat", "koumoku"));
         } catch (ModelNotFoundException $ex) {
         }
     }
@@ -333,12 +333,15 @@ class PaperController extends Controller
         return redirect()->route('paper.index')->with('feedback.success', '投稿情報と関連ファイルを削除しました');
     }
 
-    public function review(string $id)
+    public function review(string $id, string $token)
     {
         $paper = Paper::findOrFail($id);
-        if (!Gate::allows('show_paper', $paper)) {
-            abort(403, 'forbidden_for_others');
+        if (!auth()->user()->can('role_any', 'pc|reviewer')) {
+            if (!Gate::allows('show_paper', $paper)) {
+                abort(403, 'forbidden_for_others');
+            }
         }
+        if ($paper->token() != $token) return abort(403, "Review Browse TOKEN ERROR");
         $subs = $paper->submits;
         return view('paper.review', ['paper' => $id])->with(compact("subs", "paper"));
     }
@@ -364,7 +367,7 @@ class PaperController extends Controller
         $pdftext = $paper->pdf_file->getPdfText();
         // 書誌情報の設定項目
         $koumoku = Paper::mandatory_bibs();
-        $koumokucolor = ['title' => 'teal', 'abst' => 'teal', 'keyword' => 'teal', 'authorlist'=>'teal', 'etitle' => 'lime', 'eabst' => 'lime', 'ekeyword' => 'lime','eauthorlist'=>'lime'];
+        $koumokucolor = ['title' => 'teal', 'abst' => 'teal', 'keyword' => 'teal', 'authorlist' => 'teal', 'etitle' => 'lime', 'eabst' => 'lime', 'ekeyword' => 'lime', 'eauthorlist' => 'lime'];
         // $pdftext = mb_ereg_replace('\n+',"\n",$pdftext);
         $reps = ["ﬁ" => "fi", "ﬀ" => "ff", "ﬃ" => "ffi"];
         foreach ($reps as $riga => $non) {

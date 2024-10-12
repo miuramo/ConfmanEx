@@ -81,7 +81,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/paper/{paper}/enq/{enq}', [EnqueteController::class, 'show'])->name('enquete.pageview');
     Route::put('/paper/{paper}/enq/{enq}', [EnqueteController::class, 'update'])->name('enquete.update');
     //査読結果
-    Route::get('/paper/{paper}/review', [PaperController::class, 'review'])->name('paper.review');
+    Route::get('/paper/{paper}/review/{token}', [PaperController::class, 'review'])->name('paper.review'); // 著者に返る査読結果
     //ドラッグ範囲選択
     Route::get('/paper/{paper}/dt', [PaperController::class, 'dragontext'])->name('paper.dragontext');
     Route::post('/paper/{paper}/dtpost', [PaperController::class, 'dragontextpost'])->name('paper.dragontextpost');

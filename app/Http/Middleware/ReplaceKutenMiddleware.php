@@ -32,7 +32,8 @@ class ReplaceKutenMiddleware
             route('paper.dragontext', ['paper' => 'NUM']),
             route('admin.paperlist'),
             route('review.result', ['cat' => 'NUM']),
-            route('review.commentpaper', ['cat' => 'NUM', 'paper' => 'NUM', 'token' => 'HEX']),
+            route('paper.review', ['paper' => 'NUM','token' => 'HEX']), // 著者に返る査読結果
+            route('review.commentpaper', ['cat' => 'NUM', 'paper' => 'NUM', 'token' => 'HEX']), // 委員会での共有画面
             route('admin.crud'),
             route('bb.show', ['bb' => 'NUM', 'key' => 'ALPHANUM']),
         ];
