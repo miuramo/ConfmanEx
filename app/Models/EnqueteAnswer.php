@@ -47,4 +47,29 @@ class EnqueteAnswer extends Model
         }
         return $ret;
     }
+
+    /**
+     * デモ希望としているアンケート回答数を、採択状況ごとに分けてカウントする
+     */
+    public static function demoCount(){
+        $demoenqitem = EnqueteItem::where("name", "demoifaccepted")->first();
+        if ($demoenqitem != null) {
+            $demoenqitemid = $demoenqitem->id;
+            // EnqueteAnswerのうち、demoenqitemid に "はい" と答えているものをカウント
+            $res = EnqueteAnswer::where("enquete_item_id", $demoenqitemid)->where("valuestr", "はい")->count();
+            return $res;
+        }
+        return 0;
+    }
+    public static function demoPaperIDs(){
+        $demoenqitem = EnqueteItem::where("name", "demoifaccepted")->first();
+        if ($demoenqitem != null) {
+            $demoenqitemid = $demoenqitem->id;
+            // EnqueteAnswerのうち、demoenqitemid に "はい" と答えているものをカウント
+            $res = EnqueteAnswer::select("paper_id")->where("enquete_item_id", $demoenqitemid)->where("valuestr", "はい")->get()->pluck("paper_id")->toArray(); 
+            return $res;
+        }
+        return [];
+    }
+
 }

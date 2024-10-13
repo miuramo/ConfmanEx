@@ -57,7 +57,7 @@ class ViewpointController extends Controller
         }
         $coldetails = AdminController::column_details($tableName);
         $coldetails['COPY'] = 'COPY';
-        $ary = ['COPY', 'orderint', 'name', 'desc', 'content', 'contentafter', 'forrev', 'formeta', 'weight', 'doReturn', 'doReturnAcceptOnly'];
+        $ary = ['COPY', 'orderint', 'name', 'desc', 'content', 'contentafter', 'forrev', 'formeta', 'weight', 'doReturn', 'doReturnAcceptOnly','subdesc'];
         $cold2 = [];
         foreach ($ary as $f) {
             if (isset($coldetails[$f])) $cold2[$f] = $coldetails[$f];

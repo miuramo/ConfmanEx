@@ -3,6 +3,9 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
             {{ __('査読結果') }}
+            <span class="mx-2"></span>
+            <x-element.paperid size=2 :paper_id="$paper->id">
+            </x-element.paperid>
         </h2>
     </x-slot>
     @section('title', '査読結果')
@@ -10,30 +13,31 @@
         <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
     @endif
 
-    <div class="py-2 px-6">
-        {{-- ファイルアップロードがあると、#filelist の中身をAjaxでかきかえていく --}}
-        <div id="mypaperlist" class="grid grid-cols-1 gap-4">
-            <div class="bg-slate-200 p-3">
-                <x-element.paperid size=2 :paper_id="$paper->id">
-                </x-element.paperid>
-                &nbsp;
-                &nbsp;
-                <x-element.category :cat="$paper->category_id">
+    <div class="pt-2 px-6">
+        <div class="bg-slate-200 p-3 dark:bg-slate-600 dark:text-gray-300">
+            @foreach ($subs as $sub)
+                @if (!$loop->first)
+                    <span class="mx-8 text-2xl font-bold text-gray-400"></span>
+                @endif
+                <x-element.category :cat="$sub->category_id" size="2xl">
                 </x-element.category>
-                {{-- @if ($authorType == 1) --}}
-
-                {{-- <img src="{{ route('paper.headimgshow', ['paper' => $paper->id, 'file' => substr($paper->pdf_file->key,0,8)]) }}"
-                    title="{{ $paper->title }}" loading="lazy" class="w-1/2 mt-2"> --}}
-            </div>
+                <span class="mx-1"></span>
+                <span class="text-2xl font-bold">{{ $accepts[$sub->accept_id] }}</span>
+            @endforeach
         </div>
     </div>
 
     @foreach ($subs as $sub)
-        <div class="m-6">
+        <div class="mx-6 my-2">
             @php
                 $count = 0;
                 $accept = App\Models\Accept::find($sub->accept_id);
-                $isaccepted = ($accept->judge > 0); // 不採択の場合、返さない項目があるので、ここで調べておく
+                $isaccepted = $accept->judge > 0; // 不採択の場合、返さない項目があるので、ここで調べておく
+                $vpsubdescs = App\Models\Viewpoint::where('category_id', $sub->category_id)
+                    ->select('subdesc', 'desc')
+                    ->get()
+                    ->pluck('subdesc', 'desc')
+                    ->toArray();
             @endphp
             @foreach ($sub->reviews as $rev)
                 <table class="table-auto">
@@ -56,7 +60,7 @@
                     <tbody>
                         @foreach ($rev->scores_and_comments(1, 0, $isaccepted) as $vpdesc => $valstr)
                             <tr
-                                class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200' : 'bg-white-50' }}">
+                                class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200 dark:bg-neutral-200' : 'bg-white-50 dark:bg-neutral-300' }}">
                                 <td nowrap class="p-2 bg-slate-100 border-2 border-slate-300">
                                     {{ $vpdesc }}
                                 </td>
@@ -66,6 +70,11 @@
                                     @else
                                         {!! nl2br(htmlspecialchars($valstr)) !!}
                                     @endif
+                                    {{-- vpsubdesc スコアの意味などを表示する --}}
+                                    @isset($vpsubdescs[$vpdesc])
+                                        <span class="mx-6"></span>
+                                        <span class="text-gray-400 text-sm">{{ $vpsubdescs[$vpdesc] }}</span>
+                                    @endisset
                                 </td>
                             </tr>
                         @endforeach

@@ -107,7 +107,14 @@
                 <x-element.submitbutton value="view" color="yellow">↑ 選択したファイルをDownload
                 </x-element.submitbutton>
             </form>
-
+            <div class="pt-4">
+                <div>
+                    デモ希望数：{{ App\Models\EnqueteAnswer::demoCount() }}
+                </div>
+                <div>
+                    デモ希望PaperIDリスト：{{ implode(",", App\Models\EnqueteAnswer::demoPaperIDs()) }}
+                </div>
+            </div>
         </div>
     </div>
 
