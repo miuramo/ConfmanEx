@@ -7,6 +7,18 @@
 </style>
 
 <div class="px-6 py-4">
+    <x-element.h1>登壇デモ希望
+    </x-element.h1>
+        <div class="px-2">
+            <div>
+                デモ希望数：{{ App\Models\EnqueteAnswer::demoCount() }}
+            </div>
+            <div>
+                デモ希望PaperIDリスト：{{ implode(",", App\Models\EnqueteAnswer::demoPaperIDs()) }}
+            </div>
+        </div>
+
+
     <x-element.h1>
         アンケート
         <span class="px-3"></span>
