@@ -40,9 +40,10 @@ class ReplaceKutenMiddleware
 
         $baseurl = url('/');
         $currenturl = str_replace($baseurl, "", url()->current());
-        $currenturl = preg_replace('/\b\d+\b/', 'NUM', $currenturl);
+        // 順番が大事。数字を置換する前にHEXを置換する
+        $currenturl = preg_replace('/\b[0-9a-f]{20,}\b/', 'HEX', $currenturl);
         $currenturl = preg_replace('/\b[0-9a-zA-Z]{20,}\b/', 'ALPHANUM', $currenturl);
-        $currenturl = preg_replace('/\b[0-9a-f]{6,}\b/', 'HEX', $currenturl);
+        $currenturl = preg_replace('/\b\d+\b/', 'NUM', $currenturl);
         $currenturl = preg_replace('/\?\w/', '', $currenturl);
         foreach ($excludedRoutes as $url) {
             $url = str_replace($baseurl, "", $url);
