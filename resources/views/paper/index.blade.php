@@ -55,12 +55,16 @@
                     @if ($revreturn[$paper->category_id])
                         &nbsp;
                         &nbsp;
-                        <x-element.linkbutton href="{{ route('paper.review', ['paper' => $paper->id, 'token' => $paper->token() ]) }}" color="orange"
-                            target="_blank">
+                        <x-element.linkbutton
+                            href="{{ route('paper.review', ['paper' => $paper->id, 'token' => $paper->token()]) }}"
+                            color="orange" target="_blank">
                             結果 </x-element.linkbutton>
                         {{-- 議論掲示板があれば、ここにもリンクを表示する --}}
                         @php
-                            $bb = App\Models\Bb::where('paper_id', $paper->id)->where('category_id',$paper->category_id)->where('type',2)->first();
+                            $bb = App\Models\Bb::where('paper_id', $paper->id)
+                                ->where('category_id', $paper->category_id)
+                                ->where('type', 2) // 2: メタと著者 この条件を忘れると、議論用が表示されてしまうため注意
+                                ->first();
                         @endphp
                         @isset($bb)
                             &nbsp;
@@ -68,7 +72,7 @@
                             <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb, 'key' => $bb->key]) }}"
                                 color="pink" target="_blank">
                                 掲示板 </x-element.linkbutton>
-                                @endisset
+                        @endisset
                     @endif
 
                     <a href="{{ route('paper.edit', ['paper' => $paper->id]) }}">

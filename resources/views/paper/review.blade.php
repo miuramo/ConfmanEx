@@ -38,6 +38,10 @@
                     ->get()
                     ->pluck('subdesc', 'desc')
                     ->toArray();
+                $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
+                if ($nameofmeta == null) {
+                    $nameofmeta = 'メタ';
+                }
             @endphp
             @foreach ($sub->reviews as $rev)
                 <table class="table-auto">
@@ -50,7 +54,7 @@
                                 査読者 {{ $count }}
 
                                 @if ($rev->ismeta)
-                                    <span class="mx-2 text-blue-500">(メタ査読者) </span>
+                                    <span class="mx-2 text-blue-500">（{{$nameofmeta}}査読者） </span>
                                 @endif
                             </th>
                             <th class="bg-slate-300 border-4 border-slate-300">

@@ -27,6 +27,12 @@
     @push('localcss')
         <link rel="stylesheet" href="{{ asset('/css/localflash.css') }}">
     @endpush
+    @php
+        $revreturn = App\Models\Category::select('status__revreturn_on', 'id')
+            ->get()
+            ->pluck('status__revreturn_on', 'id')
+            ->toArray();
+    @endphp
 
     <div class="py-2">
         <div class="py-2 px-6">
@@ -61,7 +67,13 @@
         @endphp
         {{-- 最初のsuccess がなく、かつ、エラーがあれば --}}
         @if ((count($fileerrors) > 0 || count($enqerrors) > 0) && !session('feedback.success'))
-            <x-alert.error2>投稿はまだ完了していません。</x-alert.error2>
+            {{-- もし、査読結果を返している段階なら、投稿は完了しているので、違うメッセージを表示する --}}
+            @if ($revreturn[$paper->category_id])
+                <x-alert.warning>カメラレディ提出期限までに必要となる以下の入力・操作について、ご確認ください。</x-alert.warning>
+            @else
+                <x-alert.error2>投稿はまだ完了していません。</x-alert.error2>
+            @endif
+
         @endif
         @foreach ($fileerrors as $er)
             <x-alert.error>{{ $er }}</x-alert.error>
@@ -125,34 +137,39 @@
                         @if ($paper->locked)
                             <span class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、書誌情報の設定はできません。）</span>
                         @endif
-                    <div class="text-lg mt-2 ml-6 p-1 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
-                        現在設定されている書誌情報の確認
-                        {{-- <x-element.gendospan>採択後に入力</x-element.gendospan> --}}
-                    </div>
-                    <div class="text-md mx-6 mt-0">
-                        <table class="border-cyan-500 border-2">
-                            @foreach ($koumoku as $k => $v)
-                                <tr class="{{ $loop->iteration % 2 === 1 ? 'bg-cyan-50' : 'bg-white dark:bg-cyan-100' }}">
-                                    <td class="px-2 py-1 whitespace-nowrap">{{ $v }}</td>
-                                    @if(strlen($paper->{$k})<2)
-                                    <td class="px-2 py-1 text-red-600 font-bold" id="confirm_{{ $k }}">（未設定）</td>
-                                    @else
-                                    <td class="px-2 py-1" id="confirm_{{ $k }}">{!! nl2br($paper->{$k}) !!}</td>
-                                    @endif
-                                </tr>
-                            @endforeach
-                        </table>
+                        <div
+                            class="text-lg mt-2 ml-6 p-1 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
+                            現在設定されている書誌情報の確認
+                            {{-- <x-element.gendospan>採択後に入力</x-element.gendospan> --}}
+                        </div>
+                        <div class="text-md mx-6 mt-0">
+                            <table class="border-cyan-500 border-2">
+                                @foreach ($koumoku as $k => $v)
+                                    <tr
+                                        class="{{ $loop->iteration % 2 === 1 ? 'bg-cyan-50' : 'bg-white dark:bg-cyan-100' }}">
+                                        <td class="px-2 py-1 whitespace-nowrap">{{ $v }}</td>
+                                        @if (strlen($paper->{$k}) < 2)
+                                            <td class="px-2 py-1 text-red-600 font-bold"
+                                                id="confirm_{{ $k }}">（未設定）</td>
+                                        @else
+                                            <td class="px-2 py-1" id="confirm_{{ $k }}">
+                                                {!! nl2br($paper->{$k}) !!}</td>
+                                        @endif
+                                    </tr>
+                                @endforeach
+                            </table>
 
-                        <div class="mt-2 text-sm px-2  dark:text-gray-400">注：和文著者名の書き方は、以下の例に合わせてください。詳細は [書誌情報の設定]→[和文著者名の設定方法を表示] を参照してください。</div>
-                        <textarea id="jpex" name="jpexample" rows="3"
-                            class="inline-flex mb-1 block p-2.5 w-full text-md text-gray-900 bg-gray-200 rounded-lg border border-gray-300
+                            <div class="mt-2 text-sm px-2  dark:text-gray-400">注：和文著者名の書き方は、以下の例に合わせてください。詳細は
+                                [書誌情報の設定]→[和文著者名の設定方法を表示] を参照してください。</div>
+                            <textarea id="jpex" name="jpexample" rows="3"
+                                class="inline-flex mb-1 block p-2.5 w-full text-md text-gray-900 bg-gray-200 rounded-lg border border-gray-300
                              focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
                               dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="投稿 太郎 (投稿大学)&#10;和布蕪 二郎 (和布蕪大学)&#10;昆布 巻子 (ダシ大学/昆布研究所)" readonly></textarea>
-        
-                    </div>
-                </x-element.h1>
-            </div>
+                                placeholder="投稿 太郎 (投稿大学)&#10;和布蕪 二郎 (和布蕪大学)&#10;昆布 巻子 (ダシ大学/昆布研究所)" readonly></textarea>
+
+                        </div>
+                    </x-element.h1>
+                </div>
             @endif
 
 
@@ -242,9 +259,13 @@
                             @endif --}}
                         </div>
                     @else
-                        <div class="mx-5 my-5 bg-red-600 p-5 text-white font-bold text-2xl">
-                            投稿はまだ完了していません。画面上部の指示に従ってください。
-                        </div>
+                        @if ($revreturn[$paper->category_id])
+                            <x-alert.warning>カメラレディ提出期限までに必要となる入力・操作について、画面上部の指示をご確認ください。</x-alert.warning>
+                        @else
+                            <div class="mx-5 my-5 bg-red-600 p-5 text-white font-bold text-2xl">
+                                投稿はまだ完了していません。画面上部の指示に従ってください。
+                            </div>
+                        @endif
                     @endif
 
                     @if ($paper->locked)
@@ -252,14 +273,19 @@
                             <span class="text-red-500 dark:text-red-400">現在、投稿はロックされているため、投稿者による削除はできません。</span>
                         </div>
                     @else
-                        <div class="mx-5 my-5">
-                            投稿をとりやめるときは
-                            <x-element.deletebutton_nodiv
-                                action="{{ route('paper.destroy', ['paper' => $paper->id]) }}"
-                                confirm="アップロードファイルも消えますが、本当にPaperID : {{ $id_03d }} 投稿を削除してよいですか？"> PaperID :
-                                {{ $id_03d }} 投稿を削除
-                            </x-element.deletebutton_nodiv> を押してください。
-                        </div>
+                        @if (!$revreturn[$paper->category_id])
+                            <div class="mx-5 my-5">
+                                投稿をとりやめるときは
+                                <x-element.deletebutton_nodiv
+                                    action="{{ route('paper.destroy', ['paper' => $paper->id]) }}"
+                                    confirm="アップロードファイルも消えますが、本当にPaperID : {{ $id_03d }} 投稿を削除してよいですか？"> PaperID
+                                    :
+                                    {{ $id_03d }} 投稿を削除
+                                </x-element.deletebutton_nodiv> を押してください。
+                            </div>
+                        @else
+                            <div class="my-5"></div>
+                        @endif
                     @endif
 
                     <div class="mx-6 my-2">
