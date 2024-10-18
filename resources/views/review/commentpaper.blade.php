@@ -4,6 +4,8 @@
         $catspans = App\Models\Category::spans();
         $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
         $cats = App\Models\Category::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+
+        $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
     @endphp
     @section('title', $paper->id_03d() . ' スコア')
     <x-slot name="header">
@@ -57,6 +59,19 @@
             color="orange" target="_blank" size="sm">
             著者がみる査読結果 </x-element.linkbutton>
 
+        @if($bb2 && $bb2->ismeta_myself() )
+            <span class="mx-4"></span>
+            @isset($bb2->paper)
+                <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb2->id, 'key' => $bb2->key]) }}" color="pink"
+                    target="_blank" size="sm">
+                    {{$nameofmeta}}と著者の掲示板
+                    ({{ $bb2->nummessages() }} messages)
+                </x-element.linkbutton>
+            @else
+                <div>Error: No Paper associated {{ $bb2->id }}</div>
+            @endisset
+        @endif
+
     </div>
 
     <div class="mx-6 mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -76,13 +91,6 @@
         <x-review.paperscores :paper_id="$paper->id" :cat_id="$paper->category_id" :bb_id=null size="lg"></x-review.paperscores>
     </div>
     {{-- //    プライマリの査読結果（Primary部分のみ6項目）を表示する。 --}}
-    @php
-        // $sub = App\Models\Submit::where('paper_id', $paper->id)
-        //     ->where('category_id', $paper->category_id)
-        //     ->first();
-        $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
-    @endphp
-
     @foreach ($sub->reviews as $rev)
         <div class="m-6">
             <table class="table-auto">
