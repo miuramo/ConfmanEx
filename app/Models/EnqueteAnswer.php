@@ -77,7 +77,7 @@ class EnqueteAnswer extends Model
     // すべてのカテゴリについて、デモ希望をだしているPaperID=>CatIDの配列を返す 例:[9=>1,24=>1,29=>3,31=>3,33=>1]
     public static function demoPaperIDs_CatID(){
         $demoPaperIDs = self::demoPaperIDs();
-        $res = Paper::select("id", "category_id")->whereIn("id", $demoPaperIDs)->get()->pluck("category_id", "id")->toArray();
+        $res = Paper::select("id", "category_id")->whereIn("id", $demoPaperIDs)->orderBy("category_id")->get()->pluck("category_id", "id")->toArray();
         return $res;
     }
     // 上記の結果を、カテゴリごとに分けて返す 例:[1=>[0=>9,1=>24,2=>33],3=>[0=>29,1=>31]]
