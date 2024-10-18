@@ -32,6 +32,10 @@
             ->get()
             ->pluck('status__revreturn_on', 'id')
             ->toArray();
+        $revedit_on = App\Models\Category::select('status__revedit_on', 'id')
+            ->get()
+            ->pluck('status__revedit_on', 'id')
+            ->toArray();
     @endphp
 
     <div class="py-2">
@@ -69,17 +73,27 @@
         @if ((count($fileerrors) > 0 || count($enqerrors) > 0) && !session('feedback.success'))
             {{-- もし、査読結果を返している段階なら、投稿は完了しているので、違うメッセージを表示する --}}
             @if ($revreturn[$paper->category_id])
-                <x-alert.warning>{{$cat->name_of_cameraready}}提出期限までに必要となる以下の入力・操作について、ご確認ください。</x-alert.warning>
+                <x-alert.warning>{{ $cat->name_of_cameraready }}提出期限までに必要となる以下の入力・操作について、ご確認ください。</x-alert.warning>
             @else
-                <x-alert.error2>投稿はまだ完了していません。</x-alert.error2>
+                @if ($revedit_on[$paper->category_id])
+                    <x-alert.warning>現在査読中です。</x-alert.warning>
+                @else
+                    <x-alert.error2>投稿はまだ完了していません。</x-alert.error2>
+                @endif
             @endif
-
         @endif
+
+        {{-- ファイルエラーは、投稿フェーズに関係なく、表示して大丈夫 --}}
         @foreach ($fileerrors as $er)
             <x-alert.error>{{ $er }}</x-alert.error>
         @endforeach
         @if (count($fileerrors) == 0)
-            @if (count($enqerrors) > 0)
+            {{-- アンケートエラーは、査読中は表示しない。査読中とは、revedit_on が true かつ、revreturn が false のとき。 --}}
+            @php
+                // 査読中かどうか
+                $is_reviewing = $revedit_on[$paper->category_id] && !$revreturn[$paper->category_id];
+            @endphp
+            @if (count($enqerrors) > 0 && !$is_reviewing)
                 @foreach ($enqerrors as $er)
                     @if ($loop->iteration < 4)
                         <x-alert.error>{{ $er }}</x-alert.error>
@@ -260,7 +274,7 @@
                         </div>
                     @else
                         @if ($revreturn[$paper->category_id])
-                            <x-alert.warning>{{$cat->name_of_cameraready}}提出期限までに必要となる入力・操作について、画面上部の指示をご確認ください。</x-alert.warning>
+                            <x-alert.warning>{{ $cat->name_of_cameraready }}提出期限までに必要となる入力・操作について、画面上部の指示をご確認ください。</x-alert.warning>
                         @else
                             <div class="mx-5 my-5 bg-red-600 p-5 text-white font-bold text-2xl">
                                 投稿はまだ完了していません。画面上部の指示に従ってください。
