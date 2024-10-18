@@ -8,33 +8,32 @@
 
 <div class="px-6 py-4">
     <x-element.h1>投稿論文</x-element.h1>
-    <div class="px-6 py-2 flex">
 
-        <x-paper.summarytable />
+    <x-paper.summarytable />
 
-        <div class="mx-10 px-6 py-2">
-            <div class="w-full">
-                デモ希望数：{{ App\Models\EnqueteAnswer::demoCount() }}
-            </div>
-            <div class="w-full">
-                デモ希望PaperIDリスト：{{ implode(', ', $dPIDs = App\Models\EnqueteAnswer::demoPaperIDs()) }}
-                <span class="mx-2"></span>
-                {{ count($dPIDs) }} 件
-            </div>
-            <div class="mx-4 w-full">
-                カテゴリ別：
-                @php
-                    $demoPaper_eachCat = App\Models\EnqueteAnswer::demoPaperIDs_eachCat();
-                @endphp
-                <div class="mx-4">
-                    @foreach ($demoPaper_eachCat as $cat => $papers)
-                        <div>
-                            {{ $cat }}： {{ implode(', ', $papers) }}
-                            <span class="mx-2"></span>
-                            {{ count($papers) }} 件
-                        </div>
-                    @endforeach
-                </div>
+    <x-element.h1>デモ希望 (demoifaccepted) の状況</x-element.h1>
+    <div class="mx-2 px-6 py-2">
+        <div class="w-full">
+            デモ希望数：{{ App\Models\EnqueteAnswer::demoCount() }}
+        </div>
+        <div class="w-full">
+            デモ希望PaperIDリスト：{{ implode(', ', $dPIDs = App\Models\EnqueteAnswer::demoPaperIDs()) }}
+            <span class="mx-2"></span>
+            {{ count($dPIDs) }} 件
+        </div>
+        <div class="mx-4 w-full">
+            カテゴリ別：
+            @php
+                $demoPaper_eachCat = App\Models\EnqueteAnswer::demoPaperIDs_eachCat();
+            @endphp
+            <div class="mx-4">
+                @foreach ($demoPaper_eachCat as $cat => $papers)
+                    <div>
+                        {{ $cat }}： {{ implode(', ', $papers) }}
+                        <span class="mx-2"></span>
+                        {{ count($papers) }} 件
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>
