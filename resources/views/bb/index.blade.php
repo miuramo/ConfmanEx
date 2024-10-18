@@ -22,6 +22,10 @@
     @php
         $opts = [1 => '査読者同士の事前議論', 2 => 'メタと著者', 3 => '出版と著者'];
         $colors = [1 => 'cyan', 2 => 'teal', 3 => 'pink'];
+        $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
+        if ($nameofmeta != null) {
+            $opts[2] = $nameofmeta . 'と著者';
+        }
     @endphp
 
     <div class="py-2 px-6">
