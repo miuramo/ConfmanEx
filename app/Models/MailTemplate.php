@@ -294,6 +294,17 @@ class MailTemplate extends Model
         return User::whereIn('id', $norev_userids)->get();
     }
     /**
+     * 「条件付き採録のプライマリ査読者」のように、特定の採択ID（ジャッジ値ではない）の査読者
+     */
+    public static function mt_primary_of_acc($accid){
+        // submit→review->uid->user
+        $subids = Submit::where('accept_id', $accid)->pluck('id')->toArray();
+        $revs = Review::whereIn('submit_id', $subids)->where('ismeta', 1)->get();
+        $uids = $revs->pluck('user_id')->toArray();
+        return User::whereIn('id', $uids)->get();
+    }
+
+    /**
      * 著者名未入力（採択分のみ）
      */
     public static function mt_noauthorlist($catid)
