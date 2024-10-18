@@ -190,6 +190,7 @@ class EnqueteController extends Controller
         return view("enquete.pageedit")->with(compact("enq", "enqs", "enqans", "paper"));
     }
 
+
     /**
      * Update the specified resource in storage.
      */

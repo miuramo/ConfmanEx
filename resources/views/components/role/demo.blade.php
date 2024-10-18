@@ -37,7 +37,24 @@
             </div>
         </div>
     </div>
-
+    <x-element.h1>デモ希望を手動でつける</x-element.h1>
+    <div class="mx-2 px-6 py-2">
+        <form action="{{ route('enq.manualset') }}" method="post">
+            @csrf
+            <div class="w-full">
+                <label for="paper_id">PaperID（数字カンマ区切り）</label>
+                <input type="text" name="pids" id="pids" class="w-96" size="30" placeholder="012, 023, 034">
+            </div>
+            <div class="w-full">
+                <x-element.submitbutton color="cyan" value="はい">
+                    デモ希望「はい」
+                </x-element.submitbutton>
+                <x-element.submitbutton color="slate" value="いいえ">
+                    デモ希望「いいえ」
+                </x-element.submitbutton>
+            </div>
+        </form>
+    </div>
 
     <x-element.h1>
         アンケート

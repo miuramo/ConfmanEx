@@ -48,6 +48,8 @@ class EnqueteAnswer extends Model
         return $ret;
     }
 
+
+
     /**
      * デモ希望としているアンケート回答数を、採択状況ごとに分けてカウントする
      */
