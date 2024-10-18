@@ -21,7 +21,7 @@
 
     @php
         $opts = [1 => '査読者同士の事前議論', 2 => 'メタと著者', 3 => '出版と著者'];
-        $colors = [1 => 'cyan', 2 => 'teal', 3 => 'pink'];
+        $colors = [1 => 'cyan', 2 => 'pink', 3 => 'teal'];
         $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
         if ($nameofmeta != null) {
             $opts[2] = $nameofmeta . 'と著者';
@@ -36,6 +36,7 @@
             <x-element.button id="toggleButton" value="{{ $lbl }} ({{ count($bbs[$i]) }})" :color="$colors[$i]"
                 onclick="openclose('div_type{{ $i }}')">
             </x-element.button>
+            <span class="mx-1"></span>
         @endforeach
 
         @foreach ($opts as $i => $lbl)
