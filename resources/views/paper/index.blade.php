@@ -59,6 +59,16 @@
                             target="_blank">
                             結果 </x-element.linkbutton>
                         {{-- 議論掲示板があれば、ここにもリンクを表示する --}}
+                        @php
+                            $bb = App\Models\Bb::where('paper_id', $paper->id)->where('category_id',$paper->category_id)->where('type',2)->first();
+                        @endphp
+                        @isset($bb)
+                            &nbsp;
+                            &nbsp;
+                            <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb, 'key' => $bb->key]) }}"
+                                color="pink" target="_blank">
+                                掲示板 </x-element.linkbutton>
+                                @endisset
                     @endif
 
                     <a href="{{ route('paper.edit', ['paper' => $paper->id]) }}">
