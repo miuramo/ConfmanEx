@@ -69,7 +69,7 @@
         @if ((count($fileerrors) > 0 || count($enqerrors) > 0) && !session('feedback.success'))
             {{-- もし、査読結果を返している段階なら、投稿は完了しているので、違うメッセージを表示する --}}
             @if ($revreturn[$paper->category_id])
-                <x-alert.warning>カメラレディ提出期限までに必要となる以下の入力・操作について、ご確認ください。</x-alert.warning>
+                <x-alert.warning>{{$cat->name_of_cameraready}}提出期限までに必要となる以下の入力・操作について、ご確認ください。</x-alert.warning>
             @else
                 <x-alert.error2>投稿はまだ完了していません。</x-alert.error2>
             @endif
@@ -260,7 +260,7 @@
                         </div>
                     @else
                         @if ($revreturn[$paper->category_id])
-                            <x-alert.warning>カメラレディ提出期限までに必要となる入力・操作について、画面上部の指示をご確認ください。</x-alert.warning>
+                            <x-alert.warning>{{$cat->name_of_cameraready}}提出期限までに必要となる入力・操作について、画面上部の指示をご確認ください。</x-alert.warning>
                         @else
                             <div class="mx-5 my-5 bg-red-600 p-5 text-white font-bold text-2xl">
                                 投稿はまだ完了していません。画面上部の指示に従ってください。
