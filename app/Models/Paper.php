@@ -314,7 +314,7 @@ class Paper extends Model
         foreach ($this->contacts as $con) {
             $cclist[] = $con->email;
         }
-        return ["to" => $this->paperowner->email, "cc" => $cclist];
+        return ["to" => $this->paperowner->email, "cc" => $cclist, "bcc" => [] ];
     }
 
     /**

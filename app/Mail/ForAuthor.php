@@ -29,6 +29,22 @@ class ForAuthor extends Mailable implements ShouldQueue
         $this->template = $_temp;
         $this->replacetxt = $_temp->getreplacetxt($_paper);
         $this->mail_to_cc = $_paper->get_mail_to_cc();
+        if (strlen($_temp->cc) > 0) {
+            $ary = explode(",", $_temp->cc);
+            foreach ($ary as $em) {
+                $this->mail_to_cc['cc'][] = trim($em);
+            }
+        }
+        if (strlen($_temp->bcc) > 0) {
+            $ary = explode(",", $_temp->bcc);
+            foreach ($ary as $em) {
+                $this->mail_to_cc['bcc'][] = trim($em);
+            }
+        }
+        $backup_bcc = env("MAIL_BCC_ADDRESS", null);
+        if ($backup_bcc != null) {
+            $this->mail_to_cc['bcc'][] = $backup_bcc;
+        }
     }
 
     /**
@@ -37,9 +53,8 @@ class ForAuthor extends Mailable implements ShouldQueue
     public function process_send()
     {
         $pmail = Mail::to($this->mail_to_cc['to']);
-        $pmail->cc($this->mail_to_cc['cc']);
-        $backup_bcc = env("MAIL_BCC_ADDRESS", null);
-        if ($backup_bcc != null) $pmail->bcc($backup_bcc);
+        if (count($this->mail_to_cc['cc']) > 0) $pmail->cc($this->mail_to_cc['cc']);
+        if (isset($this->mail_to_cc['bcc']) && count($this->mail_to_cc['bcc']) > 0) $pmail->bcc($this->mail_to_cc['bcc']);
         $pmail->send($this);
     }
 
