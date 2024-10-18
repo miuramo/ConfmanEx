@@ -98,7 +98,7 @@
 
     </div>
 
-    <div class="mx-6 my-2 p-3 bg-slate-300 rounded-lg dark:bg-slate-700 dark:text-gray-300">
+    <div class="mx-6 mt-10 p-3 bg-slate-300 rounded-lg dark:bg-slate-700 dark:text-gray-300">
         Danger Zone
         <span class="mx-2"></span>
         <x-element.deletebutton_nodiv confirm="全削除してよいですか？" :action="route('bb.destroy')">
