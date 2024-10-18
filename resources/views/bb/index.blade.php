@@ -78,7 +78,7 @@
             <div class="mb-1">
                 <label for="pids">掲示板をまとめて作成する Paper ID List (カンマ区切り) / all / accepted</label>
             </div>
-            <input type="text" name="pids" id="pids" size="80" placeholder="pid1, pid2, ..."
+            <input type="text" name="pids" id="pids" size="80" placeholder="012, 023, 034, ..."
                 class="mx-2 p-1">
             <div class="mt-2">
                 <label>作成する掲示板の種類</label>

@@ -45,12 +45,13 @@
                 <label for="paper_id">PaperID（数字カンマ区切り）</label>
                 <input type="text" name="pids" id="pids" class="w-96" size="30" placeholder="012, 023, 034">
             </div>
-            <div class="w-full">
+            <div class="w-full mt-2 mx-6">
+                指定したPaperについて、
                 <x-element.submitbutton color="cyan" value="はい">
-                    デモ希望「はい」
+                    デモ希望を「はい」にする
                 </x-element.submitbutton>
                 <x-element.submitbutton color="slate" value="いいえ">
-                    デモ希望「いいえ」
+                    デモ希望を「いいえ」にする
                 </x-element.submitbutton>
             </div>
         </form>
