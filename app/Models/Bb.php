@@ -158,4 +158,14 @@ class Bb extends Model
         return $rev->user;
     }
 
+    /**
+     * ユーザIDから、シェファーディング掲示板を取得する
+     */
+    public static function getShepherdingBbs($user_id)
+    {
+        // get all meta reviews
+        $metarev_pids = Review::where('user_id', $user_id)->where('ismeta', 1)->get()->pluck('paper_id')->toArray();
+        return Bb::whereIn('paper_id', $metarev_pids)->where('type', 2)->get();
+    }
+
 }

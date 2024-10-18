@@ -123,6 +123,25 @@
         </div>
     @endif
 
+    @php
+        $sbbs = App\Models\Bb::getShepherdingBbs(auth()->id());
+        $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
+    @endphp
+    @if ($sbbs->count() > 0)
+        <x-element.h1>
+            {{$nameofmeta}}と著者の掲示板 （シェファーディング掲示板）
+        </x-element.h1>
+        <div class="mx-6 my-4">
+            @foreach ($sbbs as $sbb)
+                <x-element.linkbutton href="{{ route('bb.show', ['bb' => $sbb->id, 'key' => $sbb->key]) }}" color="pink"
+                    target="_blank">
+                    {{ $sbb->paper->id_03d() }} : {{ $sbb->paper->title }}
+                </x-element.linkbutton>
+                <div class="my-3"></div>
+            @endforeach
+        </div>
+    @endif
+
 </div>
 
 
