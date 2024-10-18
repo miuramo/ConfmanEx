@@ -7,16 +7,37 @@
 </style>
 
 <div class="px-6 py-4">
-    <x-element.h1>登壇デモ希望
-    </x-element.h1>
-        <div class="px-2">
-            <div>
+    <x-element.h1>投稿論文</x-element.h1>
+    <div class="px-6 py-2 flex">
+
+        <x-paper.summarytable />
+
+        <div class="mx-10 px-6 py-2">
+            <div class="w-full">
                 デモ希望数：{{ App\Models\EnqueteAnswer::demoCount() }}
             </div>
-            <div>
-                デモ希望PaperIDリスト：{{ implode(",", App\Models\EnqueteAnswer::demoPaperIDs()) }}
+            <div class="w-full">
+                デモ希望PaperIDリスト：{{ implode(', ', $dPIDs = App\Models\EnqueteAnswer::demoPaperIDs()) }}
+                <span class="mx-2"></span>
+                {{ count($dPIDs) }} 件
+            </div>
+            <div class="mx-4 w-full">
+                カテゴリ別：
+                @php
+                    $demoPaper_eachCat = App\Models\EnqueteAnswer::demoPaperIDs_eachCat();
+                @endphp
+                <div class="mx-4">
+                    @foreach ($demoPaper_eachCat as $cat => $papers)
+                        <div>
+                            {{ $cat }}： {{ implode(', ', $papers) }}
+                            <span class="mx-2"></span>
+                            {{ count($papers) }} 件
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
+    </div>
 
 
     <x-element.h1>
@@ -42,7 +63,8 @@
             $user = App\Models\User::find(auth()->id());
         @endphp
         @foreach ($user->roles as $ro)
-            <span class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }}
+            <span
+                class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }}
                 ({{ $ro->name }})
             </span>
         @endforeach

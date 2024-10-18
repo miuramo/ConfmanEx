@@ -61,15 +61,32 @@ class EnqueteAnswer extends Model
         }
         return 0;
     }
+    // すべてのカテゴリについて、デモ希望をだしているPaperIDのリストを返す 例:[9,24,29,31,33]
     public static function demoPaperIDs(){
         $demoenqitem = EnqueteItem::where("name", "demoifaccepted")->first();
         if ($demoenqitem != null) {
             $demoenqitemid = $demoenqitem->id;
             // EnqueteAnswerのうち、demoenqitemid に "はい" と答えているものをカウント
-            $res = EnqueteAnswer::select("paper_id")->where("enquete_item_id", $demoenqitemid)->where("valuestr", "はい")->get()->pluck("paper_id")->toArray(); 
+            $res = EnqueteAnswer::select("paper_id")->where("enquete_item_id", $demoenqitemid)->where("valuestr", "はい")->orderBy("paper_id")->get()->pluck("paper_id")->toArray(); 
             return $res;
         }
         return [];
+    }
+    // すべてのカテゴリについて、デモ希望をだしているPaperID=>CatIDの配列を返す 例:[9=>1,24=>1,29=>3,31=>3,33=>1]
+    public static function demoPaperIDs_CatID(){
+        $demoPaperIDs = self::demoPaperIDs();
+        $res = Paper::select("id", "category_id")->whereIn("id", $demoPaperIDs)->get()->pluck("category_id", "id")->toArray();
+        return $res;
+    }
+    // 上記の結果を、カテゴリごとに分けて返す 例:[1=>[0=>9,1=>24,2=>33],3=>[0=>29,1=>31]]
+    public static function demoPaperIDs_eachCat(){
+        $demoPaperIDs = self::demoPaperIDs_CatID();
+        $res = [];
+        foreach($demoPaperIDs as $pid => $cid){
+            if (!isset($res[$cid])) $res[$cid] = [];
+            $res[$cid][] = $pid;
+        }
+        return $res;
     }
 
 }
