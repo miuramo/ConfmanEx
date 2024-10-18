@@ -459,6 +459,7 @@ class AdminController extends Controller
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         $coldetails = $this->column_details('categories');
+        $note = null;
         if ($req->has("toukou")) { // 投稿関係
             $ary = [
                 'name',
@@ -479,6 +480,7 @@ class AdminController extends Controller
             }
             $coldetails = $cold2;
             $title = "投稿受付管理";
+            $note = "査読中（revedit_on = 1 && revreturn_on = 0）は「書誌情報の設定ボタンを表示する」を設定しても、著者の編集画面に表示しません。";
         } else if ($req->has("mandatoryfile")) { // 必須ファイル関係
             $ary = ['name', 'accept_video', 'accept_pptx', 'accept_img', 'img_max_width', 'img_max_height', 'accept_altpdf', 'altpdf_page_min', 'altpdf_page_max'];
             $cold2 = [];
@@ -502,6 +504,7 @@ class AdminController extends Controller
                 }
             }
             $title = "査読進行管理";
+            $note = "査読中（revedit_on = 1 && revreturn_on = 0）は「書誌情報の設定ボタン」や「回答可能なアンケート」を著者の編集画面に表示しません。";
         }
 
         $domain = config('database.default');
@@ -512,7 +515,7 @@ class AdminController extends Controller
         $tableComments = $this->get_table_comments($db_name, $tableName);
         $data = DB::table($tableName)->orderBy('id')->limit(100)->get()->toArray();
         $numdata = DB::table($tableName)->count();
-        return view('admin.crudtable2')->with(compact("tableName", "coldetails", "data", "whereBy", "numdata", "tableComments", "title"));
+        return view('admin.crudtable2')->with(compact("tableName", "coldetails", "data", "whereBy", "numdata", "tableComments", "title","note"));
     }
 
     /**

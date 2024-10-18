@@ -87,12 +87,12 @@
         @foreach ($fileerrors as $er)
             <x-alert.error>{{ $er }}</x-alert.error>
         @endforeach
+        {{-- アンケートエラーは、査読中は表示しない。査読中とは、revedit_on が true かつ、revreturn が false のとき。 --}}
+        @php
+            // 査読中かどうか
+            $is_reviewing = $revedit_on[$paper->category_id] && !$revreturn[$paper->category_id];
+        @endphp
         @if (count($fileerrors) == 0)
-            {{-- アンケートエラーは、査読中は表示しない。査読中とは、revedit_on が true かつ、revreturn が false のとき。 --}}
-            @php
-                // 査読中かどうか
-                $is_reviewing = $revedit_on[$paper->category_id] && !$revreturn[$paper->category_id];
-            @endphp
             @if (count($enqerrors) > 0 && !$is_reviewing)
                 @foreach ($enqerrors as $er)
                     @if ($loop->iteration < 4)
@@ -139,7 +139,7 @@
                 </div>
             </div>
 
-            @if ($cat->show_bibinfo_btn)
+            @if ($cat->show_bibinfo_btn && !$is_reviewing)
                 <div class="m-6">
                     <x-element.h1>
                         PDFファイルをアップロードしたあとで、 <x-element.linkbutton
@@ -188,32 +188,35 @@
 
 
             <div class="m-6">
-                @foreach ($enqs['canedit'] as $enq)
-                    <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-gray-400">
-                        {{ $enq->name }}
-                        @if (!$enq->showonpaperindex)
-                            &nbsp; → <x-element.linkbutton
-                                href="{{ route('enquete.pageedit', ['paper' => $paper, 'enq' => $enq]) }}"
-                                color="cyan">
-                                ここをクリックして回答
-                            </x-element.linkbutton>
+                {{-- 査読中は、編集可能なアンケートは表示しない。（査読結果を返すタイミングでの設定変更が難しいため） --}}
+                @if (!$is_reviewing)
+                    @foreach ($enqs['canedit'] as $enq)
+                        <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-gray-400">
+                            {{ $enq->name }}
+                            @if (!$enq->showonpaperindex)
+                                &nbsp; → <x-element.linkbutton
+                                    href="{{ route('enquete.pageedit', ['paper' => $paper, 'enq' => $enq]) }}"
+                                    color="cyan">
+                                    ここをクリックして回答
+                                </x-element.linkbutton>
+                            @endif
+                            <x-element.gendospan>{{ $enqs['until'][$enq->id] }}まで修正可</x-element.gendospan>
+                        </div>
+                        @if ($enq->showonpaperindex)
+                            <form action="{{ route('enquete.update', ['paper' => $paper->id, 'enq' => $enq]) }}"
+                                method="post" id="enqform{{ $enq->id }}">
+                                @csrf
+                                @method('put')
+                                <input type="hidden" name="paper_id" value="{{ $paper->id }}">
+                                <input type="hidden" name="enq_id" value="{{ $enq->id }}">
+                                <div class="mx-10">
+                                    <x-enquete.edit :enq="$enq" :enqans="$enqans">
+                                    </x-enquete.edit>
+                                </div>
+                            </form>
                         @endif
-                        <x-element.gendospan>{{ $enqs['until'][$enq->id] }}まで修正可</x-element.gendospan>
-                    </div>
-                    @if ($enq->showonpaperindex)
-                        <form action="{{ route('enquete.update', ['paper' => $paper->id, 'enq' => $enq]) }}"
-                            method="post" id="enqform{{ $enq->id }}">
-                            @csrf
-                            @method('put')
-                            <input type="hidden" name="paper_id" value="{{ $paper->id }}">
-                            <input type="hidden" name="enq_id" value="{{ $enq->id }}">
-                            <div class="mx-10">
-                                <x-enquete.edit :enq="$enq" :enqans="$enqans">
-                                </x-enquete.edit>
-                            </div>
-                        </form>
-                    @endif
-                @endforeach
+                    @endforeach
+                @endif
                 @foreach ($enqs['readonly'] as $enq)
                     <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
                         {{ $enq->name }}
