@@ -81,7 +81,7 @@
             <thead>
                 <tr class="bg-pink-200 dark:bg-pink-600">
                     <th class="px-2 text-center">
-                        ID
+                        accID
                     </th>
                     <th class="px-2 text-center">
                         Name
@@ -96,6 +96,52 @@
                     <td class="px-2 py-1 text-center">{{ $a->id }}</td>
                     <td class="px-2 py-1 text-center">{{ $a->name }}</td>
                     <td class="px-2 py-1 text-center">{{ $a->judge }}</td>
+                </tr>
+            @endforeach
+        </table>
+
+        現在のRole一覧
+        @php
+            $role = App\Models\Role::all();
+        @endphp
+        <table>
+            <thead>
+                <tr class="bg-green-200 dark:bg-green-600">
+                    <th class="px-2 text-center">
+                        roleID
+                    </th>
+                    <th class="px-2 text-center">
+                        Name
+                    </th>
+                </tr>
+            </thead>
+            @foreach ($role as $r)
+                <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-green-50 dark:bg-green-400' : 'bg-white  dark:bg-green-500' }}">
+                    <td class="px-2 py-1 text-center">{{ $r->id }}</td>
+                    <td class="px-2 py-1 text-center">{{ $r->desc }}</td>
+                </tr>
+            @endforeach
+        </table>
+
+        現在のカテゴリ一覧
+        @php
+            $cat = App\Models\Category::all();
+        @endphp
+        <table>
+            <thead>
+                <tr class="bg-blue-200 dark:bg-blue-600">
+                    <th class="px-2 text-center">
+                        catID
+                    </th>
+                    <th class="px-2 text-center">
+                        Name
+                    </th>
+                </tr>
+            </thead>
+            @foreach ($cat as $c)
+                <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-blue-50 dark:bg-blue-400' : 'bg-white  dark:bg-blue-500' }}">
+                    <td class="px-2 py-1 text-center">{{ $c->id }}</td>
+                    <td class="px-2 py-1 text-center">{{ $c->name }}</td>
                 </tr>
             @endforeach
         </table>
