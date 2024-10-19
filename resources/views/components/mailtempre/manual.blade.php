@@ -34,7 +34,7 @@
                 'reject(catid)' => 'catidで不採択 (judgeが負)',
                 'paperid(pid1,pid2, ...)' => 'PaperIDの羅列',
                 'acc_id(accid1,accid2, ...)' => '採択IDの羅列',
-                'acc_judge(j1,j2, ...)' => '採択ジャッジ値の羅列',
+                'acc_judge(judge1,judge2, ...)' => '採択ジャッジ値の羅列',
                 'nofile(catid1,catid2,...)' => 'ファイル無し',
                 'noauthorlist(catid)' => '著者リスト未記入',
                 'oldfile(catid, "2024-07-10")' => '期日以前のファイル',
