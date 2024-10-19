@@ -36,6 +36,10 @@ class BbNotify extends Mailable
     public function __construct($_bb, $_bbmes)
     {
         $names = [1 => "査読議論", 2 => "メタと著者の", 3 => "出版担当と著者の"];
+        $nameofmeta = Setting::findByIdOrName('name_of_meta')->value;
+        if ($nameofmeta != null){
+            $names[2] = $nameofmeta."と著者の";
+        }
         $this->bb = $_bb;
         $this->bbmes = $_bbmes;
         $this->paper = $_bb->paper;
