@@ -50,13 +50,13 @@
             </div>
         </div>
 
-        <x-element.h1>権限・Roleの管理</x-element.h1>
+        <x-element.h1>権限・Roleの管理  <span class="ml-10 text-blue-600 font-bold">凡例：</span><span class="mx-1 bg-slate-500 text-white rounded-md py-1 px-2">Role名（RoleID）</span></x-element.h1>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @foreach ($roleall as $role)
                 <span>
                     <x-element.linkbutton href="{{ route('role.edit', ['role' => $role->name]) }}" color="slate"
                         target="_blank">
-                        {{ $role->desc }}
+                        {{ $role->desc }} ({{$role->id}})
                     </x-element.linkbutton>
                 </span>
             @endforeach
