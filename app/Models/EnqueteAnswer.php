@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class EnqueteAnswer extends Model
 {
@@ -90,6 +91,29 @@ class EnqueteAnswer extends Model
         }
         ksort($res);
         return $res;
+    }
+    // さらに、採択状況によって分ける
+    // group by submits.accept_id, papers.category_id
+
+    public static function demoPaperIDs_eachCat_eachAccID(){
+        $demoPaperIDs = self::demoPaperIDs_CatID();
+
+        $fs = ["submits.category_id", "submits.accept_id", "submits.paper_id"];
+        $sql1 = "select ".implode(",", $fs). ", accepts.name, categories.name as catname";
+        $sql1 .= " from submits left join accepts on submits.accept_id = accepts.id";
+        $sql1 .= " left join categories on submits.category_id = categories.id";
+        $sql1 .= " where paper_id in (".implode(",", array_keys($demoPaperIDs)).")";
+        $sql1 .= " order by " . implode(",", $fs);
+        $cols = DB::select($sql1);
+        $ary = []; // category_id, accept_id
+        $cats = [];
+        $accs = [];
+        foreach ($cols as $c) {
+            $ary[$c->category_id][$c->accept_id][] = $c->paper_id;
+            $cats[$c->category_id] = $c->catname;
+            $accs[$c->accept_id] = $c->name;
+        }
+        return ["ary"=>$ary, "cat"=>$cats, "acc"=>$accs];
     }
 
 }

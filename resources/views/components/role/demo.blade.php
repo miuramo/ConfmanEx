@@ -11,7 +11,7 @@
 
     <x-paper.summarytable />
 
-    <x-element.h1>デモ希望 (demoifaccepted) の状況</x-element.h1>
+    <x-element.h1>デモ希望アンケートの状況</x-element.h1>
     <div class="mx-2 px-6 py-2">
         <div class="w-full">
             デモ希望数：{{ App\Models\EnqueteAnswer::demoCount() }}
@@ -21,7 +21,7 @@
             <span class="mx-2"></span>
             {{ count($dPIDs) }} 件
         </div>
-        <div class="mx-4 w-full">
+        {{-- <div class="mx-4 w-full">
             カテゴリ別：
             @php
                 $demoPaper_eachCat = App\Models\EnqueteAnswer::demoPaperIDs_eachCat();
@@ -35,6 +35,29 @@
                     </div>
                 @endforeach
             </div>
+        </div> --}}
+        <div class="mx-4 w-full mt-2">
+            @php
+                $dPP = App\Models\EnqueteAnswer::demoPaperIDs_eachCat_eachAccID();
+            @endphp
+            <table class="divide-y divide-gray-400 border-2">
+                <tr class="bg-gray-200">
+                    <th>カテゴリ</th>
+                    <th>採択ラベル</th>
+                    <th>PaperIDリスト</th>
+                    <th class="px-2">件数</th>
+                </tr>
+                @foreach ($dPP['ary'] as $cat => $cat_ary)
+                    @foreach ($cat_ary as $acc => $papers)
+                        <tr>
+                            <td class="text-center px-2">{{ $dPP['cat'][$cat] }}</td>
+                            <td class="text-center px-2">{{ $dPP['acc'][$acc] }}</td>
+                            <td class="text-center px-2">{{ implode(', ', $papers) }}</td>
+                            <td class="text-center px-2">{{ count($papers) }}</td>
+                        </tr>
+                    @endforeach
+                @endforeach
+            </table>
         </div>
     </div>
     <x-element.h1>デモ希望を手動でつける</x-element.h1>
@@ -43,7 +66,8 @@
             @csrf
             <div class="w-full">
                 <label for="paper_id">PaperID（数字カンマ区切り）</label>
-                <input type="text" name="pids" id="pids" class="w-96" size="30" placeholder="012, 023, 034">
+                <input type="text" name="pids" id="pids" class="w-96" size="30"
+                    placeholder="012, 023, 034">
             </div>
             <div class="w-full mt-2 mx-6">
                 指定したPaperについて、
