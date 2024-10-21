@@ -1,4 +1,6 @@
-@props([])
+@props([
+    'width' => 'w-32',
+])
 <!-- components.paper.authorlist -->
 @php
     $cat_paper_count = App\Models\Category::withCount('papers')->get();
@@ -11,7 +13,7 @@
         ->pluck('count', 'category_id');
 
 @endphp
-<table class="w-32 divide-y divide-gray-400 flex-grow  dark:text-gray-300">
+<table class="{{$width}} divide-y divide-gray-400 flex-grow  dark:text-gray-300">
     <thead>
         <tr>
             <th class="px-2">Category</th>

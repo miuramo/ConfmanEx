@@ -9,7 +9,7 @@
 <div class="px-6 py-4">
     <x-element.h1>投稿論文</x-element.h1>
 
-    <x-paper.summarytable />
+    <x-paper.summarytable width='' />
 
     <x-element.h1>デモ希望アンケートの状況</x-element.h1>
     <div class="mx-2 px-6 py-2">
