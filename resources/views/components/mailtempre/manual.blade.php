@@ -60,6 +60,8 @@
                 'norev_cat(catid)' => '査読未完了(category限定)',
                 'norev_catmeta(catid, 0|1)' => '査読未完了(ismeta=1)',
                 'notdownloaded(catid)' => '未ダウンロード',
+                'primary_of_acc(accid1,accid2,...)' => '採択IDのPrimary査読者',
+                'primary_of_paper(pid1,pid2,...)' => 'PaperIDのPrimary査読者',
             ];
         @endphp
         <table class="border-cyan-200 border-2">
