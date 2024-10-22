@@ -23,7 +23,11 @@ class EnqExportFromView implements FromView, ShouldAutoSize, WithHeadings
         $enq = $this->enq;
         $enq_id = $this->enq->id; 
         $enqans = EnqueteAnswer::where('enquete_id', $enq_id)->orderBy('paper_id')->get();
-        return view('components.admin.enqtable')->with(compact("enq","enqans","papers"));
+        if ($enq->withPaper){
+            return view('components.admin.enqtable')->with(compact("enq","enqans","papers"));    
+        } else {
+            return view('components.admin.enqtable_nopaper')->with(compact("enq","enqans"));
+        }
     }
 
     public function headings(): array

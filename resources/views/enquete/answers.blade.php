@@ -24,10 +24,13 @@
     @endif
     
     <div class="py-4 px-6  dark:text-gray-400">
+        @if($enq->withpaper)
         <x-admin.enqtable :papers="$papers" :enqans="$enqans" :enq="$enq">
         </x-admin.enqtable>
-    
-
+        @else
+        <x-admin.enqtable_nopaper :enqans="$enqans" :enq="$enq">
+        </x-admin.enqtable_nopaper>
+        @endif
     </div>
 
     <div class="py-2 px-6">
