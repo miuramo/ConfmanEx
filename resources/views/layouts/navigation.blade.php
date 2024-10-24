@@ -69,6 +69,17 @@
                             $navs_active['会計'] = url()->current() === $navs_href['会計'];
                         @endphp
                     @endcan
+                    @php
+                        // その他、カテゴリー管理者のリンクを追加
+                        $catpcrole = App\Models\Role::where('cat_id', '>', 0)->get();
+                        foreach ($catpcrole as $role) {
+                            if ($role->containsUser(auth()->id())) {
+                                $navs_href[$role->desc] = route('role.top', ['role' => $role->name]);
+                                $navs_active[$role->desc] = url()->current() === $navs_href[$role->desc];
+                            }
+                        }
+                    @endphp
+
                     @can('admin')
                         @php
                             $navs_href['管理'] = route('admin.dashboard');
@@ -97,9 +108,9 @@
                             <button
                                 class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
                                 <div>{{ Auth::user()->name }}
-                                    @if(App\Models\Setting::findByIdOrName("SHOW_UID_WITH_NAME","value"))
-                                    <span class="mx-1"> </span>
-                                        (ID : {{auth()->id()}})
+                                    @if (App\Models\Setting::findByIdOrName('SHOW_UID_WITH_NAME', 'value'))
+                                        <span class="mx-1"> </span>
+                                        (ID : {{ auth()->id() }})
                                     @endif
                                 </div>
 
@@ -130,10 +141,10 @@
                                 </x-dropdown-link>
                             </form>
                             {{-- UserIDを表示 --}}
-                            @if(App\Models\Setting::findByIdOrName("SHOW_UID_WITH_NAME","value"))
-                            <div class="px-4 py-2 text-gray-400">
-                                (UserID: {{auth()->id()}})
-                            </div>
+                            @if (App\Models\Setting::findByIdOrName('SHOW_UID_WITH_NAME', 'value'))
+                                <div class="px-4 py-2 text-gray-400">
+                                    (UserID: {{ auth()->id() }})
+                                </div>
                             @endif
                         </x-slot>
                     </x-dropdown>

@@ -93,7 +93,9 @@ class AdminController extends Controller
 
     public function paperlist(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc')) {
+            if (!auth()->user()->can('manage_cat_any')) abort(403);
+        }
         // Formからのカテゴリ選択を配列にいれる
         $targets = [];
         foreach ($req->all() as $k => $v) {
@@ -119,7 +121,9 @@ class AdminController extends Controller
      */
     public function paperlist_excel(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc')) {
+            if (!auth()->user()->can('manage_cat_any')) abort(403);
+        }
         // Formからのカテゴリ選択を配列にいれる
         $targets = [];
         foreach ($req->all() as $k => $v) {
@@ -135,7 +139,9 @@ class AdminController extends Controller
      */
     public function deletepaper(int $cat_id, Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc')) {
+            if (!auth()->user()->can('manage_cat', $cat_id)) abort(403);
+        }
         $all = Paper::withTrashed()->where("category_id", $cat_id)->orderBy('deleted_at', 'asc')->orderBy('id')->get();
         if ($req->has("action") ) {
             foreach ($req->input("pid") as $n => $pid) {
@@ -156,7 +162,9 @@ class AdminController extends Controller
         return view('admin.deletepaper')->with(compact("all", "cat_id"));
     }
     public function timestamp(int $cat_id){
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc')) {
+            if (!auth()->user()->can('manage_cat', $cat_id)) abort(403);
+        }
         $all = Paper::withTrashed()->where("category_id", $cat_id)->orderBy('deleted_at', 'asc')->orderBy('id')->get();
         return view('admin.timestamp')->with(compact("all", "cat_id"));
     }
@@ -179,7 +187,9 @@ class AdminController extends Controller
      */
     public function zipdownloadstream(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc')) {
+            if (!auth()->user()->can('manage_cat_any')) abort(403);
+        }
         // Formからのカテゴリ選択を配列にいれる
         $targets = [];
         $filetypes = []; // pdf, video, img, altpdf
@@ -206,7 +216,9 @@ class AdminController extends Controller
      */
     public function zipdownload(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc')) {
+            if (!auth()->user()->can('manage_cat_any')) abort(403);
+        }
         // Formからのカテゴリ選択を配列にいれる
         $targets = [];
         $filetypes = []; // pdf, video, img, altpdf

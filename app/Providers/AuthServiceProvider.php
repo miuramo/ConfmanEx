@@ -58,17 +58,17 @@ class AuthServiceProvider extends ServiceProvider
          * どれか1つのRole
          */
         Gate::define('role_any', function ($user, string $roles_str) {
-            $roles = explode("|",$roles_str);
+            $roles = explode("|", $roles_str);
 
             // 1つ1つチェックして、どれかOKならtrueを返す。
-            foreach($roles as $role_id){
+            foreach ($roles as $role_id) {
                 if ($user->can('role', $role_id)) return true;
             }
             return false;
         });
 
 
-        Gate::define('edit_paper', function ($user, $paper){
+        Gate::define('edit_paper', function ($user, $paper) {
             if ($paper->owner === $user->id) {
                 $ret = "user uid{$user->id} is owner of pid{$paper->id}";
             } else {
@@ -77,15 +77,38 @@ class AuthServiceProvider extends ServiceProvider
             return ($paper->owner === $user->id);
         });
 
-        Gate::define('show_paper', function ($user, $paper){
+        Gate::define('show_paper', function ($user, $paper) {
             if ($paper->owner === $user->id) $ret = "user uid{$user->id} is owner of pid{$paper->id}";
-            else if ($paper->isCoAuthorEmail($user->email)){
+            else if ($paper->isCoAuthorEmail($user->email)) {
                 $ret = "user uid{$user->id} is coauthor of pid{$paper->id}";
             } else {
                 $ret = "NOT ALLOWED: show_paper";
             }
             if ($paper->owner === $user->id) return true;
             return $paper->isCoAuthorEmail($user->email);
+        });
+
+        /**
+         * カテゴリの管理権限
+         */
+        Gate::define('manage_cat', function ($user, $category) {
+            // もし、PC長なら、true
+            if ($user->can('role', 'pc')) return true;
+            // そうでなければ、cat_id が0以外のRoleを調べる
+            $catid_roles = Role::where('cat_id', $category)->get();
+            foreach ($catid_roles as $role) {
+                // いずれかのRoleに所属していれば、true
+                if ($role->containsUser($user->id)) return true;
+            }
+            return false;
+        });
+        Gate::define('manage_cat_any', function ($user) {
+            $catid_roles = Role::where('cat_id', '>', 0)->get();
+            foreach ($catid_roles as $role) {
+                // いずれかのRoleに所属していれば、true
+                if ($role->containsUser($user->id)) return true;
+            }
+            return false;
         });
     }
 }

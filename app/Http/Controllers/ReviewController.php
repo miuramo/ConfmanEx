@@ -109,7 +109,7 @@ class ReviewController extends Controller
             if (auth()->user()->can('role_any', 'reviewer|metareviewer') && $revlist[$cat->id]) {
                 // OK , pass
             } else {
-                return abort(403, 'review result');
+                if (!auth()->user()->can('manage_cat', $cat->id)) return abort(403, 'review result');
             }
         }
         // Submitの一覧を返す
@@ -119,7 +119,9 @@ class ReviewController extends Controller
     }
     public function resultpost(Request $req, Category $cat)
     {
-        if (!auth()->user()->can('role', 'pc')) return abort(403);
+        if (!auth()->user()->can('role', 'pc')) {
+            if (!auth()->user()->can('manage_cat', $cat->id)) return abort(403, 'review result');
+        }
         if ($req->has("action") && $req->input("action") == "excel") {
             return Excel::download(new ReviewResultExportFromView($cat), "reviewresult_{$cat->id}.xlsx");
         }
@@ -184,7 +186,7 @@ class ReviewController extends Controller
         // 掲示板
         $bb = Bb::where('category_id', $cat_id)->where('paper_id', $paper->id)->where('type', 1)->first();
         $bb2 = Bb::where('category_id', $cat_id)->where('paper_id', $paper->id)->where('type', 2)->first();
-        return view("review.commentpaper")->with(compact("sub", "cat_id", "cat", "paper", "bb","bb2"));
+        return view("review.commentpaper")->with(compact("sub", "cat_id", "cat", "paper", "bb", "bb2"));
     }
 
 

@@ -3,7 +3,7 @@
     @php
         $catspans = App\Models\Category::spans();
         $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
-        $cats = App\Models\Category::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+        $cats = App\Models\Category::manage_cats();
     @endphp
         @section('title', $cats[$cat_id].' 結果')
 
@@ -33,7 +33,7 @@
             <x-review.resultmap :subs="$subs">
             </x-review.resultmap>
 
-            @can('role', 'pc')
+            @can('manage_cat', $cat_id)
             <div class="py-4">
             <x-element.button onclick="CheckAll('reviewresult')" color="lime" value="すべてチェック">
             </x-element.button>
@@ -42,7 +42,7 @@
             </x-element.button>
             @endcan
         </div>
-        @can('role', 'pc')
+        @can('manage_cat', $cat_id)
         <select id="uprev" name="uprev">
                 @foreach ($accepts as $n => $acc)
                     <option value="{{ $n }}">{{ $acc }}</option>

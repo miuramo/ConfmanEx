@@ -1,15 +1,19 @@
 @php
-    $cats = App\Models\Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+    $cats = App\Models\Category::manage_cats();
     // 査読プロセスをまわす（査読者を割り当てる）カテゴリ
     $cat_arrange_review = App\Models\Category::where('status__arrange_review', true)
+        ->whereIn('id', array_keys($cats))
         ->get()
         ->pluck('name', 'id')
         ->toArray();
 
-@endphp
-<!-- components.role.pc -->
-<div class="px-6 py-4">
+    if ($role->name == 'wc') {
+        $targetcat = $role->cat_id;
+    }
 
+@endphp
+<!-- components.role.pcsub -->
+<div class="px-6 py-4">
     <x-element.h1>投稿論文</x-element.h1>
 
     <div class="px-6 py-2 flex">
@@ -30,7 +34,7 @@
                 <div>
                     @foreach ($cats as $catid => $catname)
                         <input type="checkbox" name="targetcat{{ $catid }}" value="{{ $catid }}"
-                            id="label{{ $catid }}" @if ($catid == 1) checked="checked" @endif>
+                            id="label{{ $catid }}" @if ($catid == $targetcat) checked="checked" @endif>
                         <label for="label{{ $catid }}" class="dark:text-gray-300">{{ $catname }}</label>
                         &nbsp;
                     @endforeach
@@ -41,11 +45,11 @@
                 </x-element.submitbutton>
             </form>
             <div class="py-1"></div>
-            <x-element.linkbutton2 href="{{ route('admin.deletepaper',['cat'=>1]) }}" color="yellow">
+            <x-element.linkbutton2 href="{{ route('admin.deletepaper', ['cat' => $targetcat]) }}" color="yellow">
                 投稿とファイルの状況（削除済みを含む）
             </x-element.linkbutton2>
             <div class="py-1"></div>
-            <x-element.linkbutton2 href="{{ route('admin.timestamp',['cat'=>1]) }}" color="purple">
+            <x-element.linkbutton2 href="{{ route('admin.timestamp', ['cat' => $targetcat]) }}" color="purple">
                 投稿とファイルのタイムスタンプ
             </x-element.linkbutton2>
         </div>
@@ -60,7 +64,7 @@
                 <div>
                     @foreach ($cats as $catid => $catname)
                         <input type="checkbox" name="targetcat{{ $catid }}" value="{{ $catid }}"
-                            id="label{{ $catid }}" @if ($catid == 1) checked="checked" @endif>
+                            id="label{{ $catid }}" @if ($catid == $targetcat) checked="checked" @endif>
                         <label for="label{{ $catid }}"
                             class="dark:text-gray-300">{{ $catname }}</label>&nbsp;
                     @endforeach
@@ -82,13 +86,13 @@
                     デモ希望数：{{ App\Models\EnqueteAnswer::demoCount() }}
                 </div>
                 <div>
-                    デモ希望PaperIDリスト：{{ implode(",", App\Models\EnqueteAnswer::demoPaperIDs()) }}
+                    デモ希望PaperIDリスト：{{ implode(',', App\Models\EnqueteAnswer::demoPaperIDs()) }}
                 </div>
             </div>
         </div>
     </div>
 
-    <x-element.h1> <span class="px-2"></span>
+    {{-- <x-element.h1> <span class="px-2"></span>
         <x-element.linkbutton href="{{ route('admin.catsetting', ['toukou' => 'on']) }}" color="cyan"
             target="_blank">
             投稿受付管理
@@ -106,7 +110,7 @@
         <x-element.linkbutton2 href="{{ route('admin.catsetting', ['leadtext' => 'on']) }}" color="gray" target="_blank">
             カテゴリ固有の案内(リード文など)
         </x-element.linkbutton2>
-    </x-element.h1>
+    </x-element.h1> --}}
 
     <x-element.h1>メール送信
         <span class="px-3"></span>
@@ -136,72 +140,79 @@
         @endforeach
     </x-element.h1>
 
-    <x-element.h1>査読結果（コメント非表示・スコアのみ） <span class="px-2"></span>
-        @foreach ($cats as $catid => $catname)
-            @isset($cat_arrange_review[$catid])
-                <x-element.linkbutton href="{{ route('review.comment_scoreonly', ['cat' => $catid]) }}" color="purple"
-                    target="_blank">
-                    {{ $catname }}
-                </x-element.linkbutton>
-            @endisset
-        @endforeach
-        <span class="mx-2"></span>
-        @foreach ($cats as $catid => $catname)
-            @isset($cat_arrange_review[$catid])
-                <x-element.linkbutton href="{{ route('review.comment_scoreonly', ['cat' => $catid, 'excel' => 'dl']) }}"
-                    color="teal">
-                    {{ $catname }}Excel
-                </x-element.linkbutton>
-            @endisset
-        @endforeach
-    </x-element.h1>
+    @if (count($cat_arrange_review) > 0)
+        <x-element.h1>査読結果（コメント非表示・スコアのみ） <span class="px-2"></span>
+            @foreach ($cats as $catid => $catname)
+                @isset($cat_arrange_review[$catid])
+                    <x-element.linkbutton href="{{ route('review.comment_scoreonly', ['cat' => $catid]) }}" color="purple"
+                        target="_blank">
+                        {{ $catname }}
+                    </x-element.linkbutton>
+                @endisset
+            @endforeach
+            <span class="mx-2"></span>
+            @foreach ($cats as $catid => $catname)
+                @isset($cat_arrange_review[$catid])
+                    <x-element.linkbutton
+                        href="{{ route('review.comment_scoreonly', ['cat' => $catid, 'excel' => 'dl']) }}" color="teal">
+                        {{ $catname }}Excel
+                    </x-element.linkbutton>
+                @endisset
+            @endforeach
+        </x-element.h1>
+    @endif
 
-    <x-element.h1>査読結果＋コメント <span class="px-2"></span>
-        @foreach ($cats as $catid => $catname)
-            @isset($cat_arrange_review[$catid])
-                <x-element.linkbutton href="{{ route('review.comment', ['cat' => $catid]) }}" color="purple"
-                    target="_blank">
-                    {{ $catname }}
-                </x-element.linkbutton>
-            @endisset
-        @endforeach
-        <span class="mx-2"></span>
-        @foreach ($cats as $catid => $catname)
-            @isset($cat_arrange_review[$catid])
-                <x-element.linkbutton href="{{ route('review.comment', ['cat' => $catid, 'excel' => 'dl']) }}"
-                    color="teal">
-                    {{ $catname }}Excel
-                </x-element.linkbutton>
-            @endisset
-        @endforeach
-    </x-element.h1>
+    @if (count($cat_arrange_review) > 0)
+        <x-element.h1>査読結果＋コメント <span class="px-2"></span>
+            @foreach ($cats as $catid => $catname)
+                @isset($cat_arrange_review[$catid])
+                    <x-element.linkbutton href="{{ route('review.comment', ['cat' => $catid]) }}" color="purple"
+                        target="_blank">
+                        {{ $catname }}
+                    </x-element.linkbutton>
+                @endisset
+            @endforeach
+            <span class="mx-2"></span>
+            @foreach ($cats as $catid => $catname)
+                @isset($cat_arrange_review[$catid])
+                    <x-element.linkbutton href="{{ route('review.comment', ['cat' => $catid, 'excel' => 'dl']) }}"
+                        color="teal">
+                        {{ $catname }}Excel
+                    </x-element.linkbutton>
+                @endisset
+            @endforeach
+        </x-element.h1>
+    @endif
 
+
+    @if (count($cat_arrange_review) > 0)
     <x-element.h1>査読進捗 <span class="px-2"></span>
         <x-element.linkbutton href="{{ route('revcon.revstatus') }}" color="orange" target="_blank">査読進捗
         </x-element.linkbutton>
     </x-element.h1>
+    @endif
 
-    <x-element.h1>査読者一覧と利害表明者 <span class="px-2"></span>
-        @foreach ($cats as $catid => $catname)
-            @isset($cat_arrange_review[$catid])
-            <x-element.linkbutton href="{{ route('revcon.revname', ['cat' => $catid]) }}"
-                color="lime">
-                {{ $catname }} 
-            </x-element.linkbutton>
+    @if (count($cat_arrange_review) > 0)
+        <x-element.h1>査読者一覧と利害表明者 <span class="px-2"></span>
+            @foreach ($cats as $catid => $catname)
+                @isset($cat_arrange_review[$catid])
+                    <x-element.linkbutton href="{{ route('revcon.revname', ['cat' => $catid]) }}" color="lime">
+                        {{ $catname }}
+                    </x-element.linkbutton>
                 @endisset
-        @endforeach
-        @foreach ($cats as $catid => $catname)
-            @isset($cat_arrange_review[$catid])
-            <x-element.linkbutton href="{{ route('revcon.revname', ['cat' => $catid, 'excel' => 'dl']) }}"
-                color="teal">
-                {{ $catname }} Excel
-            </x-element.linkbutton>
+            @endforeach
+            @foreach ($cats as $catid => $catname)
+                @isset($cat_arrange_review[$catid])
+                    <x-element.linkbutton href="{{ route('revcon.revname', ['cat' => $catid, 'excel' => 'dl']) }}"
+                        color="teal">
+                        {{ $catname }} Excel
+                    </x-element.linkbutton>
                 @endisset
-        @endforeach
-    </x-element.h1>
+            @endforeach
+        </x-element.h1>
+    @endif
 
-
-    <x-element.h1>査読割り当て <span class="px-2"></span>
+    {{-- <x-element.h1>査読割り当て <span class="px-2"></span>
         @php
             $roles = App\Models\Role::where('name', 'like', '%reviewer')->get();
         @endphp
@@ -231,11 +242,11 @@
         </x-element.linkbutton>
 
 
-    </x-element.h1>
+    </x-element.h1> --}}
 
 
 
-    <x-element.h1>ロック
+    {{-- <x-element.h1>ロック
         <span class="px-3"></span>
         <x-element.linkbutton href="{{ route('file.adminlock') }}" color="orange">
             投稿ファイルの管理
@@ -244,47 +255,18 @@
         <x-element.linkbutton href="{{ route('paper.adminlock') }}" color="cyan">
             書誌情報(Paper)の管理
         </x-element.linkbutton> <span class="text-sm mx-2 mr-10">カメラレディ締め切り後に操作してください。著者名と所属、書誌情報がロックされます。</span>
-    </x-element.h1>
+    </x-element.h1> --}}
 
-
-    <x-element.h1>査読観点(Viewpoint)の管理
-        <span class="mx-2"></span>
-        @foreach ($cats as $catid => $catname)
-            @isset($cat_arrange_review[$catid])
-                <x-element.linkbutton
-                    href="{{ route('viewpoint.itmsetting', ['cat_id' => $catid, 'cat_name' => $catname]) }}"
-                    color="yellow" size="sm">
-                    {{ $catname }}
-                </x-element.linkbutton>
-
-                {{-- <form class="inline" action="{{ route('admin.crud') }}?table=viewpoints" method="post"
-                    id="admincrudwhere{{ $catid }}">
-                    @csrf
-                    @method('post')
-                    <input id="whereby" type="hidden"
-                        class="whereBy text-sm bg-slate-100 font-thin mr-2 p-0 h-5 w-full" name="whereBy__category_id"
-                        value={{ $catid }}>
-                    <x-element.submitbutton color="yellow" size="sm">{{ $catname }}
-                    </x-element.submitbutton>
-                </form> --}}
-                <span class="mx-2"></span>
-            @endisset
-        @endforeach
-        <span class="text-sm mx-2 mr-10">編集画面をひらくとき、orderintを自動再調整します。</span>
-
-        <br>
-        プレビュー用査読フォーム
-        <span class="mx-2"></span>
-        @php
-            $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META', 'value');
-        @endphp
-        @foreach ($cats as $catid => $catname)
-            @isset($cat_arrange_review[$catid])
-                @foreach (['一般', $nameofmeta] as $ismeta => $revtype)
-                    <x-element.linkbutton2 href="{{ route('review.edit_dummy', ['cat' => $catid, 'ismeta' => $ismeta]) }}"
-                        color="blue" size="sm" target="_blank">
-                        {{ $catname }}({{ $revtype }})
-                    </x-element.linkbutton2>
+    @if (count($cat_arrange_review) > 0)
+        <x-element.h1>査読観点(Viewpoint)の管理
+            <span class="mx-2"></span>
+            @foreach ($cats as $catid => $catname)
+                @isset($cat_arrange_review[$catid])
+                    <x-element.linkbutton
+                        href="{{ route('viewpoint.itmsetting', ['cat_id' => $catid, 'cat_name' => $catname]) }}"
+                        color="yellow" size="sm">
+                        {{ $catname }}
+                    </x-element.linkbutton>
 
                     {{-- <form class="inline" action="{{ route('admin.crud') }}?table=viewpoints" method="post"
                     id="admincrudwhere{{ $catid }}">
@@ -297,10 +279,40 @@
                     </x-element.submitbutton>
                 </form> --}}
                     <span class="mx-2"></span>
-                @endforeach
-            @endisset
-        @endforeach
-        {{-- <div class="my-2 px-6 py-2 dark:text-gray-300 bg-slate-300 text-sm">
+                @endisset
+            @endforeach
+            <span class="text-sm mx-2 mr-10">編集画面をひらくとき、orderintを自動再調整します。</span>
+
+            <br>
+            プレビュー用査読フォーム
+            <span class="mx-2"></span>
+            @php
+                $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META', 'value');
+            @endphp
+            @foreach ($cats as $catid => $catname)
+                @isset($cat_arrange_review[$catid])
+                    @foreach (['一般', $nameofmeta] as $ismeta => $revtype)
+                        <x-element.linkbutton2
+                            href="{{ route('review.edit_dummy', ['cat' => $catid, 'ismeta' => $ismeta]) }}"
+                            color="blue" size="sm" target="_blank">
+                            {{ $catname }}({{ $revtype }})
+                        </x-element.linkbutton2>
+
+                        {{-- <form class="inline" action="{{ route('admin.crud') }}?table=viewpoints" method="post"
+                    id="admincrudwhere{{ $catid }}">
+                    @csrf
+                    @method('post')
+                    <input id="whereby" type="hidden"
+                        class="whereBy text-sm bg-slate-100 font-thin mr-2 p-0 h-5 w-full" name="whereBy__category_id"
+                        value={{ $catid }}>
+                    <x-element.submitbutton color="yellow" size="sm">{{ $catname }}
+                    </x-element.submitbutton>
+                </form> --}}
+                        <span class="mx-2"></span>
+                    @endforeach
+                @endisset
+            @endforeach
+            {{-- <div class="my-2 px-6 py-2 dark:text-gray-300 bg-slate-300 text-sm">
             <x-element.linkbutton href="{{ route('viewpoint.export') }}" color="yellow">
                 Viewpoint Download
             </x-element.linkbutton>
@@ -321,7 +333,8 @@
                 </x-element.submitbutton>
             </form>
         </div> --}}
-    </x-element.h1>
+        </x-element.h1>
+    @endif
 
     <x-element.h1>自分の権限確認（Role一覧）
         <span class="mx-3"></span>
@@ -329,16 +342,17 @@
             $user = App\Models\User::find(auth()->id());
         @endphp
         @foreach ($user->roles as $ro)
-            <span class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }}
+            <span
+                class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }}
                 ({{ $ro->name }})
             </span>
         @endforeach
     </x-element.h1>
 
-    <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
+    {{-- <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
             情報学広場登録用Excel Download
         </x-element.linkbutton>
-    </x-element.h1>
+    </x-element.h1> --}}
 
 
 </div>

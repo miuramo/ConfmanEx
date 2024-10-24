@@ -1,6 +1,7 @@
 @php
-    $cats = App\Models\Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+    $cats = App\Models\Category::manage_cats();
     $catcolors = App\Models\Category::select('id', 'name')->get()->pluck('bgcolor', 'id')->toArray();
+
 @endphp
 <x-app-layout>
 

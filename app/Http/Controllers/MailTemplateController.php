@@ -20,7 +20,9 @@ class MailTemplateController extends Controller
      */
     public function index()
     {
-        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'manager|pc')) {
+            if (!auth()->user()->can('manage_cat_any')) abort(403);
+        }
         $mts = MailTemplate::orderBy('updated_at', 'desc')->get();
         return view('mailtempre.index')->with(compact("mts"));
     }
@@ -47,7 +49,9 @@ class MailTemplateController extends Controller
      */
     public function show(Request $req, MailTemplate $mt)
     {
-        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'manager|pc')) {
+            if (!auth()->user()->can('manage_cat_any')) abort(403);
+        }
         $numsend = $mt->numpaper();
         $first_item = $mt->first_item();
         if ($first_item == null) return redirect()->route('mt.index')->with('feedback.error', "Toに該当する投稿がありません。（またはユーザがいません。）");
@@ -96,7 +100,9 @@ class MailTemplateController extends Controller
      */
     public function bundle(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'manager|pc')) {
+            if (!auth()->user()->can('manage_cat_any')) abort(403);
+        }
         // valueがonの要素をあつめる。mt_{mtid}になっているので、とりだす。
         $targetmts = [];
         foreach ($req->all() as $k => $v) {

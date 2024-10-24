@@ -10,13 +10,11 @@
             <x-element.deletebutton action="{{ route('file.delall') }}" color="red" confirm="全部削除してよいですか？"> Delete All
             </x-element.deletebutton> --}}
             <span class="mx-4"></span>
-            @if($role->name == 'pc')
-            <x-element.linkbutton href="https://scrapbox.io/confman/ConfmanEx_PC%E5%A7%94%E5%93%A1%E9%95%B7%E5%90%91%E3%81%91%E3%81%AE%E8%B3%87%E6%96%99"
-             color="cyan" size="sm" target="_blank">
-                マニュアル (Cosense/Scrapbox)</x-element.linkbutton>
-
-
-
+            @if ($role->name == 'pc')
+                <x-element.linkbutton
+                    href="https://scrapbox.io/confman/ConfmanEx_PC%E5%A7%94%E5%93%A1%E9%95%B7%E5%90%91%E3%81%91%E3%81%AE%E8%B3%87%E6%96%99"
+                    color="cyan" size="sm" target="_blank">
+                    マニュアル (Cosense/Scrapbox)</x-element.linkbutton>
             @endif
         </h2>
     </x-slot>
@@ -28,30 +26,34 @@
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
 
-    @can('role', $role->name)
+    @can('role_any', 'reviewer|pc|pub|award|acc|demo|wc')
         @if ($role->name == 'reviewer')
-        <x-role.reviewer :role="$role">
-        </x-role.reviewer>
+            <x-role.reviewer :role="$role">
+            </x-role.reviewer>
         @endif
         @if ($role->name == 'pc')
-        <x-role.pc :role="$role">
-        </x-role.pc>
+            <x-role.pc :role="$role">
+            </x-role.pc>
+        @endif
+        @if ($role->name == 'wc')
+            <x-role.pcsub :role="$role">
+            </x-role.pcsub>
         @endif
         @if ($role->name == 'pub')
-        <x-role.pub :role="$role">
-        </x-role.pub>
+            <x-role.pub :role="$role">
+            </x-role.pub>
         @endif
         @if ($role->name == 'award')
-        <x-role.award :role="$role">
-        </x-role.award>
+            <x-role.award :role="$role">
+            </x-role.award>
         @endif
         @if ($role->name == 'acc')
-        <x-role.acc :role="$role">
-        </x-role.acc>
+            <x-role.acc :role="$role">
+            </x-role.acc>
         @endif
         @if ($role->name == 'demo')
-        <x-role.demo :role="$role">
-        </x-role.demo>
+            <x-role.demo :role="$role">
+            </x-role.demo>
         @endif
     @endcan
 
