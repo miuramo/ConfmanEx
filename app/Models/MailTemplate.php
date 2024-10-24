@@ -33,6 +33,7 @@ class MailTemplate extends Model
     public function getreplacetxt(Paper|User $p_or_u)
     {
         if (strpos(get_class($p_or_u), "User") > 0) {
+            $replacetxt["UID"] = $p_or_u->id;
             $replacetxt["NAME"] = $p_or_u->name;
             $replacetxt["AFFIL"] = $p_or_u->affil;
             $replacetxt["EMAIL"] = $p_or_u->email;
@@ -135,20 +136,24 @@ class MailTemplate extends Model
     /**
      * 採択
      */
-    public static function mt_accept(int $cat)
+    public static function mt_accept(int ...$cats)
     {
         $papers = [];
-        $accept_ids = Accept::where('judge', '>', 0)->pluck("id")->toArray();
-        $subs = Submit::where('category_id', $cat)->whereIn('accept_id', $accept_ids)->get();
-        foreach ($subs as $sub) $papers[] = $sub->paper;
+        foreach ($cats as $cat) {
+            $accept_ids = Accept::where('judge', '>', 0)->pluck("id")->toArray();
+            $subs = Submit::where('category_id', $cat)->whereIn('accept_id', $accept_ids)->get();
+            foreach ($subs as $sub) $papers[] = $sub->paper;
+        }
         return $papers;
     }
-    public static function mt_reject(int $cat)
+    public static function mt_reject(int ...$cats)
     {
         $papers = [];
-        $accept_ids = Accept::where('judge', '<', 0)->pluck("id")->toArray();
-        $subs = Submit::where('category_id', $cat)->whereIn('accept_id', $accept_ids)->get();
-        foreach ($subs as $sub) $papers[] = $sub->paper;
+        foreach ($cats as $cat) {
+            $accept_ids = Accept::where('judge', '<', 0)->pluck("id")->toArray();
+            $subs = Submit::where('category_id', $cat)->whereIn('accept_id', $accept_ids)->get();
+            foreach ($subs as $sub) $papers[] = $sub->paper;
+        }
         return $papers;
     }
     public static function mt_paperid(...$args)
@@ -296,7 +301,8 @@ class MailTemplate extends Model
     /**
      * 「条件付き採録のプライマリ査読者」のように、特定の採択ID（ジャッジ値ではない）の査読者
      */
-    public static function mt_primary_of_acc(...$accids){
+    public static function mt_primary_of_acc(...$accids)
+    {
         // submit→review->uid->user
         $subids = Submit::whereIn('accept_id', $accids)->pluck('id')->toArray();
         $revs = Review::whereIn('submit_id', $subids)->where('ismeta', 1)->get();
@@ -306,13 +312,31 @@ class MailTemplate extends Model
     /**
      * 特定のPaperIDのプライマリ査読者
      */
-    public static function mt_primary_of_paper(...$pids){
+    public static function mt_primary_of_paper(...$pids)
+    {
         // submit→review->uid->user
         $subids = Submit::whereIn('paper_id', $pids)->pluck('id')->toArray();
         $revs = Review::whereIn('submit_id', $subids)->where('ismeta', 1)->get();
         $uids = $revs->pluck('user_id')->toArray();
         return User::whereIn('id', $uids)->get();
     }
+
+    /**
+     * 採択論文の著者と共著者（ユーザ単位での送信）
+     */
+    public static function mt_authors_accepted(...$catids)
+    {
+        $papers = [];
+        // TODO
+        // $subs = Submit::whereIn('category_id', $catids)->whereHas('accept', function ($query) {
+        //     $query->where('judge', '>', 0);
+        // })->get();
+        // foreach ($subs as $sub) {
+        //     $papers[] = $sub->paper;
+        // }
+        return $papers;
+    }
+
 
     /**
      * 著者名未入力（採択分のみ）

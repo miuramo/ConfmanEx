@@ -3,22 +3,36 @@
     <div class="mx-2 my-5 flex-grow dark:text-gray-200">
         雛形(subject,body)で使える埋め込み文字列
         @php
-            $a = ['PID' => 'PaperID', 'TITLE' => 'タイトル', 'OWNER'=>'投稿者の「所属 氏名 様」', 'ACCNAME'=>'採択Name', 'CATNAME'=>'投稿カテゴリ'];
+            $a = [
+                'PID' => 'PaperID',
+                'TITLE' => 'タイトル',
+                'OWNER' => '投稿者の「所属 氏名 様」',
+                'ACCNAME' => '採択Name',
+                'CATNAME' => '投稿カテゴリ',
+            ];
         @endphp
         <table class="border-pink-200 border-2">
             @foreach ($a as $k => $v)
-                <tr class="{{ $loop->iteration % 2 === 1 ? 'bg-pink-50 dark:bg-pink-400' : 'bg-white  dark:bg-pink-500' }}">
+                <tr
+                    class="{{ $loop->iteration % 2 === 1 ? 'bg-pink-50 dark:bg-pink-400' : 'bg-white  dark:bg-pink-500' }}">
                     <td class="px-2 py-1">[:{{ $k }}:]</td>
                     <td class="px-2 py-1">{{ $v }}</td>
                 </tr>
             @endforeach
         </table>
         @php
-            $u = ['NAME' => '氏 名', 'AFFIL' => '所属', 'EMAIL' => 'メール', 'URL_FORGETPASS' => 'パスワード再設定メール発行URL'];
+            $u = [
+                'NAME' => '氏 名',
+                'AFFIL' => '所属',
+                'EMAIL' => 'メール',
+                'URL_FORGETPASS' => 'パスワード再設定メール発行URL',
+                'UID' => 'UserID',
+            ];
         @endphp
         <table class="border-cyan-200 border-2">
             @foreach ($u as $k => $v)
-                <tr class="{{ $loop->iteration % 2 === 1 ? 'bg-cyan-50 dark:bg-cyan-400' : 'bg-white  dark:bg-cyan-500' }}">
+                <tr
+                    class="{{ $loop->iteration % 2 === 1 ? 'bg-cyan-50 dark:bg-cyan-400' : 'bg-white  dark:bg-cyan-500' }}">
                     <td class="px-2 py-1">[:{{ $k }}:]</td>
                     <td class="px-2 py-1">{{ $v }}</td>
                 </tr>
@@ -30,8 +44,8 @@
         to に指定できる文字列
         @php
             $a = [
-                'accept(catid)' => 'catidで採択 (judgeが正)',
-                'reject(catid)' => 'catidで不採択 (judgeが負)',
+                'accept(catid1,catid2,...)' => 'catidで採択 (judgeが正)',
+                'reject(catid1,catid2,...)' => 'catidで不採択 (judgeが負)',
                 'paperid(pid1,pid2, ...)' => 'PaperIDの羅列',
                 'acc_id(accid1,accid2, ...)' => '採択IDの羅列',
                 'acc_judge(judge1,judge2, ...)' => '採択ジャッジ値の羅列',
@@ -44,7 +58,8 @@
         @endphp
         <table class="border-pink-200 border-2">
             @foreach ($a as $k => $v)
-                <tr class="{{ $loop->iteration % 2 === 1 ? 'bg-pink-50 dark:bg-pink-400' : 'bg-white  dark:bg-pink-500' }}">
+                <tr
+                    class="{{ $loop->iteration % 2 === 1 ? 'bg-pink-50 dark:bg-pink-400' : 'bg-white  dark:bg-pink-500' }}">
                     <td class="px-2 py-1">{{ $k }}</td>
                     <td class="px-2 py-1">{{ $v }}</td>
                 </tr>
@@ -66,7 +81,8 @@
         @endphp
         <table class="border-cyan-200 border-2">
             @foreach ($u as $k => $v)
-                <tr class="{{ $loop->iteration % 2 === 1 ? 'bg-cyan-50 dark:bg-cyan-400' : 'bg-white  dark:bg-cyan-500' }}">
+                <tr
+                    class="{{ $loop->iteration % 2 === 1 ? 'bg-cyan-50 dark:bg-cyan-400' : 'bg-white  dark:bg-cyan-500' }}">
                     <td class="px-2 py-1">{{ $k }}</td>
                     <td class="px-2 py-1">{{ $v }}</td>
                 </tr>
@@ -77,7 +93,7 @@
     <div class="mx-2 my-5 flex-grow dark:text-gray-300">
         現在の採択ID、採択ジャッジ値
         @php
-            $acc = App\Models\Accept::where('name','not like',"予備%")->get();
+            $acc = App\Models\Accept::where('name', 'not like', '予備%')->get();
         @endphp
         <table>
             <thead>
@@ -94,7 +110,8 @@
                 </tr>
             </thead>
             @foreach ($acc as $a)
-                <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-pink-50 dark:bg-pink-400' : 'bg-white  dark:bg-pink-500' }}">
+                <tr
+                    class="{{ $loop->iteration % 2 === 0 ? 'bg-pink-50 dark:bg-pink-400' : 'bg-white  dark:bg-pink-500' }}">
                     <td class="px-2 py-1 text-center">{{ $a->id }}</td>
                     <td class="px-2 py-1 text-center">{{ $a->name }}</td>
                     <td class="px-2 py-1 text-center">{{ $a->judge }}</td>
@@ -118,7 +135,8 @@
                 </tr>
             </thead>
             @foreach ($role as $r)
-                <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-green-50 dark:bg-green-400' : 'bg-white  dark:bg-green-500' }}">
+                <tr
+                    class="{{ $loop->iteration % 2 === 0 ? 'bg-green-50 dark:bg-green-400' : 'bg-white  dark:bg-green-500' }}">
                     <td class="px-2 py-1 text-center">{{ $r->id }}</td>
                     <td class="px-2 py-1 text-center">{{ $r->desc }}</td>
                 </tr>
@@ -141,7 +159,8 @@
                 </tr>
             </thead>
             @foreach ($cat as $c)
-                <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-blue-50 dark:bg-blue-400' : 'bg-white  dark:bg-blue-500' }}">
+                <tr
+                    class="{{ $loop->iteration % 2 === 0 ? 'bg-blue-50 dark:bg-blue-400' : 'bg-white  dark:bg-blue-500' }}">
                     <td class="px-2 py-1 text-center">{{ $c->id }}</td>
                     <td class="px-2 py-1 text-center">{{ $c->name }}</td>
                 </tr>
