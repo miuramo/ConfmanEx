@@ -87,7 +87,7 @@
                     <x-element.submitbutton value="mailsend" color="pink">
                         チェックをいれた人に、メール送信
                     </x-element.submitbutton>
-                    （注：確認画面はありません）
+                    （注：ボタンを押すとすぐにメール送信します。確認画面はありません。メールを送信した後で、雛形を作成します。）
 
                     <div class="m-4">
                     または、雛形
