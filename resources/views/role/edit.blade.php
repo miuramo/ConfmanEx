@@ -67,7 +67,7 @@
                 </x-element.button>
                 <div class="hidden-content mt-2 bg-pink-200 dark:bg-pink-600 p-2" id="content" style="display:none;">
                     subject: <input class="w-3/4 p-1 text-sm text-black  bg-white dark:text-gray-200 dark:bg-gray-800"
-                        type="text" name="subject" value="[:CONFTITLE:] 投稿・査読システムのログイン方法">
+                        type="text" name="subject" value="[[:CONFTITLE:]] 投稿・査読システムのログイン方法">
                     <textarea class="w-full p-1 text-sm text-black  bg-white dark:text-gray-200 dark:bg-gray-800" name="body"
                         id="" cols="80" rows="10">[:AFFIL:] [:NAME:] 様
 
