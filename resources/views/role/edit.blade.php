@@ -105,7 +105,7 @@
                     <x-element.submitbutton value="addtemplate" color="pink">
                         チェックをいれた人をTo:に指定した雛形を、新規作成
                     </x-element.submitbutton>
-                    （注：ボタンを押してもメールは送信しません）
+                    （注：ボタンを押してもメールは送信しません。）
                 </div>
                 </div>
             </div>
