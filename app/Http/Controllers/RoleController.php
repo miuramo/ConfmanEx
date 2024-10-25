@@ -96,6 +96,9 @@ class RoleController extends Controller
             }
             if (count($target_users) > 0) {
                 $targetmt = MailTemplate::find($req->input("mailtemplate"));
+                if ($targetmt == null) {
+                    return redirect()->route('role.edit', ["role" => $name])->with('feedback.error', "雛形が選択されていませんでした。");
+                }
                 $mt = $targetmt->replicate();
                 $mt->from = "[:MAILFROM:]";
                 $mt->to = "userid(" . implode(", ", $target_users) . ")";
