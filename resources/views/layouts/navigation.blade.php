@@ -59,8 +59,9 @@
                     @endcan
                     @can('role', 'demo')
                         @php
-                            $navs_href['デモ'] = route('role.top', ['role' => 'demo']);
-                            $navs_active['デモ'] = url()->current() === $navs_href['デモ'];
+                            $nameofdemo = App\Models\Role::findByIdOrName('demo', 'desc');
+                            $navs_href[$nameofdemo] = route('role.top', ['role' => 'demo']);
+                            $navs_active[$nameofdemo] = url()->current() === $navs_href[$nameofdemo];
                         @endphp
                     @endcan
                     @can('role', 'acc')

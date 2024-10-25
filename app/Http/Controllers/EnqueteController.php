@@ -174,6 +174,7 @@ class EnqueteController extends Controller
         //
     }
 
+    // enq preview
     public function edit_dummy(Enquete $enq)
     {
         //Paperアンケートのときは、Paperのカテゴリが要求するアンケート→それぞれの質問項目、の順に集めたが、プレビューなので後者のみ。
