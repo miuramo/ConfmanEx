@@ -531,6 +531,19 @@ class Paper extends Model
         $this->save();
     }
 
+    public function demo_ifaccepted()
+    {
+        $demoenqitem = EnqueteItem::where("name", "demoifaccepted")->first();
+        if ($demoenqitem != null) {
+            $demoenqitemid = $demoenqitem->id;
+            $ans = $this->enqans->where("enquete_item_id", $demoenqitemid)->first();
+            if ($ans != null && $ans->valuestr == "はい") {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function validate_accepted()
     {
         //ファイルエラー

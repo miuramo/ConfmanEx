@@ -68,12 +68,22 @@
 
         @php
             $submit_finished = false;
+
+            // 査読結果が採択、または、デモ希望がある場合は、カメラレディ提出が必要(WISS)
+            $result_accepted = $paper->submits->where('status', 'accepted')->count();
+            // ただし、デモ希望があっても、査読前に申請したものの場合は、通らない場合がある。
+            $demo_ifaccepted = $paper->demo_ifaccepted();
+            $need_camera_ready = ($result_accepted || $demo_ifaccepted) && $revreturn[$paper->category_id];
         @endphp
         {{-- 最初のsuccess がなく、かつ、エラーがあれば --}}
         @if ((count($fileerrors) > 0 || count($enqerrors) > 0) && !session('feedback.success'))
             {{-- もし、査読結果を返している段階なら、投稿は完了しているので、違うメッセージを表示する --}}
             @if ($revreturn[$paper->category_id])
-                <x-alert.warning>{{ $cat->name_of_cameraready }}提出期限までに必要となる以下の入力・操作について、ご確認ください。</x-alert.warning>
+                @if ($need_camera_ready)
+                    <x-alert.warning>{{ $cat->name_of_cameraready }}提出期限までに必要となる以下の入力・操作について、ご確認ください。</x-alert.warning>
+                @else
+                    <x-alert.warning>投稿いただき、ありがとうございました。</x-alert.warning>
+                @endif
             @else
                 @if ($revedit_on[$paper->category_id])
                     <x-alert.warning>現在査読中です。</x-alert.warning>
@@ -93,12 +103,15 @@
             $is_reviewing = $revedit_on[$paper->category_id] && !$revreturn[$paper->category_id];
         @endphp
         @if (count($fileerrors) == 0)
-            @if (count($enqerrors) > 0 && !$is_reviewing)
-                @foreach ($enqerrors as $er)
-                    @if ($loop->iteration < 4)
-                        <x-alert.error>{{ $er }}</x-alert.error>
-                    @endif
-                @endforeach
+            @if (count($enqerrors) > 0)
+                {{-- 査読中ではなく、かつ、（査読後で採択があるか、またはまだ査読前）なら、エラーを表示する --}}
+                @if (!$is_reviewing && ($need_camera_ready || !$revedit_on[$paper->category_id]))
+                    @foreach ($enqerrors as $er)
+                        @if ($loop->iteration < 4)
+                            <x-alert.error>{{ $er }}</x-alert.error>
+                        @endif
+                    @endforeach
+                @endif
                 @if (count($enqerrors) > 3)
                     <x-alert.error>（このほかに、ご回答いただく項目が、{{ count($enqerrors) - 3 }}項目あります。）</x-alert.error>
                 @endif
@@ -261,23 +274,14 @@
                                 color="cyan" confirm="本当にメール送信しますか？">
                                 投稿完了通知メールを送信
                             </x-element.linkbutton> を押すと、投稿完了通知をメールで受け取ることができます。
-                            {{-- @if ($cat->show_bibinfo_btn)
-                                <div class="my-4"></div>
-                                カメラレディ投稿の締め切り時までに <x-element.linkbutton
-                                    href="{{ route('paper.dragontext', ['paper' => $paper->id]) }}" color="blue"
-                                    size="md">
-                                    書誌情報の設定
-                                </x-element.linkbutton>
-                                をしてください。（登壇発表の投稿時は必須ではありません。）
-                                @if ($paper->locked)
-                                    <span
-                                        class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、書誌情報の設定はできません。）</span>
-                                @endif
-                            @endif --}}
                         </div>
                     @else
                         @if ($revreturn[$paper->category_id])
-                            <x-alert.warning>{{ $cat->name_of_cameraready }}提出期限までに必要となる入力・操作について、画面上部の指示をご確認ください。</x-alert.warning>
+                            @if ($need_camera_ready)
+                                <x-alert.warning>{{ $cat->name_of_cameraready }}提出期限までに必要となる入力・操作について、ページ上部をご確認ください。</x-alert.warning>
+                            @else
+                                <x-alert.warning>投稿いただき、ありがとうございました。</x-alert.warning>
+                            @endif
                         @else
                             <div class="mx-5 my-5 bg-red-600 p-5 text-white font-bold text-2xl">
                                 投稿はまだ完了していません。画面上部の指示に従ってください。
