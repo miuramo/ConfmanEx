@@ -17,6 +17,9 @@
     @if (session('feedback.success'))
         <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
     @endif
+    @if (session('feedback.error'))
+        <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
+    @endif
 
     <div class="py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -84,6 +87,25 @@
                     <x-element.submitbutton value="mailsend" color="pink">
                         チェックをいれた人に、メール送信
                     </x-element.submitbutton>
+                    （注：確認画面はありません）
+
+                    <div class="m-4">
+                    または、雛形
+                    @php
+                        $mts = App\Models\MailTemplate::orderBy('updated_at', 'desc')->get();
+                    @endphp
+                    <select name="mailtemplate" id="mailtemplate"
+                        class="w-3/4 p-1 text-sm text-black  bg-white dark:text-gray-200 dark:bg-gray-800">
+                        <option value="">メールテンプレートを選択</option>
+                        @foreach ($mts as $mt)
+                            <option value="{{ $mt->id }}">(ID: {{$mt->id}}) {{ $mt->subject }} 【{{$mt->to}}】</option>
+                        @endforeach
+                    </select><br>
+                    のsubjectとbodyを利用し、
+                    <x-element.submitbutton value="addtemplate" color="pink">
+                        チェックをいれた人をTo:に指定した雛形を、新規作成
+                    </x-element.submitbutton>
+                </div>
                 </div>
             </div>
         </div>

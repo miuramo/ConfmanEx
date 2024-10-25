@@ -85,6 +85,28 @@ class RoleController extends Controller
                 }
             }
             return redirect()->route('role.edit', ["role" => $name])->with('feedback.success', "他のRoleを追加しました。");
+        } else if ($req->has("action") && $req->input("action") == "addtemplate") {
+            // valueがonの要素をあつめる。u_{uid}になっているので、とりだす。
+            $target_users = [];
+            foreach ($req->all() as $k => $v) {
+                if ($v == 'on' && strpos($k, 'u_') === 0) {
+                    $uid = explode("_", $k)[1];
+                    if (is_numeric($uid)) $target_users[] = $uid;
+                }
+            }
+            if (count($target_users) > 0) {
+                $targetmt = MailTemplate::find($req->input("mailtemplate"));
+                $mt = $targetmt->replicate();
+                $mt->from = "[:MAILFROM:]";
+                $mt->to = "userid(" . implode(", ", $target_users) . ")";
+                $mt->user_id = auth()->user()->id;
+                $mt->lastsent = null;
+                $mt->updated_at = date("Y-m-d H:i:s");
+                $mt->save();
+
+                return redirect()->route('mt.index',)->with('feedback.success', "指定したユーザに送信する雛形(ID: {$mt->id})を作成しました。");
+            }
+            return redirect()->route('role.edit', ["role" => $name])->with('feedback.error', "送信予定のユーザにチェックをいれてください。");
         } else if ($req->has("action") && $req->input("action") == "mailsend") {
             // valueがonの要素をあつめる。u_{uid}になっているので、とりだす。
             $target_users = [];
@@ -98,7 +120,7 @@ class RoleController extends Controller
                 MailTemplate::bundleUser($target_users, $req->input("subject"), $req->input("body"));
                 return redirect()->route('role.edit', ["role" => $name])->with('feedback.success', "メールを送信しました。");
             }
-            return redirect()->route('role.edit', ["role" => $name])->with('feedback.success', "メールを送信するユーザにチェックをいれてください。");
+            return redirect()->route('role.edit', ["role" => $name])->with('feedback.error', "メールを送信するユーザにチェックをいれてください。");
         } else if ($req->has("action") && $req->input("action") == "adduser") {
             $adduser = $req->input("adduser");
             $lines = explode("\n", $adduser);
