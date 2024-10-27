@@ -90,7 +90,7 @@
                             {{ $sub->paper->id_03d() }}
                         </td>
                         <td class="p-1 text-sm">
-                            @if ($enableTitleLink && $rigais[$sub->paper->id][auth()->id()] > 2)
+                            @if ($enableTitleLink && isset($rigais[$sub->paper->id][auth()->id()]) && $rigais[$sub->paper->id][auth()->id()] > 2)
                                 <x-review.commentpaper_link :sub="$sub"></x-element.commentpaper_link>
                                 @else
                                     <span class="text-gray-400">

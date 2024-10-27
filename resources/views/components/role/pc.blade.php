@@ -235,15 +235,15 @@
 
 
 
-    <x-element.h1>ロック
+    <x-element.h1>ファイルと書誌情報の保護
         <span class="px-3"></span>
         <x-element.linkbutton href="{{ route('file.adminlock') }}" color="orange">
             投稿ファイルの管理
-        </x-element.linkbutton> <span class="text-sm mx-2 mr-10">投稿締め切り後に操作してください。PDFファイルがロックされます。</span>
+        </x-element.linkbutton> <span class="text-sm mx-2 mr-10">ファイルを修正ロック（査読中に使用）したり、ロック解除（査読結果通知前に使用）したりできる設定画面が開きます。</span>
 
         <x-element.linkbutton href="{{ route('paper.adminlock') }}" color="cyan">
             書誌情報(Paper)の管理
-        </x-element.linkbutton> <span class="text-sm mx-2 mr-10">カメラレディ締め切り後に操作してください。著者名と所属、書誌情報がロックされます。</span>
+        </x-element.linkbutton> <span class="text-sm mx-2 mr-10">書誌情報（タイトル、著者名と所属、概要など）の編集権限をカテゴリ別に設定できる画面が開きます。</span>
     </x-element.h1>
 
 
