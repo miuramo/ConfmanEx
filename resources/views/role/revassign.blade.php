@@ -57,12 +57,9 @@
         </div>
     </div>
 
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-4 px-1">
             <x-role.revmap :reviewers="$reviewers" :papers="$papers">
             </x-role.revmap>
-
-        </div>
     </div>
 
     <div class="tooltip"

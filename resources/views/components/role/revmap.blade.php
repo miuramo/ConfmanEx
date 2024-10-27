@@ -9,7 +9,7 @@
     $stars = App\Models\Review::arr_pu_star();
 @endphp
 <!-- components.role.revmap -->
-<table class="min-w-full divide-y divide-gray-200">
+<table class="w-full divide-y divide-gray-200">
     <thead>
         <tr>
             <th class="p-1 bg-slate-300"> paper \ reviewer</th>
