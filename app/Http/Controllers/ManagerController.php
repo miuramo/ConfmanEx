@@ -109,7 +109,7 @@ class ManagerController extends Controller
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         $sets = Setting::where("name", "like", "SKIP_HEAD_%")->where("valid", true)->get();
         $papers = Paper::whereNotNull("pdf_file_id")->get();
-        if ($req->input('action')=='titleupdate'){
+        if ($req->input('action')=='titleupdate'){ // 第3要素のタイトルで書き換える
             foreach($papers as $paper){
                 $title = $paper->title_candidate();
                 foreach($sets as $set){
@@ -125,7 +125,17 @@ class ManagerController extends Controller
             }
             return redirect()->route('admin.paperauthorhead')->with('feedback.success', 'タイトルを一括更新しました');
         }
-        if ($req->has('authorheads')) {
+        if ($req->input('action')=='setfirstauthor_ifnull'){ // ★★第一著者未設定★★ について、第一著者の苗字を設定する
+            foreach($papers as $paper){
+                if (mb_strlen($paper->authorhead) < 1) {
+                    $myouji = explode(" ",$paper->paperowner->name)[0];
+                    $paper->authorhead = $myouji;
+                    $paper->save();
+                }
+            }
+            return redirect()->route('admin.paperauthorhead')->with('feedback.success', '★★第一著者未設定★★ について、第一著者の苗字を設定しました');
+        }
+        if ($req->has('authorheads')) { // テキストエリアがある場合
             $lines = explode("\n", $req->input('authorheads'));
             $lines = array_map("trim", $lines);
             foreach ($lines as $n => $line) {

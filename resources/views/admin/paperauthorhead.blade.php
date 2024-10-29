@@ -54,6 +54,12 @@
                     <x-element.submitbutton color="cyan" value="ahead">
                         第一著者の名前（;;で区切られた第2要素のみ）を設定する
                     </x-element.submitbutton>
+                    <span class="mx-2"></span>
+                    （おそらく、最初に1回だけ実行→）
+                    <x-element.submitbutton color="lime" value="setfirstauthor_ifnull">
+                        ★★第一著者未設定★★ について、第一著者の苗字を設定する
+                    </x-element.submitbutton>
+                <div class="my-1"></div>        
                     <x-element.submitbutton color="purple" value="titleupdate">
                         上記の第3要素のタイトルで書き換える
                     </x-element.submitbutton>
