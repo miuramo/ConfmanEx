@@ -5,6 +5,10 @@
 ])
 
 <!-- components.admin.papertable -->
+<div class="my-2">
+    <x-element.button onclick="checkAllByClass('nopdffile')" color="purple" value="PDFファイル無しにチェック">
+    </x-element.button>    
+</div>
 
 <table class="min-w-full divide-y divide-gray-200">
     <thead>
@@ -19,7 +23,11 @@
         @foreach ($all as $paper)
             <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200' : 'bg-white' }}">
                 <td class="p-1 text-center">
-                    <input type="checkbox" name="pid[]" value="{{ $paper->id }}">
+                    <input type="checkbox" name="pid[]" value="{{ $paper->id }}"
+                    @if ($paper->deleted_at == null && ($paper->pdf_file_id == 0 || $paper->pdf_file == null))
+                        class="nopdffile bg-purple-200"
+                    @endif
+                    >
                 </td>
                 <td class="p-1 text-sm">{{ $paper->id_03d() }}
                 </td>
@@ -80,3 +88,12 @@
         @endforeach
     </tbody>
 </table>
+
+<script>
+    function checkAllByClass(cls){
+        var checks = document.getElementsByClassName(cls);
+        for (var i = 0; i < checks.length; i++){
+            checks[i].checked = true;
+        }
+    }
+    </script>
