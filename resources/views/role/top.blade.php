@@ -26,7 +26,7 @@
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
 
-    @can('role_any', 'reviewer|pc|pub|award|acc|demo|wc')
+    @can('role_any', 'metareviewer|reviewer|pc|pub|award|acc|demo|wc')
         @if ($role->name == 'reviewer')
             <x-role.reviewer :role="$role">
             </x-role.reviewer>
