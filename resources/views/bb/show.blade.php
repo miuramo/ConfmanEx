@@ -47,6 +47,7 @@
                     <div class="px-2 text-left text-sm">送信フォーム</div>
                     <input class="w-full p-2 bg-green-200 rounded-md border-green-300 border-2" type="text"
                         size="70" name="sub" id="bbsub" placeholder="ここに Subject (Title) を入力"
+                        onkeydown="return disableEnterKey(event);" 
                         @isset($revid)
                             value="[RevID : {{ $revid }}]  "
                         @endisset>
@@ -67,6 +68,24 @@
         @endif
     </div>
     <script>
+        let isComposing = false;
+
+        document.getElementById("bbsub").addEventListener("compositionstart", () => {
+            isComposing = true;
+        });
+        document.getElementById("bbsub").addEventListener("compositionend", () => {
+            isComposing = false;
+        });
+
+        function disableEnterKey(event) {
+            // IME確定時ではなく、通常のEnterキーのみ無効化
+            if (event.key === "Enter" && !isComposing) {
+                document.getElementById("bbmes").focus();
+                return false; // イベントをキャンセル（送信を無効化）
+            }
+            return true;
+        }
+
         function showMessageBeforeSend() {
             var mes = document.getElementById('bbmes').value;
             var sub = document.getElementById('bbsub').value;
