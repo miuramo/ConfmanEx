@@ -10,5 +10,5 @@
         掲示板
     </x-element.linkbutton>
 @else
-    <div class="m-2 p-2 bg-pink-200">掲示板参照Error</div>
+    <div class="m-2 p-2 bg-pink-200 text-sm">掲示板は準備中です。</div>
 @endisset

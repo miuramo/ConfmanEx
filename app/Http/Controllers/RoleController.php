@@ -24,7 +24,12 @@ class RoleController extends Controller
         //     abort(403);
         // }
         if (!auth()->user()->can('role', $name)) {
-            abort(403);
+            if ($name == "reviewer" && auth()->user()->can('role', 'metareviewer')) {
+                return redirect()->route('role.top', ["role" => "metareviewer"]);
+                // reviewerはmetareviewerも見ることができる。
+            } else {
+                abort(403);
+            }
         }
         // $role = Role::where("name",$name)->first();
         $role = Role::findByIdOrName($name);
