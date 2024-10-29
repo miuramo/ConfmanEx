@@ -2,7 +2,7 @@
     @php
         $names = [1 => '査読議論', 2 => 'メタと著者の', 3 => '出版担当と著者の'];
         $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
-        if ($nameofmeta != null){
+        if ($nameofmeta != null) {
             $names[2] = $nameofmeta . 'と著者の';
         }
     @endphp
@@ -36,7 +36,8 @@
         @endforeach
 
         <div class="text-right mt-1">
-            <form action="{{ route('bb.store', ['bb' => $bb->id, 'key' => $bb->key]) }}" method="post" id="post_bbmes">
+            <form action="{{ route('bb.store', ['bb' => $bb->id, 'key' => $bb->key]) }}" method="post" id="post_bbmes"
+                onsubmit="return showMessageBeforeSend();">
                 @csrf
                 @method('post')
                 <input type="hidden" name="key" value="{{ $bb->key }}">
@@ -65,6 +66,22 @@
             <x-review.paperscores :paper_id="$bb->paper_id" :cat_id="$bb->category_id" :bb_id="$bb->id"></x-review.paperscores>
         @endif
     </div>
-
+    <script>
+        function showMessageBeforeSend() {
+            var mes = document.getElementById('bbmes').value;
+            var sub = document.getElementById('bbsub').value;
+            if (mes == '' || sub == '') {
+                alert('Subject と Message は必ず入力してください。');
+                return false;
+            }
+            // 確認ダイアログを表示
+            if (!confirm('この内容で送信します。よろしいですか？（送信にすこし時間がかかりますので、お待ちください。）')) {
+                return false;
+            }
+            // submitボタンを無効化
+            document.getElementById('id_submit_button').disabled = true;
+            return true;
+        }
+    </script>
 
 </x-app-layout>
