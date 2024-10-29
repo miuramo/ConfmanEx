@@ -4,6 +4,9 @@
     'color' => 'blue',
     'id' => 'id_submit_button',
 ])
+@php
+    $id = ($id == 'id_submit_button') ? $id.'_'.$value : $id;
+@endphp
 <!-- components.element.submitbutton -->
 <button
         type="submit" name="{{ $name }}" value="{{ $value }}" id = "{{ $id }}" 

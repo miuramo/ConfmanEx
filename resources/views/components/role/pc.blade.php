@@ -74,7 +74,7 @@
                     @endforeach
                 </div>
 
-                <x-element.submitbutton value="view" color="yellow">↑ 選択したファイルをDownload
+                <x-element.submitbutton value="downzip" color="yellow">↑ 選択したファイルをDownload
                 </x-element.submitbutton>
             </form>
             <div class="pt-4">

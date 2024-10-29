@@ -52,7 +52,7 @@
                         @endisset>
                     <textarea class="w-full mt-1 p-2 bg-green-100 rounded-md border-green-300  border-2" name="mes" id="bbmes"
                         cols="70" rows="10" placeholder="ここにメッセージを入力"></textarea>
-                    送信すると、関係者にメールで通知されます。<x-element.submitbutton value="submit" color="green">了解して送信する
+                    送信すると、関係者にメールで通知されます。<x-element.submitbutton value="submit" color="green" id="bb_submit">了解して送信する
                     </x-element.submitbutton>
                 </div>
             </form>
@@ -79,7 +79,7 @@
                 return false;
             }
             // submitボタンを無効化
-            document.getElementById('id_submit_button').disabled = true;
+            document.getElementById('bb_submit').disabled = true;
             return true;
         }
     </script>
