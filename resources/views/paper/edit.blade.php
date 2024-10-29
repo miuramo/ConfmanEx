@@ -82,7 +82,7 @@
                 @if ($need_camera_ready)
                     <x-alert.warning>{{ $cat->name_of_cameraready }}提出期限までに必要となる以下の入力・操作について、ご確認ください。</x-alert.warning>
                 @else
-                    <x-alert.warning>投稿いただき、ありがとうございました。（以下の指示への対応は不要です。）</x-alert.warning>
+                    <x-alert.warning>投稿いただき、ありがとうございました。（{{ $cat->name_of_cameraready }}の提出をされない場合、以下の指示への対応は基本的に不要です。）</x-alert.warning>
                 @endif
             @else
                 @if ($revedit_on[$paper->category_id])
@@ -280,7 +280,7 @@
                             @if ($need_camera_ready)
                                 <x-alert.warning>{{ $cat->name_of_cameraready }}提出期限までに必要となる入力・操作について、ページ上部をご確認ください。</x-alert.warning>
                             @else
-                                <x-alert.warning>投稿いただき、ありがとうございました。（上記の指示への対応は不要です。）</x-alert.warning>
+                                <x-alert.warning>投稿いただき、ありがとうございました。</x-alert.warning>
                             @endif
                         @else
                             <div class="mx-5 my-5 bg-red-600 p-5 text-white font-bold text-2xl">
