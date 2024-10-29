@@ -59,18 +59,22 @@ class EnqueteAnswer extends Model
         if ($demoenqitem != null) {
             $demoenqitemid = $demoenqitem->id;
             // EnqueteAnswerのうち、demoenqitemid に "はい" と答えているものをカウント
-            $res = EnqueteAnswer::where("enquete_item_id", $demoenqitemid)->where("valuestr", "はい")->count();
+            $res = EnqueteAnswer::where("enquete_item_id", $demoenqitemid)->where("valuestr", "はい")->
+            whereIn("paper_id", Paper::select("id")->whereNull("deleted_at"))->count();
             return $res;
         }
         return 0;
     }
     // すべてのカテゴリについて、デモ希望をだしているPaperIDのリストを返す 例:[9,24,29,31,33]
+    // ただし、Paper->deleted_at が null であるものに限る
     public static function demoPaperIDs(){
         $demoenqitem = EnqueteItem::where("name", "demoifaccepted")->first();
         if ($demoenqitem != null) {
             $demoenqitemid = $demoenqitem->id;
             // EnqueteAnswerのうち、demoenqitemid に "はい" と答えているものをカウント
-            $res = EnqueteAnswer::select("paper_id")->where("enquete_item_id", $demoenqitemid)->where("valuestr", "はい")->orderBy("paper_id")->get()->pluck("paper_id")->toArray(); 
+            $res = EnqueteAnswer::select("paper_id")->where("enquete_item_id", $demoenqitemid)->where("valuestr", "はい")->
+            whereIn("paper_id", Paper::select("id")->whereNull("deleted_at"))->
+            orderBy("paper_id")->get()->pluck("paper_id")->toArray(); 
             return $res;
         }
         return [];
