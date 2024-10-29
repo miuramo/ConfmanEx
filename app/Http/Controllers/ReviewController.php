@@ -27,7 +27,7 @@ class ReviewController extends Controller
 
     public function conflict(int $cat_id)
     {
-        if (!auth()->user()->can('role', 'reviewer')) return abort(403);
+        if (!auth()->user()->can('role_any', 'reviewer|metareviewer')) return abort(403);
         // 自著分、共著分については、さきにRevConflictを作成しておく
         $author_papers = Paper::where("owner", auth()->user()->id)->get();
         foreach ($author_papers as $p) {
@@ -63,7 +63,7 @@ class ReviewController extends Controller
      */
     public function index()
     {
-        if (!auth()->user()->can('role', 'reviewer')) return abort(403);
+        if (!auth()->user()->can('role_any', 'reviewer|metareviewer')) return abort(403);
         // さっそく、読み取る
         $reviews = Review::where("user_id", auth()->user()->id)->orderBy("category_id")->orderBy("paper_id")->get();
         $revbycat = [];
@@ -81,7 +81,7 @@ class ReviewController extends Controller
      */
     public function indexcat($cat_id)
     {
-        if (!auth()->user()->can('role', 'reviewer')) return abort(403);
+        if (!auth()->user()->can('role_any', 'reviewer|metareviewer')) return abort(403);
         if (!is_numeric($cat_id)) return abort(404);
         $reviews = Review::where("user_id", auth()->user()->id)->where("category_id", $cat_id)->orderBy("paper_id")->get();
         // $revbycat = [];
@@ -211,7 +211,7 @@ class ReviewController extends Controller
      */
     public function show(Review $review)
     {
-        if (!auth()->user()->can('role_any', 'pc|reviewer',)) return abort(403);
+        if (!auth()->user()->can('role_any', 'pc|reviewer|metareviewer',)) return abort(403);
         if ($review->user_id != auth()->id()) return abort(403, "THIS IS NOT YOUR REVIEW");
 
         if ($review->ismeta) {
@@ -234,7 +234,7 @@ class ReviewController extends Controller
      */
     public function pubshow(Review $review, string $token)
     {
-        if (!auth()->user()->can('role_any', 'pc|reviewer',)) return abort(403);
+        if (!auth()->user()->can('role_any', 'pc|reviewer|metareviewer',)) return abort(403);
         if ($review->token() != $token) return abort(403, "Review Browse TOKEN ERROR");
 
         if ($review->ismeta) {
@@ -274,7 +274,7 @@ class ReviewController extends Controller
      */
     public function edit(Review $review)
     {
-        if (!auth()->user()->can('role', 'reviewer')) return abort(403);
+        if (!auth()->user()->can('role_any', 'reviewer|metareviewer')) return abort(403);
         if ($review->user_id != auth()->id()) return abort(403, "THIS IS NOT YOUR REVIEW");
 
         $query = Viewpoint::where("category_id", $review->category_id);
@@ -301,7 +301,7 @@ class ReviewController extends Controller
     public function update(UpdateReviewRequest $request, int $reviewid)
     {
         if ($reviewid == 0) return $request->shori_dummy(); // ダミーはかならずReviewID = 0 にする。
-        if (!auth()->user()->can('role', 'reviewer')) return abort(403);
+        if (!auth()->user()->can('role_any', 'reviewer|metareviewer')) return abort(403);
         $review = Review::find($reviewid);
         if ($review->user_id != auth()->id()) return abort(403, "THIS IS NOT YOUR REVIEW");
 

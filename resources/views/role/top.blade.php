@@ -31,6 +31,10 @@
             <x-role.reviewer :role="$role">
             </x-role.reviewer>
         @endif
+        @if ($role->name == 'metareviewer')
+            <x-role.reviewer :role="$role">
+            </x-role.reviewer>
+        @endif
         @if ($role->name == 'pc')
             <x-role.pc :role="$role">
             </x-role.pc>

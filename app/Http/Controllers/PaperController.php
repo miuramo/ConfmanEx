@@ -337,7 +337,7 @@ class PaperController extends Controller
     public function review(string $id, string $token)
     {
         $paper = Paper::findOrFail($id);
-        if (!auth()->user()->can('role_any', 'pc|reviewer')) {
+        if (!auth()->user()->can('role_any', 'pc|reviewer|metareviewer')) {
             if (!Gate::allows('show_paper', $paper)) {
                 abort(403, 'forbidden_for_others');
             }

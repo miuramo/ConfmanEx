@@ -37,6 +37,12 @@
                         }
 
                     @endphp
+                    @can('role', 'metareviewer')
+                        @php
+                            $navs_href['査読'] = route('role.top', ['role' => 'metareviewer']);
+                            $navs_active['査読'] = url()->current() === $navs_href['査読'];
+                        @endphp
+                    @endcan
                     @can('role', 'reviewer')
                         @php
                             $navs_href['査読'] = route('role.top', ['role' => 'reviewer']);
