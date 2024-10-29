@@ -91,10 +91,13 @@
             var sub = document.getElementById('bbsub').value;
             if (mes == '' || sub == '') {
                 alert('Subject と Message は必ず入力してください。');
+                if (sub == '') document.getElementById("bbsub").focus();
+                else document.getElementById("bbmes").focus();
                 return false;
             }
             // 確認ダイアログを表示
             if (!confirm('この内容で送信します。よろしいですか？（送信にすこし時間がかかります）')) {
+                document.getElementById("bbmes").focus();
                 return false;
             }
             // submitボタンを無効化
