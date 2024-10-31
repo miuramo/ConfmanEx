@@ -30,8 +30,9 @@
         </style>
     </x-slot>
 
-    <div class="px-4 pt-4 leading-relaxed"><span class="p-1 bg-purple-300">背景が紫</span> の要素は、直接入力モードで入力された項目ですので、PDFとの齟齬があるかもしれません。<br>
-    要素をクリックすると編集できます。
+    <div class="px-4 pt-4 leading-relaxed"><span class="p-1 bg-purple-300">背景が紫</span>
+        の要素は、直接入力モードで入力された項目ですので、PDFとの齟齬があるかもしれません。<br>
+        要素をクリックすると編集できます。
     </div>
 
     @php
@@ -55,9 +56,24 @@
             'eabst' => 'mediumtext',
             'ekeyword' => 'varchar',
         ];
+
+        if (count($subs) == 0) {
+            $subs = $subs2;
+            $memo = "採択済み論文はまだありません。かわりに、すべての投稿論文を表示します。";
+        }
     @endphp
+    @isset($memo)
+        <div class="m-2 px-4 py-2 bg-red-500 text-white text-2xl">{{ $memo }}
+        </div>
+        @endisset
+
     <div class="px-4 py-4">
         @foreach ($subs as $sub)
+            @php
+                if($sub->paper == null) {
+                    continue;
+                }
+            @endphp
             <table class="border-lime-400 border-2">
                 <tr class="bg-lime-200">
                     <td class="px-2 py-1">
@@ -68,17 +84,22 @@
                             onclick="openclose('headimg{{ $sub->id }}')">
                         </x-element.button>
 
-                        <x-file.link_pdfthumb :fileid="$sub->paper->pdf_file_id" page=1></x-file.link_pdfthumb>
-                        <x-file.link_pdffile :fileid="$sub->paper->pdf_file_id"></x-file.link_pdffile>
+                        @isset($sub->paper->pdf_file_id)
+                            <x-file.link_pdfthumb :fileid="$sub->paper->pdf_file_id" page=1></x-file.link_pdfthumb>
+                            <x-file.link_pdfthumb :fileid="$sub->paper->pdf_file_id" page=1></x-file.link_pdfthumb>
+                            <x-file.link_pdffile :fileid="$sub->paper->pdf_file_id"></x-file.link_pdffile>
+                        @endisset
                         @isset($sub->paper->pdf_file)
-                        {{ $sub->paper->pdf_file->pagenum }} pages
+                            {{ $sub->paper->pdf_file->pagenum }} pages
                         @endisset
                     </td>
                 </tr>
             </table>
             <div class="hidden-content w-3/4 border border-gray-400 p-1" id="headimg{{ $sub->id }}"
                 style="display:none;">
-                <x-file.paperheadimg :paper="$sub->paper"></x-file.paperheadimg>
+                @isset($sub->paper)
+                    <x-file.paperheadimg :paper="$sub->paper"></x-file.paperheadimg>
+                @endisset
             </div>
             <table class="border-cyan-400 border-2 mb-1">
                 <tr class="bg-white dark:bg-cyan-100">
@@ -86,20 +107,25 @@
                         PaperID
                     </td>
                     <td class="px-2 py-1">
-                        {{ $sub->paper->id_03d() }}
+                        @isset($sub->paper)
+                            {{ $sub->paper->id_03d() }}
+                        @endisset
                     </td>
                 </tr>
                 @foreach ($koumoku as $k => $v)
                     <tr class="{{ $loop->iteration % 2 === 1 ? 'bg-cyan-50' : 'bg-white dark:bg-cyan-100' }}">
                         <td class="px-2 py-1">{{ $v }}</td>
-                        @if (isset($sub->paper->maydirty[$k]) && $sub->paper->maydirty[$k] == 'true')
-                            <td class="px-2 py-1 bg-purple-300
-                            @else
-                            <td class="px-2 py-1 hover:bg-lime-100
-                        @endif
-                        font-monaca clicktoedit" id="{{ $k }}__{{$sub->paper->id}}__{{$dtype[$k]}}"
-                        data-orig="{{ $sub->paper->{$k} }}">
-                        {!! nl2br( $sub->paper->{$k} ) !!}</td>
+                        @isset($sub->paper)
+                            @if (isset($sub->paper->maydirty[$k]) && $sub->paper->maydirty[$k] == 'true')
+                                <td class="px-2 py-1 bg-purple-300
+@else
+<td class="px-2 py-1 hover:bg-lime-100
+                                    @endif
+                                    font-monaca clicktoedit"
+                                    id="{{ $k }}__{{ $sub->paper->id }}__{{ $dtype[$k] }}"
+                                    data-orig="{{ $sub->paper->{$k} }}">
+                                    {!! nl2br($sub->paper->{$k}) !!}</td>
+                            @endisset
                     </tr>
                 @endforeach
             </table>

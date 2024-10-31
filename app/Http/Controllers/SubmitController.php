@@ -242,8 +242,12 @@ class SubmitController extends Controller
         if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
 
         $subs = Submit::subs_accepted($catid);
+        // もし、subsが空なら、代替として、全てのsubmitsを表示する
+        if (count($subs) == 0) {
+            $subs2 = Submit::subs_all($catid);
+        }
 
-        return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs"));
+        return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs","subs2"));
     }
 
     /**
