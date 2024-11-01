@@ -204,8 +204,10 @@ Route::middleware('auth')->group(function () {
 
     // 掲示板
     Route::get('bb', [BbController::class, 'index'])->name('bb.index');
+    Route::get('bb_for_pub', [BbController::class, 'index_for_pub'])->name('bb.index_for_pub');
     Route::post('bb', [BbController::class, 'store'])->name('bb.createnew'); // まとめて作成
     Route::delete('bb', [BbController::class, 'destroy'])->name('bb.destroy'); // 全削除
+    Route::delete('bb_destroy_bytype', [BbController::class, 'destroy_bytype'])->name('bb.destroy_bytype'); // 種別ごとに削除
     Route::get('bb/{bb}/{key}', [BbController::class, 'show'])->name('bb.show')->where('key', '([0-9A-Za-z]+)');
     Route::post('bb/{bb}/{key}', [BbMesController::class, 'store'])->name('bb.store')->where('key', '([0-9A-Za-z]+)');
 

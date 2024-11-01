@@ -153,6 +153,13 @@
         <x-element.linkbutton href="{{ route('mt.index') }}" color="pink">
             メール雛形
         </x-element.linkbutton>
+
+        <span class="mx-10"></span>
+        掲示板
+        <span class="px-3"></span>
+        <x-element.linkbutton href="{{ route('bb.index_for_pub') }}" color="pink">
+            出版掲示板の管理
+        </x-element.linkbutton>
     </x-element.h1>
 
     <x-element.h1>自分の権限確認（Role一覧）</x-element.h1>

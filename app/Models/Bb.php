@@ -47,12 +47,12 @@ class Bb extends Model
         $subs = [
             1 => "reviewer|metareviewer",
             2 => "pc|metareviewer|author",
-            3 => "pc|pub|author",
+            3 => "pub|author",
         ];
         $firstmes = [
             1 => "ここは査読者同士の事前議論掲示板です。\n査読者は自身を名乗らないでください。必要があればRevIDを用いてください。RevIDは送信フォームに表示されています。\n（RevIDが表示されていない場合は、査読を担当していません。）\n注：RevIDは査読者のIDではなく、査読割当てごとに異なるIDです。",
             2 => "ここはメタ査読者と著者の掲示板です。（プログラム委員長も閲覧できます。）",
-            3 => "ここは出版担当と著者の掲示板です。（プログラム委員長も閲覧できます。）",
+            3 => "ここは出版担当と著者の掲示板です。",
         ];
         $nameofmeta = Setting::findByIdOrName('name_of_meta')->value;
         if ($nameofmeta != null){
@@ -114,6 +114,7 @@ class Bb extends Model
                 $role = Role::findByIdOrName($role);
                 foreach($role->users as $u){
                     if ( isset($rigais[$this->paper_id][$u->id]) && $rigais[$this->paper_id][$u->id]<3 ) continue; //利害or共著
+                    // 出版掲示板ならば、利害関係者であっても送信してよいという考え方はある。ただ、通常はauthor(cc)で追加されるはずなので、ここで特別な処理をする必要はない。
                     $bcclist[] = $u->email;
                 }
             } else if ($role=="metareviewer" || $role=="reviewer"){
