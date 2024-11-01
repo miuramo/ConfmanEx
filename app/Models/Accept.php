@@ -22,7 +22,7 @@ class Accept extends Model
             "submits.category_id as hanteicat",
             "submits.accept_id",
             // "accepts.name as acceptname",
-            "accepts.judge",
+            // "accepts.judge",
         ];
         if ($include_paperid) { // paper_idを含める
             $fs[] = "submits.paper_id";
