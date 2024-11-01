@@ -91,7 +91,7 @@
         <textarea class="p-2 w-full text-xl bg-yellow-100 font-monaca" id="seltext" rows=6
             placeholder="（ここは直接入力できません。下のテキストをマウスでドラッグして、選択してください。）"></textarea>
         <div class="mb-2">
-            <x-element.button onclick="return removespaces();" value="半角スペースを除去" size="sm"
+            <x-element.button onclick="return removespaces();" value="半角スペースを削除" size="sm"
                 color="orange"></x-element.button>
             <x-element.button onclick="return replacekutouten();" value="句読点を『 ． ， 』に置換" size="sm"
                 color="yellow"></x-element.button>

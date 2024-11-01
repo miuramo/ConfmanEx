@@ -7,7 +7,7 @@ function other_textchange(event) {
     var tdid = event.target.id.replace("select__", "edit__");
     var text = $("#" + tdid).val();
     if (event.target.value == "remove_spaces_between_japanese") {
-        var newtext = text.replace(/([一-龥ぁ-ゔァ-ヴー々〆〤])\s+([一-龥ぁ-ゔァ-ヴー々〆〤])/g, '$1$2');
+        var newtext = text.replace(/([一-龥ぁ-ゔァ-ヴー々〆〤．，。、])\s+([一-龥ぁ-ゔァ-ヴー々〆〤．，。、])/g, '$1$2');
         $("#" + tdid).val(newtext);
     } else if (event.target.value == "replace_kuten") {
         var newtext = text.replace(/、/g, "，").replace(/。/g, "．");
