@@ -79,6 +79,10 @@ class Accept extends Model
             "source" => 'h1a1',
             "target" => 'h1a2',
         ];
+        $links[] = [
+            "source" => 'h1a2',
+            "target" => 'h1a21',
+        ];
 
         $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
         $acc_judges = Accept::select('judge', 'id')->get()->pluck('judge', 'id')->toArray();
