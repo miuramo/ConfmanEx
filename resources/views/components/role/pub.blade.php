@@ -18,7 +18,7 @@
         </x-element.linkbutton2>
         <span class="mx-2"></span>
         <x-element.linkbutton2 href="{{ route('pub.accstatusgraph') }}" color="cyan" target="_blank" size="xs">
-            採択グラフ（試験的）
+            採択状況のグラフ表示（試験的）
         </x-element.linkbutton2>
         <span class="mx-4"></span>
         <x-element.linkbutton href="{{ route('pub.addsubmit') }}" color="cyan" target="_blank">
