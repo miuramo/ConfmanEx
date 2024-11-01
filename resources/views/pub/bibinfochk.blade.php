@@ -114,10 +114,20 @@
                 </tr>
                 @foreach ($koumoku as $k => $v)
                     <tr class="{{ $loop->iteration % 2 === 1 ? 'bg-cyan-50' : 'bg-white dark:bg-cyan-100' }}">
-                        <td class="px-2 py-1">{{ $v }}</td>
+                        <td class="px-2 py-1">
+                            @isset($sub->paper)
+                            @if (isset($sub->paper->maydirty[$k]) && $sub->paper->maydirty[$k] == 'true')
+                                <span class="bg-purple-300">{{ $v }}</span>
+                                <button onclick="reset_maydirty('{{ $sub->paper->id }}', '{{ $k }}')"
+                                    class="bg-red-300 hover:bg-red-500 text-white px-2 py-1">確認済みにする</button>
+                            @else
+                                {{ $v }}    
+                            @endif
+                            @endisset
+                        </td>
                         @isset($sub->paper)
                             @if (isset($sub->paper->maydirty[$k]) && $sub->paper->maydirty[$k] == 'true')
-                                <td class="px-2 py-1 bg-purple-300
+                                <td class="px-2 py-1 bg-purple-300 hover:bg-lime-100 
 @else
 <td class="px-2 py-1 hover:bg-lime-100
                                     @endif
@@ -157,11 +167,18 @@
         <script src="/js/openclose.js"></script>
         <script src="/js/crud_table.js"></script>
         <script src="/js/crud_where.js"></script>
+        <script src="/js/reset_maydirty.js"></script>
     @endpush
     <form action="{{ route('admin.crudpost') }}" method="post" id="admincrudpost">
         @csrf
         @method('post')
     </form>
+
+    <form action="{{ route('pub.update_maydirty') }}" method="post" id="update_maydirty">
+        @csrf
+        @method('post')
+    </form>
+
     <script>
         var table = "papers";
         var origData = {};

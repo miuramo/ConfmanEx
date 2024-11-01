@@ -249,8 +249,28 @@ class SubmitController extends Controller
             $subs2 = [];
         }
 
-        return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs","subs2"));
+        return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs", "subs2"));
     }
+    /**
+     * update maydirty (for reset) 確認済みにする (falseをセットする)
+     */
+    public function update_maydirty(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc|pub')) abort(403);
+        info($req->all());
+        $pid = $req->input("pid");
+        $paper = Paper::findOrFail($pid);
+        $field = $req->input("field");
+        $value = $req->input("value"); // true or false
+        $md = $paper->maydirty;
+        if (isset($md[$field])) {
+            $md[$field] = $value;
+        }
+        $paper->maydirty = $md;
+        $paper->save();
+        return json_encode(["maydirty" => $md]);
+    }
+
 
     /**
      * bibinfo for web (プログラム出力)
