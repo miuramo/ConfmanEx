@@ -34,7 +34,7 @@
                 </div>
                 <x-element.submitbutton value="view" color="green">↑ の投稿論文リスト
                 </x-element.submitbutton><br>
-                <x-element.submitbutton value="excel" color="teal">↑ のExcel Download
+                <x-element.submitbutton value="excel" color="teal">↑ の投稿論文リストExcel
                 </x-element.submitbutton>
             </form>
             <div class="py-1"></div>
