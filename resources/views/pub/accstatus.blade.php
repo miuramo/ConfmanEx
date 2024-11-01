@@ -39,9 +39,9 @@
                     </td>
                     <td class="px-2 py-1 text-center">
                         @if ($st->judge > 0)
-                            <span class="text-blue-600 font-bold">{{ $st->acceptname }}</span>
+                            <span class="text-blue-600 font-bold">{{ $accepts[$st->accept_id] }}</span>
                         @else
-                            <span class="text-slate-600">{{ $st->acceptname }}</span>
+                            <span class="text-slate-600">{{ $accepts[$st->accept_id] }}</span>
                         @endif
                     </td>
                     <td class="px-2 py-1 text-center">

@@ -21,7 +21,7 @@ class Accept extends Model
             "papers.category_id as origcat",
             "submits.category_id as hanteicat",
             "submits.accept_id",
-            "accepts.name as acceptname",
+            // "accepts.name as acceptname",
             "accepts.judge",
         ];
         if ($include_paperid) { // paper_idを含める
