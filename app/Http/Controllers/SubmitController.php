@@ -308,6 +308,7 @@ class SubmitController extends Controller
      * 採択状況一覧
      */
     public function accstatus(){
+        if (!auth()->user()->can('role_any', 'admin|pc|pub|demo')) abort(403);
         $stats = Accept::acc_status();
         $paperlist = Accept::acc_status(true);
         $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
