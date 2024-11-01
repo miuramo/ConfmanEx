@@ -316,6 +316,18 @@ class SubmitController extends Controller
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
         return view('pub.accstatus')->with(compact("stats","accepts","cats","paperlist","acc_judges"));
     }
+    /**
+     * 採択状況一覧（グラフ）
+     */
+    public function accstatusgraph(){
+        if (!auth()->user()->can('role_any', 'admin|pc|pub|demo')) abort(403);
+        $stats = Accept::acc_status();
+        $paperlist = Accept::acc_status(true);
+        $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+        $acc_judges = Accept::select('judge', 'id')->get()->pluck('judge', 'id')->toArray();
+        $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+        return view('pub.accstatusgraph')->with(compact("stats","accepts","cats","paperlist","acc_judges"));
+    }
 
     /**
      * 別カテゴリでの採否を追加する
