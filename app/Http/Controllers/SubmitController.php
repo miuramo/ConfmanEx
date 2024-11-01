@@ -249,7 +249,7 @@ class SubmitController extends Controller
             $subs2 = [];
         }
 
-        return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs", "subs2"));
+        return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs", "subs2","catid"));
     }
     /**
      * update maydirty (for reset) 確認済みにする (falseをセットする)

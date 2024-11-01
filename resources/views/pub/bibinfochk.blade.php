@@ -30,9 +30,29 @@
         </style>
     </x-slot>
 
-    <div class="px-4 pt-4 leading-relaxed"><span class="p-1 bg-purple-300">背景が紫</span>
-        の要素は、直接入力モードで入力された項目ですので、PDFとの齟齬があるかもしれません。<br>
-        要素をクリックすると編集できます。
+    <div class="mx-6 px-4 pt-4 leading-relaxed">
+        <span class="p-1 font-bold">出版担当のかたへ：</span> 論文自体のチェックに加えて、お手数ですが、投稿者が入力した書誌情報の確認と修正をお願いします。<br>
+        緑色の背景のところにあるボタンを押すと、それぞれ切り取り画像、1ページ目の画像、PDFをひらきます。<br>
+        その下の表は、投稿者が入力した書誌情報です。背景色が変わる要素については、クリックすると編集できます。<br>
+        <b>一行テキストは Enter、複数行テキストは CTRL+Enter で保存してください。</b><br><br>
+        
+        <span class="p-1 bg-purple-300">背景が紫</span>
+        の要素は、書誌情報入力画面の「直接入力モード」で入力された項目ですので、要チェックです。PDFとの齟齬があるかもしれません。<br>
+        「確認済みにする」をクリックすると、要チェックのフラグを消すことができます。<br>
+        <br>
+        背景が通常（紫でない）については、基本的にはPDFから抽出したテキストになります。<br>
+        不要な空白、句読点の種類の不統一が気になる場合は、クリックして【テキスト一括処理】を実行してください（複数行テキストのみ適用可能）。その後、CTRL+Enter で保存してください。<br>
+        <b>（投稿者の書誌情報入力画面には、「半角スペースをすべて削除」の機能があります。投稿者がそれを英文箇所に使った場合、本来残したほうがよい半角スペースが消えている場合があります。）</b><br>
+
+        著者名（所属）のカッコは、全角・半角どちらでも大丈夫です。また、著者名と所属の間のスペースの有無も問いません。<br>
+        複数所属は、半角スラッシュ / で区切ってください。<br>
+        出力例を確認しながら、修正されることをおすすめします。
+        <x-element.linkbutton href="{{ route('pub.bibinfo', ['cat' => $catid, 'abbr'=>'true']) }}" target="_blank" color="cyan" size="sm">
+            出力例（所属をまとめる）
+        </x-element.linkbutton>
+        <x-element.linkbutton href="{{ route('pub.bibinfo', ['cat' => $catid]) }}" target="_blank" color="teal" size="sm">
+            出力例（所属をまとめない）
+        </x-element.linkbutton>
     </div>
 
     @php
@@ -85,7 +105,6 @@
                         </x-element.button>
 
                         @isset($sub->paper->pdf_file_id)
-                            <x-file.link_pdfthumb :fileid="$sub->paper->pdf_file_id" page=1></x-file.link_pdfthumb>
                             <x-file.link_pdfthumb :fileid="$sub->paper->pdf_file_id" page=1></x-file.link_pdfthumb>
                             <x-file.link_pdffile :fileid="$sub->paper->pdf_file_id"></x-file.link_pdffile>
                         @endisset
