@@ -245,6 +245,8 @@ class SubmitController extends Controller
         // もし、subsが空なら、代替として、全てのsubmitsを表示する
         if (count($subs) == 0) {
             $subs2 = Submit::subs_all($catid);
+        } else {
+            $subs2 = [];
         }
 
         return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs","subs2"));
