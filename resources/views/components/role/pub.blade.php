@@ -33,7 +33,7 @@
         <span class="mx-2"></span>
         <x-element.linkbutton href="{{ route('paper.adminlock') }}" color="green">
             書誌情報の管理
-        </x-element.linkbutton> <span class="text-sm mx-2 mr-10">書誌情報（タイトル、著者名と所属、概要など）の編集権限をカテゴリ別に設定できる画面が開きます。</span>
+        </x-element.linkbutton> <span class="text-sm mx-2 mr-10">書誌情報（タイトル、著者名と所属、概要など）の投稿者による編集可否をカテゴリ別に設定できる画面が開きます。</span>
     </x-element.h1>
 
 
