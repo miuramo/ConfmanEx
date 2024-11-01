@@ -32,9 +32,9 @@
                         &nbsp;
                     @endforeach
                 </div>
-                <x-element.submitbutton value="view" color="green">↑ 選択カテゴリの投稿論文リスト
+                <x-element.submitbutton value="view" color="green">↑ の投稿論文リスト
                 </x-element.submitbutton><br>
-                <x-element.submitbutton value="excel" color="teal">↑ 選択カテゴリのExcel Download
+                <x-element.submitbutton value="excel" color="teal">↑ のExcel Download
                 </x-element.submitbutton>
             </form>
             <div class="py-1"></div>
