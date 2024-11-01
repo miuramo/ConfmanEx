@@ -13,11 +13,15 @@
 
 <div class="px-6 py-4">
     <x-element.h1>
+        <x-element.linkbutton2 href="{{ route('pub.accstatus') }}" color="cyan" target="_blank">
+            採択状況の確認
+        </x-element.linkbutton2>
+        <span class="mx-4"></span>
         <x-element.linkbutton href="{{ route('pub.addsubmit') }}" color="cyan" target="_blank">
             別カテゴリでの採否を追加する
         </x-element.linkbutton>
     </x-element.h1>
-    
+
     <x-element.h1>
         セッション割り当て
         @foreach ($cats as $cid => $cname)
@@ -33,7 +37,8 @@
         <span class="mx-2"></span>
         <x-element.linkbutton href="{{ route('paper.adminlock') }}" color="green">
             書誌情報の管理
-        </x-element.linkbutton> <span class="text-sm mx-2 mr-10">書誌情報（タイトル、著者名と所属、概要など）の投稿者による編集可否をカテゴリ別に設定できる画面が開きます。</span>
+        </x-element.linkbutton> <span
+            class="text-sm mx-2 mr-10">書誌情報（タイトル、著者名と所属、概要など）の投稿者による編集可否をカテゴリ別に設定できる画面が開きます。</span>
     </x-element.h1>
 
 
@@ -101,14 +106,15 @@
 
     <x-element.h1>採択論文・ファイルのタイムスタンプ
         @foreach ($cats as $cid => $cname)
-        <span class="mx-2"></span>
-        <x-element.linkbutton2 href="{{ route('pub.fileinfochk', ['cat' => $cid]) }}" color="lime" target="_blank">
-            {{ $cname }}
-        </x-element.linkbutton2>
+            <span class="mx-2"></span>
+            <x-element.linkbutton2 href="{{ route('pub.fileinfochk', ['cat' => $cid]) }}" color="lime"
+                target="_blank">
+                {{ $cname }}
+            </x-element.linkbutton2>
         @endforeach
     </x-element.h1>
 
-    
+
     <x-element.h1>採択論文・ファイルダウンロード</x-element.h1>
 
     <div class="px-6 py-0 flex">
@@ -167,7 +173,9 @@
         $user = App\Models\User::find(auth()->id());
     @endphp
     @foreach ($user->roles as $ro)
-        <span class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }} ({{ $ro->name }})</span>
+        <span
+            class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }}
+            ({{ $ro->name }})</span>
     @endforeach
 
     <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">

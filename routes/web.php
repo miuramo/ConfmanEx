@@ -143,6 +143,7 @@ Route::middleware('auth')->group(function () {
     Route::post('addsubmit', [SubmitController::class, 'addsubmit'])->name('pub.addsubmit');
 
     // 出版担当
+    Route::get('pub_accstatus', [SubmitController::class, 'accstatus'])->name('pub.accstatus');
     Route::get('pub/{cat}/booth', [SubmitController::class, 'booth'])->name('pub.booth');
     Route::post('pub/{cat}/booth', [SubmitController::class, 'booth'])->name('pub.booth');
     Route::get('pub/{cat}/boothtxt', [SubmitController::class, 'boothtxt'])->name('pub.boothtxt');

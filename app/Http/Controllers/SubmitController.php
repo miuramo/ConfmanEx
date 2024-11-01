@@ -13,6 +13,7 @@ use App\Models\Paper;
 use App\Models\Setting;
 use App\Models\Submit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use STS\ZipStream\Facades\Zip;
 use ZipArchive;
 
@@ -301,6 +302,17 @@ class SubmitController extends Controller
         $files = File::whereIn('paper_id', array_keys($pid2sub))->where('valid', 1)->where('deleted', 0)->get()->sortByDesc('created_at');
 
         return view('pub.fileinfochk', ["cat" => $catid])->with(compact("pid2sub", "files"));
+    }
+
+    /**
+     * 採択状況一覧
+     */
+    public function accstatus(){
+        $stats = Accept::acc_status();
+        $paperlist = Accept::acc_status(true);
+        $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+        $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+        return view('pub.accstatus')->with(compact("stats","accepts","cats","paperlist"));
     }
 
     /**
