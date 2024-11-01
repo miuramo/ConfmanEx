@@ -38,7 +38,7 @@
                         {!! $catspans[$st->hanteicat] !!}
                     </td>
                     <td class="px-2 py-1 text-center">
-                        @if ($st->judge > 0)
+                        @if ($acc_judges[$st->accept_id] > 0)
                             <span class="text-blue-600 font-bold">{{ $accepts[$st->accept_id] }}</span>
                         @else
                             <span class="text-slate-600">{{ $accepts[$st->accept_id] }}</span>

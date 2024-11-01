@@ -312,8 +312,9 @@ class SubmitController extends Controller
         $stats = Accept::acc_status();
         $paperlist = Accept::acc_status(true);
         $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+        $acc_judges = Accept::select('judge', 'id')->get()->pluck('judge', 'id')->toArray();
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
-        return view('pub.accstatus')->with(compact("stats","accepts","cats","paperlist"));
+        return view('pub.accstatus')->with(compact("stats","accepts","cats","paperlist","acc_judges"));
     }
 
     /**
