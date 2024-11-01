@@ -241,7 +241,7 @@
             投稿ファイルの管理
         </x-element.linkbutton> <span class="text-sm mx-2 mr-10">ファイルを修正ロック（査読中に使用）したり、ロック解除（査読結果通知前に使用）したりできる設定画面が開きます。</span>
 
-        <x-element.linkbutton href="{{ route('paper.adminlock') }}" color="cyan">
+        <x-element.linkbutton href="{{ route('paper.adminlock') }}" color="green">
             書誌情報(Paper)の管理
         </x-element.linkbutton> <span class="text-sm mx-2 mr-10">書誌情報（タイトル、著者名と所属、概要など）の編集権限をカテゴリ別に設定できる画面が開きます。</span>
     </x-element.h1>

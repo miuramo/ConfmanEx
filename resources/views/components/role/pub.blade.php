@@ -28,6 +28,14 @@
         @endforeach
     </x-element.h1>
 
+    <x-element.h1>
+        書誌情報を、投稿者が修正できないように設定する
+        <span class="mx-2"></span>
+        <x-element.linkbutton href="{{ route('paper.adminlock') }}" color="green">
+            書誌情報の管理
+        </x-element.linkbutton> <span class="text-sm mx-2 mr-10">書誌情報（タイトル、著者名と所属、概要など）の編集権限をカテゴリ別に設定できる画面が開きます。</span>
+    </x-element.h1>
+
 
     <x-element.h1>
         書誌情報の確認と修正
