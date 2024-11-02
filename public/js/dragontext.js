@@ -117,7 +117,13 @@ function removespaces() {
     }
     var val = $("#seltext").val();
     val = val.trim();
-    val = val.replace(/ /g, "");
+    val = val.replace(/([一-龥ぁ-ゔァ-ヴー々〆〤．，。、])\s+([一-龥ぁ-ゔァ-ヴー々〆〤．，。、])/g, '$1$2');
+    var conf = confirm("全角文字に挟まれた《半角スペース》に加え、全角と半角（英文字・数字）に挟まれた《半角スペース》も一括削除しますか？\n\n（例）「怪盗 Kids」→「怪盗Kids」");  
+    if (conf){
+        val = val.replace(/([一-龥ぁ-ゔァ-ヴー々〆〤．，。、])\s+([a-zA-Z0-9])/g, '$1$2');
+        val = val.replace(/([a-zA-Z0-9])\s+([一-龥ぁ-ゔァ-ヴー々〆〤．，。、])/g, '$1$2');
+    }
+    // val = val.replace(/ /g, "");
     $("#seltext").val(val);
     return false;
 }

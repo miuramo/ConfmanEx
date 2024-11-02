@@ -50,6 +50,11 @@ class Submit extends Model
         })->orderBy($ord)->get();
         return $subs;
     }
+    public static function subs_all(int $cat_id, string $ord = "orderint")
+    {
+        $subs = Submit::with('paper')->where("category_id", $cat_id)->whereNot("paper_id",0)->orderBy($ord)->get();
+        return $subs;
+    }
 
 /**
  * このSubmitに関連するReviewの点数を更新する

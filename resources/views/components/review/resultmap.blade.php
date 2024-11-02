@@ -22,6 +22,11 @@
         @endphp
         @foreach ($subs as $sub)
             @isset($sub->paper)
+                @php
+                    if ($sub->category_id != $sub->paper->category_id) {
+                        continue;
+                    }
+                @endphp
                 @isset($sub->paper->pdf_file)
                     <tr class="{{ $count % 2 === 0 ? 'bg-slate-200 dark:bg-slate-300' : 'bg-white dark:bg-slate-500' }}">
                         <td class="p-1 text-center">

@@ -345,7 +345,7 @@ class PaperController extends Controller
         if ($paper->token() != $token) return abort(403, "Review Browse TOKEN ERROR");
         $subs = $paper->submits;
         $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
-        return view('paper.review', ['paper' => $id])->with(compact("subs", "paper","accepts"));
+        return view('paper.review', ['paper' => $id])->with(compact("subs", "paper", "accepts"));
     }
 
     /**

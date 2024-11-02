@@ -1,5 +1,20 @@
 var toggleNoticeShown = false;
 
+// crud でのテキスト編集
+function other_textchange(event) {
+    // console.log(event.target.value); // selected option value
+    // console.log(event.target.id); // select
+    var tdid = event.target.id.replace("select__", "edit__");
+    var text = $("#" + tdid).val();
+    if (event.target.value == "remove_spaces_between_japanese") {
+        var newtext = text.replace(/([一-龥ぁ-ゔァ-ヴー々〆〤．，。、])\s+([一-龥ぁ-ゔァ-ヴー々〆〤．，。、])/g, '$1$2');
+        $("#" + tdid).val(newtext);
+    } else if (event.target.value == "replace_kuten") {
+        var newtext = text.replace(/、/g, "，").replace(/。/g, "．");
+        $("#" + tdid).val(newtext);
+    }
+}
+
 $(".clicktoedit").click(function (e) {
     var tdid = e.currentTarget.id;
     if (origData[tdid] != null) return;
@@ -12,7 +27,13 @@ $(".clicktoedit").click(function (e) {
     if (/text$/.test(m[3].toLowerCase())) { // text, longtext, mediumtext...
         var attr = $('#' + tdid).data('orig');
         if (typeof attr !== 'undefined') txt = attr;
-        $('#' + tdid).html("<textarea style=\"resize:both;\" cols=\""+localsizecols+"\" rows=\"6\" id=\"edit__" + tdid + "\">" + txt + "</textarea><div class=\"text-sm text-green-500\">hint: cmd(ctrl)+enter to save, esc to cancel</div>");
+        $('#' + tdid).html("<textarea style=\"resize:both;\" cols=\""+localsizecols+"\" rows=\"6\" id=\"edit__" + tdid + "\">" + txt + "</textarea><div><span class=\"text-sm text-green-500\">hint: cmd(ctrl)+enter to save, esc to cancel. </span>"+
+            "<select class=\"font-sans text-xs\" id='select__" + tdid + "' onchange=\"other_textchange(event);\"><option>【テキスト一括処理】</option>"+
+            "<option value=\"remove_spaces_between_japanese\">日本語文字間の半角スペース・改行を削除</option>"+
+            "<option value=\"replace_kuten\">、。を，．に変換</option>"+
+            "</select>"+
+            // "<button class=\"text-xs bg-gray-200 p-1\" onclick=\"saveText('edit__"+tdid + "');\">保存</input>"+
+            "</div>");
         inputType = "textarea";
     } else if (m[3].toLowerCase() == "varchar" || m[3].toLowerCase() == "datetime" || m[3].toLowerCase() == "timestamp") {
         $('#' + tdid).html("<input type=\"text\" size=\""+localsizecols+"\" id=\"edit__" + tdid + "\"  value=\"" + txt + "\">");
@@ -50,32 +71,53 @@ $(".clicktoedit").on('compositionend', function (e) {
     isIMEActive = false;
 });
 
+function saveText(tdid) {
+    var m = tdid.match(/^(\w+)__(\d+)__([\w()]+)/); // tdidを分解する field__id__TYPE
+    if ($('#' + tdid).find("textarea").length > 0) {
+        var text = $('#' + tdid).find("textarea").val();
+        $('#' + tdid).data('orig', text);
+        if (typeof mode_br !== 'undefined' && mode_br === true){
+            var showtext = text.replaceAll("\n", "<br>");
+            $('#' + tdid).html(showtext);
+        } else {
+            $('#' + tdid).text(text.replaceAll("\n", "\r\n"));
+        }
+    } else if ($('#' + tdid).find("input").length > 0) {
+        var text = $('#' + tdid).find("input").val();
+        $('#' + tdid).text(text);
+    } else {
+        alert("error saveText");
+    }
+    crudpost(m[1], m[2], text, m[3]);
+
+    $('#' + tdid).addClass('hover:text-blue-600');
+    origData[tdid] = null;
+    delete origData[tdid];
+}
+
 $(".clicktoedit").keydown(function (e) {
     var tdid = e.currentTarget.id;
-    var m = tdid.match(/^(\w+)__(\d+)__([\w()]+)/); // tdidを分解する field__id__TYPE
     if (e.key === "Enter") {
         if (isIMEActive) return; // IME変換中はEnterは確定なので、送信しない。
         if ($('#' + tdid).find("textarea").length > 0 && !e.ctrlKey && !e.metaKey) return; // textareaはCTRLorMetaが必要
         else {
-            if ($('#' + tdid).find("textarea").length > 0) {
-                var text = $('#' + tdid).find("textarea").val();
-                $('#' + tdid).data('orig', text);
-                if (typeof mode_br !== 'undefined' && mode_br === true){
-                    var showtext = text.replaceAll("\n", "<br>");
-                    $('#' + tdid).html(showtext);
-                } else {
-                    $('#' + tdid).text(text.replaceAll("\n", "\r\n"));
-                }
-            }
-            if ($('#' + tdid).find("input").length > 0) {
-                var text = $('#' + tdid).find("input").val();
-                $('#' + tdid).text(text);
-            }
-            crudpost(m[1], m[2], text, m[3]);
+            saveText(tdid);
+            // if ($('#' + tdid).find("textarea").length > 0) {
+            //     var text = $('#' + tdid).find("textarea").val();
+            //     $('#' + tdid).data('orig', text);
+            //     if (typeof mode_br !== 'undefined' && mode_br === true){
+            //         var showtext = text.replaceAll("\n", "<br>");
+            //         $('#' + tdid).html(showtext);
+            //     } else {
+            //         $('#' + tdid).text(text.replaceAll("\n", "\r\n"));
+            //     }
+            // }
+            // if ($('#' + tdid).find("input").length > 0) {
+            //     var text = $('#' + tdid).find("input").val();
+            //     $('#' + tdid).text(text);
+            // }
+            // crudpost(m[1], m[2], text, m[3]);
         }
-        $('#' + tdid).addClass('hover:text-blue-600');
-        origData[tdid] = null;
-        delete origData[tdid];
     } else if (e.key === "Escape" || e.key === "Esc") {
         if (typeof mode_br !== 'undefined' && mode_br === true){
             $('#' + tdid).html(origData[tdid].replaceAll("\n", "<br>"));

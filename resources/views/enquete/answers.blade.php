@@ -8,7 +8,7 @@
         </div>
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
 
-           「{{$enq->name}}」 {{ __('アンケート回答') }} 
+            「{{ $enq->name }}」 {{ __('アンケート回答') }}
 
         </h2>
     </x-slot>
@@ -22,20 +22,20 @@
     @if (session('feedback.error'))
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
-    
+
     <div class="py-4 px-6  dark:text-gray-400">
-        @if($enq->withpaper)
-        <x-admin.enqtable :papers="$papers" :enqans="$enqans" :enq="$enq">
-        </x-admin.enqtable>
+        @if ($enq->withpaper)
+            <x-admin.enqtable :papers="$papers" :enqans="$enqans" :enq="$enq">
+            </x-admin.enqtable>
         @else
-        <x-admin.enqtable_nopaper :enqans="$enqans" :enq="$enq">
-        </x-admin.enqtable_nopaper>
+            <x-admin.enqtable_nopaper :enqans="$enqans" :enq="$enq">
+            </x-admin.enqtable_nopaper>
         @endif
     </div>
 
     <div class="py-2 px-6">
 
-       
+
         <div class="mb-4 my-10">
             <x-element.linkbutton href="{{ route('enq.index') }}" color="gray" size="sm">
                 &larr; アンケート一覧 に戻る

@@ -28,6 +28,17 @@ class BbController extends Controller
         //
     }
 
+    public function index_for_pub()
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403);
+
+        $i = 3;
+        $bbs[$i] = Bb::with("paper")->with("category")->where("type", $i)->get();
+
+        return view("bb.index_for_pub")->with(compact("bbs"));
+        //
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -54,6 +65,11 @@ class BbController extends Controller
         }
         foreach ($ary as $n => $paper) {
             Bb::make_bb($type, $paper->id, $catid);
+        }
+        // 出版担当からの作成のとき 1
+        $for_pub = $req->input("for_pub");
+        if ($for_pub){
+            return redirect()->route('bb.index_for_pub')->with('feedback.success', "作成しました。");
         }
         return redirect()->route('bb.index')->with('feedback.success', "作成しました。");
     }
@@ -105,8 +121,28 @@ class BbController extends Controller
      */
     public function destroy(Bb $bb)
     {
+        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
         Bb::truncate();
         BbMes::truncate();
         return redirect()->route('bb.index')->with('feedback.success', "全削除しました。");
+    }
+
+    /**
+     * 種別ごとに削除
+     */
+    public function destroy_bytype(Request $req){
+        if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403);
+        $type = $req->input("type");
+        if (!auth()->user()->can('role_any', 'admin|manager|pc')) {
+            if ($type != 3) abort(403);
+        }
+        $target_bbids = Bb::where("type", $type)->pluck("id");
+        BbMes::whereIn("bb_id", $target_bbids)->delete();
+        Bb::where("type", $type)->delete();
+        $for_pub = $req->input("for_pub");
+        if ($for_pub){
+            return redirect()->route('bb.index_for_pub')->with('feedback.success', "出版掲示板をすべて削除しました。");
+        }
+        return redirect()->route('bb.index')->with('feedback.success', "削除しました。");
     }
 }

@@ -6,9 +6,9 @@
 
     <x-slot name="header">
         <div class="mb-4">
-            <x-element.linkbutton href="{{ route('role.top', ['role' => 'pc']) }}" color="gray" size="sm">
+            {{-- <x-element.linkbutton href="{{ route('role.top', ['role' => 'pc']) }}" color="gray" size="sm">
                 &larr; PC長 Topに戻る
-            </x-element.linkbutton>
+            </x-element.linkbutton> --}}
         </div>
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('投稿とファイルの状況（削除済みを含む）') }}

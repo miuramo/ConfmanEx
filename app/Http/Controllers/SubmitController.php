@@ -13,6 +13,7 @@ use App\Models\Paper;
 use App\Models\Setting;
 use App\Models\Submit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use STS\ZipStream\Facades\Zip;
 use ZipArchive;
 
@@ -242,9 +243,35 @@ class SubmitController extends Controller
         if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
 
         $subs = Submit::subs_accepted($catid);
+        // もし、subsが空なら、代替として、全てのsubmitsを表示する
+        if (count($subs) == 0) {
+            $subs2 = Submit::subs_all($catid);
+        } else {
+            $subs2 = [];
+        }
 
-        return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs"));
+        return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs", "subs2","catid"));
     }
+    /**
+     * update maydirty (for reset) 確認済みにする (falseをセットする)
+     */
+    public function update_maydirty(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc|pub')) abort(403);
+        info($req->all());
+        $pid = $req->input("pid");
+        $paper = Paper::findOrFail($pid);
+        $field = $req->input("field");
+        $value = $req->input("value"); // true or false
+        $md = $paper->maydirty;
+        if (isset($md[$field])) {
+            $md[$field] = $value;
+        }
+        $paper->maydirty = $md;
+        $paper->save();
+        return json_encode(["maydirty" => $md]);
+    }
+
 
     /**
      * bibinfo for web (プログラム出力)
@@ -275,6 +302,31 @@ class SubmitController extends Controller
         $files = File::whereIn('paper_id', array_keys($pid2sub))->where('valid', 1)->where('deleted', 0)->get()->sortByDesc('created_at');
 
         return view('pub.fileinfochk', ["cat" => $catid])->with(compact("pid2sub", "files"));
+    }
+
+    /**
+     * 採択状況一覧
+     */
+    public function accstatus(){
+        if (!auth()->user()->can('role_any', 'admin|pc|pub|demo')) abort(403);
+        $stats = Accept::acc_status();
+        $paperlist = Accept::acc_status(true);
+        $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+        $acc_judges = Accept::select('judge', 'id')->get()->pluck('judge', 'id')->toArray();
+        $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+        return view('pub.accstatus')->with(compact("stats","accepts","cats","paperlist","acc_judges"));
+    }
+    /**
+     * 採択状況一覧（グラフ）
+     */
+    public function accstatusgraph(){
+        if (!auth()->user()->can('role_any', 'admin|pc|pub|demo')) abort(403);
+        $stats = Accept::acc_status();
+        $paperlist = Accept::acc_status(true);
+        $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+        $acc_judges = Accept::select('judge', 'id')->get()->pluck('judge', 'id')->toArray();
+        $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+        return view('pub.accstatusgraph')->with(compact("stats","accepts","cats","paperlist","acc_judges"));
     }
 
     /**

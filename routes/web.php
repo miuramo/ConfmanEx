@@ -143,12 +143,15 @@ Route::middleware('auth')->group(function () {
     Route::post('addsubmit', [SubmitController::class, 'addsubmit'])->name('pub.addsubmit');
 
     // 出版担当
+    Route::get('pub_accstatus', [SubmitController::class, 'accstatus'])->name('pub.accstatus');
+    Route::get('pub_accstatusgraph', [SubmitController::class, 'accstatusgraph'])->name('pub.accstatusgraph');
     Route::get('pub/{cat}/booth', [SubmitController::class, 'booth'])->name('pub.booth');
     Route::post('pub/{cat}/booth', [SubmitController::class, 'booth'])->name('pub.booth');
     Route::get('pub/{cat}/boothtxt', [SubmitController::class, 'boothtxt'])->name('pub.boothtxt');
     Route::post('pub/{cat}/boothtxt', [SubmitController::class, 'boothtxt'])->name('pub.boothtxt');
     Route::post('pub_zipf', [SubmitController::class, 'zipdownload'])->name('pub.zipdownload');
     Route::get('pub/{cat}/bibinfochk', [SubmitController::class, 'bibinfochk'])->name('pub.bibinfochk'); //書誌情報の確認と修正
+    Route::post('pub/update_maydirty', [SubmitController::class, 'update_maydirty'])->name('pub.update_maydirty');// MayDirtyをリセット
     Route::get('pub/{cat}/bibinfo/{abbr?}', [SubmitController::class, 'bibinfo'])->name('pub.bibinfo'); //書誌情報の表示 (abbrをtrueにすると同一所属を省略)
     Route::get('pub/{cat}/fileinfochk', [SubmitController::class, 'fileinfochk'])->name('pub.fileinfochk'); // カメラレディのタイムスタンプ確認
 
@@ -203,8 +206,10 @@ Route::middleware('auth')->group(function () {
 
     // 掲示板
     Route::get('bb', [BbController::class, 'index'])->name('bb.index');
+    Route::get('bb_for_pub', [BbController::class, 'index_for_pub'])->name('bb.index_for_pub');
     Route::post('bb', [BbController::class, 'store'])->name('bb.createnew'); // まとめて作成
     Route::delete('bb', [BbController::class, 'destroy'])->name('bb.destroy'); // 全削除
+    Route::delete('bb_destroy_bytype', [BbController::class, 'destroy_bytype'])->name('bb.destroy_bytype'); // 種別ごとに削除
     Route::get('bb/{bb}/{key}', [BbController::class, 'show'])->name('bb.show')->where('key', '([0-9A-Za-z]+)');
     Route::post('bb/{bb}/{key}', [BbMesController::class, 'store'])->name('bb.store')->where('key', '([0-9A-Za-z]+)');
 
