@@ -187,10 +187,10 @@
             ({{ $ro->name }})</span>
     @endforeach
 
-    <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
+    {{-- <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
             情報学広場登録用Excel Download
         </x-element.linkbutton>
-    </x-element.h1>
+    </x-element.h1> --}}
 
 
 </div>

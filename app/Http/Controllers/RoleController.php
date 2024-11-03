@@ -27,6 +27,8 @@ class RoleController extends Controller
             if ($name == "reviewer" && auth()->user()->can('role', 'metareviewer')) {
                 return redirect()->route('role.top', ["role" => "metareviewer"]);
                 // reviewerはmetareviewerも見ることができる。
+            } else if ($name == "pub" && auth()->user()->can('role', 'web')) {
+                return redirect()->route('role.top', ["role" => "web"]);
             } else {
                 abort(403);
             }

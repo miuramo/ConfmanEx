@@ -431,7 +431,7 @@ class PaperController extends Controller
      */
     public function adminlock(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
         if ($req->method() === 'POST') {
             if ($req->has('action')) { // action is lock or unlock
                 foreach ($req->all() as $k => $v) {
