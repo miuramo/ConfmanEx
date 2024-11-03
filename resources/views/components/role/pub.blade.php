@@ -176,11 +176,14 @@
     @php
         $user = App\Models\User::find(auth()->id());
     @endphp
-    @foreach ($user->roles as $ro)
-        <span
-            class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }}
-            ({{ $ro->name }})</span>
-    @endforeach
+    <div class="mx-4">
+        @foreach ($user->roles as $ro)
+            <span
+                class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }}
+                ({{ $ro->name }})
+            </span>
+        @endforeach
+    </div>
 
     <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
             情報学広場登録用Excel Download

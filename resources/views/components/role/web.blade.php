@@ -94,25 +94,25 @@
     </x-element.h1>
 
     <x-element.h1>
-        
-            
-            @php
-                $dkey = App\Models\Setting::findByIdOrName('AWARDJSON_DLKEY', 'value');
-            @endphp
-            <x-element.linkbutton href="{{ route('pub.json_review', ['cat'=>1, 'key' => $dkey]) }}" color="purple"
-                size="md" target="_blank">
-                メタレビューJSON
-            </x-element.linkbutton>
-            <div class="text-sm">
-                ダウンロードURLは {{ route('pub.json_review', ['cat'=>1, 'key' => $dkey]) }}  <span class="mx-2"></span>
-                1 はカテゴリID<span class="mx-2"></span>
-                ダウンロードキーは {{ $dkey }}<br>
-                出力は {"metacomment": {"pid": "comment", ...}} です。ただし、metacomment の部分は、査読フォーム設定によって変わる場合があります。<br>
-                以下のようなプログラムを作成して、出力をカスタマイズしてください。
-            </div>
-            <textarea name="custom_program" cols="90" rows="5">
+
+
+        @php
+            $dkey = App\Models\Setting::findByIdOrName('AWARDJSON_DLKEY', 'value');
+        @endphp
+        <x-element.linkbutton href="{{ route('pub.json_review', ['cat' => 1, 'key' => $dkey]) }}" color="purple"
+            size="md" target="_blank">
+            メタレビューJSON
+        </x-element.linkbutton>
+        <div class="text-sm">
+            ダウンロードURLは {{ route('pub.json_review', ['cat' => 1, 'key' => $dkey]) }} <span class="mx-2"></span>
+            1 はカテゴリID<span class="mx-2"></span>
+            ダウンロードキーは {{ $dkey }}<br>
+            出力は {"metacomment": {"pid": "comment", ...}} です。ただし、metacomment の部分は、査読フォーム設定によって変わる場合があります。<br>
+            以下のようなプログラムを作成して、出力をカスタマイズしてください。
+        </div>
+        <textarea name="custom_program" cols="90" rows="5">
 &lt;?php
-  $url = "{{ route('pub.json_review', ['cat'=>1, 'key' => $dkey]) }}" ;
+  $url = "{{ route('pub.json_review', ['cat' => 1, 'key' => $dkey]) }}" ;
   $json = file_get_contents($url) ;
   $ary = json_decode($json, true) ;
   # var_dump($ary) ;
@@ -181,11 +181,14 @@
     @php
         $user = App\Models\User::find(auth()->id());
     @endphp
-    @foreach ($user->roles as $ro)
-        <span
-            class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }}
-            ({{ $ro->name }})</span>
-    @endforeach
+    <div class="mx-4">
+        @foreach ($user->roles as $ro)
+            <span
+                class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }}
+                ({{ $ro->name }})
+            </span>
+        @endforeach
+    </div>
 
     {{-- <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
             情報学広場登録用Excel Download
