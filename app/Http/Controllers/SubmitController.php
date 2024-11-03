@@ -10,8 +10,11 @@ use App\Models\Enquete;
 use App\Models\EnqueteAnswer;
 use App\Models\File;
 use App\Models\Paper;
+use App\Models\Review;
+use App\Models\Score;
 use App\Models\Setting;
 use App\Models\Submit;
+use App\Models\Viewpoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use STS\ZipStream\Facades\Zip;
@@ -438,6 +441,38 @@ class SubmitController extends Controller
                 }
             }
         }
+        return json_encode($out, JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * 【採録のみ】メタレビューのJSON
+     * ただし、以下の条件をすべて満たす評価観点への回答のみ
+     * formeta = 1
+     * forrev = 0
+     * doReturn = 1
+     * doReturnAcceptOnly = 1
+     */
+    public function json_review(int $catid, string $key = null)
+    {
+        $downloadkey = Setting::findByIdOrName("AWARDJSON_DLKEY", "value");
+        if ($key != $downloadkey) abort(403);
+
+        // Viewpointで、formeta = 1 and doReturn = 1 のものを取得
+        $vps = Viewpoint::select("name","id")->where("formeta", 1)->where("forrev",0)->where("doReturn", 1)->where("doReturnAcceptOnly",1)->pluck("name","id")->toArray();
+        // 
+        $accepted_subs = Submit::subs_accepted($catid);
+        $revid2pid = Review::where("category_id", $catid)->where("ismeta", 1)->whereIn("paper_id", $accepted_subs->pluck("paper_id"))->pluck("paper_id","id")->toArray();
+        $scores = Score::whereIn("review_id", array_keys($revid2pid))->whereIn("viewpoint_id", array_keys($vps))->get();
+
+        if (count($scores) == 0) {
+            return json_encode([], JSON_THROW_ON_ERROR);
+        }
+        $out = [];
+        foreach($scores as $score){
+            $out[ $vps[$score->viewpoint_id] ][ $revid2pid[$score->review_id] ] = $score->valuestr;
+        }
+        // [ viewpoint1 => [ paper11 => コメント1, paper22 => コメント2, ... ] ]
+        // return $out;
         return json_encode($out, JSON_THROW_ON_ERROR);
     }
 }

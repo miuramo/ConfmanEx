@@ -26,7 +26,7 @@
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
 
-    @can('role_any', 'metareviewer|reviewer|pc|pub|award|acc|demo|wc')
+    @can('role_any', 'metareviewer|reviewer|pc|pub|award|acc|demo|web|wc')
         @if ($role->name == 'reviewer')
             <x-role.reviewer :role="$role">
             </x-role.reviewer>
@@ -38,6 +38,10 @@
         @if ($role->name == 'pc')
             <x-role.pc :role="$role">
             </x-role.pc>
+        @endif
+        @if ($role->name == 'web')
+            <x-role.web :role="$role">
+            </x-role.web>
         @endif
         @if ($role->name == 'wc')
             <x-role.pcsub :role="$role">

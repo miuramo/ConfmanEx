@@ -70,6 +70,13 @@
                             $navs_active[$nameofdemo] = url()->current() === $navs_href[$nameofdemo];
                         @endphp
                     @endcan
+                    @can('role', 'web')
+                        @php
+                            $navs_href['Web'] = route('role.top', ['role' => 'web']);
+                            $navs_active['Web'] = url()->current() === $navs_href['Web'];
+                            // request()->routeIs('role.pub', ['role' => 'pub']);
+                        @endphp
+                    @endcan
                     @can('role', 'acc')
                         @php
                             $navs_href['会計'] = route('role.top', ['role' => 'acc']);
