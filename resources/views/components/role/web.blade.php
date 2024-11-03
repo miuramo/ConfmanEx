@@ -99,7 +99,7 @@
             @php
                 $dkey = App\Models\Setting::findByIdOrName('AWARDJSON_DLKEY', 'value');
             @endphp
-            <x-element.linkbutton href="{{ route('pub.json_review', ['cat'=>1, 'key' => $dkey]) }}" color="teal"
+            <x-element.linkbutton href="{{ route('pub.json_review', ['cat'=>1, 'key' => $dkey]) }}" color="purple"
                 size="md" target="_blank">
                 メタレビューJSON
             </x-element.linkbutton>
