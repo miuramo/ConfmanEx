@@ -204,7 +204,7 @@ class SubmitController extends Controller
      */
     public function zipdownload(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc|pub')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
         // Formからのカテゴリ選択を配列にいれる
         $targets = [];
         $filetypes = []; // pdf, video, img, altpdf
@@ -243,7 +243,7 @@ class SubmitController extends Controller
      */
     public function bibinfochk(Request $req, int $catid)
     {
-        if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
+        if (!auth()->user()->can('role_any', 'admin|pc|pub|web')) abort(403);
 
         $subs = Submit::subs_accepted($catid);
         // もし、subsが空なら、代替として、全てのsubmitsを表示する
@@ -260,7 +260,7 @@ class SubmitController extends Controller
      */
     public function update_maydirty(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc|pub')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
         info($req->all());
         $pid = $req->input("pid");
         $paper = Paper::findOrFail($pid);
@@ -281,7 +281,7 @@ class SubmitController extends Controller
      */
     public function bibinfo(int $catid, bool $abbr = false)
     {
-        if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
+        if (!auth()->user()->can('role_any', 'admin|pc|pub|web')) abort(403);
 
         $subs = Submit::with('paper')->where("category_id", $catid)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
@@ -295,7 +295,7 @@ class SubmitController extends Controller
      */
     public function fileinfochk(Request $req, int $catid)
     {
-        if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
+        if (!auth()->user()->can('role_any', 'admin|pc|pub|web')) abort(403);
 
         $subs = Submit::subs_accepted($catid);
         $pid2sub = [];
@@ -311,7 +311,7 @@ class SubmitController extends Controller
      * 採択状況一覧
      */
     public function accstatus(){
-        if (!auth()->user()->can('role_any', 'admin|pc|pub|demo')) abort(403);
+        if (!auth()->user()->can('role_any', 'admin|pc|pub|demo|web')) abort(403);
         $stats = Accept::acc_status();
         $paperlist = Accept::acc_status(true);
         $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
@@ -323,7 +323,7 @@ class SubmitController extends Controller
      * 採択状況一覧（グラフ）
      */
     public function accstatusgraph(){
-        if (!auth()->user()->can('role_any', 'admin|pc|pub|demo')) abort(403);
+        if (!auth()->user()->can('role_any', 'admin|pc|pub|demo|web')) abort(403);
         $stats = Accept::acc_status();
         $paperlist = Accept::acc_status(true);
         $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
