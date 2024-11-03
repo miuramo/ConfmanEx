@@ -107,7 +107,7 @@
                 ダウンロードURLは {{ route('pub.json_review', ['cat'=>1, 'key' => $dkey]) }}  <span class="mx-2"></span>
                 1 はカテゴリID<span class="mx-2"></span>
                 ダウンロードキーは {{ $dkey }}<br>
-                出力は {"metacomment": {"pid": "comment", ...}} です。<br>
+                出力は {"metacomment": {"pid": "comment", ...}} です。ただし、metacomment の部分は、査読フォーム設定によって変わる場合があります。<br>
                 以下のようなプログラムを作成して、出力をカスタマイズしてください。
             </div>
             <textarea name="custom_program" cols="90" rows="5">
