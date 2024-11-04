@@ -432,6 +432,7 @@ class SubmitController extends Controller
                 $out[$booth]['category'] = $sub->category_id;
                 $out[$booth]['paperid'] = $sub->paper_id;
                 $out[$booth]['abst'] = $sub->paper->abst;
+                $out[$booth]['pagenum'] = $sub->paper->pdf_file->pagenum;
 
                 if (isset($enqans[$sub->paper_id])) {
                     foreach ($enqans[$sub->paper_id] as $enqid => $ary) {
