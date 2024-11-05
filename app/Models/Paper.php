@@ -311,10 +311,17 @@ class Paper extends Model
     public function get_mail_to_cc()
     {
         $cclist = [];
+        $bcclist = [];
         foreach ($this->contacts as $con) {
             $cclist[] = $con->email;
         }
-        return ["to" => $this->paperowner->email, "cc" => $cclist, "bcc" => [] ];
+        if ($this->bcc_contactemails != null) {
+            $bccs = explode("\n", trim($this->bcc_contactemails));
+            foreach ($bccs as $bcc) {
+                $bcclist[] = $bcc;
+            }
+        }
+        return ["to" => $this->paperowner->email, "cc" => $cclist, "bcc" => $bcclist ];
     }
 
     /**
