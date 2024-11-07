@@ -194,7 +194,7 @@ Route::middleware('auth')->group(function () {
     // Route::post('/admin_paperlist_headimg', [AdminController::class, 'paperlist_headimg'])->name('admin.paperlist_headimg');
     Route::get('/revcon', [RevConflictController::class, 'index'])->name('revcon.index');
     Route::get('/revcon/stat', [RevConflictController::class, 'stat'])->name('revcon.stat');
-    Route::get('/revcon/revstat', [RevConflictController::class, 'revstat'])->name('revcon.revstat');
+    Route::get('/revcon/revstat/{role?}', [RevConflictController::class, 'revstat'])->name('revcon.revstat'); // 査読割り当てStat
     Route::get('/revcon/revstatus', [RevConflictController::class, 'revstatus'])->name('revcon.revstatus');
     Route::get('/revcon/revname/{cat}', [RevConflictController::class, 'revname'])->name('revcon.revname'); // 査読者の名前
     Route::get('/revcon/notdownloaded', [RevConflictController::class, 'notdownloaded'])->name('revcon.notdownloaded');

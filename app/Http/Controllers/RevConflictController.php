@@ -46,7 +46,7 @@ class RevConflictController extends Controller
     /**
      * 査読割り当て Review のまとめ
      */
-    public function revstat()
+    public function revstat(string $revrolename="reviewer")
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
@@ -56,9 +56,10 @@ class RevConflictController extends Controller
             $cnt_users[$cid] = Review::revass_stat($cid, "user_id");
             $cnt_papers[$cid] = Review::revass_stat($cid, "paper_id");
         }
-        $reviewers = Role::findByIdOrName('reviewer')->users;
+        $revrole = Role::findByIdOrName($revrolename);
+        $reviewers = $revrole->users;
         $cnt_users_all = Review::revass_stat_allcategory();
-        return view('revcon.revstat')->with(compact("papers_in_cat", "cnt_users", "cnt_papers", "cats", "reviewers", "cnt_users_all"));
+        return view('revcon.revstat')->with(compact("papers_in_cat", "cnt_users", "cnt_papers", "cats", "reviewers", "cnt_users_all","revrole"));
     }
     /**
      * 査読進捗
