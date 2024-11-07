@@ -128,6 +128,7 @@ class Accept extends Model
                         } else {
                             $nodes[] = [
                                 "id" => 'p'.$pid,
+                                "accid" => "--",
                                 "label" => $pid,
                                 "type" => "B",
                                 "width"=> 30,
