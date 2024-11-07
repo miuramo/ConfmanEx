@@ -11,7 +11,7 @@
             {{ __('採択状況の確認（グラフ表示）') }}
         </h2>
         <div class="mx-2 mt-10">
-            <span class="text-gray-400">弱い←中心に集める強さ→強い</span> 
+            <span class="text-gray-400">←弱い 【中心に集める強さ】 強い→</span> 
             <br>
             <input type="range" id="centerForceSlider" min="0.01" max="0.5" step="0.003" value="0.1"> 
         </div>
