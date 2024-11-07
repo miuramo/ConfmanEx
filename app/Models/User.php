@@ -65,7 +65,7 @@ class User extends Authenticatable implements MustVerifyEmail
         $tbl = 'role_user';
         // $table_fields = Schema::getColumnListing($tbl);
         // return $this->belongsToMany(User::class, $tbl, 'role_id', 'user_id');// ->withPivot($table_fields)->using(RolesUser::class);
-        return $this->belongsToMany(Role::class, $tbl); //->using(RolesUser::class);
+        return $this->belongsToMany(Role::class, $tbl)->orderBy('orderint')->orderBy('id'); //->using(RolesUser::class);
     }
     public function contact()
     {

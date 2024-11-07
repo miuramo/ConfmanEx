@@ -76,13 +76,36 @@ class Role extends Model
     /**
      * テスト用：tinkerから呼び出す
      * demo = 10
+     * metareviewer|reviewer|pc|pub|award|acc|demo|web|wc|admin
      */
     public static function resetRolesExcept(int $user_id, $roles){
         $user = User::find($user_id);
+        if (is_string($roles)){
+            $roles = explode("|", $roles);
+            $roles = Role::whereIn("name", $roles)->pluck("id")->toArray();
+        }
         $user->roles()->detach();
         foreach($roles as $role){
             $user->roles()->attach(Role::find($role));
         }
+        return $roles;
+    }
+    // テスト用：tinkerから呼び出す
+    public static function setRolesExcept(int $user_id, $roles){
+        $user = User::find($user_id);
+        if (is_string($roles)){
+            $roles = explode("|", $roles);
+            $roles = Role::whereIn("name", $roles)->pluck("id")->toArray();
+            info($roles);
+        }
+        $all = Role::pluck("id")->toArray();
+        foreach($all as $role){
+            $user->roles()->attach(Role::find($role));
+        }
+        foreach($roles as $role){
+            $user->roles()->detach(Role::find($role));
+        }
+        return $user->roles;
     }
 
 }
