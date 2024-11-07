@@ -169,6 +169,19 @@
         </x-element.linkbutton2>
     </x-element.h1>
 
+    <x-element.h1>査読結果と判定 <span class="px-2"></span>
+        @foreach ($cats as $catid => $catname)
+            @php
+                $btncolor = isset($cat_arrange_review[$catid]) ? 'purple' : 'cyan';
+            @endphp
+            <x-element.linkbutton href="{{ route('review.result', ['cat' => $catid]) }}" color="{{ $btncolor }}"
+                target="_blank">
+                {{ $catname }}
+            </x-element.linkbutton>
+            <span class="mx-1"></span>
+        @endforeach
+    </x-element.h1>
+
     <x-element.h1>メール送信
         <span class="px-3"></span>
         <x-element.linkbutton href="{{ route('mt.index') }}" color="pink">
