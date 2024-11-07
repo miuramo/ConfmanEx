@@ -19,7 +19,7 @@
         <table class="border-pink-400 border-2">
             <tr class="bg-pink-300">
                 @php
-                    $hs = ['投稿時カテゴリ', '採否判定カテゴリ', '判定', '件数', 'PaperIDs'];
+                    $hs = ['投稿時カテゴリ', '採否判定カテゴリ', '判定_accID', '件数', 'PaperIDs'];
                 @endphp
                 @foreach ($hs as $h)
                     <th class="px-2 py-1">{{ $h }}</th>
@@ -43,6 +43,8 @@
                         @else
                             <span class="text-slate-600">{{ $accepts[$st->accept_id] }}</span>
                         @endif
+                        <span class="mx-1"></span>
+                        <sub>{{$st->accept_id}}</sub>
                     </td>
                     <td class="px-2 py-1 text-center">
                         {{ $st->cnt }}

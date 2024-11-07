@@ -102,6 +102,7 @@ class Accept extends Model
             }
             $nodes[] = [
                 "id" => $id, 
+                "accid" => $st->accept_id, 
                 "label" => mb_substr($cats[$st->hanteicat],0,2).'-'. mb_substr($accepts[$st->accept_id],0,3),
                 "type" => "A",
                 "width"=> 80,

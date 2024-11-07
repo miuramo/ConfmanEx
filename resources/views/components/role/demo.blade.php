@@ -157,6 +157,17 @@
 
     </x-element.h1>
 
+    <x-element.h1>
+        採択状況
+        <span class="mx-3"></span>
+        <x-element.linkbutton2 href="{{ route('pub.accstatus') }}" color="cyan" target="_blank">
+            採択状況の確認
+        </x-element.linkbutton2>
+        <span class="mx-2"></span>
+        <x-element.linkbutton2 href="{{ route('pub.accstatusgraph') }}" color="cyan" target="_blank" size="xs">
+            採択状況のグラフ表示（試験的）
+        </x-element.linkbutton2>
+    </x-element.h1>
 
     <x-element.h1>メール送信
         <span class="px-3"></span>

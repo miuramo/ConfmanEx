@@ -56,7 +56,7 @@ node.append("text")
 node.on("mouseover", (event, d) => {
     tooltip
         .style("opacity", 1)
-        .html(`ID: ${d.id}<br>Label: ${d.label}`);
+        .html(`accID: ${d.accid}<br>Label: ${d.label}`);
 })
     .on("mousemove", (event) => {
         tooltip
