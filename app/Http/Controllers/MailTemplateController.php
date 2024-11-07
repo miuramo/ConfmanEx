@@ -11,6 +11,7 @@ use App\Models\Submit;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Markdown;
 use App\Mail\ForAuthor;
+use Illuminate\Http\Client\Request as ClientRequest;
 
 class MailTemplateController extends Controller
 {
@@ -31,14 +32,6 @@ class MailTemplateController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreMailTemplateRequest $request)
     {
         //
     }
@@ -75,10 +68,38 @@ class MailTemplateController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(MailTemplate $mailTemplate)
+    public function edit(MailTemplate $mt)
     {
+        if (!auth()->user()->can('role_any', 'manager|pc')) {
+            if (!auth()->user()->can('manage_cat_any')) abort(403);
+        }
+        return view('mailtempre.edit')->with(compact("mt"));
         //
     }
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'manager|pc')) {
+            if (!auth()->user()->can('manage_cat_any')) abort(403);
+        }
+        $id = $req->input("id");
+        $mt = MailTemplate::find($id);
+        if ($mt != null) {
+            $mt->subject = $req->input("subject");
+            $mt->body = $req->input("body");
+            $mt->to = $req->input("to");
+            $mt->name = $req->input("name");
+            $mt->user_id = auth()->user()->id;
+            $mt->save();
+            return redirect()->route('mt.edit',['mt'=>$id])->with('feedback.success', "メール雛形を保存しました。");
+        }
+        return redirect()->route('mt.index')->with('feedback.error', "保存できませんでした。");
+        // info($req->all());
+        //
+    }
+
 
     /**
      * Update the specified resource in storage.
@@ -100,7 +121,7 @@ class MailTemplateController extends Controller
      */
     public function bundle(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'manager|pc')) {
+        if (!auth()->user()->can('role_any', 'pc')) {
             if (!auth()->user()->can('manage_cat_any')) abort(403);
         }
         // valueがonの要素をあつめる。mt_{mtid}になっているので、とりだす。

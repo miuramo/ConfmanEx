@@ -43,11 +43,11 @@
                                 {{ $mt->id }}
                             </td>
                             <td class="px-2 py-1">
-                                <a class="hover:font-bold hover:text-blue-600" href="{{ route('admin.crud', ['table' => 'mail_templates', 'row' => $mt->id])}}" target="_blank">
+                                <a class="hover:font-bold hover:text-blue-600" href="{{ route('mt.edit', ['mt' => $mt])}}" target="editmt_{{$mt->id}}">
                                     {{ $mt->to }}</a>
                             </td>
                             <td class="px-2 py-1">
-                                <a class="hover:font-bold hover:text-lime-600" href="{{ route('mt.show', ['mt' => $mt]) }}">{{ $mt->subject }}</a>
+                                <a class="hover:font-bold hover:text-lime-600" href="{{ route('mt.show', ['mt' => $mt]) }}" target="previewmt_{{$mt->id}}">{{ $mt->subject }}</a>
                             </td>
                             <td class="px-2 py-1">
                                 {{ $mt->name }}
@@ -63,8 +63,8 @@
                                     送信前の確認画面
                                 </x-element.linkbutton2>
                                 <x-element.linkbutton2
-                                    href="{{ route('admin.crud', ['table' => 'mail_templates', 'row' => $mt->id]) }}"
-                                    color="blue" target="_blank">
+                                    href="{{ route('mt.edit', ['mt' => $mt]) }}"
+                                    color="blue">
                                     雛形を編集
                                 </x-element.linkbutton2>
                                 {{-- <x-element.deletebutton action="{{ route('mt.destroy', ['mt' => $mt]) }}"

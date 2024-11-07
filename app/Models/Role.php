@@ -73,4 +73,16 @@ class Role extends Model
         return implode("|", $ary);
     }
 
+    /**
+     * テスト用：tinkerから呼び出す
+     * demo = 10
+     */
+    public static function resetRolesExcept(int $user_id, $roles){
+        $user = User::find($user_id);
+        $user->roles()->detach();
+        foreach($roles as $role){
+            $user->roles()->attach(Role::find($role));
+        }
+    }
+
 }

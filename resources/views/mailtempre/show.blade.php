@@ -52,6 +52,8 @@
             text-align: left;
         }
     </style>
+    @section('title', 'Mail Preview '.$mt->id)
+
     <!-- mailtempre.index -->
     @if (session('feedback.success'))
         <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
@@ -80,8 +82,8 @@
                 acceptid(accid1,accid2,...), acceptjudge(judge1,judge2,...) です。
             @endif
 
-            <x-element.linkbutton2 href="{{ route('admin.crud', ['table' => 'mail_templates', 'row' => $mt->id]) }}"
-                color="blue" target="_blank">
+            <x-element.linkbutton2 href="{{ route('mt.edit', ['mt' => $mt]) }}"
+                color="blue" target="editmt_{{$mt->id}}">
                 雛形を編集
             </x-element.linkbutton2>
             <span class="px-2"></span>
