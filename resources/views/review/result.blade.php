@@ -30,6 +30,16 @@
             @csrf
             @method('post')
 
+            @can('manage_cat', $cat_id)
+            <div class="py-4">
+            <x-element.button onclick="CheckAll('reviewresult')" color="lime" value="すべてチェック">
+            </x-element.button>
+            &nbsp;
+            <x-element.button onclick="UnCheckAll('reviewresult')" color="orange" value="すべてチェック解除">
+            </x-element.button>
+            @endcan
+
+
             <x-review.resultmap :subs="$subs">
             </x-review.resultmap>
 
