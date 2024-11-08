@@ -107,6 +107,14 @@
 
     </x-element.h1>
 
+    <x-element.h1>
+        アンケート
+        <span class="px-3"></span>
+        <x-element.linkbutton href="{{ route('enq.index') }}" color="green">
+            （出版Roleおよび自分のRoleで参照可能な）アンケート一覧
+        </x-element.linkbutton>
+    </x-element.h1>
+
 
     <x-element.h1>採択論文・ファイルのタイムスタンプ
         @foreach ($cats as $cid => $cname)
