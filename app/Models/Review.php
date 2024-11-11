@@ -224,6 +224,7 @@ class Review extends Model
             if ($only_score && strpos($vp->content, "number") === false) continue;
             // Primaryじゃないとき(ismeta=0)、forrev=0のときは表示しない
             if (!$this->ismeta && !$vp->forrev) continue;
+            if ($this->ismeta && !$vp->formeta) continue;
             if (!$accepted && $vp->doReturnAcceptOnly) continue;
 
             $ret[$vp->desc] = (isset($aryscores[$vp->id])) ? $aryscores[$vp->id] : "(未入力)";
