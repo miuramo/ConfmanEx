@@ -35,6 +35,7 @@
         ->pluck('count', 'category_id');
 
 @endphp
+
 <!-- components.role.reviewer -->
 <div class="px-6 py-4">
     <x-element.h1>

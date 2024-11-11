@@ -31,6 +31,10 @@ class Review extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function submit()
+    {
+        return $this->belongsTo(Submit::class, 'submit_id');
+    }
 
     /**
      * この査読のトークンを生成（査読者同士の参照用）

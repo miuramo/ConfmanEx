@@ -135,6 +135,42 @@
         <x-review.myscores :cat_id="$cat_id">
         </x-review.myscores>
     </div>
+
+    {{-- // （おもにインタラクション）メタレビューワーは、査読者の査読結果を途中でも見ることができる(commentpaperを見ることができる) --}}
+    @can('role', 'metareviewer')
+        <div class="mb-4 my-10">
+            <x-element.h1>
+                自分が{{$nameofmeta}}を担当している、査読結果を見る
+            </x-element.h1>
+            <div class="px-2">
+                <table class="min-w-full divide-y divide-gray-200 mb-2">
+                    <thead>
+                        <tr>
+                            <th class="p-1 bg-slate-300"> PaperID</th>
+                            <th class="p-1 bg-slate-300"> Title</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach ($reviews as $rev)
+                            @if ($rev->ismeta)
+                                <tr
+                                    class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200 dark:bg-slate-300' : 'bg-white dark:bg-slate-500' }}">
+                                    <td class="p-1 text-center">
+                                        {{ sprintf('%03d', $rev->paper->id) }}
+                                    </td>
+                                    <td class="p-1">
+                                        <x-review.commentpaper_link :sub="$rev->submit"></x-element.commentpaper_link>
+                                    </td>
+                                </tr>
+                            @endif
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endcan
+
     @push('localjs')
         <script src="/js/jquery.min.js"></script>
         <script src="/js/form_changed_revconflict.js"></script>
