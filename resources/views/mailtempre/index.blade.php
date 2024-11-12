@@ -19,7 +19,7 @@
             @csrf
             @method('post')
 
-            <table>
+            <table class="table-auto w-full">
                 <thead>
                     <tr class="bg-pink-200">
                         <th class="px-2">chk</th>
@@ -43,7 +43,7 @@
                                 {{ $mt->id }}
                             </td>
                             <td class="px-2 py-1">
-                                <a class="hover:font-bold hover:text-blue-600" href="{{ route('mt.edit', ['mt' => $mt])}}" target="editmt_{{$mt->id}}">
+                                <a class="hover:font-bold hover:text-blue-600 block break-all" href="{{ route('mt.edit', ['mt' => $mt])}}" target="editmt_{{$mt->id}}">
                                     {{ $mt->to }}</a>
                             </td>
                             <td class="px-2 py-1">

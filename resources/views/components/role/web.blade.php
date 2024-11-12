@@ -108,8 +108,6 @@
     </x-element.h1>
 
     <x-element.h1>
-
-
         @php
             $dkey = App\Models\Setting::findByIdOrName('AWARDJSON_DLKEY', 'value');
         @endphp
@@ -138,6 +136,14 @@
   }</textarea>
         {{-- </div> --}}
 
+    </x-element.h1>
+
+    <x-element.h1>
+        アンケート
+        <span class="px-3"></span>
+        <x-element.linkbutton href="{{ route('enq.index') }}" color="green">
+            （WebRoleおよび自分のRoleで参照可能な）アンケート一覧
+        </x-element.linkbutton>
     </x-element.h1>
 
     <x-element.h1>採択論文・ファイルのタイムスタンプ

@@ -31,6 +31,10 @@ class Review extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function submit()
+    {
+        return $this->belongsTo(Submit::class, 'submit_id');
+    }
 
     /**
      * この査読のトークンを生成（査読者同士の参照用）
@@ -224,6 +228,7 @@ class Review extends Model
             if ($only_score && strpos($vp->content, "number") === false) continue;
             // Primaryじゃないとき(ismeta=0)、forrev=0のときは表示しない
             if (!$this->ismeta && !$vp->forrev) continue;
+            if ($this->ismeta && !$vp->formeta) continue;
             if (!$accepted && $vp->doReturnAcceptOnly) continue;
 
             $ret[$vp->desc] = (isset($aryscores[$vp->id])) ? $aryscores[$vp->id] : "(未入力)";
