@@ -78,8 +78,8 @@
                     <span class="mr-1 px-1 bg-slate-100 dark:bg-slate-500">{{ $paper->id_03d() }}</span>
                 @endforeach
             @else
-                送信対象はありません。to に指定できるのは、accept(catid), reject(catid), paperid(pid1,pid2, ...),
-                acceptid(accid1,accid2,...), acceptjudge(judge1,judge2,...) です。
+                送信対象はありません。To に指定できるのは、accept(catid), reject(catid), paperid(pid1,pid2, ...),
+                acc_id(accid1,accid2, ...), acc_judge(judge1,judge2, ...) などです。
             @endif
 
             <x-element.linkbutton2 href="{{ route('mt.edit', ['mt' => $mt]) }}"

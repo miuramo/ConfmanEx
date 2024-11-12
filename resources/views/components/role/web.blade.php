@@ -20,6 +20,20 @@
         <x-element.linkbutton2 href="{{ route('pub.accstatusgraph') }}" color="cyan" target="_blank" size="xs">
             採択状況のグラフ表示（試験的）
         </x-element.linkbutton2>
+        <span class="mx-4"></span>
+        <x-element.linkbutton href="{{ route('pub.addsubmit') }}" color="cyan" target="_blank">
+            別カテゴリでの採否を追加する
+        </x-element.linkbutton>
+    </x-element.h1>
+
+    <x-element.h1>
+        セッション割り当て
+        @foreach ($cats as $cid => $cname)
+            <span class="px-2"></span>
+            <x-element.linkbutton href="{{ route('pub.booth', ['cat' => $cid]) }}" color="cyan" target="_blank">
+                {{ $cname }}
+            </x-element.linkbutton>
+        @endforeach
     </x-element.h1>
 
     <x-element.h1>
@@ -52,7 +66,7 @@
         @endforeach
 
         <span class="px-2"></span>
-        <x-element.button id="toggleButton" value="出力をカスタマイズしたい場合" color='cyan' size='sm'
+        <x-element.button id="toggleButton" value="出力をカスタマイズしたい場合 (書誌情報JSON)" color='cyan' size='sm'
             onclick="openclose('awardjson')">
         </x-element.button>
 

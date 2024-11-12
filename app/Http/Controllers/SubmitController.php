@@ -85,7 +85,7 @@ class SubmitController extends Controller
      */
     public function booth(Request $req, int $catid)
     {
-        if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
 
         if ($req->method() === 'POST') {
             if ($req->has("json")) { // set session
@@ -135,7 +135,7 @@ class SubmitController extends Controller
 
     public function boothtxt(Request $req, int $catid)
     {
-        if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
 
         $sbmap = "";
         if ($req->method() === 'POST') {
@@ -243,7 +243,7 @@ class SubmitController extends Controller
      */
     public function bibinfochk(Request $req, int $catid)
     {
-        if (!auth()->user()->can('role_any', 'admin|pc|pub|web')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
 
         $subs = Submit::subs_accepted($catid);
         // もし、subsが空なら、代替として、全てのsubmitsを表示する
@@ -337,7 +337,7 @@ class SubmitController extends Controller
      */
     public function addsubmit(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'admin|pc|pub')) abort(403);
+        if (!auth()->user()->can('role_any', 'admin|pc|pub|web')) abort(403);
         if ($req->method() === 'POST') {
             // Submitsから、Paperをあつめていく
             $catid = $req->input("catid");

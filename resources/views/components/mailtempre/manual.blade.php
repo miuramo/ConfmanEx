@@ -41,7 +41,7 @@
     </div>
 
     <div class="mx-2 my-5 flex-grow dark:text-gray-300">
-        to に指定できる文字列
+        To に指定できる文字列
         @php
             $a = [
                 'accept(catid1,catid2,...)' => 'catidで採択 (judgeが正)',
