@@ -5,7 +5,7 @@
             メール雛形 {{$mt->id}} の編集
         </h2>
     </x-slot>
-    @section('title', 'Mail Edit '.$mt->id)
+    @section('title', 'EditM '.$mt->id)
 
     @if (session('feedback.success'))
         <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
@@ -39,8 +39,9 @@
                             <label for="to">To</label>
                         </td>
                         <td class="px-2 py-1">
-                            <input type="text" name="to" id="to" size="30" value="{{ $mt->to }}">
-                            <span class="text-sm bg-yellow-100">注：To にメールアドレスは指定できません。下の「Toと雛形の説明」を参照してください。</span>
+                            <input type="text" name="to" id="to" size="50" value="{{ $mt->to }}"><br>
+                            <span class="text-sm bg-white font-monaca font-bold p-1">複数指定する場合は && で区切ってください（セミコロン( ; ) や || でも可）。</span>
+                            <span class="text-sm bg-yellow-100 text-red-600 font-bold">注：メールアドレスは指定できません。</span>
                         </td>
                     </tr>
                     <tr class="bg-pink-50 dark:bg-pink-200">

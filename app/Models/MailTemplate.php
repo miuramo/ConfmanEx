@@ -70,8 +70,11 @@ class MailTemplate extends Model
     }
     public function handle_to()
     {
-        // toをセミコロンで分割する
-        $toary = explode(";", $this->to);
+        // && や || を、セミコロンに変換する
+        // $this->to = str_replace("&&", ";", $this->to);
+        // $this->to = str_replace("||", ";", $this->to);
+        // toをセミコロンまたは && または || で分割する
+        $toary = preg_split('/\s*(&&|\|\||;)\s*/', $this->to);
         $toary = array_map("trim", $toary);
         $merged = []; // new Collection(); // Papersという名前だが、Users が混じる可能性もある。
         foreach ($toary as $one_to) {

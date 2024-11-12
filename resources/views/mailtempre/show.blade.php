@@ -52,7 +52,7 @@
             text-align: left;
         }
     </style>
-    @section('title', 'Mail Preview '.$mt->id)
+    @section('title', 'Preview '.$mt->id)
 
     <!-- mailtempre.index -->
     @if (session('feedback.success'))
