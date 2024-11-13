@@ -486,6 +486,16 @@ class Paper extends Model
                 $errors[$key] = "書誌情報の設定から、".$expr." を入力してください。";
             }
         }
+
+        // 著者名(所属) のチェック
+        foreach($koumoku as $key=>$expr){
+            if ($key == "authorlist" || $key == "eauthorlist"){
+                $ret = $this->authorlist_check($key);
+                if (!$ret) {
+                    $errors[$key] = ($key=="authorlist"? "和文著者名(所属)":"英文Authors(所属)")." の書式が正しくありません。";
+                }
+            }
+        }
         return $errors;
     }
 
@@ -560,6 +570,26 @@ class Paper extends Model
 
         $this->accepted = (count($fileerrors) == 0 && count($enqerrors) == 0);
         $this->save();
+    }
+
+    /**
+     * 著者名(所属) のチェック
+     */
+    public function authorlist_check($field = "authorlist")
+    {
+        $src = $this->{$field};
+        $src = str_replace("（", "(", $src);
+        $src = str_replace("）", ")", $src);
+        $lines = explode("\n", $src);
+        $lines = array_map("trim", $lines);
+        if (count($lines) == 0) return true;
+        $pattern = '/^([\p{Hiragana}\p{Katakana}\p{Han}\w]+(?:\s[\p{Hiragana}\p{Katakana}\p{Han}\w]+)*)\s*\([^\)]+\)$/u';
+        foreach($lines as $line){
+            if (!preg_match($pattern, $line)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // 著者名と所属のパース結果を配列で返す。英文所属は引数にeauthorlist を指定する。
