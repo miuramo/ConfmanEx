@@ -159,7 +159,7 @@ class ReviewController extends Controller
         $cat_id = $cat->id;
         return view("review.pccomment")->with(compact("subs", "cat_id", "cat", "scoreonly"));
     }
-    // 査読会議で著者にみせる、スコアのみの表
+    // 査読会議で査読者にみせる、スコアのみの表
     public function comment_scoreonly(Request $req, Category $cat)
     {
         if (!Category::isShowReview($cat->id)) {
@@ -172,7 +172,9 @@ class ReviewController extends Controller
     public function comment_paper(Category $cat, Paper $paper, string $token)
     {
         if (!Category::isShowReview($cat->id)) {
-            return abort(403, 'review comment');
+            if (!auth()->user()->can('role_any', 'metareviewer')){ //メタであれば見せる
+                return abort(403, 'review comment');
+            }
         }
         $rigais = RevConflict::arr_pu_rigai();
         if ($rigais[$paper->id][auth()->id()] < 3) {
