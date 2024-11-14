@@ -583,7 +583,7 @@ class Paper extends Model
         $lines = explode("\n", $src);
         $lines = array_map("trim", $lines);
         if (count($lines) == 0) return true;
-        $pattern = '/^([\p{Hiragana}\p{Katakana}\p{Han}\w,.]+(?:\s[\p{Hiragana}\p{Katakana}\p{Han}\w,.]+)*)\s*\([^\)]+\)$/u';
+        $pattern = '/^([\p{Hiragana}\p{Katakana}\p{Han}\w\-,.]+(?:\s[\p{Hiragana}\p{Katakana}\p{Han}\w\-,.]+)*)\s*\([^\)]+\)$/u';
         foreach($lines as $line){
             if (!preg_match($pattern, $line)) {
                 return false;
