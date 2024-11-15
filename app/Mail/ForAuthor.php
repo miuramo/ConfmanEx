@@ -32,12 +32,14 @@ class ForAuthor extends Mailable implements ShouldQueue
         if (strlen($_temp->cc) > 0) {
             $ary = explode(",", $_temp->cc);
             foreach ($ary as $em) {
+                if ($em == $this->mail_to_cc['to']) continue;
                 $this->mail_to_cc['cc'][] = trim($em);
             }
         }
         if (strlen($_temp->bcc) > 0) {
             $ary = explode(",", $_temp->bcc);
             foreach ($ary as $em) {
+                if ($em == $this->mail_to_cc['to']) continue;
                 $this->mail_to_cc['bcc'][] = trim($em);
             }
         }
