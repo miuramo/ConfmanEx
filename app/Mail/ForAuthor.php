@@ -23,7 +23,7 @@ class ForAuthor extends Mailable implements ShouldQueue
 
     public $tries = 5;
     public $backoff = 10;
-    public $timeout = 120;
+    public $timeout = 60;
 
     /**
      * Create a new message instance.
