@@ -47,6 +47,7 @@ class ForAuthor extends Mailable implements ShouldQueue
         if ($backup_bcc != null) {
             $this->mail_to_cc['bcc'][] = $backup_bcc;
         }
+        info($this->mail_to_cc);
     }
 
     /**
