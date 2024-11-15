@@ -79,6 +79,11 @@
                 size="sm" target="_blank">
                 JSON
             </x-element.linkbutton>
+            <span class="mx-2"></span>
+            <x-element.linkbutton href="{{ route('pub.json_booth_title_author', ['key' => $dkey, 'readable' => true]) }}" color="teal"
+                size="sm" target="_blank">
+                Web確認用
+            </x-element.linkbutton>
             <div class="text-sm">
                 ダウンロードURLは {{ route('pub.json_booth_title_author', ['key' => $dkey]) }} <br>
                 ダウンロードキーは {{ $dkey }}<br>

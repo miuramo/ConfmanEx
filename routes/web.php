@@ -44,7 +44,7 @@ Route::get('/dashboard', function () {
 Route::get('/file/favicon', [FileController::class, 'favicon'])->name('file.favicon');
 
 //表彰状作成用のJSON
-Route::get('awards/json_booth_title_author/{key?}', [SubmitController::class, 'json_bta'])->name('pub.json_booth_title_author');
+Route::get('awards/json_booth_title_author/{key?}/{readable?}', [SubmitController::class, 'json_bta'])->name('pub.json_booth_title_author');
 Route::get('json_review/{cat}/{key?}', [SubmitController::class, 'json_review'])->name('pub.json_review');
 
 Route::middleware('auth')->group(function () {

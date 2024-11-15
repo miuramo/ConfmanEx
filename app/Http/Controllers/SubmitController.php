@@ -409,7 +409,7 @@ class SubmitController extends Controller
      * awards/json_booth_title_author/{key}
      * プログラム生成にも使えるように、affils を追加。
      */
-    public function json_bta(string $key = null)
+    public function json_bta(string $key = null, bool $readable = false)
     {
         $downloadkey = Setting::findByIdOrName("AWARDJSON_DLKEY", "value");
         if ($key != $downloadkey) abort(403);
@@ -443,7 +443,11 @@ class SubmitController extends Controller
                 }
             }
         }
-        return json_encode($out, JSON_THROW_ON_ERROR);
+        if ($readable){
+            return '<pre>' . htmlspecialchars(json_encode($out, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT), ENT_QUOTES, 'UTF-8') . '</pre>';
+        } else {
+            return json_encode($out, JSON_THROW_ON_ERROR);
+        }
     }
 
     /**

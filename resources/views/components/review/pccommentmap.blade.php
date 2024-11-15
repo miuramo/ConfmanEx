@@ -17,7 +17,7 @@
     }
 @endphp
 <!-- components.review.pccommentmap -->
-<table class="min-w-full divide-y divide-gray-200 mb-2">
+<table class="min-w-full divide-y divide-gray-200 mb-2 sortable" id="sortable">
     <thead>
         <tr>
             <th class="p-1 bg-slate-300"> i</th>

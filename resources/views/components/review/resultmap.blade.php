@@ -7,11 +7,15 @@
     $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
 @endphp
 <!-- components.review.resultmap -->
-<table class="min-w-full divide-y divide-gray-200 mb-2">
+<table class="min-w-full divide-y divide-gray-200 mb-2 sortable" id="sortable">
     <thead>
         <tr>
             @foreach (['chk', 'pid', 'title', 'accept', 'avg score', 'stddev', 'num finish', 'num assign', 'i'] as $h)
-                <th class="p-1 bg-slate-300 dark:bg-slate-400"> {{ $h }} </th>
+                <th class="p-1 bg-slate-300 dark:bg-slate-400
+                @if($h === 'chk')
+                    unsortable 
+                @endif
+                "> {{ $h }} </th>
             @endforeach
         </tr>
     </thead>
