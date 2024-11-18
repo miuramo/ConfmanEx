@@ -180,6 +180,7 @@ class SubmitController extends Controller
             //割り当て実行
             foreach ($paper_session_map as $paperid => $sessionid) {
                 $sub = Submit::where("category_id", $catid)->where("paper_id", $paperid)->first();
+                if ($sub == null) continue;
                 $sub->booth = $paper_booth_map[$paperid];
                 $sub->psession_id = $sessionid;
                 $sub->save();
