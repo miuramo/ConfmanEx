@@ -14,7 +14,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class DisableEmail extends Mailable
+class DisableEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -25,7 +25,7 @@ class DisableEmail extends Mailable
     public $backoff = 10;
     public $timeout = 60;
 
-    
+
     /**
      * Create a new message instance.
      *

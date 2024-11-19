@@ -15,7 +15,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class Submitted extends Mailable
+class Submitted extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

@@ -18,7 +18,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class BbNotify extends Mailable
+class BbNotify extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
