@@ -21,7 +21,7 @@ class ForAuthor extends Mailable implements ShouldQueue
     public array $replacetxt;
     public array $mail_to_cc;
 
-    public $tries = 5;
+    public $tries = 10;
     public $backoff = 10;
     public $timeout = 60;
 
