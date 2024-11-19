@@ -25,6 +25,8 @@ class ForAuthor extends Mailable implements ShouldQueue
     public $backoff = 10;
     public $timeout = 60;
 
+    public bool $failed = false;
+
     /**
      * Create a new message instance.
      */
@@ -62,7 +64,7 @@ class ForAuthor extends Mailable implements ShouldQueue
         $pmail = Mail::to($this->mail_to_cc['to']);
         if (count($this->mail_to_cc['cc']) > 0) $pmail->cc($this->mail_to_cc['cc']);
         if (isset($this->mail_to_cc['bcc']) && count($this->mail_to_cc['bcc']) > 0) $pmail->bcc($this->mail_to_cc['bcc']);
-        $pmail->send($this);
+        $pmail->queue($this);
     }
 
     /**
@@ -70,6 +72,11 @@ class ForAuthor extends Mailable implements ShouldQueue
      */
     public function envelope(): Envelope
     {
+        if ($this->failed){
+            return new Envelope(
+                subject: "★★メール送信失敗？★★ ".$this->template->make_subject($this->replacetxt),
+            );
+        } 
         return new Envelope(
             subject: $this->template->make_subject($this->replacetxt),
         );
@@ -96,5 +103,12 @@ class ForAuthor extends Mailable implements ShouldQueue
     public function attachments(): array
     {
         return [];
+    }
+
+    public function failed(\Exception $exception)
+    {
+        info('ForAuthor:メール送信に失敗しました: ' . $exception->getMessage());
+        $this->failed = true;
+        Mail::to(env("MAIL_BCC_ADDRESS", null))->queue($this);
     }
 }

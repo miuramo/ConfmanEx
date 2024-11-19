@@ -36,7 +36,6 @@ class PaperController extends Controller
             if ($paper->pdf_file_id != 0 && count($paper->validateFiles()) == 0) {
                 // $paper->pendingMail("Submitted");
                 (new Submitted($paper))->process_send();
-                // $mail->send();
                 return redirect()->route('paper.edit', ['paper' => $paper->id])->with('feedback.success', "投稿状況メールを送信しました。");
             } else {
                 return redirect()->route('paper.edit', ['paper' => $paper->id])->with('feedback.error', "投稿状況メールを送信しようとしましたが、まだ投稿が完了していませんでした。下のメッセージをご確認ください。");

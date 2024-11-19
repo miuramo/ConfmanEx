@@ -26,6 +26,8 @@ class Submitted extends Mailable implements ShouldQueue
     public $backoff = 10;
     public $timeout = 60;
 
+    public bool $failed = false;
+
     /**
      * Create a new message instance.
      *
@@ -45,7 +47,7 @@ class Submitted extends Mailable implements ShouldQueue
     public function process_send(){
         $pmail = Mail::to($this->mail_to_cc['to']);
         $pmail->cc($this->mail_to_cc['cc']);
-        $pmail->send($this);
+        $pmail->queue($this);
     }
 
     /**
@@ -53,6 +55,12 @@ class Submitted extends Mailable implements ShouldQueue
      */
     public function envelope(): Envelope
     {
+        if ($this->failed){
+            return new Envelope(
+                subject: "★★メール送信失敗？★★ ".$this->template->make_subject($this->replacetxt),
+            );
+        } 
+
         return new Envelope(
             subject: '投稿完了通知メール PaperID : '.$this->paper->id_03d(),
         );
@@ -103,5 +111,12 @@ class Submitted extends Mailable implements ShouldQueue
             Attachment::fromPath($imagePath)->as("titleimage.png"),
             // ->withMime('image/png'),
         ];
+    }
+
+    public function failed(\Exception $exception)
+    {
+        info('Submitted:メール送信に失敗しました: ' . $exception->getMessage());
+        $this->failed = true;
+        Mail::to(env("MAIL_BCC_ADDRESS", null))->queue($this);
     }
 }

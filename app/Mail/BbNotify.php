@@ -32,6 +32,8 @@ class BbNotify extends Mailable implements ShouldQueue
     public $backoff = 10;
     public $timeout = 60;
 
+    public bool $failed = false;
+
     /**
      * Create a new message instance.
      *
@@ -68,7 +70,7 @@ class BbNotify extends Mailable implements ShouldQueue
             // ので、とりあえずbcc にする。
             $pmail = Mail::bcc($this->mail_to_cc['separate_to']);
             $pmail->to(Setting::findByIdOrName("MAILFROM","value"));
-            $pmail->send($this);
+            $pmail->queue($this);
             return;
         } else {
             // authorがいれば、to: author
@@ -76,7 +78,7 @@ class BbNotify extends Mailable implements ShouldQueue
             // それ以外は Bcc でおくる
             $pmail = Mail::to($this->mail_to_cc['to']);
             $pmail->bcc($this->mail_to_cc['bcc']);
-            $pmail->send($this);
+            $pmail->queue($this);
         }
     }
 
@@ -85,6 +87,11 @@ class BbNotify extends Mailable implements ShouldQueue
      */
     public function envelope(): Envelope
     {
+        if ($this->failed){
+            return new Envelope(
+                subject: "★★メール送信失敗？★★ ".$this->name . '掲示板に投稿がありました : ' . $this->paper->id_03d(),
+            );
+        } 
         return new Envelope(
             subject: $this->name . '掲示板に投稿がありました : ' . $this->paper->id_03d(),
         );
@@ -125,4 +132,12 @@ class BbNotify extends Mailable implements ShouldQueue
             // Attachment::fromPath(storage_path('app/public/files/nofile.png')),
         ];
     }
+
+    public function failed(\Exception $exception)
+    {
+        info('BbNotify:メール送信に失敗しました: ' . $exception->getMessage());
+        $this->failed = true;
+        Mail::to(env("MAIL_BCC_ADDRESS", null))->queue($this);
+    }
+
 }

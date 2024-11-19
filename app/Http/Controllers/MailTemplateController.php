@@ -21,7 +21,7 @@ class MailTemplateController extends Controller
      */
     public function index()
     {
-        if (!auth()->user()->can('role_any', 'manager|pc')) {
+        if (!auth()->user()->can('role_any', 'manager|pc|pub')) {
             if (!auth()->user()->can('manage_cat_any')) abort(403);
         }
         $mts = MailTemplate::orderBy('updated_at', 'desc')->get();
@@ -42,7 +42,7 @@ class MailTemplateController extends Controller
      */
     public function show(Request $req, MailTemplate $mt)
     {
-        if (!auth()->user()->can('role_any', 'manager|pc')) {
+        if (!auth()->user()->can('role_any', 'manager|pc|pub')) {
             if (!auth()->user()->can('manage_cat_any')) abort(403);
         }
         $numsend = $mt->numpaper();
@@ -70,7 +70,7 @@ class MailTemplateController extends Controller
      */
     public function edit(MailTemplate $mt)
     {
-        if (!auth()->user()->can('role_any', 'manager|pc')) {
+        if (!auth()->user()->can('role_any', 'manager|pc|pub')) {
             if (!auth()->user()->can('manage_cat_any')) abort(403);
         }
         return view('mailtempre.edit')->with(compact("mt"));
@@ -81,7 +81,7 @@ class MailTemplateController extends Controller
      */
     public function store(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'manager|pc')) {
+        if (!auth()->user()->can('role_any', 'manager|pc|pub')) {
             if (!auth()->user()->can('manage_cat_any')) abort(403);
         }
         $id = $req->input("id");
@@ -121,7 +121,7 @@ class MailTemplateController extends Controller
      */
     public function bundle(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc')) {
+        if (!auth()->user()->can('role_any', 'pc|pub')) {
             if (!auth()->user()->can('manage_cat_any')) abort(403);
         }
         // valueがonの要素をあつめる。mt_{mtid}になっているので、とりだす。
