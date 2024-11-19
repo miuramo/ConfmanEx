@@ -9,6 +9,17 @@
             <x-element.linkbutton href="{{ route('role.top', ['role' => 'pub']) }}" color="gray" size="sm">
                 &larr; 出版 Topに戻る
             </x-element.linkbutton>
+            <span class="mx-4"></span>
+            <span class="bg-gray-100 p-4 rounded-lg">
+                表示を切り替える：
+                @foreach ($cats as $catid => $catname)
+                    <a href="{{ route('pub.booth', ['cat' => $catid]) }}">
+                        <x-element.category :cat="$catid" size="sm">
+                        </x-element.category>
+                    </a>
+                @endforeach
+            </span>
+
         </div>
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('セッション割り当て') }}
@@ -80,7 +91,7 @@
                                 sprintfフォーマット <input type="text" name="print_format" id="print_format" size="9"
                                     value="{{ $format }}" class="text-sm p-1 dark:text-black">
                                 <span class="mx-2"></span>
-                                orderintに追加する値 <input type="number" name="additional" min=0 max=1000 value=0 
+                                orderintに追加する値 <input type="number" name="additional" min=0 max=1000 value=0
                                     class="text-sm p-1 dark:text-black">
                             </div>
                         </form>

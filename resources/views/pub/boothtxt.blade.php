@@ -9,6 +9,17 @@
             <x-element.linkbutton href="{{ route('role.top', ['role' => 'pub']) }}" color="gray" size="sm">
                 &larr; 出版 Topに戻る
             </x-element.linkbutton>
+            <span class="mx-4"></span>
+            <span class="bg-gray-100 p-4 rounded-lg">
+                表示を切り替える：
+                @foreach ($cats as $catid => $catname)
+                    <a href="{{ route('pub.boothtxt', ['cat' => $catid]) }}">
+                        <x-element.category :cat="$catid" size="sm">
+                        </x-element.category>
+                    </a>
+                @endforeach
+            </span>
+
         </div>
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('テキスト形式でのセッション割り当て') }}
