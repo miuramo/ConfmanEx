@@ -20,6 +20,12 @@ class DisableEmail extends Mailable
 
     public Paper $paper;
     public string $invalid_email;
+
+    public $tries = 5;
+    public $backoff = 10;
+    public $timeout = 60;
+
+    
     /**
      * Create a new message instance.
      *

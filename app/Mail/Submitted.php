@@ -21,6 +21,11 @@ class Submitted extends Mailable
 
     public Paper $paper;
     public array $mail_to_cc;
+
+    public $tries = 5;
+    public $backoff = 10;
+    public $timeout = 60;
+
     /**
      * Create a new message instance.
      *
