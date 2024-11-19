@@ -52,7 +52,7 @@ class BbController extends Controller
      */
     public function store(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
+        if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403);
         $catid = $req->input("catid");
         $type = $req->input("type");
         $pids = trim($req->input("pids"));
