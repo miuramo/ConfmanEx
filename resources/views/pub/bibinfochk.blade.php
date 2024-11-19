@@ -14,6 +14,16 @@
             <x-element.linkbutton href="{{ route('role.top', ['role' => 'pub']) }}" color="gray" size="sm">
                 &larr; 出版 Topに戻る
             </x-element.linkbutton>
+            <span class="mx-4"></span>
+            <span class="bg-gray-100 p-4 rounded-lg">
+                表示を切り替える：
+                @foreach ($cats as $catid => $catname)
+                    <a href="{{ route('pub.bibinfochk', ['cat' => $catid]) }}">
+                        <x-element.category :cat="$catid" size="sm">
+                        </x-element.category>
+                    </a>
+                @endforeach
+            </span>
         </div>
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('書誌情報の確認と修正') }}
@@ -35,7 +45,7 @@
         緑色の背景のところにあるボタンを押すと、それぞれ切り取り画像、1ページ目の画像、PDFをひらきます。<br>
         その下の表は、投稿者が入力した書誌情報です。背景色が変わる要素については、クリックすると編集できます。<br>
         <b>一行テキストは Enter、複数行テキストは CTRL+Enter で保存してください。Escapeでキャンセルできます。</b><br><br>
-        
+
         <span class="p-1 bg-purple-300">背景が紫</span>
         の要素は、書誌情報入力画面の「直接入力モード」で入力された項目ですので、要チェックです。PDFとの齟齬があるかもしれません。<br>
         「確認済みにする」をクリックすると、要チェックのフラグを消すことができます。<br>
@@ -47,10 +57,12 @@
         著者名（所属）のカッコは、全角・半角どちらでも大丈夫です。また、著者名と所属の間のスペースの有無も問いません。<br>
         複数所属は、半角スラッシュ / で区切ってください。<br>
         著者名と所属に関しては、出力例を適宜確認しながら、修正されることをおすすめします。
-        <x-element.linkbutton href="{{ route('pub.bibinfo', ['cat' => $catid, 'abbr'=>'true']) }}" target="_blank" color="cyan" size="sm">
+        <x-element.linkbutton href="{{ route('pub.bibinfo', ['cat' => $catid, 'abbr' => 'true']) }}" target="_blank"
+            color="cyan" size="sm">
             出力例（所属をまとめる）
         </x-element.linkbutton>
-        <x-element.linkbutton href="{{ route('pub.bibinfo', ['cat' => $catid]) }}" target="_blank" color="teal" size="sm">
+        <x-element.linkbutton href="{{ route('pub.bibinfo', ['cat' => $catid]) }}" target="_blank" color="teal"
+            size="sm">
             出力例（所属をまとめない）
         </x-element.linkbutton>
     </div>
@@ -79,18 +91,18 @@
 
         if (count($subs) == 0) {
             $subs = $subs2;
-            $memo = "採択済み論文はまだありません。かわりに、すべての投稿論文を表示します。";
+            $memo = '採択済み論文はまだありません。かわりに、すべての投稿論文を表示します。';
         }
     @endphp
     @isset($memo)
         <div class="m-2 px-4 py-2 bg-red-500 text-white text-2xl">{{ $memo }}
         </div>
-        @endisset
+    @endisset
 
     <div class="px-4 py-4">
         @foreach ($subs as $sub)
             @php
-                if($sub->paper == null) {
+                if ($sub->paper == null) {
                     continue;
                 }
             @endphp
@@ -135,21 +147,21 @@
                     <tr class="{{ $loop->iteration % 2 === 1 ? 'bg-cyan-50' : 'bg-white dark:bg-cyan-100' }}">
                         <td class="px-2 py-1">
                             @isset($sub->paper)
-                            @if (isset($sub->paper->maydirty[$k]) && $sub->paper->maydirty[$k] == 'true')
-                                <span class="bg-purple-300">{{ $v }}</span>
-                                <button onclick="reset_maydirty('{{ $sub->paper->id }}', '{{ $k }}')"
-                                    class="bg-red-300 hover:bg-red-500 text-white px-2 py-1">確認済みにする</button>
-                            @else
-                                {{ $v }}    
-                            @endif
+                                @if (isset($sub->paper->maydirty[$k]) && $sub->paper->maydirty[$k] == 'true')
+                                    <span class="bg-purple-300">{{ $v }}</span>
+                                    <button onclick="reset_maydirty('{{ $sub->paper->id }}', '{{ $k }}')"
+                                        class="bg-red-300 hover:bg-red-500 text-white px-2 py-1">確認済みにする</button>
+                                @else
+                                    {{ $v }}
+                                @endif
                             @endisset
                         </td>
                         @isset($sub->paper)
                             @if (isset($sub->paper->maydirty[$k]) && $sub->paper->maydirty[$k] == 'true')
-                                <td class="px-2 py-1 bg-purple-300 hover:bg-lime-100 
+                                <td class="px-2 py-1 bg-purple-300 hover:bg-lime-100
 @else
-<td class="px-2 py-1 hover:bg-lime-100
-                                    @endif
+<td class="px-2 py-1
+                                    hover:bg-lime-100 @endif
                                     font-monaca clicktoedit"
                                     id="{{ $k }}__{{ $sub->paper->id }}__{{ $dtype[$k] }}"
                                     data-orig="{{ $sub->paper->{$k} }}">

@@ -13,6 +13,18 @@
             <x-element.linkbutton href="{{ route('role.top', ['role' => 'pub']) }}" color="gray" size="sm">
                 &larr; 出版 Topに戻る
             </x-element.linkbutton>
+
+            <span class="mx-4"></span>
+            <span class="bg-gray-100 p-4 rounded-lg">
+                表示を切り替える：
+                @foreach ($cats as $catid => $catname)
+                    <a href="{{ route('pub.fileinfochk', ['cat' => $catid]) }}">
+                        <x-element.category :cat="$catid" size="sm">
+                        </x-element.category>
+                    </a>
+                @endforeach
+            </span>
+
         </div>
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('採択分ファイルの確認') }}
@@ -36,10 +48,10 @@
         <table class="border-lime-400 border-2">
             <tr class="bg-lime-300">
                 @php
-                    $hs = ['PID','Booth','created_at','mime','pages','link','fid','origfn','valid','deleted'];
+                    $hs = ['PID', 'Booth', 'created_at', 'mime', 'pages', 'link', 'fid', 'origfn', 'valid', 'deleted'];
                 @endphp
                 @foreach ($hs as $h)
-                    <th class="px-2 py-1">{{$h}}</th>
+                    <th class="px-2 py-1">{{ $h }}</th>
                 @endforeach
             </tr>
             @foreach ($files as $file)
@@ -60,22 +72,22 @@
                         {{ $file->pagenum }}
                     </td>
                     <td>
-                        @if($file->pagenum > 0)
-                        <x-file.link_pdffile :fileid="$file->id"></x-file.link_pdffile>
+                        @if ($file->pagenum > 0)
+                            <x-file.link_pdffile :fileid="$file->id"></x-file.link_pdffile>
                         @else
                         @endif
                     </td>
                     <td class="px-2 py-1 text-center">
-                        {{$file->id}}
+                        {{ $file->id }}
                     </td>
                     <td class="text-sm">
-                        {{$file->origname}}
+                        {{ $file->origname }}
                     </td>
                     <td class="px-2 py-1 text-center">
-                        {{$file->valid}}
+                        {{ $file->valid }}
                     </td>
                     <td class="px-2 py-1 text-center">
-                        {{$file->deleted}}
+                        {{ $file->deleted }}
                     </td>
                 </tr>
             @endforeach
