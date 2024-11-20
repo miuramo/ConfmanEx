@@ -169,7 +169,7 @@
                             現在設定されている書誌情報の確認
                             {{-- <x-element.gendospan>採択後に入力</x-element.gendospan> --}}
                         </div>
-                        <div class="text-md mx-6 mt-0">
+                        <div class="text-md mx-6 mt-0 dark:text-gray-500">
                             <table class="border-cyan-500 border-2">
                                 @foreach ($koumoku as $k => $v)
                                     <tr

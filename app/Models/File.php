@@ -6,6 +6,7 @@ use App\Jobs\OcrJob;
 use App\Jobs\PdfJob;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -18,6 +19,51 @@ class File extends Model
     public function paper()
     {
         return $this->belongsTo(Paper::class);
+    }
+
+    /**
+     * 
+     * BBMesControllerから呼ばれる
+     */
+    public static function createnew($tmp, $pid = 0)
+    {
+        // フォルダがなければ作る
+        File::mkdir_ifnot(storage_path(File::apf()));
+
+        $file = new File();
+        $uid = $file->user_id = Auth::user()->id;
+        $pid = $file->paper_id = $pid;
+        // fnameは暫定として、一回保存して、fileid を確定する
+        $file->fname = "zantei.pdf";
+        $file->save();
+        $hashname = sprintf("%03d", $pid) . "_" . $file->id . "_" . $tmp->hashName();
+        $tmp->storeAs(File::pf(), $hashname);
+
+        $file->fname = $hashname;
+        $fullpath = storage_path(File::apf() . '/' . $hashname);
+        $file->key = shell_exec("md5sum {$fullpath}");
+        $file->key = substr($file->key, 0, 32);
+        $file->mime = trim(shell_exec("file --mime-type -b {$fullpath}")); // $tmp->getClientMimeType();
+        $file->origname = $tmp->getClientOriginalName();
+
+        // ページ番号を取得
+        $pdfinfo = trim(shell_exec("pdfinfo {$fullpath}"));
+        $ary = explode("\n", $pdfinfo);
+        $pnum = -1;
+        foreach ($ary as $n => $p) {
+            if (preg_match('/^Pages:[ ]+(\d+)/', $p, $match)) {
+                $pnum = $match[1];
+            }
+        }
+        $file->pagenum = $pnum;
+        $file->save();
+        // 1ページ目のサムネをつくる
+        shell_exec("pdftoppm -png -singlefile {$fullpath} " . storage_path(File::apf() . '/' . substr($hashname, 0, -4)));
+
+        if ($file->mime == "application/pdf") {
+            PdfJob::dispatch($file);
+        }
+        return $file;
     }
 
     // public static $app_public_files = 'app/public/';
@@ -62,7 +108,7 @@ class File extends Model
             @unlink(substr($fullpath, 0, -4) . ".png");
             $this->removeDirectory(substr($fullpath, 0, -4));
         }
-        if (strpos($this->mime,"video")===0){
+        if (strpos($this->mime, "video") === 0) {
             @unlink(substr($fullpath, 0, -4) . ".png");
         }
     }
@@ -83,22 +129,23 @@ class File extends Model
     public function makeThumbFolder()
     {
         $dir = substr($this->fname, 0, -4);
-        return File::mkdir_ifnot(storage_path(File::apf() .'/'. $dir));
+        return File::mkdir_ifnot(storage_path(File::apf() . '/' . $dir));
     }
 
-    public static function mkdir_ifnot($dirpath){
+    public static function mkdir_ifnot($dirpath)
+    {
         if (!file_exists($dirpath)) {
-            return mkdir($dirpath,0777,true);
+            return mkdir($dirpath, 0777, true);
         }
         return true;
     }
 
     public function makePdfHeadThumb()
     {
-        $fullpath_pdf = storage_path(File::apf() .'/'. $this->fname); // 元のPDFファイル名
+        $fullpath_pdf = storage_path(File::apf() . '/' . $this->fname); // 元のPDFファイル名
         $dir = substr($this->fname, 0, -4);
-        $fullpath_png = storage_path(File::apf() .'/'. $dir . ".png"); // PNGファイル名
-        $dirpath = storage_path(File::apf() .'/'. $dir); // /でおわらないので注意
+        $fullpath_png = storage_path(File::apf() . '/' . $dir . ".png"); // PNGファイル名
+        $dirpath = storage_path(File::apf() . '/' . $dir); // /でおわらないので注意
         // 1ページ目の上だけのサムネ
         // $file->pagenum = preg_match_all("/\/Page\W/", $data, $matches);
         // ここで、convertをつかって、t-00001.png の上部だけを取り出した画像ファイル h-00001.png を作成する
@@ -116,11 +163,15 @@ class File extends Model
         }
         File::mkdir_ifnot($dirpath);
         chdir($dirpath);
+        $retry = 0;
         while (!file_exists($fullpath_png)) {
             sleep(1);
+            $retry++;
+            if ($retry > 10) break;
         }
         // Log::info("convert {$fullpath_png} -crop {$crop_w}x{$crop_h}+{$crop_x}+{$crop_y} {$dirpath}/h-00001.png");
         $out = shell_exec("convert {$fullpath_png} -crop {$crop_w}x{$crop_h}+{$crop_x}+{$crop_y} {$dirpath}/h-00001.png 2>&1");
+        info($out);
     }
 
 
@@ -210,7 +261,7 @@ class File extends Model
     {
         if ($this->pagenum < 2) return;
         // Log::info("[File@extractTitle] File id: {$this->id} pagenum {$this->pagenum} start title extracts");
-        Paper::find($this->paper_id)->extractTitleAndAuthors($text);
+        if ($this->paper_id > 0) Paper::find($this->paper_id)->extractTitleAndAuthors($text);
     }
     /**
      * 標準出力を取り出して、返却値とする
@@ -394,7 +445,7 @@ class File extends Model
                 }
                 // 下準備完了
                 if ($tmp['level'] == 5 && $tmp['text'] != null) {
-                    $words[]= $tmp;
+                    $words[] = $tmp;
                 }
             }
         }
@@ -409,11 +460,13 @@ class File extends Model
         return storage_path(File::apf() . '/' . $dir . "/" . $fn);
     }
 
-    public function removeHintFile(){
+    public function removeHintFile()
+    {
         @unlink($this->getHintFilePath());
         // $this->writeHintFile("xx");
     }
-    public function writeHintFile($txt){
+    public function writeHintFile($txt)
+    {
         $this->write_textfile($this->getHintFilePath(), $txt);
     }
 }

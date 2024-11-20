@@ -101,7 +101,8 @@
                         target="_blank">{{ $file->origname }}</a>
                 @endif
             @endif
-            
+            <span class="m-2 text-gray-400 text-xs text-right">{{$file->created_at}}</span>
+
             @if ($file->deleted)
                 <span class="mx-4 sm:rounded-lg  bg-yellow-200 px-2 py-1 font-bold text-red-600 text-lg">Deleted</span>
             @endif

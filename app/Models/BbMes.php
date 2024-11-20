@@ -21,4 +21,10 @@ class BbMes extends Model
         return $this->belongsTo(Bb::class, 'bb_id');
     }
 
+    public function files()
+    {
+        return $this->hasMany(File::class, 'bb_mes_id');
+    }
+
+
 }

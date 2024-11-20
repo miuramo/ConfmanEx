@@ -53,7 +53,8 @@
                         target="_blank">{{ $file->origname }}</a>
                 @endif
             @endif
-            
+            <span class="m-2 text-gray-400 text-xs text-right">{{$file->created_at}}</span>
+
             @if ($file->locked)
                 <span
                     class="mx-4 sm:rounded-lg border-2 border-green-600 bg-lime-200 px-2 py-1 font-bold text-green-600 text-lg">Locked</span>

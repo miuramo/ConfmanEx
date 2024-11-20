@@ -17,7 +17,7 @@
             <x-element.category :cat="$bb->category_id">
             </x-element.category>
         </h2>
-        <div class="text-lg mt-4 font-bold bg-slate-200 py-2 px-4 inline-block rounded-md">{{ $bb->paper->title }}</div>
+        <div class="text-lg mt-4 font-bold bg-slate-200 py-2 px-4 inline-block rounded-md dark:text-slate-200 dark:bg-slate-500">{{ $bb->paper->title }}</div>
     </x-slot>
     @section('title', $bb->paper->id_03d() . ' 掲示板')
 
@@ -36,23 +36,25 @@
         @endforeach
 
         <div class="text-right mt-1">
-            <form action="{{ route('bb.store', ['bb' => $bb->id, 'key' => $bb->key]) }}" method="post" id="post_bbmes"
+            <form action="{{ route('bb.store', ['bb' => $bb->id, 'key' => $bb->key]) }}" method="post" id="post_bbmes" enctype="multipart/form-data" 
                 onsubmit="return showMessageBeforeSend();">
                 @csrf
                 @method('post')
                 <input type="hidden" name="key" value="{{ $bb->key }}">
 
                 <div
-                    class="inline-block w-3/4 bg-green-300 p-2 rounded-md mt-5 hover:bg-green-400 hover:transition-colors">
+                    class="inline-block w-3/4 bg-green-300 p-2 rounded-md mt-5 hover:bg-green-400 hover:transition-colors dark:bg-green-500">
                     <div class="px-2 text-left text-sm">送信フォーム</div>
-                    <input class="w-full p-2 bg-green-200 rounded-md border-green-300 border-2" type="text"
+                    <input class="w-full p-2 bg-green-200 rounded-md border-green-300 border-2 dark:bg-green-400" type="text"
                         size="70" name="sub" id="bbsub" placeholder="ここに Subject (Title) を入力"
-                        onkeydown="return disableEnterKey(event);" 
+                        onkeydown="return disableEnterKey(event);"
                         @isset($revid)
                             value="[RevID : {{ $revid }}]  "
                         @endisset>
-                    <textarea class="w-full mt-1 p-2 bg-green-100 rounded-md border-green-300  border-2" name="mes" id="bbmes"
+                    <textarea class="w-full mt-1 p-2 bg-green-100 rounded-md border-green-300  border-2 dark:bg-green-300" name="mes" id="bbmes"
                         cols="70" rows="10" placeholder="ここにメッセージを入力"></textarea>
+                        <label for="bbfile" class="text-sm">ファイル添付（オプション）</label>
+                        <input class="text-sm" type="file" name="bbfile" id="bbfile">
                     送信すると、関係者にメールで通知されます。<x-element.submitbutton value="submit" color="green" id="bb_submit">了解して送信する
                     </x-element.submitbutton>
                 </div>
@@ -96,7 +98,7 @@
                 return false;
             }
             // 確認ダイアログを表示
-            if (!confirm('この内容で送信します。よろしいですか？（送信にすこし時間がかかります）')) {
+            if (!confirm('この内容で送信します。よろしいですか？（通知メールにはファイルは添付されません。）')) {
                 document.getElementById("bbmes").focus();
                 return false;
             }
@@ -105,5 +107,11 @@
             return true;
         }
     </script>
+
+    @push('localjs')
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/openclose.js"></script>
+    @endpush
+
 
 </x-app-layout>

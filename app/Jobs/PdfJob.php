@@ -31,10 +31,16 @@ class PdfJob implements ShouldQueue
     public function handle(): void
     {
         // fnameのフォルダを作成
+        // info("PDFジョブ開始");
         $this->file->makeThumbFolder();
+        // info("サムネイルフォルダ作成");
         $this->file->makePdfThumbs();
+        // info("サムネイル作成");
         $text = $this->file->makePdfText();
+        // info("テキスト作成");
         $this->file->makePdfHeadThumb();
+        // info("ヘッダーサムネイル作成");
         $this->file->extractTitleAndAuthors($text); //ページ数が2ページ以上のときなど、論文PDFのときに使用
+        // info("タイトルと著者抽出、すべて完了。");
     }
 }
