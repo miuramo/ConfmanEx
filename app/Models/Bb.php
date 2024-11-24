@@ -115,6 +115,7 @@ class Bb extends Model
                 foreach($role->users as $u){
                     if ( isset($rigais[$this->paper_id][$u->id]) && $rigais[$this->paper_id][$u->id]<3 ) continue; //利害or共著
                     // 出版掲示板ならば、利害関係者であっても送信してよいという考え方はある。ただ、通常はauthor(cc)で追加されるはずなので、ここで特別な処理をする必要はない。
+                    if ( $u->pivot->mailnotify == 0 ) continue; // mailnotifyが0のときは送信しない
                     $bcclist[] = $u->email;
                 }
             } else if ($role=="metareviewer" || $role=="reviewer"){
