@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoresubmitRequest;
 use App\Http\Requests\UpdatesubmitRequest;
 use App\Models\Accept;
+use App\Models\Bb;
 use App\Models\Category;
 use App\Models\Enquete;
 use App\Models\EnqueteAnswer;
@@ -481,5 +482,14 @@ class SubmitController extends Controller
         // [ viewpoint1 => [ paper11 => コメント1, paper22 => コメント2, ... ] ]
         // return $out;
         return json_encode($out, JSON_THROW_ON_ERROR);
+    }
+
+    public function paperfile(int $paperid)
+    {
+        if (!auth()->user()->can('role_any', 'admin|pc|pub|web')) abort(403);
+        $paper = Paper::findOrFail($paperid);
+        $files = File::where('paper_id', $paperid)->where('valid', 1)->where('deleted', 0)->orderBy('created_at', 'desc')->get();
+        $bb = Bb::where('paper_id', $paperid)->where('type', 3)->first();
+        return view('pub.paperfile')->with(compact("paper", "files", "bb"));
     }
 }

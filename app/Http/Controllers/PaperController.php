@@ -468,4 +468,38 @@ class PaperController extends Controller
         }
         return view('admin.paperlock')->with(compact("cols", "pids"));
     }
+
+    /**
+     * 出版が、ファイルを採用する（アップロードされたファイルに切り替える）
+     */
+    public function fileadopt(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
+        $paper = Paper::find($req->paper_id);
+        if ($paper == null) {
+            return redirect()->route('pub.paperfile', ['paper' => $req->paper_id])->with('feedback.error', 'Paperが見つかりません。');
+        }
+        if (!$req->file_id) {
+            return redirect()->route('pub.paperfile', ['paper' => $req->paper_id])->with('feedback.error', 'ファイルがchkでチェックされていません。');
+        }
+        $file = File::find($req->file_id);
+        if ($req->ftype == 'pdf')
+            $paper->pdf_file_id = $file->id;
+        else if ($req->ftype == 'img')
+            $paper->img_file_id = $file->id;
+        else if ($req->ftype == 'video')
+            $paper->video_file_id = $file->id;
+        else if ($req->ftype == 'altpdf')
+            $paper->altpdf_file_id = $file->id;
+        else if ($req->ftype == 'pptx')
+            $paper->pptx_file_id = $file->id;
+
+        $paper->save();
+        $file->pending = 0;
+        $file->deleted = 0;
+        $file->locked = 1;
+        $file->save();
+
+        return redirect()->route('pub.paperfile', ['paper' => $req->paper_id])->with('feedback.success', 'ファイルを採用しました。状況を再度、確認してください。');
+    }
 }

@@ -95,6 +95,18 @@ class Bb extends Model
         if ($bb==null) return null;
         return $bb->url();
     }
+    public static function url_from_bbmesid(int $bbmesid)
+    {
+        $bbmes = BbMes::find($bbmesid);
+        if ($bbmes==null) return null;
+        return $bbmes->bb->url();
+    }
+    public static function url_from_bbid(int $bbid)
+    {
+        $bb = Bb::find($bbid);
+        if ($bb==null) return null;
+        return $bb->url();
+    }
 
     public function get_mail_to_cc()
     {

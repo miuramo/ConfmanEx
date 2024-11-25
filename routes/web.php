@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
     //ドラッグ範囲選択
     Route::get('/paper/{paper}/dt', [PaperController::class, 'dragontext'])->name('paper.dragontext');
     Route::post('/paper/{paper}/dtpost', [PaperController::class, 'dragontextpost'])->name('paper.dragontextpost');
+    Route::post('/paper/{paper}/fileadopt', [PaperController::class, 'fileadopt'])->name('paper.fileadopt'); // 出版が、投稿ファイルをマニュアルで採用する
 
 
     // 利害表明
@@ -155,6 +156,7 @@ Route::middleware('auth')->group(function () {
     Route::post('pub/update_maydirty', [SubmitController::class, 'update_maydirty'])->name('pub.update_maydirty');// MayDirtyをリセット
     Route::get('pub/{cat}/bibinfo/{abbr?}', [SubmitController::class, 'bibinfo'])->name('pub.bibinfo'); //書誌情報の表示 (abbrをtrueにすると同一所属を省略)
     Route::get('pub/{cat}/fileinfochk', [SubmitController::class, 'fileinfochk'])->name('pub.fileinfochk'); // カメラレディのタイムスタンプ確認
+    Route::get('pub/{paper}/paperfile', [SubmitController::class, 'paperfile'])->name('pub.paperfile'); // 論文ごとに、どのファイルを採用しているか？を表示する
 
     // メール雛形
     Route::resource('mt', MailTemplateController::class);

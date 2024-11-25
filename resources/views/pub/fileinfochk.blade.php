@@ -48,7 +48,7 @@
         <table class="border-lime-400 border-2">
             <tr class="bg-lime-300">
                 @php
-                    $hs = ['PID', 'Booth', 'created_at', 'mime', 'pages', 'link', 'fid', 'origfn', 'valid', 'deleted'];
+                    $hs = ['PID', 'Booth', 'created_at', '拡張子', 'pages', 'fid', 'origfn', 'valid', 'deleted','PDF未採用','出版掲示板'];
                 @endphp
                 @foreach ($hs as $h)
                     <th class="px-2 py-1">{{ $h }}</th>
@@ -66,28 +66,40 @@
                         {{ $file->created_at }}
                     </td>
                     <td class="px-2 py-1">
-                        {{ $file->mime }}
+                        {{ $file->extension() }}
+                        {{-- {{ substr($file->mime,0,15) }} --}}
                     </td>
                     <td class="px-2 py-1 text-center">
                         {{ $file->pagenum }}
                     </td>
-                    <td>
+                    {{-- <td>
                         @if ($file->pagenum > 0)
                             <x-file.link_pdffile :fileid="$file->id"></x-file.link_pdffile>
                         @else
                         @endif
-                    </td>
+                    </td> --}}
                     <td class="px-2 py-1 text-center">
                         {{ $file->id }}
                     </td>
                     <td class="text-sm">
-                        {{ $file->origname }}
+                        <x-file.link_anyfile :fileid="$file->id" label="origname" linktype="link"></x-file.link_anyfile>
                     </td>
                     <td class="px-2 py-1 text-center">
                         {{ $file->valid }}
                     </td>
                     <td class="px-2 py-1 text-center">
                         {{ $file->deleted }}
+                    </td>
+                    <td class="px-2 py-1 text-center">
+                        @if($file->mime == 'application/pdf' && $file->paper->pdf_file_id != $file->id)
+                        <div class="bg-yellow-300 text-sm">PDF未採用</div>
+                        @endif
+                        <a class="text-sm bg-cyan-100 p-1 hover:bg-cyan-300" href="{{route('pub.paperfile', ['paper'=>$file->paper_id])}}" target="_blank">状況確認</a>
+                    </td>
+                    <td class="px-2 py-1 text-center">
+                        @if($file->bb_mes_id)
+                            <x-element.bblink :bbmes_id="$file->bb_mes_id" label="for{{sprintf('%03d',$file->paper_id)}}"></x-element.bblink>
+                        @endif
                     </td>
                 </tr>
             @endforeach

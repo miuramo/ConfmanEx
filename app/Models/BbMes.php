@@ -16,6 +16,8 @@ class BbMes extends Model
         'mes',
     ];
 
+    protected $with = ['bb', 'files'];
+
     public function bb()
     {
         return $this->belongsTo(Bb::class, 'bb_id');
