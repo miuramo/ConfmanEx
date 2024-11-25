@@ -30,7 +30,7 @@
                     {{ $u->email }}
                 </td>
                 <td>
-                    {{ $u->pivot->mailnotify ? '通知する' : '通知しない' }}
+                    {{ $u->pivot->mailnotify ? '受信する' : '受信しない' }}
                 </td>
                 <td>
                     {{ $u->last_access() }}
