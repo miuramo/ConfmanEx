@@ -1,7 +1,7 @@
 @props([
     'users' => [],
     'role' => null,
-    'heads' => ['chk','uid', 'name','affil','email','last_access','created_at','(action)','i'],
+    'heads' => ['chk','uid', 'name','affil','email','mailnofity','last_access','created_at','(action)','i'],
     'chkfor' => null,
 ])
 <!-- components.role.members -->
@@ -28,6 +28,9 @@
                 </td>
                 <td>
                     {{ $u->email }}
+                </td>
+                <td>
+                    {{ $u->pivot->mailnotify ? '通知する' : '通知しない' }}
                 </td>
                 <td>
                     {{ $u->last_access() }}

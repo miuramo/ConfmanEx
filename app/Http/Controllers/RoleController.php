@@ -131,6 +131,20 @@ class RoleController extends Controller
                 return redirect()->route('role.edit', ["role" => $name])->with('feedback.success', "メールを送信しました。");
             }
             return redirect()->route('role.edit', ["role" => $name])->with('feedback.error', "メールを送信するユーザにチェックをいれてください。");
+        } else if ($req->has("action") && $req->input("action") == "editnotify") {
+            // info($req->all());
+            foreach ($req->all() as $k => $v) {
+                if ($v == 'on' && strpos($k, 'u_') === 0) {
+                    $uid = explode("_", $k)[1];
+                    if (is_numeric($uid)) {
+                        $u = User::find($uid);
+                        if ($u != null) {
+                            $u->roles()->updateExistingPivot($role->id, ['mailnotify' => $req->input("notify")=='on']);
+                        }
+                    }
+                }
+            }
+            return redirect()->route('role.edit', ["role" => $name])->with('feedback.success', "mailnotifyを変更しました。");
         } else if ($req->has("action") && $req->input("action") == "adduser") {
             $adduser = $req->input("adduser");
             $lines = explode("\n", $adduser);

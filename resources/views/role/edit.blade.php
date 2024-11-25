@@ -1,8 +1,8 @@
 <x-app-layout>
-<!-- role.edit -->
+    <!-- role.edit -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
-            Role『{{ $role->desc }}』のメンバー編集
+            Role『{{ $role->desc }}』のメンバー編集 (RoleID: {{ $role->id }})
         </h2>
 
         <style>
@@ -54,17 +54,20 @@
         @csrf
         @method('post')
 
-        <div class="mx-6 my-2">
-            <x-element.submitbutton value="excel" color="lime">
-                Role『{{ $role->desc }}』のメンバーをExcel出力
-            </x-element.submitbutton>
-        </div>
-
         <div class="mx-6">
+            <x-element.button class="" id="toggleButton" value="メール送信パネルを開く／閉じる" color='pink'
+                onclick="openclose('content')">
+            </x-element.button>
+            <span class="mx-2"></span>
+            <x-element.button class="" id="toggleButton" value="他のRole追加パネルを開く／閉じる" color='cyan'
+                onclick="openclose('otherroles')">
+            </x-element.button>
+            <span class="mx-2"></span>
+            <x-element.button class="" id="toggleButton" value="mailnotify修正パネルを開く／閉じる" color='yellow'
+                onclick="openclose('editnotify')">
+            </x-element.button>
+
             <div class="container">
-                <x-element.button class="" id="toggleButton" value="メール送信パネルを開く／閉じる" color='pink'
-                    onclick="openclose('content')">
-                </x-element.button>
                 <div class="hidden-content mt-2 bg-pink-200 dark:bg-pink-600 p-2" id="content" style="display:none;">
                     subject: <input class="w-3/4 p-1 text-sm text-black  bg-white dark:text-gray-200 dark:bg-gray-800"
                         type="text" name="subject" value="[[:CONFTITLE:]] 投稿・査読システムのログイン方法">
@@ -90,32 +93,26 @@
                     （注：ボタンを押すとすぐにメール送信します。確認画面はありません。メールを送信した後で、雛形を作成します。）
 
                     <div class="m-4">
-                    または、雛形
-                    @php
-                        $mts = App\Models\MailTemplate::orderBy('updated_at', 'desc')->get();
-                    @endphp
-                    <select name="mailtemplate" id="mailtemplate"
-                        class="w-3/4 p-1 text-sm text-black  bg-white dark:text-gray-200 dark:bg-gray-800">
-                        <option value="">メールテンプレートを選択</option>
-                        @foreach ($mts as $mt)
-                            <option value="{{ $mt->id }}">(ID: {{$mt->id}}) {{ $mt->subject }} 【{{$mt->to}}】</option>
-                        @endforeach
-                    </select><br>
-                    のsubjectとbodyを利用し、
-                    <x-element.submitbutton value="addtemplate" color="pink">
-                        チェックをいれた人をTo:に指定した雛形を、新規作成
-                    </x-element.submitbutton>
-                    （注：ボタンを押してもメールは送信しません。）
+                        または、雛形
+                        @php
+                            $mts = App\Models\MailTemplate::orderBy('updated_at', 'desc')->get();
+                        @endphp
+                        <select name="mailtemplate" id="mailtemplate"
+                            class="w-3/4 p-1 text-sm text-black  bg-white dark:text-gray-200 dark:bg-gray-800">
+                            <option value="">メールテンプレートを選択</option>
+                            @foreach ($mts as $mt)
+                                <option value="{{ $mt->id }}">(ID: {{ $mt->id }}) {{ $mt->subject }}
+                                    【{{ $mt->to }}】</option>
+                            @endforeach
+                        </select><br>
+                        のsubjectとbodyを利用し、
+                        <x-element.submitbutton value="addtemplate" color="pink">
+                            チェックをいれた人をTo:に指定した雛形を、新規作成
+                        </x-element.submitbutton>
+                        （注：ボタンを押してもメールは送信しません。）
+                    </div>
                 </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="mx-6 my-2">
-            <div class="container">
-                <x-element.button class="" id="toggleButton" value="他のRole追加パネルを開く／閉じる" color='cyan'
-                    onclick="openclose('otherroles')">
-                </x-element.button>
                 <div class="hidden-content mt-2 bg-cyan-200 dark:bg-cyan-600 p-2" id="otherroles" style="display:none;">
 
                     @foreach ($roles as $ro)
@@ -130,6 +127,18 @@
 
                     <x-element.submitbutton value="otherroles" color="cyan">
                         チェックをいれた人に、選択したRoleを追加する
+                    </x-element.submitbutton>
+                </div>
+
+                <div class="hidden-content mt-2 bg-yellow-200 dark:bg-yellow-600 p-2" id="editnotify"
+                    style="display:none;">
+
+                    <input type="hidden" name="notify" value="off" />
+                    <input type="checkbox" id="id_notify" name="notify" value="on" />
+                    <label for="id_notify" class="mr-4">通知するならチェック、しないならチェックをはずす</label>
+
+                    <x-element.submitbutton value="editnotify" color="yellow">
+                        チェックをいれた人の、mailnotifyを修正する
                     </x-element.submitbutton>
                 </div>
             </div>
@@ -171,6 +180,13 @@
             </div>
 
         </div>
+
+        <div class="mx-6 my-2">
+            <x-element.submitbutton value="excel" color="lime">
+                Role『{{ $role->desc }}』のメンバーをExcel出力
+            </x-element.submitbutton>
+        </div>
+
     </form>
     @php
         // REVIEWER_MEMBER をチェックして、まだアカウントがない人を表示する
