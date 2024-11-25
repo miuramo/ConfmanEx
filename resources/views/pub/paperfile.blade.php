@@ -16,7 +16,7 @@
             <span class="mx-4"></span>
             {{ __('論文ごとの採択ファイルの確認') }}
             <span class="mx-4"></span>
-            <x-element.bblink :bb_id="$bb->id" label="出版掲示板 for {{ $paper->id }}"></x-element.bblink>
+            <x-element.bblink :bb_id="$bb->id" label="出版掲示板 for {{ $paper->id_03d() }}"></x-element.bblink>
             <div
                 class="text-lg mt-4 font-bold bg-slate-200 py-2 px-4 inline-block rounded-md dark:text-slate-200 dark:bg-slate-500">
                 {{ $bb->paper->title }}</div>
@@ -79,7 +79,7 @@
                     <td class="px-2 py-1 text-center">
                         @if ($file->bb_mes_id)
                             <x-element.bblink :bbmes_id="$file->bb_mes_id"
-                                label="出版掲示板 for {{ $file->paper_id }}"></x-element.bblink>
+                                label="出版掲示板 for {{ sprintf('%03d',$file->paper_id) }}"></x-element.bblink>
                         @endif
                     </td>
                     <td class="px-2 py-1 text-center">
