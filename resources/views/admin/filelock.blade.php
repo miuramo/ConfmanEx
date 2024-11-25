@@ -49,7 +49,7 @@
                 @foreach ($cols as $col)
                     <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200' : 'bg-white dark:bg-slate-400' }}">
                         @foreach ($fs as $f => $h)
-                            @if ($f == 'category_id')
+                            @if ($f == 'category_id' && is_numeric($col->{$f}))
                                 <td class="p-1 text-center">{{ $cats[$col->{$f}] }}</td>
                             @else
                                 <td class="p-1 text-center">{{ $col->{$f} }}</td>
