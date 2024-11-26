@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateAnnotRequest;
 use App\Models\Annot;
 use App\Models\AnnotPaper;
 use App\Models\Paper;
+use App\Models\Setting;
 
 class AnnotController extends Controller
 {
@@ -24,6 +25,9 @@ class AnnotController extends Controller
      */
     public function create()
     {
+        $enabled_annotpaper = Setting::findByIdOrName('enable_annotpaper');
+        if (!$enabled_annotpaper->valid) abort(403, 'AnnotPaper Invalid');
+        if ($enabled_annotpaper->value !=='true') abort(403, 'AnnotPaper Disabled');
         //
         return view('annot.create');
     }
@@ -34,6 +38,7 @@ class AnnotController extends Controller
     public function store(StoreAnnotRequest $request)
     {
         $paper = Paper::find($request->paper_id);
+        if (!$paper) abort(403);
         AnnotPaper::create([
             'paper_id' => $request->paper_id,
             'user_id' => auth()->id(),
@@ -49,6 +54,7 @@ class AnnotController extends Controller
     public function show(int $annopaper)
     {
         $apaper = AnnotPaper::find($annopaper)->first();
+        if (!$apaper) abort(403);
         return view('annot.show')->with(compact('apaper'));
         //
     }
