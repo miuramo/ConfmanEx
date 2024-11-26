@@ -53,6 +53,7 @@
                 'noauthorlist(catid)' => '著者リスト未記入',
                 'oldfile(catid, "2024-07-10")' => '期日以前のファイル',
                 'nobib(catid1,catid2,...)' => '書誌情報なし(和文アブスト、和文キーワード、英文Titleのうち1つ以上)',
+                'hasvideo(catid1,catid2,...)' => '公開予定のビデオファイルあり',
                 '' => '',
             ];
         @endphp
