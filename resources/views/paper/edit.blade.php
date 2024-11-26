@@ -116,7 +116,11 @@
                     @endif
                 @endif
             @else
-                <x-alert.success>投稿に必要なファイルと情報は、そろっています。<br>投稿完了通知は「投稿完了通知メールを送信」を押すと送信します。<br>締め切り日時までは、ひきつづき修正可能です。</x-alert.success>
+                @if(!$paper->locked)
+                    <x-alert.success>投稿に必要なファイルと情報は、そろっています。<br>
+                    投稿完了通知は「投稿完了通知メールを送信」を押すと送信します。<br>
+                    締め切り日時までは、ひきつづき修正可能です。</x-alert.success>
+                @endif
                 @php
                     $submit_finished = true;
                 @endphp
