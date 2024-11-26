@@ -241,3 +241,5 @@ Route::middleware('guest')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+require __DIR__ . '/annotpaper.php';
