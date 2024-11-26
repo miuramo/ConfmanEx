@@ -59,7 +59,7 @@
                     </x-element.submitbutton>
                     @if($bb->paper->owner != auth()->id())
                     <div class="text-left">
-                    <span class="mx-2 p-1 text-xs  bg-yellow-200 dark:bg-yellow-500">差替用のファイルを添付するには、投稿時のアカウントでログインしてください。</span>
+                    <span class="mx-2 p-1 text-xs  bg-yellow-200 dark:bg-yellow-500">差替用のファイルを添付するときは、投稿時の著者アカウントでログインしてください。</span>
                     </div>
                     @endif
                 </div>
