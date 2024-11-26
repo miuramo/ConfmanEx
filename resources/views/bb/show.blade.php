@@ -57,6 +57,11 @@
                         <input class="text-sm" type="file" name="bbfile" id="bbfile">
                     送信すると、関係者にメールで通知されます。<x-element.submitbutton value="submit" color="green" id="bb_submit">了解して送信する
                     </x-element.submitbutton>
+                    @if($bb->paper->owner != auth()->id())
+                    <div class="text-left">
+                    <span class="mx-2 p-1 text-xs  bg-yellow-200 dark:bg-yellow-500">差替用のファイルを添付するには、投稿時のアカウントでログインしてください。</span>
+                    </div>
+                    @endif
                 </div>
             </form>
 
