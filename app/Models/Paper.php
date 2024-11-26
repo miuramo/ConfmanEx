@@ -697,4 +697,16 @@ class Paper extends Model
         }
         return $title;
     }
+
+    /**
+     * いずれかのカテゴリで、採択されているならtrue
+     */
+    public function is_accepted_in_any_category()
+    {
+        $subs = $this->submits;
+        foreach ($subs as $sub) {
+            if ($sub->accept->judge > 0) return true;
+        }
+        return false;
+    }
 }

@@ -26,21 +26,11 @@
                                         d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                                         clip-rule="evenodd" />
                                 </svg>
-                                {{-- <svg class="fill-current h-4 w-4"　xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
-                                <path d="M3 12L21 12M3 6L21 6M3 18L21 18"></path>
-                              </svg> --}}
-
                             </div>
                         </button>
                     </x-slot>
 
                     <x-slot name="content">
-                        {{-- <x-dropdown-link target="_blank" :href="route('file.pdfimages', ['file' => $file->id])">
-                        thumb
-                    </x-dropdown-link>
-                    <x-dropdown-link target="_blank" :href="route('file.altimgshow', ['file' => $file->id, 'hash'=> substr($file->key,0,8)])">
-                        alt
-                    </x-dropdown-link> --}}
                         <x-dropdown-div>
                             <x-element.deletebutton action="{{ route('file.destroy', ['file' => $file->id]) }}"
                                 color="red" confirm="削除してよいですか？"> Delete File
@@ -59,8 +49,9 @@
             @if ($file->locked)
                 <span
                     class="mx-1 sm:rounded-lg border-2 border-green-600 bg-lime-200 px-2 py-1 font-bold text-green-600 text-lg dark:bg-lime-400">Locked</span>
-                <div class="my-2"></div>
             @endif
+            <x-file.adoption :file="$file" />
+            <div class="my-2"></div>
 
             @if ($file->mime == 'image/png' || $file->mime == 'image/jpeg')
                 <a href="{{ route('file.showhash', ['file' => $file->id, 'hash' => substr($file->key, 0, 8)]) }}"

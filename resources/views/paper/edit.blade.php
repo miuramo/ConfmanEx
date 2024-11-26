@@ -125,6 +125,7 @@
 
         <div class="py-2 px-6">
             <div class="m-6">
+                @if(!$paper->locked)
                 <x-element.h1>ファイルをアップロードするには <span class="bg-lime-200 text-green-700 px-1 dark:bg-lime-500">Drop Files
                         Here</span> にドラッグ＆ドロップしてください。
                     <div class="text-sm mx-4 mt-2">
@@ -139,6 +140,9 @@
                 <div class="py-4 px-6">
                     <x-element.filedropzone color="lime" :paper_id="$id"></x-element.filedropzone>
                 </div>
+                @else
+                <span class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、この画面からのファイルアップロードはできません。）</span>
+                @endif
 
                 <div class="py-2 px-6">
                     {{-- ファイルアップロードがあると、#filelist の中身をAjaxでかきかえていく --}}

@@ -15,6 +15,9 @@
         duration-250">
         {{-- <div class="p-4 text-gray-900 xs:text-sm sm:text-sm md:text-md lg:text-lg xl:text-2xl"> --}}
         <div class="p-4 text-gray-900 text-sm">
+            <x-file.adoption :file="$file" />
+            <div class="my-2"></div>
+
             @if ($file->mime == 'image/png' || $file->mime == 'image/jpeg')
                 <a href="{{ route('file.showhash', ['file' => $file->id, 'hash' => substr($file->key, 0, 8)]) }}"
                     target="_blank">
@@ -58,8 +61,8 @@
             @if ($file->locked)
                 <span
                     class="mx-4 sm:rounded-lg border-2 border-green-600 bg-lime-200 px-2 py-1 font-bold text-green-600 text-lg">Locked</span>
-                <div class="my-2"></div>
             @endif
+            <div class="my-2"></div>
 
             @if ($file->deleted)
                 <span class="mx-4 sm:rounded-lg bg-yellow-200 px-2 py-1 font-bold text-red-600 text-lg">Deleted</span>
