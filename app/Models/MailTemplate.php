@@ -398,4 +398,24 @@ class MailTemplate extends Model
         }
         return $papers;
     }
+
+    /**
+     * 公開予定のVIDEOファイルがある
+     */
+    public static function mt_hasvideo(...$catids){
+        $accPIDs = Submit::with('paper')->whereIn("category_id", $catids)->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->get()->pluck("paper_id")->toArray();
+
+        $papers = [];
+        // $cols = Paper::whereIn('category_id', $args)->whereNull("abst")->orWhereNull("keyword")->orWhereNull("etitle")->get();
+        $cols = Paper::with('video_file')->whereIn('id', $accPIDs)
+            ->where(function ($query) {
+                $query->whereNotNull("video_file_id");
+            })->get();
+        foreach ($cols as $paper) {
+            $papers[] = $paper;
+        }
+        return $papers;
+    }
 }
