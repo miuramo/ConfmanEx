@@ -19,6 +19,10 @@
             class="mx-1 sm:rounded-lg border-2 border-blue-600 bg-cyan-200 px-2 py-1 font-bold text-blue-600 text-sm dark:bg-cyan-400">
             Videoとして収録予定
         </span>
+        <div class="my-2"></div>
+        <x-element.deletebutton action="{{ route('file.abandon', ['file' => $file->id]) }}" color="purple"
+            confirm="本当に【収録しない】に変更してよいですか？（ここで変更すると、元に戻せません）"> 【収録しない】に変更する
+        </x-element.deletebutton>
     @elseif($file->id == $file->paper->altpdf_file_id)
         <span
             class="mx-1 sm:rounded-lg border-2 border-blue-600 bg-cyan-200 px-2 py-1 font-bold text-blue-600 text-sm dark:bg-cyan-400">

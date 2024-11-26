@@ -168,6 +168,28 @@ class FileController extends Controller
     }
 
     /**
+     * このファイルの予稿集収録をとりやめる
+     */
+    public function abandon(Request $req, int $fileid)
+    {
+        $file = File::where('user_id', Auth::user()->id)->where('id', $fileid)->first();
+        $referrer = $req->headers->get('referer');
+        if ($referrer) {
+            $redirector = redirect($referrer);
+        } else {
+            $redirector = redirect()->route('paper.edit', ['paper' => $file->paper->id]);
+        }
+        if (!$file) {
+            return $redirector->with('feedback.error', '対象ファイルがありません。');
+        }
+        $file->paper->file_abandon($fileid);
+        $file->locked = 0;
+        $file->deleted = 1;
+        $file->save();
+        return $redirector->with('feedback.success', '【収録しない】に変更しました。');
+    }
+
+    /**
      * DB.files のデータを消す。ついでに、ファイルも消す。
      */
     public function delall()

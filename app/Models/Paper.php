@@ -709,4 +709,23 @@ class Paper extends Model
         }
         return false;
     }
+
+    /**
+     * このファイルの予稿集収録をとりやめる（参照をはずす）
+     */
+    public function file_abandon(int $fileid){
+        if ($this->pdf_file_id == $fileid) {
+            $this->pdf_file_id = null;
+        }
+        if ($this->img_file_id == $fileid) {
+            $this->img_file_id = null;
+        }
+        if ($this->video_file_id == $fileid) {
+            $this->video_file_id = null;
+        }
+        if ($this->altpdf_file_id == $fileid) {
+            $this->altpdf_file_id = null;
+        }
+        $this->save();
+    }
 }

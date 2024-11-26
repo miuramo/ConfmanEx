@@ -61,6 +61,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/file/pdftext/{file}', [FileController::class, 'pdftext'])->name('file.pdftext')->where('file', '([0-9]+|)');
     Route::resource('file', FileController::class);
     Route::get('/file/{file}/show/{hash?}', [FileController::class, 'show'])->name('file.showhash')->where('file', '([0-9]+|)');
+    Route::delete('/file/{file}/abandon', [FileController::class, 'abandon'])->name('file.abandon')->where('file', '([0-9]+|)'); // 予稿集掲載対象から外す。
 
     Route::get('/paper/adminlock', [PaperController::class, 'adminlock'])->name('paper.adminlock'); //ロック状態の変更(paper) 順番が大事。
     Route::post('/paper/adminlock', [PaperController::class, 'adminlock'])->name('paper.adminlock'); //ロック状態の変更(paper)
