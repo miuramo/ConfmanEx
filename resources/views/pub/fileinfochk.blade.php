@@ -48,14 +48,38 @@
         <table class="border-lime-400 border-2">
             <tr class="bg-lime-300">
                 @php
-                    $hs = ['PID', 'Booth', 'created_at', '拡張子', 'pages', 'fid', 'origfn', 'valid', 'deleted','PDF未採用','出版掲示板'];
+                    $hs = [
+                        'PID',
+                        'Booth',
+                        'created_at',
+                        '拡張子',
+                        'pages',
+                        'fid',
+                        'origfn',
+                        'valid',
+                        'deleted',
+                        'PDF未採用',
+                        '出版掲示板',
+                    ];
                 @endphp
                 @foreach ($hs as $h)
                     <th class="px-2 py-1">{{ $h }}</th>
                 @endforeach
             </tr>
             @foreach ($files as $file)
-                <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-lime-100' : 'bg-lime-50' }}">
+                <tr
+                    class="
+                @php
+if($file->valid && $file->deleted == 0) { 
+                    echo ($loop->iteration % 2 === 0 ? 'bg-lime-100' : 'bg-lime-50');
+                }
+                 else {
+                    if (!$file->valid){
+                        echo 'bg-gray-300';
+                    } else if($file->deleted) echo 'bg-gray-200';
+               
+                 } @endphp
+                ">
                     <td class="px-2 py-1 text-center">
                         {{ sprintf('%03d', $file->paper_id) }}
                     </td>
@@ -91,14 +115,16 @@
                         {{ $file->deleted }}
                     </td>
                     <td class="px-2 py-1 text-center">
-                        @if($file->mime == 'application/pdf' && $file->paper->pdf_file_id != $file->id)
-                        <div class="bg-yellow-300 text-sm">PDF未採用</div>
+                        @if ($file->valid && !$file->deleted && $file->mime == 'application/pdf' && $file->paper->pdf_file_id != $file->id)
+                            <div class="bg-yellow-300 text-sm">PDF未採用</div>
                         @endif
-                        <a class="text-sm bg-cyan-100 p-1 hover:bg-cyan-300" href="{{route('pub.paperfile', ['paper'=>$file->paper_id])}}" target="_blank">状況確認</a>
+                        <a class="text-sm bg-cyan-100 p-1 hover:bg-cyan-300"
+                            href="{{ route('pub.paperfile', ['paper' => $file->paper_id]) }}" target="_blank">状況確認</a>
                     </td>
                     <td class="px-2 py-1 text-center">
-                        @if($file->bb_mes_id)
-                            <x-element.bblink :bbmes_id="$file->bb_mes_id" label="for{{sprintf('%03d',$file->paper_id)}}"></x-element.bblink>
+                        @if ($file->bb_mes_id)
+                            <x-element.bblink :bbmes_id="$file->bb_mes_id"
+                                label="for{{ sprintf('%03d', $file->paper_id) }}"></x-element.bblink>
                         @endif
                     </td>
                 </tr>

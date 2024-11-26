@@ -48,7 +48,19 @@
                 @endforeach
             </tr>
             @foreach ($files as $file)
-                <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-lime-100' : 'bg-lime-50' }}">
+            <tr
+            class="
+        @php
+if($file->valid && $file->deleted == 0) { 
+            echo ($loop->iteration % 2 === 0 ? 'bg-lime-100' : 'bg-lime-50');
+        }
+         else {
+            if (!$file->valid){
+                echo 'bg-gray-300';
+            } else if($file->deleted) echo 'bg-gray-200';
+       
+         } @endphp
+        ">
                     <td class="px-2 py-1 text-center">
                         <input type="radio" name="file_id" form="fileadopt" value="{{ $file->id }}">
                     </td>
@@ -86,8 +98,8 @@
                         {{ $file->id }} 
                     </td>
                     <td class="px-2 py-1 text-center">
-                        @if($file->deleted_at)
-                            <span class="bg-red-300 text-red-800 px-2 py-1 rounded-lg">削除済({{$file->deleted_at}})</span>
+                        @if($file->deleted)
+                            <span class="bg-red-300 text-red-800 px-2 py-1 rounded-lg">Deleted</span>
                         @endif
                         @if($file->pending)
                             <span class="bg-purple-500 text-white px-2 py-1 rounded-lg">Pending</span>
@@ -120,9 +132,12 @@
             </select>
             <button type="submit" class="bg-yellow-300 hover:bg-orange-300 px-1 py-1 rounded-lg dark:text-gray-500"
                 onclick="return confirm('本当に採用しますか？（ファイルおよび種別がただしいか、再度確認してください）')">←として採用する</button>
+            または <x-element.submitbutton2 value="reject" size="sm" color="red" id="idreject"
+                confirm="return confirm('Invalid & Deletedにすることで、よろしければ、OKを押してください。')">Invalid & Deletedにする</x-element.submitbutton2>
         </form>
         <div class="p-2 m-1 bg-slate-50">
         ここで採用すると、Pending属性、削除済み属性は解除され、Lock属性がつきます。<br>
+        Invalid & Deletedにすると、Pending属性、Lock属性は解除されます。<br>
         掲示板には通知しません。必要があれば、個別に通知してください。<br>
         論文（Paper）から、参照・採用できるファイルは、種別(pdf,img,video,altpdf,etc...)ごとに一つのみです。
         </div>

@@ -3,6 +3,7 @@
     'value' => '',
     'color' => 'blue',
     'id' => 'id_submit_button',
+    'confirm' => 'false',
 ])
 @php
     $id = ($id == 'id_submit_button') ? $id.'_'.$value : $id;

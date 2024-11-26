@@ -304,7 +304,8 @@ class SubmitController extends Controller
         foreach ($subs as $sub) {
             $pid2sub[$sub->paper->id] = $sub;
         }
-        $files = File::whereIn('paper_id', array_keys($pid2sub))->where('valid', 1)->where('deleted', 0)->get()->sortByDesc('created_at');
+        // $files = File::whereIn('paper_id', array_keys($pid2sub))->where('valid', 1)->where('deleted', 0)->get()->sortByDesc('created_at');
+        $files = File::whereIn('paper_id', array_keys($pid2sub))->get()->sortByDesc('created_at');
 
         return view('pub.fileinfochk', ["cat" => $catid])->with(compact("pid2sub", "files"));
     }
@@ -488,7 +489,7 @@ class SubmitController extends Controller
     {
         if (!auth()->user()->can('role_any', 'admin|pc|pub|web')) abort(403);
         $paper = Paper::findOrFail($paperid);
-        $files = File::where('paper_id', $paperid)->where('valid', 1)->where('deleted', 0)->orderBy('created_at', 'desc')->get();
+        $files = File::where('paper_id', $paperid)->orderBy('created_at', 'desc')->get();
         $bb = Bb::where('paper_id', $paperid)->where('type', 3)->first();
         return view('pub.paperfile')->with(compact("paper", "files", "bb"));
     }

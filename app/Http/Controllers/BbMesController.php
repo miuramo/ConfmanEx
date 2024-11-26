@@ -77,6 +77,28 @@ class BbMesController extends Controller
         $bb = Bb::with("paper")->with("category")->where('id', $bbid)->where('key', $key)->first();
         if ($bb == null) abort(403, 'bb not found');
 
+        // もし、取り下げなら、invalid & deleted にする
+        if ($req->action == "reject") {
+            $file_id = $req->input("file_id");
+            $rejectfile = \App\Models\File::find($file_id);
+            $rejectfile->valid = 0;
+            $rejectfile->deleted = 1;
+            $rejectfile->pending = 0;
+            $rejectfile->save();
+            $memo = "(fileid={$file_id}, name={$rejectfile->origname}) について、未採用＆措置済みにしました。\n";
+            $bbmes = BbMes::create([
+                'bb_id' => $bb->id,
+                'user_id' => auth()->id(),
+                'subject' => "未採用ファイルを措置済みにしました",
+                'mes' => $memo,
+            ]);
+            //メール通知
+            (new BbNotify($bb, $bbmes))->process_send();
+    
+            return redirect()->route('bb.show', ['bb' => $bbid, 'key' => $key])->with('feedback.success', "ファイルを未採用＆措置済みにし、本掲示板にその旨を通知しました。");    
+        }
+
+
         $file_desc = Setting::findByIdOrName('FILE_DESCRIPTIONS', 'value');
         $ft = json_decode($file_desc, true);
 

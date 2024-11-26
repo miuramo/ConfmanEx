@@ -471,6 +471,7 @@ class PaperController extends Controller
 
     /**
      * 出版が、ファイルを採用する（アップロードされたファイルに切り替える）
+     * 関連：BbMesController.phpのadopt
      */
     public function fileadopt(Request $req)
     {
@@ -482,6 +483,18 @@ class PaperController extends Controller
         if (!$req->file_id) {
             return redirect()->route('pub.paperfile', ['paper' => $req->paper_id])->with('feedback.error', 'ファイルがchkでチェックされていません。');
         }
+
+        if ($req->action == "reject") {
+            $file_id = $req->input("file_id");
+            $rejectfile = \App\Models\File::find($file_id);
+            $rejectfile->valid = 0;
+            $rejectfile->deleted = 1;
+            $rejectfile->pending = 0;
+            $rejectfile->locked = 0;
+            $rejectfile->save();
+            return redirect()->route('pub.paperfile', ['paper' => $req->paper_id])->with('feedback.success', 'ファイルをInvalid & Deletedにしました。状況を再度、確認してください。');
+        }
+
         $file = File::find($req->file_id);
         if ($req->ftype == 'pdf')
             $paper->pdf_file_id = $file->id;

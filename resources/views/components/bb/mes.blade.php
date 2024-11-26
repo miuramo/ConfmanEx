@@ -57,6 +57,7 @@
                         <span class="mx-1 text-sm text-blue-400 dark:text-blue-200">(採用済み)</span>
                     @else
                         @if ($file->paper_id > 0)
+                            @if($file->valid)
                             <form action="{{ route('bb.adopt', ['bb' => $mes->bb->id, 'key' => $mes->bb->key]) }}"
                                 method="post" class="inline">
                                 @csrf
@@ -74,6 +75,7 @@
                                 <button type="submit"
                                     class="bg-yellow-300 hover:bg-orange-300 px-1 py-1 rounded-lg dark:text-gray-500"
                                     onclick="return confirm('本当に採用しますか？（ファイル種別がただしいか、再度確認してください）')">←として採用し、本掲示板にその旨を通知する。</button>
+                                または <x-element.submitbutton2 value="reject" size="xs" color="red" id="bb_submit" confirm="return confirm('採用せず処置済みにすることで、よろしければ、OKを押してください。')">採用せずに処置済みにする（ファイルをinvalid&deletedにし、本掲示板に通知する）</x-element.submitbutton2>
                             </form>
 
                             <div class="mx-8 text-gray-600 dark:text-gray-50">参考：
@@ -93,6 +95,9 @@
                                     </a>
                                 @endif
                             </div>
+                            @else
+                                <span class="text-sm text-gray-500">→措置済み（未採用）</span>
+                            @endif
                         @endif
                     @endif
                 @endforeach
