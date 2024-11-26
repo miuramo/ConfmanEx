@@ -14,6 +14,9 @@
     @if (session('feedback.success'))
         <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
     @endif
+    @if (session('feedback.error'))
+        <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
+    @endif
 
     <div class="py-2 px-6">
         {{-- ファイルアップロードがあると、#filelist の中身をAjaxでかきかえていく --}}
