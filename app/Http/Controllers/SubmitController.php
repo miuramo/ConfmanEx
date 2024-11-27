@@ -280,8 +280,9 @@ class SubmitController extends Controller
 
     /**
      * bibinfo for web (プログラム出力)
+     * filechk 0 非表示、1 確認可能なリンク
      */
-    public function bibinfo(int $catid, bool $abbr = false)
+    public function bibinfo(int $catid, bool $abbr = false, int $filechk = 0)
     {
         if (!auth()->user()->can('role_any', 'admin|pc|pub|web')) abort(403);
 
@@ -289,7 +290,7 @@ class SubmitController extends Controller
             $query->where("judge", ">", 0);
         })->orderBy("orderint")->get();
 
-        return view('pub.bibinfo', ["cat" => $catid])->with(compact("subs", "catid", "abbr"));
+        return view('pub.bibinfo', ["cat" => $catid])->with(compact("subs", "catid", "abbr","filechk"));
     }
 
     /**
