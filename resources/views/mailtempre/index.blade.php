@@ -19,17 +19,17 @@
             @csrf
             @method('post')
 
-            <table class="table-auto w-full">
+            <table class="table-auto w-full sortable" id="sortable">
                 <thead>
                     <tr class="bg-pink-200">
-                        <th class="px-2">chk</th>
+                        <th class="px-2 unsortable">chk</th>
                         <th class="px-2">id</th>
                         <th class="px-2">to</th>
                         <th class="px-2">subject</th>
                         <th class="px-2">name</th>
                         <th class="px-2">lastsent</th>
                         <th class="px-2">updated_at</th>
-                        <th class="px-2">(action)</th>
+                        <th class="px-2 unsortable">(action)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -108,5 +108,8 @@
     </div>
 
 
+    @push('localjs')
+        <script src="/js/sortable.js"></script>
+    @endpush
 
 </x-app-layout>
