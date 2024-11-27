@@ -192,6 +192,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/man_9wtest', [ManagerController::class, 'test9w'])->name('admin.test9w');
     Route::get('/man_paperauthorhead', [ManagerController::class, 'paperauthorhead'])->name('admin.paperauthorhead');
     Route::post('/man_paperauthorhead', [ManagerController::class, 'paperauthorhead'])->name('admin.paperauthorhead');
+    Route::post('/man_importpaperjson', [ManagerController::class, 'importpaperjson'])->name('admin.importpaperjson');
+    Route::get('/man_importpaperjson', [ManagerController::class, 'importpaperjson'])->name('admin.importpaperjson');
+
     // 切り取った画像の一覧
     Route::get('/man_paperlist_headimg', [ManagerController::class, 'paperlist_headimg'])->name('admin.paperlist_headimg');
     Route::get('/man_paperlist_headimg_recrop', [ManagerController::class, 'paperlist_headimg_recrop'])->name('admin.paperlist_headimg_recrop');

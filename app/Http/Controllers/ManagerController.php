@@ -103,21 +103,21 @@ class ManagerController extends Controller
         // OcrJob::dispatch();
         return redirect()->route('admin.dashboard')->with('feedback.success', 'OCR Queueを実行しました。');
     }
-    
+
     public function paperauthorhead(Request $req)
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         $sets = Setting::where("name", "like", "SKIP_HEAD_%")->where("valid", true)->get();
         $papers = Paper::whereNotNull("pdf_file_id")->get();
-        if ($req->input('action')=='titleupdate'){ // 第3要素のタイトルで書き換える
-            foreach($papers as $paper){
+        if ($req->input('action') == 'titleupdate') { // 第3要素のタイトルで書き換える
+            foreach ($papers as $paper) {
                 $title = $paper->title_candidate();
-                foreach($sets as $set){
-                    $title = str_replace($set->value,"",$title);
+                foreach ($sets as $set) {
+                    $title = str_replace($set->value, "", $title);
                 }
                 // authorheadが含まれていたら
-                $pos = mb_strpos($title, mb_substr($paper->authorhead,0,2));
-                if ( $pos > -1 && $pos !== false){
+                $pos = mb_strpos($title, mb_substr($paper->authorhead, 0, 2));
+                if ($pos > -1 && $pos !== false) {
                     $title = mb_substr($title, 0, $pos);
                 }
                 $paper->title = $title;
@@ -125,10 +125,10 @@ class ManagerController extends Controller
             }
             return redirect()->route('admin.paperauthorhead')->with('feedback.success', 'タイトルを一括更新しました');
         }
-        if ($req->input('action')=='setfirstauthor_ifnull'){ // ★★第一著者未設定★★ について、第一著者の苗字を設定する
-            foreach($papers as $paper){
+        if ($req->input('action') == 'setfirstauthor_ifnull') { // ★★第一著者未設定★★ について、第一著者の苗字を設定する
+            foreach ($papers as $paper) {
                 if (mb_strlen($paper->authorhead) < 1) {
-                    $myouji = explode(" ",$paper->paperowner->name)[0];
+                    $myouji = explode(" ", $paper->paperowner->name)[0];
                     $paper->authorhead = $myouji;
                     $paper->save();
                 }
@@ -149,7 +149,41 @@ class ManagerController extends Controller
             return redirect()->route('admin.paperauthorhead')->with('feedback.success', 'updated');
         }
 
-        return view('admin.paperauthorhead')->with(compact("papers","sets"));
+        return view('admin.paperauthorhead')->with(compact("papers", "sets"));
     }
 
+    public function importpaperjson(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+
+        $out = "";
+        $src = "";
+        $updated = false;
+        if ($req->has('paperjson')) { // テキストエリアがある場合
+            info($req->input('action'));
+            $src = $req->input('paperjson');
+            $jsons = json_decode($req->input('paperjson'), true);
+            foreach ($jsons as $json) {
+                $booth = $json['id'];
+                if (is_numeric($booth)) {
+                    $booth = (int)$booth;
+                }
+                $sub = Submit::where('booth', $booth)->first();
+                if ($sub) {
+                    if ($sub->paper->title != $json['title']) {
+                        $out .= $json['title'] . "  " . $sub->paper_id . " ;; " . $json['id'] . " ;; " . "\n";
+                        $out .= "" . $sub->paper->title . "\n";
+                        if ($req->input('action') == 'doreplace') {
+                            $sub->paper->title = $json['title'];
+                            $sub->paper->save();
+                        }
+                    }
+                }
+            }
+            if ($req->input('action') == 'doreplace') {
+                $updated = true;
+            }
+        }
+        return view('admin.importpaperjson')->with(compact("out", "src", "updated"));
+    }
 }
