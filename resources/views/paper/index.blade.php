@@ -76,6 +76,20 @@
                                 color="pink" target="_blank">
                                 掲示板 </x-element.linkbutton>
                         @endisset
+
+                        @php
+                            $bb3 = App\Models\Bb::where('paper_id', $paper->id)
+                                ->where('category_id', $paper->category_id)
+                                ->where('type', 3) // 3: 出版　この条件を忘れると、議論用が表示されてしまうため注意
+                                ->first();
+                        @endphp
+                        @isset($bb3)
+                            &nbsp;
+                            &nbsp;
+                            <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb3, 'key' => $bb3->key]) }}"
+                                color="pink" target="_blank">
+                                出版掲示板 </x-element.linkbutton>
+                        @endisset
                     @endif
 
                     <a href="{{ route('paper.edit', ['paper' => $paper->id]) }}">
