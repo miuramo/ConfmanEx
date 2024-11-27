@@ -75,7 +75,7 @@
                                 <button type="submit"
                                     class="bg-yellow-300 hover:bg-orange-300 px-1 py-1 rounded-lg dark:text-gray-500"
                                     onclick="return confirm('本当に採用しますか？（ファイル種別がただしいか、再度確認してください）')">←として採用し、本掲示板にその旨を通知する。</button>
-                                または <x-element.submitbutton2 value="reject" size="xs" color="red" id="bb_submit" confirm="return confirm('採用せず処置済みにすることで、よろしければ、OKを押してください。')">採用せずに処置済みにする（ファイルをinvalid&deletedにし、本掲示板に通知する）</x-element.submitbutton2>
+                                または <x-element.submitbutton2 value="reject" size="xs" color="red" id="bb_submit" confirm="採用せず処置済みにすることで、よろしければ、OKを押してください。">採用せずに処置済みにする（ファイルをinvalid&deletedにし、本掲示板に通知する）</x-element.submitbutton2>
                             </form>
 
                             <div class="mx-8 text-gray-600 dark:text-gray-50">参考：
