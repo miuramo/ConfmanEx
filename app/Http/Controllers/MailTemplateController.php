@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\MailTemplatesExport;
 use App\Http\Requests\StoreMailTemplateRequest;
 use App\Http\Requests\UpdateMailTemplateRequest;
+use App\Imports\MailTemplatesImport;
 use App\Models\Accept;
 use App\Models\MailTemplate;
 use App\Models\Paper;
@@ -11,7 +13,10 @@ use App\Models\Submit;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Markdown;
 use App\Mail\ForAuthor;
+use App\Models\File;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Client\Request as ClientRequest;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MailTemplateController extends Controller
 {
@@ -93,10 +98,11 @@ class MailTemplateController extends Controller
             $mt->name = $req->input("name");
             $mt->user_id = auth()->user()->id;
             $mt->save();
+            if ($req->expectsJson()) return response()->json(['result' => '保存成功']);
             return redirect()->route('mt.edit',['mt'=>$id])->with('feedback.success', "メール雛形を保存しました。");
         }
+        if ($req->expectsJson()) return response()->json(['result' => '保存失敗']);
         return redirect()->route('mt.index')->with('feedback.error', "保存できませんでした。");
-        // info($req->all());
         //
     }
 
@@ -117,7 +123,7 @@ class MailTemplateController extends Controller
         //
     }
     /**
-     * まとめてコピー、または削除
+     * まとめてコピー、または削除、またはExcelExport
      */
     public function bundle(Request $req)
     {
@@ -147,8 +153,22 @@ class MailTemplateController extends Controller
                     }
                     return redirect()->route('mt.index')->with('feedback.success', "メール雛形をコピーしました。");
                 }
+            } else if ($req->input("action") == "export") {
+                if (count($targetmts) > 0) {
+                    return Excel::download(new MailTemplatesExport($targetmts), 'mail_templates.xlsx');
+                }
             }
         }
         return redirect()->route('mt.index')->with('feedback.error', "メール雛形を選択してから操作してください。");
+    }
+
+    public function import(FormRequest $req)
+    {
+        $tmp = $req->file("file");
+        $hashname = $tmp->hashName();
+        $tmp->storeAs(File::pf(), $hashname);
+        $fullpath = storage_path(File::apf() . '/' . $hashname);
+        Excel::import(new MailTemplatesImport, $fullpath);
+        return redirect(route('mt.index'))->with('feedback.success', 'メール雛形をインポートしました。');
     }
 }

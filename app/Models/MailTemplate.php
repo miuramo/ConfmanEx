@@ -11,6 +11,19 @@ class MailTemplate extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'from',
+        'to',
+        'cc',
+        'bcc',
+        'subject',
+        'body',
+        'name',
+        'category_id',
+        'lastsent'
+    ];
+
     /**
      * Role member追加から呼ばれる。
      */
@@ -402,7 +415,8 @@ class MailTemplate extends Model
     /**
      * 公開予定のVIDEOファイルがある
      */
-    public static function mt_hasvideo(...$catids){
+    public static function mt_hasvideo(...$catids)
+    {
         $accPIDs = Submit::with('paper')->whereIn("category_id", $catids)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
         })->get()->pluck("paper_id")->toArray();

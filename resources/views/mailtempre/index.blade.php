@@ -43,11 +43,14 @@
                                 {{ $mt->id }}
                             </td>
                             <td class="px-2 py-1">
-                                <a class="hover:font-bold hover:text-blue-600 block break-all" href="{{ route('mt.edit', ['mt' => $mt])}}" target="editmt_{{$mt->id}}">
+                                <a class="hover:font-bold hover:text-blue-600 block break-all"
+                                    href="{{ route('mt.edit', ['mt' => $mt]) }}" target="editmt_{{ $mt->id }}">
                                     {{ $mt->to }}</a>
                             </td>
                             <td class="px-2 py-1">
-                                <a class="hover:font-bold hover:text-lime-600" href="{{ route('mt.show', ['mt' => $mt]) }}" target="previewmt_{{$mt->id}}">{{ $mt->subject }}</a>
+                                <a class="hover:font-bold hover:text-lime-600"
+                                    href="{{ route('mt.show', ['mt' => $mt]) }}"
+                                    target="previewmt_{{ $mt->id }}">{{ $mt->subject }}</a>
                             </td>
                             <td class="px-2 py-1">
                                 {{ $mt->name }}
@@ -59,18 +62,12 @@
                                 {{ $mt->updated_at }}
                             </td>
                             <td class="px-2 py-1">
-                                <x-element.linkbutton2 href="{{ route('mt.show', ['mt' => $mt]) }}" color="lime">
-                                    送信前の確認画面
+                                <x-element.linkbutton2 href="{{ route('mt.show', ['mt' => $mt]) }}" color="lime" size="xs">
+                                    送信前確認
                                 </x-element.linkbutton2>
-                                <x-element.linkbutton2
-                                    href="{{ route('mt.edit', ['mt' => $mt]) }}"
-                                    color="blue">
+                                <x-element.linkbutton2 href="{{ route('mt.edit', ['mt' => $mt]) }}" color="blue" size="xs">
                                     雛形を編集
                                 </x-element.linkbutton2>
-                                {{-- <x-element.deletebutton action="{{ route('mt.destroy', ['mt' => $mt]) }}"
-                                confirm="本当に削除する？">削除
-                            </x-element.deletebutton> --}}
-
                             </td>
                         </tr>
                     @endforeach
@@ -84,8 +81,22 @@
                 <x-element.submitbutton value="delete" color="red" confirm="本当に削除する？">
                     チェックをいれた雛形を削除
                 </x-element.submitbutton>
+                <span class="mx-2"></span>
+                <x-element.submitbutton value="export" color="lime">
+                    チェックをいれた雛形をExcelエクスポート
+                </x-element.submitbutton>
             </div>
         </form>
+
+        <form action="{{ route('mt.import') }}" method="post" id="mtimport" enctype="multipart/form-data" class="inline-block">
+            @csrf
+            @method('post')
+            Excelエクスポートファイルを選択→
+            <input type="file" name="file" id="file" class="text-xs">
+            <x-element.submitbutton color="cyan">←で指定したファイルから雛形をインポート
+            </x-element.submitbutton>
+        </form>
+
 
         <div class="py-5"></div>
         <x-element.h1>Toと雛形の説明
