@@ -133,7 +133,7 @@ if($file->valid && $file->deleted == 0) {
             <button type="submit" class="bg-yellow-300 hover:bg-orange-300 px-1 py-1 rounded-lg dark:text-gray-500"
                 onclick="return confirm('本当に採用しますか？（ファイルおよび種別がただしいか、再度確認してください）')">←として採用する</button>
             または <x-element.submitbutton2 value="reject" size="sm" color="red" id="idreject"
-                confirm="return confirm('Invalid & Deletedにすることで、よろしければ、OKを押してください。')">Invalid & Deletedにする</x-element.submitbutton2>
+                confirm="Invalid & Deletedにすることで、よろしければ、OKを押してください。">Invalid & Deletedにする</x-element.submitbutton2>
         </form>
         <div class="p-2 m-1 bg-slate-50">
         ここで採用すると、Pending属性、削除済み属性は解除され、Lock属性がつきます。<br>
