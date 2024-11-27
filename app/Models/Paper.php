@@ -516,6 +516,10 @@ class Paper extends Model
             // info("note: category->extract_title is 0. SKIPPING.");
             return;
         }
+        if ($this->locked){
+            // info("note: paper is locked. SKIPPING.");
+            return;
+        }
 
         // 下処理として、改行をとりのぞく
         if (function_exists("mb_strpos")) {
