@@ -75,6 +75,7 @@
                                 <option>【テキスト一括処理】</option>
                                 <option value="replace_kuten">、。を，．に変換</option>
                                 <option value="replace_kuten2">，．を、。に変換</option>
+                                <option value="replace_kuten3">、．を，。に変換</option>
                             </select>
                         </td>
                     </tr>
@@ -171,6 +172,9 @@
                 $("#" + tdid).val(newtext);
             } else if (event.target.value == "replace_kuten2") {
                 var newtext = text.replace(/，/g, "、").replace(/．/g, "。");
+                $("#" + tdid).val(newtext);
+            } else if (event.target.value == "replace_kuten3") {
+                var newtext = text.replace(/、/g, "，").replace(/．/g, "。");
                 $("#" + tdid).val(newtext);
             }
         }
