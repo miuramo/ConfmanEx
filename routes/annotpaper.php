@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth')->group(function () {
     Route::resource('annot', AnnotController::class);
 
-
+    Route::post('/annot_postsubmit', [AnnotController::class, 'postsubmit'])->name('annot.postsubmit');
+    // Route::get('/annot_jsubmit/{annot}', [AnnotController::class, 'jsubmit'])->name('annot.submit');
+    // Route::get('/jsubmit/{annot?}', [AnnotController::class, 'jsonsubmit'])->name('annot.jsonsubmit');
 });
-

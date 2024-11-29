@@ -9,6 +9,8 @@ class Annot extends Model
 {
     use HasFactory;
 
+    protected $with = ['user', 'annot_paper', 'paper'];
+
     protected $fillable = [
         'annot_paper_id',
         'paper_id',
@@ -17,8 +19,13 @@ class Annot extends Model
         'user_id',
         'iine',
     ];
+    protected $casts = [
+        'content' => 'array',
+    ];
+    protected $attributes = [
+        'content' => '[]',
+    ];
 
-    protected $with = ['user', 'annot_paper', 'paper'];
 
     public function user()
     {

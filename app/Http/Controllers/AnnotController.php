@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreAnnotRequest;
-use App\Http\Requests\UpdateAnnotRequest;
 use App\Models\Annot;
 use App\Models\AnnotPaper;
 use App\Models\Paper;
 use App\Models\Setting;
+use Illuminate\Http\Request;
 
 class AnnotController extends Controller
 {
@@ -34,8 +33,9 @@ class AnnotController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * Paperを保存する
      */
-    public function store(StoreAnnotRequest $request)
+    public function store(Request $request)
     {
         $paper = Paper::find($request->paper_id);
         if (!$paper) abort(403);
@@ -53,11 +53,41 @@ class AnnotController extends Controller
      */
     public function show(int $annopaper)
     {
-        $apaper = AnnotPaper::find($annopaper)->first();
+        $apaper = AnnotPaper::find($annopaper);
         if (!$apaper) abort(403);
         return view('annot.show')->with(compact('apaper'));
         //
     }
+    /**
+     * 送信元Pageは annot / num = (show) apaper, apaper has paper_id, user_id, file_id
+     * Update the specified resource in storage.
+     * Annotationを更新する（保存する。もし無ければ作る）
+     */
+    public function postsubmit(Request $req, Annot $annot)
+    {
+        // annot_paper_id, page, content
+        // (paper_idはannot_paper_idから取得)
+        $apaper = AnnotPaper::find($req->annot_paper_id);
+        if (!$apaper) abort(403);
+        $an = Annot::firstOrCreate([
+            'annot_paper_id' => $req->annot_paper_id,
+            'page' => $req->page,
+            'user_id' => auth()->id(),
+        ],[
+            'content' => json_decode($req->content, true),
+            'iine' => 0,
+            'paper_id' => $apaper->paper_id,
+        ]);
+        
+        info($an->content);
+        // $ary = json_decode($req->content, true);
+        // info($ary);
+        // $an->content = $ary;
+        // $an->save();
+        return "OK, saved";
+        //
+    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -66,14 +96,13 @@ class AnnotController extends Controller
     {
         //
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateAnnotRequest $request, Annot $annot)
+    public function update(Request $req, Annot $annot)
     {
+        info($req->all());
+        return "UPDATE";
         //
     }
+
 
     /**
      * Remove the specified resource from storage.

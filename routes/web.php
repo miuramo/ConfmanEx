@@ -244,6 +244,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/validate/{key}', [UserController::class, 'validate_email'])->name('validate_email');
 });
 
+require __DIR__ . '/annotpaper.php';
+
 require __DIR__ . '/auth.php';
 
-require __DIR__ . '/annotpaper.php';
