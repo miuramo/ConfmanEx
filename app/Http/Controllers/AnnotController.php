@@ -26,7 +26,7 @@ class AnnotController extends Controller
     {
         $enabled_annotpaper = Setting::findByIdOrName('enable_annotpaper');
         if (!$enabled_annotpaper->valid) abort(403, 'AnnotPaper Invalid');
-        if ($enabled_annotpaper->value !=='true') abort(403, 'AnnotPaper Disabled');
+        if ($enabled_annotpaper->value !== 'true') abort(403, 'AnnotPaper Disabled');
         //
         return view('annot.create');
     }
@@ -73,17 +73,13 @@ class AnnotController extends Controller
             'annot_paper_id' => $req->annot_paper_id,
             'page' => $req->page,
             'user_id' => auth()->id(),
-        ],[
-            'content' => json_decode($req->content, true),
+        ], [
             'iine' => 0,
             'paper_id' => $apaper->paper_id,
         ]);
-        
-        info($an->content);
-        // $ary = json_decode($req->content, true);
-        // info($ary);
-        // $an->content = $ary;
-        // $an->save();
+        info($req->content);
+        $an->content = $req->content;
+        $an->save();
         return "OK, saved";
         //
     }

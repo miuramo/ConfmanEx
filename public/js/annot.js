@@ -17,15 +17,6 @@ function resizeCanvas() {
     canvas.setWidth(windowWidth);
     canvas.setHeight(image.naturalHeight * scale);
 
-    // オブジェクトのリサイズと再配置
-    // canvas.getObjects().forEach((obj, index) => {
-    //     const original = originalState.objects[index];
-    //     obj.scaleX = original.scaleX * scaleX;
-    //     obj.scaleY = original.scaleY * scaleY;
-    //     obj.left = original.left * scaleX;
-    //     obj.top = original.top * scaleY;
-    //     obj.setCoords(); // 座標を再計算
-    //   });
     // オブジェクトがある場合は必要に応じて再スケール
     canvas.getObjects().forEach(obj => {
         let objWidth = obj.width * scale;
@@ -35,44 +26,21 @@ function resizeCanvas() {
         obj.top = (obj.top * scale) / lastScale;
     });
 
-    imgInstance.scaleToWidth(windowWidth);
-    imgInstance.scaleToHeight(windowWidth * 1.41);
-
     canvas.renderAll();
 }
 
+function import_notes() {
+    const jsonData = notes[0]['content'];
+    canvas.loadFromJSON(jsonData, () => {
+    }).then((canvas) => {
+        canvas.renderAll(); // すべてのオブジェクトを再描画
+    });
+}
+
 function image_onload() {
-    console.log('画像読み込み完了');
-    imgInstance = new fabric.Image(image, {
-        left: 0,
-        top: 0,
-        angle: 0,
-        opacity: 1.0
-    });
-    imgInstance.selectable = false;
-    imgInstance.evented = false;
-    imgInstance.excludeFromExport = true;
-    canvas.add(imgInstance);
-    // canvas.sendToBack(imgInstance); 
 
-    // 四角形を描画
-    // const rect = new fabric.Rect({
-    //     left: 50,
-    //     top: 50,
-    //     fill: 'rgba(0, 155, 0, 0.5)', // 半透明のgreen
-    //     width: 100,
-    //     height: 100,
-    //     hasBorders: true, // 境界線を表示
-    //     hasControls: true // リサイズコントロールを表示
-    // });
+    import_notes();
 
-    // テキストを描画
-    const text = new fabric.IText('Hello, Fabric!', {
-        left: 200,
-        top: 150,
-        fontSize: 30,
-        fill: 'blue',
-    });
     // 半透明の四角形を描画
     // const transparentRect = new fabric.Rect({
     //     left: 300,
@@ -83,9 +51,6 @@ function image_onload() {
     //     hasBorders: true, // 境界線を表示
     //     hasControls: true // リサイズコントロールを表示
     // });
-    // Canvas にオブジェクトを追加
-    // canvas.add(rect);
-    canvas.add(text);
     // canvas.add(transparentRect);
 
     // オブジェクトをクリックして選択できる
@@ -188,11 +153,21 @@ function image_onload() {
 
     // エクスポートボタンのクリックイベント
     document.getElementById('exportButton').addEventListener('click', function () {
-        const json = JSON.stringify(canvas.toJSON());
+        //独自属性を追加
+        const windowWidth = window.innerWidth - 15;
+        // JSONを一旦オブジェクトに変換
+        let json = canvas.toJSON();
+        // windowWidthを JSON に追加
+        json.windowWidth = windowWidth;
+        // JSON を文字列に変換
+        const strjson = JSON.stringify(json);
 
-        document.getElementById('output').textContent = json;
-        document.getElementById('id_content').value = json;
+        document.getElementById('output').textContent = strjson;
+        document.getElementById('id_content').value = strjson;
         annot_changed('submit_annots');
+    });
+    document.getElementById('importButton').addEventListener('click', function () {
+        import_notes();
     });
 }
 // 画像の読み込み後に初期描画

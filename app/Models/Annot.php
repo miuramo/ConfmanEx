@@ -9,7 +9,7 @@ class Annot extends Model
 {
     use HasFactory;
 
-    protected $with = ['user', 'annot_paper', 'paper'];
+    // protected $with = ['user', 'annot_paper'];
 
     protected $fillable = [
         'annot_paper_id',
@@ -19,12 +19,12 @@ class Annot extends Model
         'user_id',
         'iine',
     ];
-    protected $casts = [
-        'content' => 'array',
-    ];
-    protected $attributes = [
-        'content' => '[]',
-    ];
+    // protected $casts = [
+    //     'content' => 'array',
+    // ];
+    // protected $attributes = [
+    //     'content' => '[]',
+    // ];
 
 
     public function user()

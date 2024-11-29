@@ -42,7 +42,9 @@
     <button id="addTextButton" class="p-2 bg-blue-200 hover:bg-blue-500">add Text</button>
     <button id="exportButton">Save</button>
     <button id="importButton">Load</button>
-    <canvas id="canvas" width="600" height="900"></canvas>
+    <div id="canvas-container" style="position: relative; width: 100%; height: auto; background: url('{{ route('file.pdfimages', ['file' => $apaper->file->id, 'page' => $page, 'hash' => substr($apaper->file->key, 0, 8)]) }}') no-repeat center center; background-size: cover;">
+        <canvas id="canvas" width="600" height="900"></canvas>
+    </div>
     <pre id="output"></pre>
 
     <form action="{{ route('annot.postsubmit') }}" method="post" class="invisible" id="submit_annots">
@@ -54,6 +56,13 @@
         {{-- <button type="submit" class="p-2 bg-blue-200 hover:bg-blue-500">Save</button> --}}
     </form>
 
+    @php
+        $annots = $apaper->annots->where('page', $page);
+        $notes = json_encode($annots);
+    @endphp
+    <script>
+        const notes = {!!$notes !!};
+    </script>
 
     @push('localjs')
         <script src="/js/jquery.min.js"></script>
