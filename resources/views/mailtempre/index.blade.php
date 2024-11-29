@@ -73,6 +73,14 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="py-2">
+                <x-element.button onclick="CheckAll('mt_bundle')" color="lime" value="すべてチェック" size="xs">
+                </x-element.button>
+                &nbsp;
+                <x-element.button onclick="UnCheckAll('mt_bundle')" color="orange" value="すべてチェック解除" size="xs">
+                </x-element.button>
+            </div>
+
             <div class="mt-2">
                 <x-element.submitbutton value="copy" color="yellow">
                     チェックをいれた雛形をコピー
@@ -106,7 +114,22 @@
         </x-mailtempre.manual>
 
     </div>
-
+    <script>
+        function CheckAll(formname) {
+            for (var i = 0; i < document.forms[formname].elements.length; i++) {
+                if (document.forms[formname].elements[i].type != "radio") {
+                    document.forms[formname].elements[i].checked = true;
+                }
+            }
+        }
+        function UnCheckAll(formname) {
+            for (var i = 0; i < document.forms[formname].elements.length; i++) {
+                if (document.forms[formname].elements[i].type != "radio") {
+                    document.forms[formname].elements[i].checked = false;
+                }
+            }
+        }
+    </script>
 
     @push('localjs')
         <script src="/js/sortable.js"></script>

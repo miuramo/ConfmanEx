@@ -42,10 +42,6 @@
 
             <table>
                 <thead>
-                    {{-- <tr class="bg-pink-200">
-                        <th class="px-2">field</th>
-                        <th class="px-2">id</th>
-                    </tr> --}}
                 </thead>
                 <tbody>
                     <tr class="bg-pink-100 dark:bg-pink-300">
@@ -73,8 +69,13 @@
                         <td class="px-2 py-1">
                             <label for="body">Body</label>
                         </td>
-                        <td class="px-2 py-1">
-                            <textarea name="body" cols="100" rows="20">{{ $mt->body }}</textarea>
+                        <td class="px-2 py-1 flex items-end">
+                            <textarea name="body" cols="100" rows="20" id="mt_body">{{ $mt->body }}</textarea>
+                            <select class="font-sans text-xs" onchange="other_textchange(event);">
+                                <option>【テキスト一括処理】</option>
+                                <option value="replace_kuten">、。を，．に変換</option>
+                                <option value="replace_kuten2">，．を、。に変換</option>
+                            </select>
                         </td>
                     </tr>
                     <tr class="bg-pink-50 dark:bg-pink-200">
@@ -106,8 +107,6 @@
                     target="_blank" color="gray">
                     （管理者編集）
                 </x-element.linkbutton>
-
-
             </div>
         </form>
 
@@ -160,6 +159,24 @@
                 document.querySelector('#flashable').classList.remove('flash-success');
             }, 1300); // フラッシュの持続時間を1.3秒に設定
         }
+
+        // crud でのテキスト編集
+        function other_textchange(event) {
+            // console.log(event.target.value); // selected option value
+            // console.log(event.target.id); // select
+            var tdid = "mt_body";
+            var text = $("#" + tdid).val();
+            if (event.target.value == "replace_kuten") {
+                var newtext = text.replace(/、/g, "，").replace(/。/g, "．");
+                $("#" + tdid).val(newtext);
+            } else if (event.target.value == "replace_kuten2") {
+                var newtext = text.replace(/，/g, "、").replace(/．/g, "。");
+                $("#" + tdid).val(newtext);
+            }
+        }
     </script>
+    @push('localjs')
+        <script src="/js/jquery.min.js"></script>
+    @endpush
 
 </x-app-layout>

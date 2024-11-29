@@ -38,6 +38,9 @@ class ReplaceKutenMiddleware
             route('bb.show', ['bb' => 'NUM', 'key' => 'ALPHANUM']),
             route('pub.bibinfochk', ['cat' => 'NUM']),
             route('pub.bibinfo', ['cat' => 'NUM', 'abbr' => 'ALPHANUM']),
+            route('mt.edit', ['mt' => 'NUM']),
+            route('mt.show', ['mt' => 'NUM']),
+            route('mt.index'),
         ];
 
         $baseurl = url('/');
