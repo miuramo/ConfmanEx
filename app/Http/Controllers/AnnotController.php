@@ -51,11 +51,11 @@ class AnnotController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $annopaper)
+    public function show(int $annopaper, int $page = 1)
     {
         $apaper = AnnotPaper::find($annopaper);
         if (!$apaper) abort(403);
-        return view('annot.show')->with(compact('apaper'));
+        return view('annot.show')->with(compact('apaper', 'page'));
         //
     }
     /**
@@ -77,7 +77,6 @@ class AnnotController extends Controller
             'iine' => 0,
             'paper_id' => $apaper->paper_id,
         ]);
-        info($req->content);
         $an->content = $req->content;
         $an->save();
         return "OK, saved";
@@ -94,7 +93,6 @@ class AnnotController extends Controller
     }
     public function update(Request $req, Annot $annot)
     {
-        info($req->all());
         return "UPDATE";
         //
     }

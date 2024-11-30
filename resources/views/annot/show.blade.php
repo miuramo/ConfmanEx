@@ -25,27 +25,30 @@
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
 
-    @php
-        $page = 2;
-    @endphp
     {{-- @for ($page = 1; $page <= $apaper->file->pagenum; $page++)
     <img src="{{ route('file.pdfimages', ['file' => $apaper->file->id, 'page'=>$page, 'hash' => substr($apaper->file->key, 0, 8)]) }}"
     title="page {{$page}}" loading="lazy" class="flex-shrink-0 border">
 @endfor --}}
 
     <!-- 元の画像 -->
-    <img src="{{ route('file.pdfimages', ['file' => $apaper->file->id, 'page' => $page, 'hash' => substr($apaper->file->key, 0, 8)]) }}"
+    <img src="{{ route('file.pdfimages', ['file' => $apaper->file->id, 'page' => $page, 'hash' => substr($apaper->file->key, 0, 13)]) }}"
         title="page" class="flex-shrink-0 border" id="targetImage" style="display:none;">
 
     <!-- 描画用のキャンバス -->
-    <button id="drawModeButton">フリーハンド描画モード</button>
     <button id="addTextButton" class="p-2 bg-blue-200 hover:bg-blue-500">add Text</button>
-    <button id="exportButton">Save</button>
-    <button id="importButton">Load</button>
-    <div id="canvas-container" style="position: relative; width: 100%; height: auto; background: url('{{ route('file.pdfimages', ['file' => $apaper->file->id, 'page' => $page, 'hash' => substr($apaper->file->key, 0, 8)]) }}') no-repeat center center; background-size: cover;">
+    <button id="addRectButton" class="p-2 bg-blue-200 hover:bg-blue-500">add Rect</button>
+    <button id="exportButton" class="p-2 bg-blue-200 hover:bg-blue-500">Save</button>
+    {{-- <button id="importButton" class="p-2 bg-blue-200 hover:bg-blue-500">Load</button> --}}
+    {{-- <button id="inspectButton" class="p-2 bg-blue-200 hover:bg-blue-500">Inspect</button> --}}
+    <div id="canvas-container"
+        style="position: relative; width: 100%; height: auto; background: url('{{ route('file.pdfimages', ['file' => $apaper->file->id, 'page' => $page, 'hash' => substr($apaper->file->key, 0, 8)]) }}') no-repeat center center; background-size: cover;">
         <canvas id="canvas" width="600" height="900"></canvas>
     </div>
-    <pre id="output"></pre>
+    <pre id="output" class="invisible"></pre>
+    <div id="tooltip"
+        style="position: absolute; display: none; background: rgba(0, 0, 0, 0.8); color: white; padding: 5px; border-radius: 3px; font-size: 12px; pointer-events: none;">
+    </div>
+    <button id="drawModeButton" style="visibility:hidden;">フリーハンド描画モード</button>
 
     <form action="{{ route('annot.postsubmit') }}" method="post" class="invisible" id="submit_annots">
         @csrf
@@ -57,11 +60,11 @@
     </form>
 
     @php
-        $annots = $apaper->annots->where('page', $page);
-        $notes = json_encode($annots);
+        $final = $apaper->get_fabric_objects($page);
     @endphp
     <script>
-        const notes = {!!$notes !!};
+        const notes = {!! $final !!};
+        const user_id = {{ Auth::id() }};
     </script>
 
     @push('localjs')

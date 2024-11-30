@@ -34,5 +34,22 @@ class AnnotPaper extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function get_fabric_objects($page = 1)
+    {
+        $annots = $this->annots->where('page', $page);
+        $concat = [];
+        foreach($annots as $eachannot){
+            $objcontent = json_decode($eachannot->content, true);
+            foreach($objcontent['objects'] as $ooo){
+                $ooo['user_id'] = $eachannot->user_id;
+                $concat[] = $ooo;
+            }
+        }
+        $objects = [];
+        $objects['version'] = '6.5.1';
+        $objects['objects'] = $concat;
+        $final = json_encode($objects);
+        return $final;
+    }
 
 }

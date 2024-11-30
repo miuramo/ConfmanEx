@@ -57,7 +57,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/file/adminlock', [FileController::class, 'adminlock'])->name('file.adminlock'); //ロック状態の変更(file)
     Route::post('/file/adminlock', [FileController::class, 'adminlock'])->name('file.adminlock'); //ロック状態の変更(file)
     Route::get('/file/altimgshow/{file}/{hash?}', [FileController::class, 'altimgshow'])->name('file.altimgshow');
-    Route::get('/file/pdfimages/{file}/{page?}/{hash?}', [FileController::class, 'pdfimages'])->name('file.pdfimages')->where('page', '([0-9]+|)');
     Route::get('/file/pdftext/{file}', [FileController::class, 'pdftext'])->name('file.pdftext')->where('file', '([0-9]+|)');
     Route::resource('file', FileController::class);
     Route::get('/file/{file}/show/{hash?}', [FileController::class, 'show'])->name('file.showhash')->where('file', '([0-9]+|)');
@@ -238,10 +237,14 @@ Route::post('vote', [VoteController::class, 'index'])->name('vote.index');
 Route::get('vote/{vote}/vote', [VoteController::class, 'vote'])->name('vote.vote');
 Route::post('vote/{vote}/vote', [VoteController::class, 'vote'])->name('vote.vote');
 
+Route::get('/file/pdfimages/{file}/{page?}/{hash?}', [FileController::class, 'pdfimages'])->name('file.pdfimages')->where('page', '([0-9]+|)');
+
 Route::middleware('guest')->group(function () {
     Route::get('/entry', [UserController::class, 'entry0'])->name('entry0');
     Route::post('/entry', [UserController::class, 'entry'])->name('entry');
     Route::get('/validate/{key}', [UserController::class, 'validate_email'])->name('validate_email');
+
+
 });
 
 require __DIR__ . '/annotpaper.php';

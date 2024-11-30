@@ -107,10 +107,11 @@ class FileController extends Controller
                 if (strpos($file->key, $firsthash) !== 0) abort(403, 'file key mismatch');
             }
             if (!is_numeric($pagenum)) {
-                return view("file/pdfimages")->with(compact("file"));
-            } else {
-                return response()->file($file->getPdfThumbPath($pagenum));
+                // return view("file.pdfimages")->with(compact("file"));
+            // } else {
+                $pagenum = 1;
             }
+            return response()->file($file->getPdfThumbPath($pagenum));
             // ->header("Content-Disposition", $file->origname);
         } catch (ModelNotFoundException $e) {
             return "error";

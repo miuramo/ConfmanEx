@@ -226,6 +226,7 @@ class Paper extends Model
      */
     public function getAuthorType(): int
     {
+        if (Auth::guest()) return -1; // not logged in
         if ($this->owner == Auth::user()->id) {
             return 1; // main author
         } else if ($this->isCoAuthorEmail(Auth::user()->email)) {
