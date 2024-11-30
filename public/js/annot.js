@@ -258,7 +258,7 @@ function image_onload() {
 
         fix_scale_objects(tmpscale, lastScale);
         canvas.discardActiveObject();
-        canvas.renderAll();
+        canvas.requestRenderAll();
         if (previousData === strjson) {
             console.log('変更なし');
             return;
