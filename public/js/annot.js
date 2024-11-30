@@ -44,6 +44,13 @@ function resizeCanvas() {
 
 function fix_scale_objects(lastS, curS) {
     canvas.getObjects().forEach(obj => {
+        if (obj.user_id === undefined || obj.excludeFromExport) {
+            console.log('skip fix');
+            return;
+        }
+        if (obj.user_id != user_id) {
+            obj.excludeFromExport = true;
+        }
         let objWidth = obj.width * curS;
         const origSX = obj.scaleX;
         const origSY = obj.scaleY;
@@ -53,9 +60,6 @@ function fix_scale_objects(lastS, curS) {
         obj.top = (obj.top * curS) / lastS;
         obj.scaleX = origSX * curS / lastS;
         obj.scaleY = origSY * curS / lastS;
-        if (obj.user_id != user_id) {
-            obj.excludeFromExport = true;
-        }
     });
 }
 
@@ -232,8 +236,14 @@ function image_onload() {
 
     let previousData = null;
     function save_objects() {
-        canvas.discardActiveObject(); // アクティブオブジェクトを解除
-        canvas.renderAll(); // 再描画
+        // if (canvas.getActiveObject() !== null) {
+        //     const obj = canvas.getActiveObject();
+        //     if (obj) {
+        //         obj.setCoords(); // オブジェクトのバウンディングボックスを再計算
+        //     }
+        //     canvas.discardActiveObject(); // アクティブオブジェクトを解除
+        //     canvas.requestRenderAll(); // 再描画
+        // }
 
         // 横幅を1000に一度リサイズ
         const tmpscale = 1000 / image.naturalWidth;
@@ -248,6 +258,8 @@ function image_onload() {
         const strjson = JSON.stringify(json);
 
         fix_scale_objects(tmpscale, lastScale);
+        canvas.discardActiveObject();
+        canvas.renderAll();
         if (previousData === strjson) {
             console.log('変更なし');
             return;
@@ -257,6 +269,8 @@ function image_onload() {
         document.getElementById('id_content').value = strjson;
         annot_changed('submit_annots');
         previousData = strjson;
+
+
     }
     // エクスポートボタンのクリックイベント
     document.getElementById('exportButton').addEventListener('click', function () {

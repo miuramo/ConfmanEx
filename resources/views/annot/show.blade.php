@@ -57,6 +57,21 @@
         style="position: relative; width: 100%; height: auto; background: url('{{ route('file.pdfimages', ['file' => $apaper->file->id, 'page' => $page, 'hash' => substr($apaper->file->key, 0, 13)]) }}') no-repeat center center; background-size: cover;">
         <canvas id="canvas" width="600" height="900"></canvas>
     </div>
+
+    <div class="m-2">
+        @for ($i = 1; $i <= $apaper->file->pagenum; $i++)
+            @if ($apaper->annots->where('page', $i)->where('user_id', '!=',auth()->id())->count() > 0)
+                <x-element.linkbutton href="{{ route('annot.showpage', ['annot' => $apaper->id, 'page' => $i]) }}"
+                    color="cyan">page{{ $i }}
+                </x-element.linkbutton>
+            @else
+            <x-element.linkbutton href="{{ route('annot.showpage', ['annot' => $apaper->id, 'page' => $i]) }}"
+                color="gray">page{{ $i }}
+            </x-element.linkbutton>
+            @endif
+        @endfor
+    </div>
+
     <pre id="output" class="invisible"></pre>
     <div id="tooltip"
         style="position: absolute; display: none; background: rgba(0, 0, 0, 0.8); color: white; padding: 5px; border-radius: 3px; font-size: 12px; pointer-events: none;">
