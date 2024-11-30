@@ -45,7 +45,6 @@ function resizeCanvas() {
 function fix_scale_objects(lastS, curS) {
     canvas.getObjects().forEach(obj => {
         if (obj.user_id === undefined || obj.excludeFromExport) {
-            console.log('skip fix');
             return;
         }
         if (obj.user_id != user_id) {
