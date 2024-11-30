@@ -4,6 +4,19 @@
             {{ $apaper->paper->id_03d() }} {{ $apaper->paper->title }}
         </h2>
     </x-slot>
+    <div class="m-2">
+        @for ($i = 1; $i <= $apaper->file->pagenum; $i++)
+            @if ($apaper->annots->where('page', $i)->where('user_id', '!=',auth()->id())->count() > 0)
+                <x-element.linkbutton href="{{ route('annot.showpage', ['annot' => $apaper->id, 'page' => $i]) }}"
+                    color="cyan">page{{ $i }}
+                </x-element.linkbutton>
+            @else
+            <x-element.linkbutton href="{{ route('annot.showpage', ['annot' => $apaper->id, 'page' => $i]) }}"
+                color="gray">page{{ $i }}
+            </x-element.linkbutton>
+            @endif
+        @endfor
+    </div>
 
     <style>
         canvas {
@@ -41,7 +54,7 @@
     {{-- <button id="importButton" class="p-2 bg-blue-200 hover:bg-blue-500">Load</button> --}}
     {{-- <button id="inspectButton" class="p-2 bg-blue-200 hover:bg-blue-500">Inspect</button> --}}
     <div id="canvas-container"
-        style="position: relative; width: 100%; height: auto; background: url('{{ route('file.pdfimages', ['file' => $apaper->file->id, 'page' => $page, 'hash' => substr($apaper->file->key, 0, 8)]) }}') no-repeat center center; background-size: cover;">
+        style="position: relative; width: 100%; height: auto; background: url('{{ route('file.pdfimages', ['file' => $apaper->file->id, 'page' => $page, 'hash' => substr($apaper->file->key, 0, 13)]) }}') no-repeat center center; background-size: cover;">
         <canvas id="canvas" width="600" height="900"></canvas>
     </div>
     <pre id="output" class="invisible"></pre>
