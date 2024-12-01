@@ -82,6 +82,14 @@ class AnnotController extends Controller
         return "OK, saved";
         //
     }
+    public function comment_json(int $annopaper, int $page = 1)
+    {
+        $apaper = AnnotPaper::find($annopaper);
+        if (!$apaper) abort(403);
+        $final = $apaper->get_fabric_objects($page);
+        return response()->json($final);
+        //
+    }
 
 
     /**

@@ -35,4 +35,13 @@ trait FindByIdOrNameTrait
         }
         return null;
     }
+
+    public static function isTrue(object|string $id)
+    {
+        $obj = self::findByIdOrName($id);
+        if ($obj == null) return false;
+        if ($obj->valid == false) return false;
+        if ($obj->value == 'true') return true;
+        return false;
+    }
 }

@@ -42,6 +42,8 @@ class AnnotPaper extends Model
             $objcontent = json_decode($eachannot->content, true);
             foreach($objcontent['objects'] as $ooo){
                 $ooo['user_id'] = $eachannot->user_id;
+                $ooo['name'] = $eachannot->user->name;
+                $ooo['affil'] = $eachannot->user->affil;
                 $concat[] = $ooo;
             }
         }

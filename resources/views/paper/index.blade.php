@@ -90,6 +90,14 @@
                                 color="pink" target="_blank">
                                 出版掲示板 </x-element.linkbutton>
                         @endisset
+
+                        @if(App\Models\Setting::isTrue("ENABLE_ANNOTPAPER"))
+                        &nbsp;
+                        &nbsp;
+                        <x-element.linkbutton href="{{ route('annot.create') }}"
+                            color="lime" target="_blank">
+                            AnnotPaper </x-element.linkbutton>
+                    @endif
                     @endif
 
                     <a href="{{ route('paper.edit', ['paper' => $paper->id]) }}">

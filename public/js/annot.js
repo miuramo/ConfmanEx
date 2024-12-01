@@ -22,8 +22,7 @@ function resizeCanvas() {
         let objWidth = obj.width * scale;
         const origSX = obj.scaleX;
         const origSY = obj.scaleY;
-        obj.scaleToWidth(objWidth); // 例: オブジェクトをキャンバス幅の10%に調整
-        // console.log(obj);
+        obj.scaleToWidth(objWidth); // オブジェクトをキャンバス幅に合わせて調整
         obj.left = (obj.left * scale) / lastScale;
         obj.top = (obj.top * scale) / lastScale;
         obj.scaleX = origSX * scale / lastScale;
@@ -34,7 +33,7 @@ function resizeCanvas() {
             obj.hoverCursor = 'default';
             // obj.evented = false; // ここを使うとマウスホバーイベントが発生しなくなる
         }
-
+        obj.setCoords(); // バウンディングボックスを再計算
     });
     canvas.renderAll();
     lastWidth = window.innerWidth;
@@ -44,23 +43,39 @@ function resizeCanvas() {
 
 function fix_scale_objects(lastS, curS) {
     canvas.getObjects().forEach(obj => {
-        if (obj.user_id === undefined || obj.excludeFromExport) {
-            return;
-        }
-        if (obj.user_id != user_id) {
-            obj.excludeFromExport = true;
-        }
+        obj.excludeFromExport = (obj.user_id != user_id);
         let objWidth = obj.width * curS;
         const origSX = obj.scaleX;
         const origSY = obj.scaleY;
-        obj.scaleToWidth(objWidth); // 例: オブジェクトをキャンバス幅の10%に調整
-        // console.log(obj);
+        obj.scaleToWidth(objWidth); // オブジェクトをキャンバス幅に合わせて調整
         obj.left = (obj.left * curS) / lastS;
         obj.top = (obj.top * curS) / lastS;
         obj.scaleX = origSX * curS / lastS;
         obj.scaleY = origSY * curS / lastS;
+        obj.setCoords(); // バウンディングボックスを再計算
     });
 }
+
+function get_comment_json() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                // データの取得が成功した場合
+                var responseData = xhr.responseText;
+                notes = JSON.parse(responseData);
+                console.log(notes);
+            } else {
+                // データの取得が失敗した場合
+                console.error('Request failed:', xhr.status);
+            }
+        }
+    };
+    xhr.open('GET', '/annot/' + annotpaper_id + '/comment_json/' + page, false);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // これがないとAjax判定にならない
+    xhr.send();
+}
+
 
 function import_notes() {
     if (notes === undefined || notes.length === 0) {
@@ -78,6 +93,37 @@ function inspect_selected() {
     const ao = canvas.getActiveObject();
     console.log('w', ao.width, 'h', ao.height, 'left', ao.left, 'top', ao.top, 'sX', ao.scaleX, 'sY', ao.scaleY, 'uID', ao.user_id);
 }
+
+function new_text(px, py) {
+    const newTxt = new fabric.IText('ここをクリックして編集', {
+        left: px,
+        top: py,
+        fontSize: 25,
+        fill: 'blue',
+        scaleX: scale,
+        scaleY: scale,
+        user_id: user_id,
+        name: username,
+        affil: useraffil,
+    });
+    canvas.add(newTxt);
+}
+function new_rect(px, py) {
+    const newRect = new fabric.Rect({
+        left: 200,
+        top: 50,
+        fill: 'rgba(255, 255, 0, 0.3)', // 半透明の赤色
+        width: 200,
+        height: 100,
+        hasBorders: true, // 境界線を表示
+        hasControls: true, // リサイズコントロールを表示
+        user_id: user_id,
+        name: username,
+        affil: useraffil,
+    });
+    canvas.add(newRect);
+}
+
 
 function image_onload() {
 
@@ -152,7 +198,7 @@ function image_onload() {
         if (target) {
             tooltip.style.background = (target.user_id == user_id) ? 'rgba(70, 250, 220, 0.8)' : 'rgba(230, 200, 40, 0.8)';
             tooltip.style.display = 'block';
-            tooltip.textContent = 'uID:' + target.user_id || 'Tooltip';
+            tooltip.textContent = target.name+" ("+target.affil+")" || 'Tooltip';
         } else {
             tooltip.style.display = 'none';
         }
@@ -175,16 +221,7 @@ function image_onload() {
     function dblclick(e) {
         if (canvas.getActiveObject() === undefined) {
             console.log('クリックされた座標:', e);
-            const newTxt = new fabric.IText('ここをクリックして編集', {
-                left: e.pointer.x,
-                top: e.pointer.y,
-                fontSize: 25,
-                fill: 'blue',
-                scaleX: scale,
-                scaleY: scale,
-                user_id: user_id,
-            });
-            canvas.add(newTxt);
+            new_text(e.pointer.x, e.pointer.y);
         }
     }
 
@@ -194,7 +231,16 @@ function image_onload() {
         if (e.key === 'Delete' || e.key === 'Backspace') {
             if (!isTextEditing) {
                 console.log('Deleteキーが押されました');
-                canvas.remove(canvas.getActiveObject());
+                const activeObjects = canvas.getActiveObjects();
+
+                if (activeObjects.length) {
+                    // 選択されたすべてのオブジェクトを削除
+                    activeObjects.forEach(obj => canvas.remove(obj));
+
+                    // 選択状態をクリア
+                    canvas.discardActiveObject();
+                    canvas.requestRenderAll();
+                }
             }
         }
     };
@@ -207,43 +253,15 @@ function image_onload() {
         this.textContent = isDrawingMode ? '描画モード終了' : 'フリーハンド描画モード';
     });
     document.getElementById('addTextButton').addEventListener('click', function () {
-        const newTxt = new fabric.IText('ここをクリックして編集', {
-            left: 200 * scale,
-            top: 150 * scale,
-            fontSize: 25,
-            fill: 'blue',
-            scaleX: scale,
-            scaleY: scale,
-            user_id: user_id,
-        });
-        canvas.add(newTxt);
+        new_text(200, 50);
     });
     document.getElementById('addRectButton').addEventListener('click', function () {
         // 半透明の四角形を描画
-        const transparentRect = new fabric.Rect({
-            left: 300,
-            top: 50,
-            fill: 'rgba(255, 255, 0, 0.3)', // 半透明の赤色
-            width: 200,
-            height: 100,
-            hasBorders: true, // 境界線を表示
-            hasControls: true, // リサイズコントロールを表示
-            user_id: user_id,
-        });
-        canvas.add(transparentRect);
+        new_rect();
     });
 
     let previousData = null;
     function save_objects() {
-        // if (canvas.getActiveObject() !== null) {
-        //     const obj = canvas.getActiveObject();
-        //     if (obj) {
-        //         obj.setCoords(); // オブジェクトのバウンディングボックスを再計算
-        //     }
-        //     canvas.discardActiveObject(); // アクティブオブジェクトを解除
-        //     canvas.requestRenderAll(); // 再描画
-        // }
-
         // 横幅を1000に一度リサイズ
         const tmpscale = 1000 / image.naturalWidth;
         fix_scale_objects(lastScale, tmpscale);
@@ -251,14 +269,12 @@ function image_onload() {
         // JSONを一旦オブジェクトに変換
         let json = canvas.toJSON();
         // windowWidthを JSON に追加
-        json.windowWidth = 1000;
+        json.windowWidth = 1000; //0.8058017727639001;
         json.lastScale = tmpscale;
         // JSON を文字列に変換
         const strjson = JSON.stringify(json);
 
         fix_scale_objects(tmpscale, lastScale);
-        canvas.discardActiveObject();
-        canvas.requestRenderAll();
         if (previousData === strjson) {
             console.log('変更なし');
             return;
@@ -272,12 +288,16 @@ function image_onload() {
 
     }
     // エクスポートボタンのクリックイベント
-    document.getElementById('exportButton').addEventListener('click', function () {
+    document.getElementById('saveButton').addEventListener('click', function () {
+        canvas.discardActiveObject();
+        canvas.renderAll();
+
         save_objects();
     });
-    // document.getElementById('importButton').addEventListener('click', function () {
-    //     import_notes();
-    // });
+    document.getElementById('loadButton').addEventListener('click', function () {
+        get_comment_json();
+        import_notes();
+    });
     // document.getElementById('inspectButton').addEventListener('click', function () {
     //     inspect_selected();
     // });
@@ -309,7 +329,7 @@ function annot_changed(formName) {
         beforeSend: function (xhr, settings) { },
         complete: function (xhr, textStatus) { },
         success: function (result, textStatus, xhr) {
-            console.log("success");
+            console.log("success "+new Date());
         },
         error: function (xhr, textStatus, error) {
             console.log(textStatus);

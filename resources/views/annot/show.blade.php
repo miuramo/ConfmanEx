@@ -6,15 +6,14 @@
     </x-slot>
     <div class="m-2">
         @for ($i = 1; $i <= $apaper->file->pagenum; $i++)
-            @if ($apaper->annots->where('page', $i)->where('user_id', '!=',auth()->id())->count() > 0)
-                <x-element.linkbutton href="{{ route('annot.showpage', ['annot' => $apaper->id, 'page' => $i]) }}"
-                    color="cyan">page{{ $i }}
-                </x-element.linkbutton>
-            @else
+            @php
+            if ($i == $page) $color = 'yellow';
+            else if ($apaper->annots->where('page', $i)->where('user_id', '!=',auth()->id())->count() > 0) $color = 'cyan';
+            else $color = 'gray';
+            @endphp
             <x-element.linkbutton href="{{ route('annot.showpage', ['annot' => $apaper->id, 'page' => $i]) }}"
-                color="gray">page{{ $i }}
+                color="{{$color}}">page{{ $i }}
             </x-element.linkbutton>
-            @endif
         @endfor
     </div>
 
@@ -50,8 +49,8 @@
     <!-- 描画用のキャンバス -->
     <button id="addTextButton" class="p-2 bg-blue-200 hover:bg-blue-500">add Text</button>
     <button id="addRectButton" class="p-2 bg-blue-200 hover:bg-blue-500">add Rect</button>
-    <button id="exportButton" class="p-2 bg-blue-200 hover:bg-blue-500">Save</button>
-    {{-- <button id="importButton" class="p-2 bg-blue-200 hover:bg-blue-500">Load</button> --}}
+    <button id="saveButton" class="p-2 bg-blue-200 hover:bg-blue-500">Save</button>
+    <button id="loadButton" class="p-2 bg-blue-200 hover:bg-blue-500">Load</button>
     {{-- <button id="inspectButton" class="p-2 bg-blue-200 hover:bg-blue-500">Inspect</button> --}}
     <div id="canvas-container"
         style="position: relative; width: 100%; height: auto; background: url('{{ route('file.pdfimages', ['file' => $apaper->file->id, 'page' => $page, 'hash' => substr($apaper->file->key, 0, 13)]) }}') no-repeat center center; background-size: cover;">
@@ -60,16 +59,16 @@
 
     <div class="m-2">
         @for ($i = 1; $i <= $apaper->file->pagenum; $i++)
-            @if ($apaper->annots->where('page', $i)->where('user_id', '!=',auth()->id())->count() > 0)
-                <x-element.linkbutton href="{{ route('annot.showpage', ['annot' => $apaper->id, 'page' => $i]) }}"
-                    color="cyan">page{{ $i }}
-                </x-element.linkbutton>
-            @else
-            <x-element.linkbutton href="{{ route('annot.showpage', ['annot' => $apaper->id, 'page' => $i]) }}"
-                color="gray">page{{ $i }}
-            </x-element.linkbutton>
-            @endif
-        @endfor
+        @php
+        if ($i == $page) $color = 'yellow';
+        else if ($apaper->annots->where('page', $i)->where('user_id', '!=',auth()->id())->count() > 0) $color = 'cyan';
+        else $color = 'gray';
+        @endphp
+        <x-element.linkbutton href="{{ route('annot.showpage', ['annot' => $apaper->id, 'page' => $i]) }}"
+            color="{{$color}}">page{{ $i }}
+        </x-element.linkbutton>
+    @endfor
+
     </div>
 
     <pre id="output" class="invisible"></pre>
@@ -91,8 +90,12 @@
         $final = $apaper->get_fabric_objects($page);
     @endphp
     <script>
-        const notes = {!! $final !!};
+        let notes = {!! $final !!};
         const user_id = {{ Auth::id() }};
+        const annotpaper_id = {{ $apaper->id }};
+        const page = {{ $page }};
+        const username = "{{ Auth::user()->name }}";
+        const useraffil = "{{ Auth::user()->affil }}";
     </script>
 
     @push('localjs')
