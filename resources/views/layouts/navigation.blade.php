@@ -16,7 +16,7 @@
                     </x-nav-link>
                 </div>
                 @php
-                    $voting = App\Models\Setting::findByIdOrName('VOTING', 'value');
+                    $voting = App\Models\Setting::isTrue('VOTING');
                 @endphp
 
                 @auth
@@ -31,7 +31,7 @@
                             '新規投稿' => request()->routeIs('paper.create'),
                             '投稿一覧' => request()->routeIs('paper.index'),
                         ];
-                        if ($voting == 'false') {
+                        if (!$voting) {
                             unset($navs_href['投票']);
                             unset($navs_active['投票']);
                         }
@@ -116,7 +116,7 @@
                     </x-dropdown>
                 @else
                     <div class="flex h-16" align="right">
-                        @if ($voting == 'true')
+                        @if ($voting)
                             <div class="hidden space-x-8 sm:-my-px sm:ms-5 sm:flex">
                                 <x-nav-link :href="route('vote.index')" :active="request()->routeIs('vote.index')">
                                     {{ __('投票') }}

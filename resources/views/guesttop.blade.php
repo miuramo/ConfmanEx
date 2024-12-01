@@ -49,8 +49,7 @@
     </div>
 
     @php
-        $introvideourl_obj = App\Models\Setting::findByIdOrName('INTRO_VIDEO_URL');
-        if ($introvideourl_obj->valid) $introvideourl = $introvideourl_obj->value;
+        $introvideourl = App\Models\Setting::getValue('INTRO_VIDEO_URL');
     @endphp
     <!-- 動画でみる投稿の流れの設定は、Setting:INTRO_VIDEO_URL にあります。 -->
     @isset($introvideourl)

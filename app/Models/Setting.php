@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class Setting extends Model
 {
     use HasFactory;
-    use FindByIdOrNameTrait;
+    use FindByIdOrNameTrait, GetValueTrait;
 
     protected $fillable = [
         'name',

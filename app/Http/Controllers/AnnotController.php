@@ -24,9 +24,7 @@ class AnnotController extends Controller
      */
     public function create()
     {
-        $enabled_annotpaper = Setting::findByIdOrName('enable_annotpaper');
-        if (!$enabled_annotpaper->valid) abort(403, 'AnnotPaper Invalid');
-        if ($enabled_annotpaper->value !== 'true') abort(403, 'AnnotPaper Disabled');
+        if (!Setting::isTrue('enable_annotpaper')) abort(403, 'AnnotPaper Invalid or Disabled');
         //
         return view('annot.create');
     }

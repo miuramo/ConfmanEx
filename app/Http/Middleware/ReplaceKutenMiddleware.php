@@ -62,9 +62,8 @@ class ReplaceKutenMiddleware
         if ($response instanceof \Illuminate\Http\Response) {
             $content = $response->getContent();
 
-            $replacesetting = Setting::findByIdOrName("REPLACE_PUNCTUATION");
-            if ($replacesetting != null && $replacesetting->valid) {
-                $replaceary = json_decode($replacesetting->value);
+            if (Setting::isTrue("REPLACE_PUNCTUATION")) {
+                $replaceary = json_decode(Setting::getValue("REPLACE_PUNCTUATION"));
                 foreach ($replaceary as $old => $new) {
                     $content = str_replace($old, $new, $content);
                     // $content = str_replace('検索文字列', '置換後の文字列', $content);
