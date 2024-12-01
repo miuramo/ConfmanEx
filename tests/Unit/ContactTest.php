@@ -14,15 +14,6 @@ use Illuminate\Support\Facades\Log;
 
 class ContactTest extends TestCase
 {
-    // use RefreshDatabase;
-    use DatabaseMigrations;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Artisan::call('migrate:fresh --seed');
-        // Artisan::call('db:seed');
-    }
 
     /**
      * A basic test example.

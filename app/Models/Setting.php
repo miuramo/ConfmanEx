@@ -179,6 +179,5 @@ class Setting extends Model
         Vote::init();
         VoteItem::init();
 
-
     }
 }

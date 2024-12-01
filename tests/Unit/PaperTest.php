@@ -13,13 +13,6 @@ use Illuminate\Support\Facades\Log;
 
 class PaperTest extends TestCase
 {
-    // use RefreshDatabase;
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Artisan::call('migrate:refresh');
-        Artisan::call('db:seed');
-    }
 
     /**
      * A basic test example.

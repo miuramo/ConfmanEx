@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->comment("氏名（半角スペース区切り）");
+            $table->string('name')->nullable()->comment("氏名（半角スペース区切り）");
             $table->string('affil')->nullable()->comment("所属");
-            $table->string('email')->unique();
+            $table->string('email')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->integer('contact_id')->nullable();
             $table->boolean('valid')->default(true)->comment("互換性のため導入");
             $table->rememberToken();

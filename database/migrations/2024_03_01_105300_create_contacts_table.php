@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->unique();
+            $table->string('email')->nullable()->unique();
             $table->integer('errorcount')->default(0)->comment('送信エラー回数');
             $table->integer('infoprovider')->nullable()->comment('情報提供者');
             $table->string('memo')->nullable()->comment('管理メモ');
