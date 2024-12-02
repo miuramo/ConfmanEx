@@ -15,7 +15,7 @@ class AnnotController extends Controller
      */
     public function index()
     {
-        //
+        return view('annot.index');
     }
 
     /**
@@ -53,6 +53,7 @@ class AnnotController extends Controller
     {
         $apaper = AnnotPaper::find($annopaper);
         if (!$apaper) abort(403);
+        if ($apaper->is_public == false && $apaper->user_id != auth()->id()) abort(403, 'AnnotPaper is not public');
         return view('annot.show')->with(compact('apaper', 'page'));
         //
     }
@@ -67,6 +68,7 @@ class AnnotController extends Controller
         // (paper_idはannot_paper_idから取得)
         $apaper = AnnotPaper::find($req->annot_paper_id);
         if (!$apaper) abort(403);
+        if ($apaper->is_public == false && $apaper->user_id != auth()->id()) abort(403, 'AnnotPaper is not public');
         $an = Annot::firstOrCreate([
             'annot_paper_id' => $req->annot_paper_id,
             'page' => $req->page,
@@ -84,8 +86,19 @@ class AnnotController extends Controller
     {
         $apaper = AnnotPaper::find($annopaper);
         if (!$apaper) abort(403);
+        if ($apaper->is_public == false && $apaper->user_id != auth()->id()) abort(403, 'AnnotPaper is not public');
+
         $final = $apaper->get_fabric_objects($page);
         return response()->json($final);
+        //
+    }
+
+    public function setpublic(Request $req, AnnotPaper $annot)
+    {
+        if ($annot->user_id != auth()->id()) abort(403);
+        $annot->is_public = $req->is_public;
+        $annot->save();
+        return redirect()->route('annot.create', ['annot' => $annot->id])->with('feedback.success', 'AnnotPaperの公開設定を変更しました');
         //
     }
 

@@ -17,24 +17,31 @@
                 </div>
                 @php
                     $voting = App\Models\Setting::isTrue('VOTING');
+                    $annoting = App\Models\Setting::isTrue('ENABLE_ANNOTPAPER');
                 @endphp
 
                 @auth
                     @php
-                        $navs_href = [
-                            '投票' => route('vote.index'),
-                            '新規投稿' => route('paper.create'),
-                            '投稿一覧' => route('paper.index'),
+                        $navs_route = [
+                            'Annot Paper' => 'annot.index',
+                            '投票' => 'vote.index',
+                            '新規投稿' => 'paper.create',
+                            '投稿一覧' => 'paper.index',
                         ];
-                        $navs_active = [
-                            '投票' => request()->routeIs('vote.index'),
-                            '新規投稿' => request()->routeIs('paper.create'),
-                            '投稿一覧' => request()->routeIs('paper.index'),
-                        ];
-                        if (!$voting) {
-                            unset($navs_href['投票']);
-                            unset($navs_active['投票']);
+                        if (!$annoting) {
+                            unset($navs_route['Annot Paper']);
                         }
+                        if (!$voting) {
+                            unset($navs_route['投票']);
+                        }
+                        if ($annoting || $voting){
+                            unset($navs_route['新規投稿']);
+                        }
+                        foreach($navs_route as $label => $route){
+                            $navs_href[$label] = route($route);
+                            $navs_active[$label] = request()->routeIs($route);
+                        }
+
                         //閲覧者のロールを取得
                         $roles = auth()->user()->roles;
                         foreach ($roles as $role) {

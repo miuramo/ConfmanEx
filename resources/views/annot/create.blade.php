@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
-            {{ __('AnnotPaperの作成') }}
+            {{ __('AnnotPaper の作成と管理') }}
         </h2>
     </x-slot>
     <style>
@@ -25,7 +25,7 @@
     <div class="mx-4">
 
         <x-element.h1>
-            AnnotPaperを作成したい論文を選択し、作成ボタンを押してください
+            AnnotPaper を作成したい論文を選択し、作成ボタンを押してください。（デフォルトは公開状態になります）
         </x-element.h1>
 
         <form action="{{ route('annot.store') }}" method="post">
@@ -45,18 +45,45 @@
     <div class="mx-4">
 
         <x-element.h1>
-            あなたが作成したAnnotPaper
+            あなたが作成した AnnotPaper （非公開・公開の設定）
         </x-element.h1>
-
+        <div class="mx-8 my-4">
+            非公開にすると、自分だけが閲覧・書き込みできます。
+        </div>
         @php
             $annotpapers = \App\Models\AnnotPaper::where('user_id', auth()->id())->get();
         @endphp
         <div class="mx-8">
             @foreach ($annotpapers as $anpaper)
-                
-                <x-element.linkbutton href="{{ route('annot.show', ['annot' => $anpaper->id]) }}" color="lime">
-                    ({{$anpaper->paper->id_03d()}}) {{ $anpaper->paper->title }}
+                @php
+                    $color = $anpaper->is_public ? 'lime' : 'gray';
+                @endphp
+                <x-element.linkbutton href="{{ route('annot.show', ['annot' => $anpaper->id]) }}"
+                    color="{{ $color }}">
+                    ({{ $anpaper->paper->id_03d() }})
+                    {{ $anpaper->paper->title }}
                 </x-element.linkbutton>
+                @if ($anpaper->is_public)
+                    公開中(Public)
+                    <form action="{{ route('annot.setpublic', ['annot' => $anpaper->id]) }}" method="post"
+                        class="inline">
+                        @csrf
+                        <input type="hidden" name="is_public" value="0">
+                        <x-element.submitbutton action="submit" color="orange">
+                            非公開にする
+                        </x-element.submitbutton>
+                    </form>
+                @else
+                    非公開(Private)
+                    <form action="{{ route('annot.setpublic', ['annot' => $anpaper->id]) }}" method="post"
+                        class="inline">
+                        @csrf
+                        <input type="hidden" name="is_public" value="1">
+                        <x-element.submitbutton action="submit" color="lime">
+                            公開にする
+                        </x-element.submitbutton>
+                    </form>
+                @endif
             @endforeach
 
         </div>

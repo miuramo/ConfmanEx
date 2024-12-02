@@ -13,5 +13,7 @@ Route::middleware('auth')->group(function () {
     // Route::get('/annot_jsubmit/{annot}', [AnnotController::class, 'jsubmit'])->name('annot.submit');
     // Route::get('/jsubmit/{annot?}', [AnnotController::class, 'jsonsubmit'])->name('annot.jsonsubmit');
     Route::get('/annot/{annot}/comment_json/{page?}', [AnnotController::class, 'comment_json'])->name('annot.comment_json');
+
+    Route::post('/annot/{annot}/setpublic', [AnnotController::class, 'setpublic'])->name('annot.setpublic');
 });
 
