@@ -50,15 +50,15 @@
                     @endphp
                     <thead>
                         <tr>
-                            <th class="bg-slate-300 border-4 border-slate-300">
-                                査読者 {{ $count }}
+                            <th class="bg-slate-300 border-4 border-slate-300 text-left pl-10" colspan="2">
+                                査読者 {{ $count }} &nbsp; 【査{{ $rev->id }}】
 
                                 @if ($rev->ismeta)
                                     <span class="mx-2 text-blue-500">（{{$nameofmeta}}査読者） </span>
                                 @endif
                             </th>
-                            <th class="bg-slate-300 border-4 border-slate-300">
-                            </th>
+                            {{-- <th class="bg-slate-300 border-4 border-slate-300">
+                            </th> --}}
                         </tr>
                     </thead>
                     <tbody>
