@@ -54,7 +54,7 @@
                                 査読者 {{ $count }} &nbsp; 【査{{ $rev->id }}】
 
                                 @if ($rev->ismeta)
-                                    <span class="mx-2 text-blue-500">（{{$nameofmeta}}査読者） </span>
+                                    <span class="mx-2 text-blue-500">（{{$nameofmeta}}） </span>
                                 @endif
                             </th>
                             {{-- <th class="bg-slate-300 border-4 border-slate-300">
