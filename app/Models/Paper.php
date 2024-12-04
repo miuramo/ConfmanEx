@@ -9,6 +9,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
@@ -347,6 +348,27 @@ class Paper extends Model
         }
     }
 
+    /** Contactから推測される範囲での、共著者UIDリストを返す */
+    // public function contact_coauthors()
+    // {
+    //     $emails = $this->contacts->pluck('email')->toArray();
+    //     return User::whereIn('email', $emails)->get()->pluck('id')->toArray();
+    // }
+    /**
+     * このPaperと、引数pidで与えられた論文との、contactsの重複があるか調べる。
+     */
+    public function hasSharedContacts(int $pid){
+        $thispid = $this->id;
+        $contacts = DB::select("select contact_id from paper_contact where paper_id in ({$pid} , {$thispid}) order by contact_id");
+        $chkary = [];
+        foreach($contacts as $colary){
+            if (isset($chkary[$colary->contact_id])) return true;
+            $chkary[$colary->contact_id] = 1;
+        }
+        return false;
+    }
+    
+
     // public function submits()
     // {
     //     return $this->hasMany(Submit::class);
@@ -602,6 +624,7 @@ class Paper extends Model
     {
         $ret = [];
         // まず、カッコをおきかえる
+        if (!isset($this->{$field})) return $ret; // 著者名と所属が設定されてない
         $lines = explode("\n", $this->{$field});
         $lines = array_map("trim", $lines);
         foreach ($lines as $line) {

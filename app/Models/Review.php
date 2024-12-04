@@ -241,7 +241,7 @@ class Review extends Model
      */
     public static function urllink($txt)
     {
-        $txt = preg_replace_callback("/(<a [^>]+?>.+?<\/a>)|(https?:\/\/[a-zA-Z0-9_\.\/\~\%\:\#\?=&\;\-]+)/i", ["App\Models\Review","urllink_callback"], $txt);
+        $txt = preg_replace_callback("/(<a [^>]+?>.+?<\/a>)|(https?:\/\/[a-zA-Z0-9_\.\/\~\%\:\#\?=&\;\-]+)/i", ["App\Models\Review", "urllink_callback"], $txt);
         $txt = strip_tags($txt, "<a>");
         return $txt;
     }
@@ -364,5 +364,73 @@ class Review extends Model
         $ret['scores'] = $scores;
         $ret['descs'] = $descs;
         return $ret;
+    }
+
+    public static function randomAssign()
+    {
+        // 
+        $revs[1] = Role::findByIdOrName("metareviewer")->users->pluck('affil', 'id')->toArray();
+        $revs[0] = Role::findByIdOrName("reviewer")->users->pluck('affil', 'id')->toArray();
+
+        $papers[2] = Paper::where("category_id", 2)->get()->pluck('authorlist', 'id')->toArray();
+        $papers[3] = Paper::where("category_id", 3)->get()->pluck('authorlist', 'id')->toArray();
+
+        $count_of_revs[0] = count($revs[0]);
+        $count_of_revs[1] = count($revs[1]);
+        $revids[0] = array_keys($revs[0]);
+        $revids[1] = array_keys($revs[1]);
+        $km = 0;
+        $ret = [];
+        $dupcheck = []; //paper_id to reviewer_id, for checking duplicate
+
+        $repnum = [4, 1]; // number of reviewers assigned to paper
+
+        for ($ism = 0; $ism < 2; $ism++) {
+            $km = 0;
+            for ($i = 0; $i < $repnum[$ism]; $i++) {
+                for ($cat = 2; $cat <= 3; $cat++) {
+                    foreach ($papers[$cat] as $pid => $authers) {
+                        if (!isset($ret[$pid]) || !is_array($ret[$pid])) $ret[$pid] = [];
+                        $rid = $revids[$ism][$km];
+                        while (
+                            isset($dupcheck[$pid][$rid])
+                            || Review::detectConflict($pid, $rid)
+                        ) { //repeat until no duplicate assignment
+                            $km = ($km + 1) % $count_of_revs[$ism];
+                            $rid = $revids[$ism][$km];
+                        }
+                        $ret[$pid][] = ['uid' => $rid, 'affil' => $revs[$ism][$rid]];
+                        $dupcheck[$pid][$rid] = $ism . " " . $i;
+                        $km = ($km + 1) % $count_of_revs[$ism];
+                    }
+                }
+            }
+        }
+        return $ret; // not verified in terms of affils
+    }
+    /**
+     * 自動査読割り当てにおける、所属のチェックと、別カテゴリでの利害申告状況の調査
+     */
+    public static function detectConflict(int $pid, int $rid)
+    {
+        $paper = Paper::find($pid);
+        $rev = User::find($rid);
+        $names_affils = $paper->authorlist_ary(); //ary[0]には氏名、ary[1]には所属がはいる
+        foreach ($names_affils as $n => $a) {
+            if ($a == $rev->affil) return true; // same affil
+            if ($n == $rev->name) return true; // same namespace
+        }
+        // Paperのcontact に含まれていないか、調べる
+        if ($paper->isCoAuthorEmail($rev->email)) return true;
+
+        //本当は、別カテゴリでの利害申告状況を使いたいが、この段階ではまだ登壇の著者リストが完成していない。
+        //そこで、該当査読者が申告した、登壇のPaperそれぞれについて、当該デモpaperとの共通著者を、contactから調べる。
+        //一人でもかぶっていたら、回避する。
+        $rigai_pids = RevConflict::rigaiPapersByUid($rid);
+        $rigai_papers = Paper::whereIn('id', $rigai_pids)->get();
+        foreach ($rigai_papers as $ripa) {
+            if ($ripa->hasSharedContacts($pid)) return true;
+        }
+        return false;
     }
 }

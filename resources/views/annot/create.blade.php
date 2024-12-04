@@ -19,7 +19,7 @@
     @endif
 
     @php
-        $papers = \App\Models\Paper::where('owner', auth()->id())->get();
+        $papers = \App\Models\Paper::where('owner', auth()->id())->whereNotNull('pdf_file_id')->get();
     @endphp
 
     <div class="mx-4">

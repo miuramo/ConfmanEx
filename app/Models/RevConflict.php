@@ -132,6 +132,15 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
         return $ret;
     }
 
+    /**
+     * 特定のユーザ（査読者）が、利害申告したPaperList
+     */
+    public static function rigaiPapersByUid(int $uid)
+    {
+        $rigaipaperids = RevConflict::where('user_id', $uid)->where('bidding_id','<', 3)->get()->pluck('paper_id')->toArray();
+        return $rigaipaperids;
+    }
+
     // /**
     //  * 査読者の名前一覧を出す。
     //  * $ret['review'][paper_id] = array( rev1, rev2,)

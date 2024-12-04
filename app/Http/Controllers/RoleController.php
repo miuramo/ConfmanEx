@@ -6,6 +6,7 @@ use App\Exports\BiddingResultExportFromView;
 use App\Exports\RoleMembersExportFromView;
 use App\Models\Category;
 use App\Models\MailTemplate;
+use App\Models\Paper;
 use App\Models\Review;
 use App\Models\Role;
 use App\Models\User;
@@ -235,5 +236,11 @@ class RoleController extends Controller
         // $papers = $cat->paperswithpdf;
         // $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
         return Excel::download(new BiddingResultExportFromView($cat, $role), "bidding_{$cat->name}.xlsx");
+    }
+
+    // TODO: call Review:randomAssign and analyze
+    public function revassign_random()
+    {
+
     }
 }
