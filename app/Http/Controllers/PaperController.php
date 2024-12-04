@@ -12,7 +12,9 @@ use App\Models\EnqueteAnswer;
 use App\Models\File;
 use App\Models\Paper;
 use App\Models\Setting;
+use App\Models\Submit;
 use App\Models\User;
+use App\Models\Viewpoint;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -345,6 +347,40 @@ class PaperController extends Controller
         $subs = $paper->submits;
         $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
         return view('paper.review', ['paper' => $id])->with(compact("subs", "paper", "accepts"));
+    }
+
+    public function paper_reviews_json(string $token)
+    {
+        $downloadkey = Setting::findByIdOrName("AWARDJSON_DLKEY", "value");
+        if ($token != $downloadkey) abort(403);
+
+        $accept_ids = Accept::where('judge', '>', 0)->pluck("id")->toArray();
+        $subs = Submit::with("reviews")->whereIn('accept_id', $accept_ids)->orderBy('category_id')->orderBy('booth')->get();
+
+        $ret = [];
+        foreach ($subs as $sub) {
+            $count = 0;
+            $rret = [];
+            $vpsubdescs = Viewpoint::where('category_id', $sub->category_id)
+                ->select('subdesc', 'desc')
+                ->get()
+                ->pluck('subdesc', 'desc')
+                ->toArray();
+
+            foreach ($sub->reviews as $rev) {
+                $count++;
+                $rret[$count] = [];
+                $rret[$count]['reviewer'] = '査読者' . $count;
+                foreach ($rev->scores_and_comments(1, 0, 1) as $vpdesc => $valstr) {
+                    $rret[$count][$vpdesc] = nl2br(htmlspecialchars($valstr));
+                    if (isset($vpsubdescs[$vpdesc]))
+                    $rret[$count][$vpdesc."_"] = $vpsubdescs[$vpdesc];
+                }
+
+            }
+            $ret[$sub->booth] = $rret;
+        }
+        return json_encode($ret, JSON_THROW_ON_ERROR);
     }
 
     /**
