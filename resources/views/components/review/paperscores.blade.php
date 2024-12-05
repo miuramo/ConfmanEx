@@ -60,9 +60,12 @@
                     {{-- 表のヘッダの項目と対応させる --}}
                         @foreach ($descs as $vpid => $desc)
                             @isset($scores[$revid][$vpid])
-                                <td class="p-1 text-center">
-                                    {{ $scores[$revid][$vpid] }}
-                                </td>
+                            <td class="p-1 text-center">
+                                {{ $scores[$revid][$vpid] }}
+                            </td>
+                            @else
+                            <td class="p-1 text-center bg-gray-300">
+                            </td>
                             @endisset
                         @endforeach
                     @endisset

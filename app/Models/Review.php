@@ -218,7 +218,7 @@ class Review extends Model
      * @param $only_score が 1のとき、number が含まれるものだけに限定する（通常はしないので0）
      * @param $accepted が 0のとき、doReturnAcceptOnly が 1のものは表示しない
      */
-    public function scores_and_comments($only_doreturn = 1, $only_score = 0, $accepted = 1)
+    public function scores_and_comments($only_doreturn = 1, $only_score = 0, $accepted = 1, $am_i_meta = 0)
     {
         $aryscores = $this->scores->pluck("valuestr", "viewpoint_id")->toArray();
         $vps = Viewpoint::where('category_id', $this->category_id)->orderBy('orderint')->get();
@@ -230,8 +230,12 @@ class Review extends Model
             if (!$this->ismeta && !$vp->forrev) continue;
             if ($this->ismeta && !$vp->formeta) continue;
             if (!$accepted && $vp->doReturnAcceptOnly) continue;
+            // hidefromrev = 1 のとき、一般査読者には見せない
+            // if ($this->ismeta && $vp->hidefromrev && !$am_i_meta) continue;//$ret[$vp->desc] = 'hideen for rev';
+
 
             $ret[$vp->desc] = (isset($aryscores[$vp->id])) ? $aryscores[$vp->id] : "(未入力)";
+            if ($this->ismeta && $vp->hidefromrev && !$am_i_meta) $ret[$vp->desc] = '(hidden for rev)';
         }
         return $ret;
     }

@@ -31,7 +31,12 @@
                 @foreach ($viewpoints as $vpt)
                     @php
                         // $formid = "revform{$vpt->id}";
-                        $current = isset($scores[$vpt->id]) ? $scores[$vpt->id]->valuestr : null;
+                        if ($vpt->hidefromrev){
+                            $current = isset($scores[$vpt->id]) ? $scores[$vpt->id]->valuestr : null;
+                            if (!$am_i_meta) $current = "(hidden for rev)";
+                        } else {
+                            $current = isset($scores[$vpt->id]) ? $scores[$vpt->id]->valuestr : null;
+                        }
                     @endphp
                     <div class="mx-10">
                         <x-enquete.itmview :itm="$vpt" :current="$current" :loop="$loop">
