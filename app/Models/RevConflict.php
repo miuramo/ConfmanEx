@@ -96,7 +96,7 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
      */
     public static function bidding_stat($catid)
     {
-        $papers_in_cat = Category::find($catid)->paperswithpdf->pluck("title","id")->toArray();
+        $papers_in_cat = Category::find($catid)->paperswithpdf->pluck("title", "id")->toArray();
 
         $tmp = RevConflict::select(DB::raw("count(id) as count, paper_id, bidding_id"))
             ->whereIn('paper_id', array_keys($papers_in_cat))
@@ -124,6 +124,7 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
         // ユーザ自身の共著論文をとりよせる
         $my_uid = auth()->id();
         $me = User::find($my_uid);
+        if ($me == null) return $ret;
         foreach ($me->coauthor_papers() as $paper) {
             if (isset($ret[$paper->paper_id][$my_uid])) {
                 $ret[$paper->paper_id][$my_uid] = 1;
@@ -137,10 +138,44 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
      */
     public static function rigaiPapersByUid(int $uid)
     {
-        $rigaipaperids = RevConflict::where('user_id', $uid)->where('bidding_id','<', 3)->get()->pluck('paper_id')->toArray();
+        $rigaipaperids = RevConflict::where('user_id', $uid)->where('bidding_id', '<', 3)->get()->pluck('paper_id')->toArray();
         return $rigaipaperids;
     }
 
+
+    /**
+     * Bidding未入力の場合に、Biddingを代理作成する
+     */
+    public static function fillBidding(int $cat_id = 1, string $role_name = "metareviewer", int $bidding_id = 7)
+    {
+        $catid = Category::find($cat_id);
+        $papers_in_cat = $catid->paperswithpdf->pluck("title", "id")->toArray();
+        $reviewers = Role::findByIdOrName($role_name)->users;
+
+        $rigais = RevConflict::arr_pu_rigai();
+
+        $log = [];
+        foreach ($reviewers as $reviewer) {
+            foreach ($papers_in_cat as $pid => $ptitle) {
+                if (!isset($rigais[$pid][$reviewer->id])) {
+                    $log []= "add {$pid}-{$reviewer->name} as {$bidding_id}";
+                    $rc = new RevConflict();
+                    $rc->paper_id = $pid;
+                    $rc->user_id = $reviewer->id;
+                    $rc->bidding_id = $bidding_id;
+                    $rc->save();
+                }
+            }
+        }
+        if (Bidding::find($bidding_id) == null) {
+            $bid = new Bidding();
+            $bid->id = $bidding_id;
+            $bid->name = "暫定";
+            $bid->bgcolor = "gray";
+            $bid->save();
+        }
+        return $log;
+    }
     // /**
     //  * 査読者の名前一覧を出す。
     //  * $ret['review'][paper_id] = array( rev1, rev2,)
