@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('categories', function (Blueprint $table) {
-            $table->string('status__revlist_for')->default('metareviewer|reviewer')->comment('査読結果一覧を開示するRole')->after('status__revlist_on');
+            $table->string('status__revlist_for')->default('metareviewer')->comment('査読結果一覧を開示するRole')->after('status__revlist_on');
             //
         });
     }
