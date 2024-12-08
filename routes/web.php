@@ -156,7 +156,7 @@ Route::middleware('auth')->group(function () {
     Route::post('pub/{cat}/boothtxt', [SubmitController::class, 'boothtxt'])->name('pub.boothtxt');
     Route::post('pub_zipf', [SubmitController::class, 'zipdownload'])->name('pub.zipdownload');
     Route::get('pub/{cat}/bibinfochk', [SubmitController::class, 'bibinfochk'])->name('pub.bibinfochk'); //書誌情報の確認と修正
-    Route::post('pub/update_maydirty', [SubmitController::class, 'update_maydirty'])->name('pub.update_maydirty');// MayDirtyをリセット
+    Route::post('pub/update_maydirty', [SubmitController::class, 'update_maydirty'])->name('pub.update_maydirty'); // MayDirtyをリセット
     Route::get('pub/{cat}/bibinfo/{abbr?}/{filechk?}', [SubmitController::class, 'bibinfo'])->name('pub.bibinfo'); //書誌情報の表示 (abbrをtrueにすると同一所属を省略)
     Route::get('pub/{cat}/fileinfochk', [SubmitController::class, 'fileinfochk'])->name('pub.fileinfochk'); // カメラレディのタイムスタンプ確認
     Route::get('pub/{paper}/paperfile', [SubmitController::class, 'paperfile'])->name('pub.paperfile'); // 論文ごとに、どのファイルを採用しているか？を表示する
@@ -175,7 +175,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin_crudpost', [AdminController::class, 'crudpost'])->name('admin.crudpost');
     Route::get('/admin_catsetting', [AdminController::class, 'catsetting'])->name('admin.catsetting');
     Route::get('/admin_chkexefiles', [AdminController::class, 'check_exefiles'])->name('admin.chkexefiles');
-    
+
     Route::get('/admin_resetpaper', [AdminController::class, 'resetpaper'])->name('admin.resetpaper');             // Danger Zone
     Route::get('/admin_resetaccesslog', [AdminController::class, 'resetaccesslog'])->name('admin.resetaccesslog'); // Danger Zone
     Route::get('/admin_resetbidding', [AdminController::class, 'resetbidding'])->name('admin.resetbidding');       // Danger Zone
@@ -208,7 +208,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/revcon/revname/{cat}', [RevConflictController::class, 'revname'])->name('revcon.revname'); // 査読者の名前
     Route::get('/revcon/notdownloaded', [RevConflictController::class, 'notdownloaded'])->name('revcon.notdownloaded');
     Route::get('/revcon/norev', [RevConflictController::class, 'norev'])->name('revcon.norev');
-    
+
     // Export and Import
     Route::get('viewpoints/export', [ViewpointController::class, 'export'])->name('viewpoint.export');
     Route::post('viewpoints/import', [ViewpointController::class, 'import'])->name('viewpoint.import');
@@ -252,12 +252,14 @@ require __DIR__ . '/web_annotpaper.php';
 
 require __DIR__ . '/auth.php';
 
-Route::get('/login-as/{user}', function ($user) {
-    if (auth()->id()!=1) return redirect('/')->with('feedback.error', '特定ユーザ以外は代理ログインできません');
-    $targetUser = User::find($user);
-    if ($targetUser) {
-        Auth::login($targetUser);
-        return redirect()->route('role.top',['role'=>$targetUser->maxRole() ])->with('feedback.success', '代理ログインしました: ' . $targetUser->name);
-    }
-    return redirect('/')->with('feedback.error', 'ユーザが見つかりません');
-})->middleware(['auth'])->name('role.login-as'); 
+if (env('APP_DEBUG')) {
+    Route::get('/login-as/{user}', function ($user) {
+        if (auth()->id() != 1) return redirect('/')->with('feedback.error', '特定ユーザ以外は代理ログインできません');
+        $targetUser = User::find($user);
+        if ($targetUser) {
+            Auth::login($targetUser);
+            return redirect()->route('role.top', ['role' => $targetUser->maxRole()])->with('feedback.success', '代理ログインしました: ' . $targetUser->name);
+        }
+        return redirect('/')->with('feedback.error', 'ユーザが見つかりません');
+    })->middleware(['auth'])->name('role.login-as');
+}
