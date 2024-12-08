@@ -72,6 +72,19 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(Contact::class, "contact_id");
     }
 
+    // エディターの最高権限を文字列で返す
+    public function maxRole()
+    {
+        $roles = $this->roles;
+        foreach($roles as $role){
+            if ($role->name == "pc") return "pc";
+            if ($role->name == "metareviewer") return "metareviewer";
+            if ($role->name == "reviewer") return "reviewer";
+        }
+        return "author";
+    }
+
+
     /**
      * 初回のみ、パスワード再設定メールを変更している。see User.php
      */

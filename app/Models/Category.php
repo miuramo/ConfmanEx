@@ -67,6 +67,8 @@ class Category extends Model
 
     /**
      * 査読結果を表示するかどうか
+     * @param int $cat_id カテゴリID
+     * ここの結果がtrue の場合、査読者やメタ査読者が、査読結果一覧をみれるようになる。（リンクが表示される。）
      */
     public static function isShowReview($cat_id)
     {

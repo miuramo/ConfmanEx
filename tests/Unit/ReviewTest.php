@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\Category;
 use App\Models\Contact;
 use App\Models\Paper;
 use App\Models\RevConflict;
@@ -125,15 +126,19 @@ class ReviewTest extends TestCase
     }
 
     public function test_reviewcomment_scoreonly_can_see_by_privileged_reviewers(){
+        // list existing roles
+        // $roles = Role::all()->pluck('name')->toArray();
+        // $this->assertTrue(in_array('reviewer', $roles));
+        // dump($roles);
         // use User factory to cretate author and reviewer and metareviewer and pc
-        $author = User::factory()->create();
-        $reviewer = User::factory()->create();
-        $metareviewer = User::factory()->create();
-        $pc = User::factory()->create();
-        $author->roles()->attach(3); // 3=author
-        $reviewer->roles()->attach(4); // 4=reviewer
-        $metareviewer->roles()->attach(5); // 5=metareviewer
-        $pc->roles()->attach(6); // 6=pc
+        $reviewer = User::factory()->withRoles('reviewer')->create();
+        $metareviewer = User::factory()->withRoles('metareviewer')->create();
+        $pc = User::factory()->withRoles('pc')->create();
+        $author = User::factory()->withPapers(2,1)->create();
+
+        // show categories settings 
+        // $cats = Category::all()->pluck('name')->toArray();
+        // dump($cats);
         
     }
     public function test_just_test(): void

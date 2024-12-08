@@ -20,6 +20,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewpointController;
 use App\Http\Controllers\VoteController;
 use App\Models\RevConflict;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -244,11 +246,18 @@ Route::middleware('guest')->group(function () {
     Route::get('/entry', [UserController::class, 'entry0'])->name('entry0');
     Route::post('/entry', [UserController::class, 'entry'])->name('entry');
     Route::get('/validate/{key}', [UserController::class, 'validate_email'])->name('validate_email');
-
-
 });
 
 require __DIR__ . '/web_annotpaper.php';
 
 require __DIR__ . '/auth.php';
 
+Route::get('/login-as/{user}', function ($user) {
+    if (auth()->id()!=1) return redirect('/')->with('feedback.error', '特定ユーザ以外は代理ログインできません');
+    $targetUser = User::find($user);
+    if ($targetUser) {
+        Auth::login($targetUser);
+        return redirect()->route('role.top',['role'=>$targetUser->maxRole() ])->with('feedback.success', '代理ログインしました: ' . $targetUser->name);
+    }
+    return redirect('/')->with('feedback.error', 'ユーザが見つかりません');
+})->middleware(['auth'])->name('role.login-as'); 
