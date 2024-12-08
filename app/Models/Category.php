@@ -72,8 +72,9 @@ class Category extends Model
     {
         $canshow = false;
         $revlist = Category::select('id', 'status__revlist_on')->get()->pluck('status__revlist_on', 'id')->toArray();
+        $revlistfor = Category::select('id', 'status__revlist_for')->get()->pluck('status__revlist_for', 'id')->toArray();
         if (!auth()->user()->can('role', 'pc')) {
-            if (auth()->user()->can('role_any', 'reviewer|metareviewer') && $revlist[$cat_id]) {
+            if (auth()->user()->can('role_any', $revlistfor[$cat_id]) && $revlist[$cat_id]) {
                 $canshow = true;
             } else {
             }

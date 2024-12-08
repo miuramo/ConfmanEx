@@ -40,7 +40,7 @@
             @endcan
 
 
-            <x-review.resultmap :subs="$subs">
+            <x-review.resultmap :subs="$subs" :cat="$cat">
             </x-review.resultmap>
 
             @can('manage_cat', $cat_id)

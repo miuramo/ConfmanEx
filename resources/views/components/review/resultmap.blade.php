@@ -5,17 +5,17 @@
 @php
     $rigais = App\Models\RevConflict::arr_pu_rigai();
     $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
-@endphp
-<!-- components.review.resultmap -->
+    $cat_id = $cat->id;
+@endphp<!-- components.review.resultmap -->
 <table class="min-w-full divide-y divide-gray-200 mb-2 sortable" id="sortable">
     <thead>
         <tr>
             @foreach (['chk', 'pid', 'title', 'accept', 'avg score', 'stddev', 'num finish', 'num assign', 'i'] as $h)
-                <th class="p-1 bg-slate-300 dark:bg-slate-400
-                @if($h === 'chk')
-                    unsortable 
-                @endif
-                "> {{ $h }} </th>
+                <th
+                    class="p-1 bg-slate-300 dark:bg-slate-400
+                @if ($h === 'chk') unsortable @endif
+                ">
+                    {{ $h }} </th>
             @endforeach
         </tr>
     </thead>
@@ -40,7 +40,17 @@
                             {{ $sub->paper->id_03d() }}
                         </td>
                         <td class="p-1">
-                            {{ $sub->paper->title }}
+                            @php
+                                // タイトルにリンクをつけるかどうか
+                                $enableTitleLink = App\Models\Category::isShowReview($cat_id);
+                            @endphp
+                            @if ($enableTitleLink && isset($rigais[$sub->paper->id][auth()->id()]) && $rigais[$sub->paper->id][auth()->id()] > 2)
+                                <x-review.commentpaper_link :sub="$sub"></x-element.commentpaper_link>
+                                @else
+                                    <span class="text-gray-400">
+                                        {{ $sub->paper->title }}
+                                    </span>
+                            @endif
                         </td>
                         <td class="p-1 text-center">
                             {{ $accepts[$sub->accept_id] }}

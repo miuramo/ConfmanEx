@@ -135,7 +135,7 @@ Route::middleware('auth')->group(function () {
     // Bidding結果のExcel
     Route::get('/role/{role}/revassign_excel/{cat}', [RoleController::class, 'revassign_excel'])->name('role.revassign_excel');
     // 査読結果
-    Route::get('/reviewresult/{cat}', [ReviewController::class, 'result'])->name('review.result');
+    Route::get('/reviewresult/{cat}', [ReviewController::class, 'result'])->name('review.result'); //avg,sdのみ
     Route::post('/reviewresult/{cat}', [ReviewController::class, 'resultpost'])->name('review.resultpost');
     Route::get('/reviewcomment/{cat}', [ReviewController::class, 'comment'])->name('review.comment'); // ?excel=dl でExcel
     Route::get('/reviewcomment_scoreonly/{cat}', [ReviewController::class, 'comment_scoreonly'])->name('review.comment_scoreonly'); // ?excel=dl でExcel

@@ -123,6 +123,19 @@ class ReviewTest extends TestCase
             $this->assertTrue($sub['stddevscore'] == 0.5);
         }
     }
+
+    public function test_reviewcomment_scoreonly_can_see_by_privileged_reviewers(){
+        // use User factory to cretate author and reviewer and metareviewer and pc
+        $author = User::factory()->create();
+        $reviewer = User::factory()->create();
+        $metareviewer = User::factory()->create();
+        $pc = User::factory()->create();
+        $author->roles()->attach(3); // 3=author
+        $reviewer->roles()->attach(4); // 4=reviewer
+        $metareviewer->roles()->attach(5); // 5=metareviewer
+        $pc->roles()->attach(6); // 6=pc
+        
+    }
     public function test_just_test(): void
     {
         $this->assertTrue(true);
