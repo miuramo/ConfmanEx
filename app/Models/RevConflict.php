@@ -36,7 +36,7 @@ class RevConflict extends Model
     {
         $ret = [];
         foreach (RevConflict::all() as $a) {
-            if ($a->paper->category_id != $cat_id) continue;
+            if ($a->paper && $a->paper->category_id != $cat_id) continue;
             $ret[$a->paper_id][$a->user_id] = $a->bidding_id;
         }
         return $ret;
@@ -51,7 +51,7 @@ class RevConflict extends Model
         $bidbgs = Bidding::pluck("bgcolor", "id")->toArray();
         $ret = [];
         foreach (RevConflict::all() as $a) {
-            if ($a->paper->category_id != $cat_id) continue;
+            if ($a->paper && $a->paper->category_id != $cat_id) continue;
             $ret[$a->paper_id][$a->user_id] = "<span class=\"text-sm text-{$bidbgs[$a->bidding_id]}-500\">{$bids[$a->bidding_id]}</span>";
         }
         return $ret;
@@ -126,7 +126,7 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
     {
         $ret = [];
         foreach (RevConflict::all() as $a) {
-            if ($a->paper->category_id != $cat_id) continue;
+            if ($a->paper && $a->paper->category_id != $cat_id) continue;
             $ret[$a->paper_id][$a->user_id] = $a->bidding_id; // 1が利害by著者,2が利害by査読者
         }
         // ユーザ自身の共著論文をとりよせる
