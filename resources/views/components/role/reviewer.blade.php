@@ -103,7 +103,7 @@
     @php
         $total_revlist = false;
         foreach ($cats as $n => $cat) {
-            if ($revlist[$n]) {
+            if (App\Models\Category::isShowReview($n)) {
                 $total_revlist = true;
             }
         }
@@ -114,7 +114,7 @@
         </x-element.h1>
         <div class="mx-6 my-4">
             @foreach ($cats as $n => $cat)
-                @if ($revlist[$n])
+                @if (App\Models\Category::isShowReview($n))
                     <x-element.linkbutton href="{{ route('review.comment_scoreonly', ['cat' => $n]) }}" color="purple"
                         target="_blank">
                         査読結果・スコアの一覧 ({{ $cat }})
