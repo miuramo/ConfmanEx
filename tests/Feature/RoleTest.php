@@ -29,7 +29,7 @@ class RoleTest extends TestCase
                 'password' => Hash::make($rolename),
             ]);
 
-            $user->roles()->attach($role->id);
+            $user->roles()->syncWithoutDetaching($role->id);
             self::$users[$rolename] = $user;
             // echo $rolename . "\n";
         }
@@ -46,8 +46,8 @@ class RoleTest extends TestCase
         $response = $this->actingAs($u)->get(route('admin.dashboard'));
         $response->assertStatus(403);
 
-        // $u->roles()->attach(1); // admin
-        $u->roles()->attach(2); // manager
+        // $u->roles()->syncWithoutDetaching(1); // admin
+        $u->roles()->syncWithoutDetaching(2); // manager
 
         $response = $this->actingAs($u)->get(route('admin.dashboard'));
         $response->assertStatus(200);

@@ -59,7 +59,7 @@ class UserFactory extends Factory
         }
         return $this->afterCreating(function (User $user) use ($roleids) {
             foreach($roleids as $roleid){
-                $user->roles()->attach(Role::find($roleid));
+                $user->roles()->syncWithoutDetaching($roleid);
             }
         });
     }
@@ -72,6 +72,7 @@ class UserFactory extends Factory
                     'category_id' => $cat_id,
                     'contactemails' => $user->email,
                     'owner' => $user->id,
+                    'title' => fake()->sentence(),
                 ]);
                 $paper->updateContacts();
             }

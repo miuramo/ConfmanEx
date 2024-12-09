@@ -31,7 +31,7 @@ class PaperTest extends TestCase
         $user = self::$users[0];
         $this->assertDatabaseHas('users', ['email' => $user->email]);
         // $role = Role::factory()->create(['name' => 'writer']);
-        // $user->roles()->attach($role);
+        // $user->roles()->syncWithoutDetaching($role);
         $this->actingAs($user);
         $response = $this->get(route('paper.index'));
         $response->assertStatus(200)

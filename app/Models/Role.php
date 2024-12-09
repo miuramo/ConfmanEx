@@ -86,7 +86,7 @@ class Role extends Model
         }
         $user->roles()->detach();
         foreach($roles as $role){
-            $user->roles()->attach(Role::find($role));
+            $user->roles()->syncWithoutDetaching($role);
         }
         return $roles;
     }
@@ -100,10 +100,10 @@ class Role extends Model
         }
         $all = Role::pluck("id")->toArray();
         foreach($all as $role){
-            $user->roles()->attach(Role::find($role));
+            $user->roles()->syncWithoutDetaching($role);
         }
         foreach($roles as $role){
-            $user->roles()->detach(Role::find($role));
+            $user->roles()->detach($role);
         }
         return $user->roles;
     }

@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
                 'affil' => env('INITIAL_AFFIL'), //'Example',
                 'password' => Hash::make(env('INITIAL_PASSWORD')),
             ]);
-
         }
         if (\App\Models\Role::count() == 0) {
             foreach (\App\Models\Role::$roles as $name => $desc) {
@@ -31,8 +30,15 @@ class DatabaseSeeder extends Seeder
                     'desc' => $desc,
                     'abbr' => $name,
                 ]);
-                $tmp->users()->attach(1);
+                $tmp->users()->syncWithoutDetaching(1);
             }
+        }
+        $u1 = \App\Models\User::find(1);
+        if ($u1->name == null && $u1->email == null) {
+            $u1->name = "First User";
+            $u1->email = "firstuser@example.com";
+            $u1->affil = "Example";
+            $u1->save();
         }
 
         $this->call([

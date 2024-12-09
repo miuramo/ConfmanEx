@@ -233,7 +233,7 @@ class EnqueteController extends Controller
                 if (strpos($name, "map_") === 0 && $val === 'on') {
                     $ary = explode("_", $name);
                     $enq = Enquete::find($ary[1]);
-                    $enq->roles()->attach($ary[2]);
+                    $enq->roles()->syncWithoutDetaching($ary[2]);
                 }
             }
         }

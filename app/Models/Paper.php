@@ -173,7 +173,7 @@ class Paper extends Model
     }
     // $p = Paper::find(1)
     //   ->contacts()
-    //   ->attach(5);　で、Contact.id = 5 を追加する。反対はdetach,配列も可。
+    //   ->syncWithoutDetaching(5);　で、Contact.id = 5 を追加する。反対はdetach,配列も可。
     // syncで、削除＆追加をする。
     public function paperowner()
     {
@@ -267,7 +267,7 @@ class Paper extends Model
                     $con->infoprovider = $this->owner;
                     $con->save();
                 }
-                $this->contacts()->attach($con->id);
+                $this->contacts()->syncWithoutDetaching($con->id);
             });
         }
         $this->refresh();
@@ -297,7 +297,7 @@ class Paper extends Model
     // contactemailsに足す
     public function add_contact(Contact $con)
     {
-        $this->contacts()->attach($con->id);
+        $this->contacts()->syncWithoutDetaching($con->id);
         $this->updateContactemailsFromContacts();
         $this->refresh();
     }

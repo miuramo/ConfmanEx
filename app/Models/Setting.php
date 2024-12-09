@@ -39,7 +39,7 @@ class Setting extends Model
                 $tmpu = User::where("name",$name)->first();
                 if ($tmpu == null) continue;
                 if (!$role->containsUser($tmpu->id)){ // ふくまれていなければ
-                    $tmpu->roles()->attach($role);
+                    $tmpu->roles()->syncWithoutDetaching($role);
                     info("auto_role_member {$name} {$role->name}");
                 }
             }

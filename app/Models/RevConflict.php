@@ -10,6 +10,7 @@ class RevConflict extends Model
 {
     use HasFactory;
 
+    protected $with = ['paper', 'bidding'];
 
     protected $fillable = [
         'paper_id',
@@ -17,6 +18,10 @@ class RevConflict extends Model
         'author_id',
         'bidding_id',
     ];
+    public function paper()
+    {
+        return $this->belongsTo(Paper::class, 'paper_id');
+    }
 
     public function bidding()
     {
@@ -27,10 +32,11 @@ class RevConflict extends Model
      * ネストした配列で返す
      * arr[paper_id][user_id] = bidding_id
      */
-    public static function arr_pu_bid()
+    public static function arr_pu_bid(int $cat_id = 1)
     {
         $ret = [];
         foreach (RevConflict::all() as $a) {
+            if ($a->paper->category_id != $cat_id) continue;
             $ret[$a->paper_id][$a->user_id] = $a->bidding_id;
         }
         return $ret;
@@ -39,12 +45,13 @@ class RevConflict extends Model
      * ネストした配列で返す
      * arr[paper_id][user_id] = bidding_name
      */
-    public static function arr_pu_bname()
+    public static function arr_pu_bname(int $cat_id = 1)
     {
         $bids = Bidding::pluck("name", "id")->toArray();
         $bidbgs = Bidding::pluck("bgcolor", "id")->toArray();
         $ret = [];
         foreach (RevConflict::all() as $a) {
+            if ($a->paper->category_id != $cat_id) continue;
             $ret[$a->paper_id][$a->user_id] = "<span class=\"text-sm text-{$bidbgs[$a->bidding_id]}-500\">{$bids[$a->bidding_id]}</span>";
         }
         return $ret;
@@ -115,10 +122,11 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
      * 申告利害に、現在のユーザの共著関係をまとめたもの
      * 3未満だと利害あり。
      */
-    public static function arr_pu_rigai()
+    public static function arr_pu_rigai(int $cat_id = 1)
     {
         $ret = [];
         foreach (RevConflict::all() as $a) {
+            if ($a->paper->category_id != $cat_id) continue;
             $ret[$a->paper_id][$a->user_id] = $a->bidding_id; // 1が利害by著者,2が利害by査読者
         }
         // ユーザ自身の共著論文をとりよせる

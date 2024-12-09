@@ -20,6 +20,47 @@ use Illuminate\Support\Facades\Log;
 
 class ReviewTest extends TestCase
 {
+
+    public function test_paper_submit(): void
+    {
+        $num_paper_per_author = 2;
+        $num_author = 5;
+        parent::paper_submit(1, $num_author, $num_paper_per_author);
+        $papers = Paper::get()->pluck('title', 'id')->toArray();
+        // dump($papers);
+        $authors = Paper::get()->pluck('owner', 'id')->toArray();
+        // dump($authors);
+        // $users = User::all();
+        // dump($users);
+        $this->assertTrue(Paper::where('category_id', 1)->count() == $num_paper_per_author * $num_author);
+
+        // 査読者を追加
+        $num_reviewer = 5;
+        parent::add_reviewer($num_reviewer);
+        // $reviewers = Role::findByIdOrName('reviewer')->users->pluck('name','id')->toArray();
+        // dump(Role::findByIdOrName('reviewer')->users->count());
+        $this->assertTrue(Role::findByIdOrName('reviewer')->users->count() == $num_reviewer + 1); // +1 for the first user
+    }
+
+    public function test_bidding(): void
+    {
+        $this->test_paper_submit();
+        // parent::dump_papers();
+        parent::dump_role('reviewer');
+        parent::give_reviewer_priv_to_authors(1, 'reviewer');
+
+        Review::extractAllCoAuthorRigais();
+        parent::bidding('reviewer');
+        dump(RevConflict::count());
+        RevConflict::fillBidding(1, "reviewer", 5);
+        parent::dump_conflict();
+        // $this->assertCount(4, Role::findByIdOrName('reviewer')->users);
+
+        parent::revassign(1, 'reviewer', 2);
+        parent::revassign(1, 'metareviewer', 1);
+        parent::dump_assign();
+    }
+
     /**
      *
      */
@@ -50,7 +91,7 @@ class ReviewTest extends TestCase
 
 
         $rev1 = User::factory()->create();
-        $rev1->roles()->attach(4); // 4=reviewer
+        $rev1->roles()->syncWithoutDetaching(4); // 4=reviewer
         $rev1->test_revconflict(); // Biddingをする
         // ここまでがうまくいっているか確認する
         $this->assertTrue(RevConflict::where('user_id', $rev1->id)->count() == 2);
@@ -89,7 +130,7 @@ class ReviewTest extends TestCase
         }
 
         $rev2 = User::factory()->create();
-        $rev2->roles()->attach(4); // 4=reviewer
+        $rev2->roles()->syncWithoutDetaching(4); // 4=reviewer
         $rev2->test_revconflict(); // Biddingをする
         // Reviewを作成する
         $revconfs = RevConflict::with('bidding')->where('user_id', $rev2->id)->get();
@@ -125,22 +166,26 @@ class ReviewTest extends TestCase
         }
     }
 
-    public function test_reviewcomment_scoreonly_can_see_by_privileged_reviewers(){
-        // list existing roles
-        // $roles = Role::all()->pluck('name')->toArray();
-        // $this->assertTrue(in_array('reviewer', $roles));
-        // dump($roles);
-        // use User factory to cretate author and reviewer and metareviewer and pc
-        $reviewer = User::factory()->withRoles('reviewer')->create();
-        $metareviewer = User::factory()->withRoles('metareviewer')->create();
-        $pc = User::factory()->withRoles('pc')->create();
-        $author = User::factory()->withPapers(2,1)->create();
 
-        // show categories settings 
-        // $cats = Category::all()->pluck('name')->toArray();
-        // dump($cats);
-        
-    }
+    // public function test_adding_reviewer(): void
+    // {        
+    // }
+
+    // public function test_reviewcomment_scoreonly_can_see_by_privileged_reviewers(){
+    // list existing roles
+    // $roles = Role::all()->pluck('name')->toArray();
+    // $this->assertTrue(in_array('reviewer', $roles));
+    // dump($roles);
+    // use User factory to cretate author and reviewer and metareviewer and pc
+    // $reviewer = User::factory()->withRoles('reviewer')->create();
+    // $metareviewer = User::factory()->withRoles('metareviewer')->create();
+    // $pc = User::factory()->withRoles('pc')->create();
+    // $author = User::factory()->withPapers(2,1)->create();
+
+    // show categories settings 
+    // $cats = Category::all()->pluck('name')->toArray();
+    // dump($cats);        
+    // }
     public function test_just_test(): void
     {
         $this->assertTrue(true);
