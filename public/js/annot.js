@@ -8,14 +8,15 @@ let scale = 1;
 let lastScale = 1;
 let isTextEditing = false;
 
-let textColor = '#0033ff';
-let rectColor = '#ffffaa';
+// localStorage から色を読み込む
+let textColor = localStorage.getItem('textColor') || '#0033ff';
+let rectColor = localStorage.getItem('rectColor') || '#ffffaa';
+
 const textCP = document.getElementById('ID_textColor');
 const rectCP = document.getElementById('ID_rectColor');
 
 // コピー用の変数
-let copiedObject = null;
-
+// let copiedObject = null;
 
 // キャンバスをウィンドウ幅に初期設定
 function resizeCanvas() {
@@ -157,6 +158,7 @@ function image_onload() {
     // color picker の初期化
     textCP.addEventListener('input', (event) => {
         textColor = event.target.value;
+        localStorage.setItem('textColor', textColor);
         if (canvas.getActiveObject() && canvas.getActiveObject().type === 'i-text') {
             canvas.getActiveObject().set({ fill: convertToRgba(textColor, 0.9) });
             canvas.renderAll();
@@ -164,6 +166,7 @@ function image_onload() {
     });
     rectCP.addEventListener('input', (event) => {
         rectColor = event.target.value;
+        localStorage.setItem('rectColor', rectColor);
         if (canvas.getActiveObject() && canvas.getActiveObject().type === 'rect') {
             canvas.getActiveObject().set({ fill: convertToRgba(rectColor, 0.3) });
             canvas.renderAll();
@@ -286,23 +289,21 @@ function image_onload() {
                 }
             }
         }
-
         // CTRL+C でコピー
         if ((e.ctrlKey || e.metaKey || e.altKey) && e.key === 'c') {
         }
         // CTRL+V で貼り付け
         if ((e.ctrlKey || e.metaKey || e.altKey) && e.key === 'v') {
         }
-
     };
 
 
     // フリーハンド描画モードの切り替え
-    document.getElementById('drawModeButton').addEventListener('click', function () {
-        isDrawingMode = !isDrawingMode;
-        canvas.isDrawingMode = isDrawingMode;
-        this.textContent = isDrawingMode ? '描画モード終了' : 'フリーハンド描画モード';
-    });
+    // document.getElementById('drawModeButton').addEventListener('click', function () {
+    //     isDrawingMode = !isDrawingMode;
+    //     canvas.isDrawingMode = isDrawingMode;
+    //     this.textContent = isDrawingMode ? '描画モード終了' : 'フリーハンド描画モード';
+    // });
     document.getElementById('addTextButton').addEventListener('click', function () {
         console.log(textColor);
         new_text(200, 50);
@@ -350,9 +351,6 @@ function image_onload() {
         get_comment_json();
         import_notes();
     });
-    // document.getElementById('inspectButton').addEventListener('click', function () {
-    //     inspect_selected();
-    // });
 }
 // 画像の読み込み後に初期描画
 image.onload = () => {
@@ -367,8 +365,17 @@ if (image.complete) {
 
 window.onload = () => {
     // ウィンドウのリサイズイベントでスケール調整
+    textCP.value = textColor;
+    rectCP.value = rectColor;
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
+}
+
+function flashSuccess() {
+    document.querySelector('#saveButton').classList.add('flash-success');
+    setTimeout(() => {
+        document.querySelector('#saveButton').classList.remove('flash-success');
+    }, 1300); // フラッシュの持続時間を1.3秒に設定
 }
 
 function annot_changed(formName) {
@@ -383,13 +390,7 @@ function annot_changed(formName) {
         success: function (result, textStatus, xhr) {
             console.log("success " + new Date());
             // main要素を緑色に1秒間フラッシュさせる
-            const main = document.getElementById('saveButton');
-            main.style.backgroundColor = 'lightgreen';
-            setTimeout(() => {
-                main.style.backgroundColor = '';
-            }, 1000);
-
-
+            flashSuccess();
         },
         error: function (xhr, textStatus, error) {
             console.log(textStatus);

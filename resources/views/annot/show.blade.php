@@ -28,6 +28,17 @@
             word-wrap: break-word;
             /* 長い単語を折り返す */
         }
+        @keyframes flash {
+            0% {
+                background-color: #0af0f8;
+            }
+            100% {
+                background-color: #bfdbfe;
+            }
+        }
+        .flash-success {
+            animation: flash 1.3s ease-in-out;
+        }
     </style>
     @section('title', 'AnnotPaper ' . $apaper->paper->id_03d() . ($apaper->is_public ? '' : ' (private)'))
     @if (session('feedback.success'))
@@ -56,7 +67,7 @@
     <button id="saveButton" class="mx-2 p-2 bg-blue-200 hover:bg-blue-500">Save</button>
     <button id="loadButton" class="mx-2 p-2 bg-blue-200 hover:bg-blue-500">Load</button>
     <span class="mx-2"></span>
-    <x-element.linkbutton href="https://scrapbox.io/confman/AnnotPaper_%E3%81%AE%E3%81%A4%E3%81%8B%E3%81%84%E3%81%8B%E3%81%9F" color="lime" target="_blank">使い方</x-element.linkbutton>
+    <x-element.linkbutton href="https://scrapbox.io/confman/AnnotPaper_%E3%81%AE%E3%81%A4%E3%81%8B%E3%81%84%E3%81%8B%E3%81%9F" color="lime" target="_blank">使い方(Scrapbox/Cosense)</x-element.linkbutton>
     </div>
     {{-- <button id="inspectButton" class="p-2 bg-blue-200 hover:bg-blue-500">Inspect</button> --}}
     <div id="canvas-container"
@@ -80,9 +91,9 @@
 
     <pre id="output" class="invisible"></pre>
     <div id="tooltip"
-        style="position: absolute; display: none; background: rgba(0, 0, 0, 0.8); color: white; padding: 5px; border-radius: 3px; font-size: 12px; pointer-events: none;">
+        style="position: absolute; display: none; background: rgba(0, 0, 0, 0.8); color: gray; padding: 5px; border-radius: 3px; font-size: 12px; pointer-events: none;">
     </div>
-    <button id="drawModeButton" style="visibility:hidden;">フリーハンド描画モード</button>
+    {{-- <button id="drawModeButton" style="visibility:hidden;">フリーハンド描画モード</button> --}}
 
     <form action="{{ route('annot.postsubmit') }}" method="post" class="invisible" id="submit_annots">
         @csrf
