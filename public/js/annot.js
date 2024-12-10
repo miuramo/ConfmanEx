@@ -8,6 +8,15 @@ let scale = 1;
 let lastScale = 1;
 let isTextEditing = false;
 
+let textColor = '#0033ff';
+let rectColor = '#ffffaa';
+const textCP = document.getElementById('ID_textColor');
+const rectCP = document.getElementById('ID_rectColor');
+
+// コピー用の変数
+let copiedObject = null;
+
+
 // キャンバスをウィンドウ幅に初期設定
 function resizeCanvas() {
 
@@ -64,7 +73,7 @@ function get_comment_json() {
                 // データの取得が成功した場合
                 var responseData = xhr.responseText;
                 notes = JSON.parse(responseData);
-                console.log(notes);
+                // console.log(notes);
             } else {
                 // データの取得が失敗した場合
                 console.error('Request failed:', xhr.status);
@@ -94,12 +103,31 @@ function inspect_selected() {
     console.log('w', ao.width, 'h', ao.height, 'left', ao.left, 'top', ao.top, 'sX', ao.scaleX, 'sY', ao.scaleY, 'uID', ao.user_id);
 }
 
+function convertToRgba(hex, alpha) {
+    // 16進数カラーコードを正規表現で検証
+    const isValidHex = /^#([0-9A-Fa-f]{6})$/.test(hex);
+    if (!isValidHex) {
+        throw new Error("Invalid HEX color format. Use #rrggbb.");
+    }
+    // rr, gg, bbを抽出
+    const r = parseInt(hex.slice(1, 3), 16); // 赤成分
+    const g = parseInt(hex.slice(3, 5), 16); // 緑成分
+    const b = parseInt(hex.slice(5, 7), 16); // 青成分
+    // アルファ値の範囲をチェック
+    if (alpha < 0 || alpha > 1) {
+        throw new Error("Alpha value must be between 0 and 1.");
+    }
+    // RGBA文字列を作成
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+
 function new_text(px, py) {
     const newTxt = new fabric.IText('ここをクリックして編集', {
         left: px,
         top: py,
         fontSize: 25,
-        fill: 'blue',
+        fill: convertToRgba(textColor, 0.9),
         scaleX: scale,
         scaleY: scale,
         user_id: user_id,
@@ -112,7 +140,7 @@ function new_rect(px, py) {
     const newRect = new fabric.Rect({
         left: 200,
         top: 50,
-        fill: 'rgba(255, 255, 0, 0.3)', // 半透明の赤色
+        fill: convertToRgba(rectColor, 0.3),
         width: 200,
         height: 100,
         hasBorders: true, // 境界線を表示
@@ -126,6 +154,21 @@ function new_rect(px, py) {
 
 
 function image_onload() {
+    // color picker の初期化
+    textCP.addEventListener('input', (event) => {
+        textColor = event.target.value;
+        if (canvas.getActiveObject() && canvas.getActiveObject().type === 'i-text') {
+            canvas.getActiveObject().set({ fill: convertToRgba(textColor, 0.9) });
+            canvas.renderAll();
+        }
+    });
+    rectCP.addEventListener('input', (event) => {
+        rectColor = event.target.value;
+        if (canvas.getActiveObject() && canvas.getActiveObject().type === 'rect') {
+            canvas.getActiveObject().set({ fill: convertToRgba(rectColor, 0.3) });
+            canvas.renderAll();
+        }
+    });
 
     // ツールチップ要素
     const tooltip = document.getElementById('tooltip');
@@ -198,7 +241,7 @@ function image_onload() {
         if (target) {
             tooltip.style.background = (target.user_id == user_id) ? 'rgba(70, 250, 220, 0.8)' : 'rgba(230, 200, 40, 0.8)';
             tooltip.style.display = 'block';
-            tooltip.textContent = target.name+" ("+target.affil+")" || 'Tooltip';
+            tooltip.textContent = target.name + " (" + target.affil + ")" || 'Tooltip';
         } else {
             tooltip.style.display = 'none';
         }
@@ -243,6 +286,14 @@ function image_onload() {
                 }
             }
         }
+
+        // CTRL+C でコピー
+        if ((e.ctrlKey || e.metaKey || e.altKey) && e.key === 'c') {
+        }
+        // CTRL+V で貼り付け
+        if ((e.ctrlKey || e.metaKey || e.altKey) && e.key === 'v') {
+        }
+
     };
 
 
@@ -253,6 +304,7 @@ function image_onload() {
         this.textContent = isDrawingMode ? '描画モード終了' : 'フリーハンド描画モード';
     });
     document.getElementById('addTextButton').addEventListener('click', function () {
+        console.log(textColor);
         new_text(200, 50);
     });
     document.getElementById('addRectButton').addEventListener('click', function () {
@@ -329,7 +381,15 @@ function annot_changed(formName) {
         beforeSend: function (xhr, settings) { },
         complete: function (xhr, textStatus) { },
         success: function (result, textStatus, xhr) {
-            console.log("success "+new Date());
+            console.log("success " + new Date());
+            // main要素を緑色に1秒間フラッシュさせる
+            const main = document.getElementById('saveButton');
+            main.style.backgroundColor = 'lightgreen';
+            setTimeout(() => {
+                main.style.backgroundColor = '';
+            }, 1000);
+
+
         },
         error: function (xhr, textStatus, error) {
             console.log(textStatus);

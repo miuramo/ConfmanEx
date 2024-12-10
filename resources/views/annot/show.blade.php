@@ -29,7 +29,7 @@
             /* 長い単語を折り返す */
         }
     </style>
-    @section('title', 'AnnotPaper ' . $apaper->paper->id_03d())
+    @section('title', 'AnnotPaper ' . $apaper->paper->id_03d() . ($apaper->is_public ? '' : ' (private)'))
     @if (session('feedback.success'))
         <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
     @endif
@@ -47,10 +47,17 @@
         title="page" class="flex-shrink-0 border" id="targetImage" style="display:none;">
 
     <!-- 描画用のキャンバス -->
+    <div class="flex items-end">
+    <input class="pt-1 w-8 h-12 p-0" type="color" id="ID_textColor" value="#0033ff" title="text color">
     <button id="addTextButton" class="p-2 bg-blue-200 hover:bg-blue-500">add Text</button>
-    <button id="addRectButton" class="p-2 bg-blue-200 hover:bg-blue-500">add Rect</button>
-    <button id="saveButton" class="p-2 bg-blue-200 hover:bg-blue-500">Save</button>
-    <button id="loadButton" class="p-2 bg-blue-200 hover:bg-blue-500">Load</button>
+    <span class="mx-2"></span>
+    <input class="pt-1 w-8 h-12 p-0" type="color" id="ID_rectColor" value="#ffffaa" title="rect color">
+    <button id="addRectButton" class="mr-2 p-2 bg-blue-200 hover:bg-blue-500">add Rect</button>
+    <button id="saveButton" class="mx-2 p-2 bg-blue-200 hover:bg-blue-500">Save</button>
+    <button id="loadButton" class="mx-2 p-2 bg-blue-200 hover:bg-blue-500">Load</button>
+    <span class="mx-2"></span>
+    <x-element.linkbutton href="https://scrapbox.io/confman/AnnotPaper_%E3%81%AE%E3%81%A4%E3%81%8B%E3%81%84%E3%81%8B%E3%81%9F" color="lime" target="_blank">使い方</x-element.linkbutton>
+    </div>
     {{-- <button id="inspectButton" class="p-2 bg-blue-200 hover:bg-blue-500">Inspect</button> --}}
     <div id="canvas-container"
         style="position: relative; width: 100%; height: auto; background: url('{{ route('file.pdfimages', ['file' => $apaper->file->id, 'page' => $page, 'hash' => substr($apaper->file->key, 0, 13)]) }}') no-repeat center center; background-size: cover;">
@@ -83,7 +90,6 @@
         <input type="text" name="page" value="{{ $page }}" id="id_page">
         <input type="text" name="content" value="1" id="id_content">
         <input type="text" name="annot_paper_id" value="{{ $apaper->id }}">
-        {{-- <button type="submit" class="p-2 bg-blue-200 hover:bg-blue-500">Save</button> --}}
     </form>
 
     @php
