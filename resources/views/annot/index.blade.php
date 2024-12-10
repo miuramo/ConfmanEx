@@ -2,6 +2,9 @@
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
             {{ __('AnnotPaper の一覧') }}
+            <span class="mx-2"></span>
+            <x-element.linkbutton2 href="https://scrapbox.io/confman/AnnotPaper_%E3%81%AE%E3%81%A4%E3%81%8B%E3%81%84%E3%81%8B%E3%81%9F" color="lime" target="_blank">使い方(Scrapbox/Cosense)</x-element.linkbutton2>
+        
         </h2>
     </x-slot>
     <style>

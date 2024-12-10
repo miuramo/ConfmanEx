@@ -67,7 +67,7 @@
     <button id="saveButton" class="mx-2 p-2 bg-blue-200 hover:bg-blue-500">Save</button>
     <button id="loadButton" class="mx-2 p-2 bg-blue-200 hover:bg-blue-500">Load</button>
     <span class="mx-2"></span>
-    <x-element.linkbutton href="https://scrapbox.io/confman/AnnotPaper_%E3%81%AE%E3%81%A4%E3%81%8B%E3%81%84%E3%81%8B%E3%81%9F" color="lime" target="_blank">使い方(Scrapbox/Cosense)</x-element.linkbutton>
+    <x-element.linkbutton2 href="https://scrapbox.io/confman/AnnotPaper_%E3%81%AE%E3%81%A4%E3%81%8B%E3%81%84%E3%81%8B%E3%81%9F" color="lime" target="_blank">使い方(Scrapbox/Cosense)</x-element.linkbutton2>
     </div>
     {{-- <button id="inspectButton" class="p-2 bg-blue-200 hover:bg-blue-500">Inspect</button> --}}
     <div id="canvas-container"
