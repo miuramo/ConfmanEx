@@ -2,10 +2,12 @@
 
 namespace Tests;
 
+use App\Models\Category;
 use App\Models\Paper;
 use App\Models\RevConflict;
 use App\Models\Review;
 use App\Models\Role;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -19,6 +21,7 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
         $this->seed();
+        Setting::seeder();
     }
 
     /**

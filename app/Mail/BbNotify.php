@@ -43,7 +43,7 @@ class BbNotify extends Mailable implements ShouldQueue
     public function __construct($_bb, $_bbmes)
     {
         $names = [1 => "査読議論", 2 => "メタと著者の", 3 => "出版担当と著者の"];
-        $nameofmeta = Setting::findByIdOrName('name_of_meta')->value;
+        $nameofmeta = Setting::findByIdOrName('NAME_OF_META')->value;
         if ($nameofmeta != null){
             $names[2] = $nameofmeta."と著者の";
         }

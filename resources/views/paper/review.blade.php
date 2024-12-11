@@ -38,7 +38,7 @@
                     ->get()
                     ->pluck('subdesc', 'desc')
                     ->toArray();
-                $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
+                $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META')->value;
                 if ($nameofmeta == null) {
                     $nameofmeta = 'メタ';
                 }

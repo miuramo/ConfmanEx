@@ -126,7 +126,7 @@
 
     @php
         $sbbs = App\Models\Bb::getShepherdingBbs(auth()->id());
-        $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
+        $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META')->value;
     @endphp
     @if ($sbbs->count() > 0)
         <x-element.h1>

@@ -5,7 +5,7 @@
         $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
         $cats = App\Models\Category::select('name', 'id')->get()->pluck('name', 'id')->toArray();
 
-        $nameofmeta = App\Models\Setting::findByIdOrName('name_of_meta')->value;
+        $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META')->value;
     @endphp
     @section('title', $paper->id_03d() . ' スコア')
     <x-slot name="header">

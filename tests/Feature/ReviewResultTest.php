@@ -16,21 +16,16 @@ class ReviewResultTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        // if (count(self::$users) < 2) {
-        //     for ($i = 0; $i < 6; $i++) {
-        //         self::$users[] = User::factory()->create();
-        //     }
-        // }
         parent::paper_submit(1, 1, 1);
     }
 
     public function test_the_application_returns_a_successful_response(): void
     {
         $response = $this->get('/');
-
         $response->assertStatus(200);
     }
+
+    
 
     public function test_reviewcomment_scoreonly_can_see_by_privileged_reviewers(): void
     {
