@@ -43,10 +43,10 @@
         </div>
     </div>
 
-    <div class="mx-4 mt-10">
+    <div class="mx-4 my-10">
 
         <x-element.h1>
-            公開 AnnotPaper の一覧
+            公開 AnnotPaper の一覧  <b>（注：同一ページ内の同一ユーザの複数アノテーションは、1件としてカウントされます）</b>
         </x-element.h1>
 
         @php
@@ -58,7 +58,8 @@
                     (AnnotPaperID: {{ $anpaper->id }})
                     &nbsp;
                     {{ $anpaper->paper->title }} (PaperID: {{ $anpaper->paper->id_03d() }})
-                </x-element.linkbutton>
+                </x-element.linkbutton> <span class="mx-2"></span>
+                {{$anpaper->annots->count()}} 件のアノテーション
             @endforeach
 
         </div>
