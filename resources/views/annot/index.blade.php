@@ -3,8 +3,10 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
             {{ __('AnnotPaper の一覧') }}
             <span class="mx-2"></span>
-            <x-element.linkbutton2 href="https://scrapbox.io/confman/AnnotPaper_%E3%81%AE%E3%81%A4%E3%81%8B%E3%81%84%E3%81%8B%E3%81%9F" color="lime" target="_blank">使い方(Scrapbox/Cosense)</x-element.linkbutton2>
-        
+            <x-element.linkbutton2
+                href="https://scrapbox.io/confman/AnnotPaper_%E3%81%AE%E3%81%A4%E3%81%8B%E3%81%84%E3%81%8B%E3%81%9F"
+                color="lime" target="_blank">使い方(Scrapbox/Cosense)</x-element.linkbutton2>
+
         </h2>
     </x-slot>
     <style>
@@ -46,7 +48,7 @@
     <div class="mx-4 my-10">
 
         <x-element.h1>
-            公開 AnnotPaper の一覧  <b>（注：同一ページ内の同一ユーザの複数アノテーションは、1件としてカウントされます）</b>
+            公開 AnnotPaper の一覧 <b>（注：同一ページ内の同一ユーザの複数アノテーションは、1件としてカウントされます）</b>
         </x-element.h1>
 
         @php
@@ -54,12 +56,14 @@
         @endphp
         <div class="mx-8">
             @foreach ($annotpapers as $anpaper)
-                <x-element.linkbutton href="{{ route('annot.show', ['annot' => $anpaper->id]) }}" color="lime">
-                    {{ $anpaper->paper->boothes_accepted() }}
-                    &nbsp;
-                    {{ $anpaper->paper->title }} (PaperID: {{ $anpaper->paper->id_03d() }})
-                </x-element.linkbutton> <span class="mx-2"></span>
-                {{$anpaper->annots->count()}} 件のアノテーション
+                <div>
+                    <x-element.linkbutton href="{{ route('annot.show', ['annot' => $anpaper->id]) }}" color="lime">
+                        {{ $anpaper->paper->boothes_accepted() }}
+                        &nbsp;
+                        {{ $anpaper->paper->title }} (PaperID: {{ $anpaper->paper->id_03d() }})
+                    </x-element.linkbutton> <span class="mx-2"></span>
+                    {{ $anpaper->annots->count() }} 件のアノテーション
+                </div>
             @endforeach
 
         </div>
