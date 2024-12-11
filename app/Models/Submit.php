@@ -9,6 +9,7 @@ class Submit extends Model
 {
     use HasFactory;
 
+    protected $with = ['accept'];
     protected $fillable = [
         'psessionid',
         'booth',

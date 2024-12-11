@@ -64,6 +64,7 @@ class Paper extends Model
     use SoftDeletes;
     // protected $table = 'papers';
     // public $timestamps = false;
+    protected $with = ['submits'];
 
     protected $casts = [
         'category_id' => 'int',
@@ -212,6 +213,20 @@ class Paper extends Model
     public function enqansByItemId($enq_itm_id)
     {
         return null;
+    }
+
+    /**
+     * 採択済みのBooth ID
+     */
+    public function boothes_accepted()
+    {
+        $bs = [];
+        foreach($this->submits as $sub){
+            if ($sub->accept->judge > 0){
+                $bs[] = $sub->booth;
+            }
+        }
+        return implode(" / ",$bs);
     }
 
     /**

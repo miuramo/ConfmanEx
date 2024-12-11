@@ -55,7 +55,7 @@
         <div class="mx-8">
             @foreach ($annotpapers as $anpaper)
                 <x-element.linkbutton href="{{ route('annot.show', ['annot' => $anpaper->id]) }}" color="lime">
-                    (AnnotPaperID: {{ $anpaper->id }})
+                    {{ $anpaper->paper->boothes_accepted() }}
                     &nbsp;
                     {{ $anpaper->paper->title }} (PaperID: {{ $anpaper->paper->id_03d() }})
                 </x-element.linkbutton> <span class="mx-2"></span>

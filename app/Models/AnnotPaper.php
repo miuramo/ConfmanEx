@@ -19,7 +19,7 @@ class AnnotPaper extends Model
 
     public function annots()
     {
-        return $this->hasMany(Annot::class);
+        return $this->hasMany(Annot::class)->whereRaw('CHAR_LENGTH(content) > ?', [82]);
     }
     public function file()
     {
