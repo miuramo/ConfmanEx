@@ -191,4 +191,32 @@ abstract class TestCase extends BaseTestCase
             }
         }
     }
+
+    protected function proceed_to_submit(int $cat_id)
+    {
+        $num_paper_per_author = 2;
+        $num_author = 5;
+        self::paper_submit($cat_id, $num_author, $num_paper_per_author);
+
+        // 査読者を追加
+        $num_reviewer = 5;
+        self::add_reviewer($num_reviewer);
+    }
+    protected function proceed_to_assign(int $cat_id)
+    {
+        // parent::dump_papers();
+        self::dump_role('reviewer');
+        self::give_reviewer_priv_to_authors(1, 'reviewer');
+
+        Review::extractAllCoAuthorRigais();
+        self::bidding('reviewer');
+        dump(RevConflict::count());
+        RevConflict::fillBidding($cat_id, "reviewer", 5);
+        self::dump_conflict();
+        // $this->assertCount(4, Role::findByIdOrName('reviewer')->users);
+
+        self::revassign($cat_id, 'reviewer', 2);
+        self::revassign($cat_id, 'metareviewer', 1);
+        self::dump_assign();
+    }
 }

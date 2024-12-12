@@ -283,6 +283,7 @@ class ReviewController extends Controller
     public function edit(Review $review)
     {
         if (!auth()->user()->can('role_any', 'reviewer|metareviewer')) return abort(403);
+        if (!Category::canEditReview($review->category_id)) return abort(403, "REVIEW EDIT IS NOT OPENED");
         if ($review->user_id != auth()->id()) return abort(403, "THIS IS NOT YOUR REVIEW");
 
         $query = Viewpoint::where("category_id", $review->category_id);

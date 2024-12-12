@@ -13,7 +13,6 @@ use Tests\TestCase;
 
 class BiddingTest extends TestCase
 {
-    protected static array $users = [];
     protected function setUp(): void
     {
         parent::setUp();
@@ -69,8 +68,6 @@ class BiddingTest extends TestCase
         $resp = $this->get('/review/conflict/1');
         $resp->assertStatus(403);
     }
-
-
 
     public function test_reviewcomment_scoreonly_can_see_by_privileged_reviewers(): void
     {

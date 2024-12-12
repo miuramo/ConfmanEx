@@ -134,6 +134,30 @@ class Review extends Model
         }
         return $ret;
     }
+
+    /**
+     * 主にテスト用
+     */
+    public static function arr_up_status()
+    {
+        $ret = [];
+        foreach (Review::all() as $a) {
+            $ret[$a->user_id][$a->paper_id] = ($a->ismeta) ? 2 : 1;
+        }
+        return $ret;
+    }
+    /**
+     * 主にテスト用
+     */
+    public static function arr_up_rev()
+    {
+        $ret = [];
+        foreach (Review::all() as $a) {
+            $ret[$a->user_id][$a->paper_id] = $a;
+        }
+        return $ret;
+    }
+
     /**
      * ネストした配列で返す
      * arr[paper_id][user_id] = star span
@@ -437,4 +461,5 @@ class Review extends Model
         }
         return false;
     }
+
 }

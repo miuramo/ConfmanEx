@@ -86,6 +86,14 @@ class Category extends Model
         return $canshow;
     }
 
+    public static function canEditReview($cat_id)
+    {
+        $canedit = false;
+        $revediton = Category::select('id', 'status__revedit_on')->get()->pluck('status__revedit_on', 'id')->toArray();
+        $reveditoff = Category::select('id', 'status__revedit_off')->get()->pluck('status__revedit_off', 'id')->toArray();
+        return ($revediton[$cat_id] && !$reveditoff[$cat_id] );
+    }
+
     /**
      * used at ReviewController.conflict
      */
