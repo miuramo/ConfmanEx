@@ -24,42 +24,58 @@ class BiddingTest extends TestCase
     {
         $reviewer = User::factory()->withRoles('reviewer')->create();
         $this->actingAs($reviewer);
-        $response0 = $this->get('/profile');
-        $response0->assertStatus(200);
-        $response0->assertSee('登録情報の修正');
+        $resp = $this->get('/profile');
+        $resp->assertStatus(200);
+        $resp->assertSee('登録情報の修正');
 
-        // $response = $this->get('/role/reviewer/top');
-        $response = $this->get('/paper');
-        $response->assertStatus(200);
-        $response->assertSee("投稿一覧");
-        // $response->assertDontSee("利害表明 (登壇発表)");
-        // Bidding開始
+        // $resp = $this->get('/role/reviewer/top');
+        $resp = $this->get('/paper');
+        $resp->assertStatus(200);
+        $resp->assertSee("投稿一覧");
+
+        // Bidding開始してない
+        parent::start_bidding(1,false);
+        parent::end_bidding(1,false);
+        $resp = $this->get('/role/reviewer/top');
+        $resp->assertDontSee("利害表明 (登壇発表)");
+        $resp = $this->get('/review/conflict/1');
+        $resp->assertStatus(403);
+
+        // Bidding開始したら見れる
         parent::start_bidding(1,true);
-        $response2 = $this->get('/');
-        $response2->assertStatus(200);
-        $response2->assertSee("査読");
+        parent::end_bidding(1,false);
+        $resp = $this->get('/');
+        $resp->assertStatus(200);
+        $resp->assertSee("査読");
 
-        // NAME_OF_META があるか？
-        // $nameofmeta = Setting::findByIdOrName('NAME_OF_META');
-        // dump($nameofmeta);
-        $response3 = $this->get('/role/reviewer/top');
-        // $response2->dumpHeaders();
-        $response3->assertStatus(200);
-        $response3->assertSee("/review/conflict/1");
-        $response3->assertSee("利害表明 (登壇発表)");
+        $resp = $this->get('/role/reviewer/top');
+        $resp->assertStatus(200);
+        $resp->assertSee("/review/conflict/1");
+        $resp->assertSee("利害表明 (登壇発表)");
         
-        // $response = $this->get(route('role.top', ['role' => 'reviewer']));
+        // Bidding終了したら見れない
+        parent::start_bidding(1,true);
+        parent::end_bidding(1,true);
+        $resp = $this->get('/role/reviewer/top');
+        $resp->assertDontSee("利害表明 (登壇発表)");
+        $resp = $this->get('/review/conflict/1');
+        $resp->assertStatus(403);
 
-        // dump($response->getContent()); // レスポンスボディをダンプ
-        // $response->assertStatus(200);
+        // 開始してないけど終了している→見れない
+        parent::start_bidding(1,false);
+        parent::end_bidding(1,true);
+        $resp = $this->get('/role/reviewer/top');
+        $resp->assertDontSee("利害表明 (登壇発表)");
+        $resp = $this->get('/review/conflict/1');
+        $resp->assertStatus(403);
     }
 
 
 
     public function test_reviewcomment_scoreonly_can_see_by_privileged_reviewers(): void
     {
-        $response = $this->get('/');
-        $response->assertStatus(200);
+        $resp = $this->get('/');
+        $resp->assertStatus(200);
 
         $reviewer = User::factory()->withRoles('reviewer')->create();
         $metareviewer = User::factory()->withRoles('metareviewer')->create();

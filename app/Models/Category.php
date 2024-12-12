@@ -87,6 +87,24 @@ class Category extends Model
     }
 
     /**
+     * used at ReviewController.conflict
+     */
+    public static function canBid(int $cat_id)
+    {
+        $canbid = false;
+        $bidding_on = Category::select('id', 'status__bidding_on')->get()->pluck('status__bidding_on', 'id')->toArray();
+        $bidding_off = Category::select('id', 'status__bidding_off')->get()->pluck('status__bidding_off', 'id')->toArray();
+        if (!auth()->user()->can('role', 'pc')) {
+            if (auth()->user()->can('role_any', 'reviewer|metareviewer') && $bidding_on[$cat_id] && !$bidding_off[$cat_id]) {
+                $canbid = true;
+            }
+        } else {
+            $canbid = true;
+        }
+        return $canbid;
+    }
+
+    /**
      * PC長ではなく、manage_cat 権限のみの場合は、そのカテゴリのみ返す。
      */
     public static function manage_cats()

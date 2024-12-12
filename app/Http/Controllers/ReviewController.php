@@ -28,6 +28,8 @@ class ReviewController extends Controller
     public function conflict(int $cat_id)
     {
         if (!auth()->user()->can('role_any', 'reviewer|metareviewer')) return abort(403);
+        if (!Category::canBid($cat_id)) return abort(403);
+        
         // 自著分、共著分については、さきにRevConflictを作成しておく
         $author_papers = Paper::where("owner", auth()->user()->id)->get();
         foreach ($author_papers as $p) {
