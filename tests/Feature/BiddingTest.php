@@ -11,6 +11,9 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
+/**
+ * Bidding→Review→ReviewResult 
+ */
 class BiddingTest extends TestCase
 {
     protected function setUp(): void

@@ -40,25 +40,52 @@
         @endforeach
 
         @foreach ($opts as $i => $lbl)
-            <div class="hidden-content bg-{{$colors[$i]}}-200 p-2 mt-2 dark:text-gray-600" id="div_type{{ $i }}"
-                style="display:none;">
+            <div class="hidden-content bg-{{ $colors[$i] }}-200 p-2 mt-2 dark:text-gray-600"
+                id="div_type{{ $i }}" style="display:none;">
 
                 @foreach ($bbs[$i] as $bb)
                     <div>
                         @isset($bb->paper)
-                        <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb->id, 'key' => $bb->key]) }}"
-                            :color="$colors[$i]" target="_blank" size="sm">
-                            {{ $bb->paper->id_03d() }} {{ $bb->paper->title }} 
-                            ({{ $bb->nummessages() }} messages)
-                        </x-element.linkbutton>
+                            <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb->id, 'key' => $bb->key]) }}"
+                                :color="$colors[$i]" target="_blank" size="sm">
+                                {{ $bb->paper->id_03d() }} {{ $bb->paper->title }}
+                                ({{ $bb->nummessages() }} messages)
+                            </x-element.linkbutton>
                         @else
-                        <div>Error: No Paper associated {{$bb->id}}</div>
+                            <div>Error: No Paper associated {{ $bb->id }}</div>
                         @endisset
                     </div>
                 @endforeach
             </div>
         @endforeach
     </div>
+
+    @php
+        $subs = App\Models\Submit::with('paper')->where('category_id', 1)->orderBy('paper_id')->get();
+        $acc_papers = [];
+        foreach ($subs as $sub) {
+            if ($sub->paper == null) {
+                continue;
+            }
+            if (!isset($acc_papers[$sub->accept->id])) {
+                $acc_papers[$sub->accept->id] = [];
+            }
+            $acc_papers[$sub->accept->id][] = sprintf('%03d', $sub->paper_id);
+        }
+        $accepts = App\Models\Accept::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+    @endphp
+    @isset($acc_papers[1])
+    <div class="mx-6 my-2 p-3 bg-yellow-100 rounded-lg dark:bg-slate-700 dark:text-gray-300 text-sm">
+        【登壇発表】採択ラベルごとの、PaperIDリスト （下のテキストエリアにコピーペーストしてください）
+        <ul class="mx-4">
+            @foreach ($acc_papers as $accid => $pids)
+                <li>
+                    {{ $accepts[$accid] }} : {{ implode(', ', $pids) }}
+                </li>
+            @endforeach
+        </ul>
+    </div>
+    @endisset
 
     <div class="mx-6 my-2 p-3 bg-slate-300 rounded-lg dark:bg-slate-700 dark:text-gray-300">
         <form action="{{ route('bb.createnew') }}" method="post" id="bb_new">
@@ -79,8 +106,7 @@
             <div class="mb-1">
                 <label for="pids">掲示板をまとめて作成する Paper ID List (カンマ区切り) / all / accepted</label>
             </div>
-            <input type="text" name="pids" id="pids" size="80" placeholder="012, 023, 034, ..."
-                class="mx-2 p-1">
+            <textarea name="pids" id="pids" cols="80" rows="5" placeholder="012, 023, 034, ..." class="mx-2 p-1"></textarea>
             <div class="mt-2">
                 <label>作成する掲示板の種類</label>
             </div>
@@ -96,9 +122,7 @@
                 </x-element.submitbutton>
             </div>
         </form>
-
     </div>
-
     <div class="mx-6 mt-10 p-3 bg-slate-300 rounded-lg dark:bg-slate-700 dark:text-gray-300">
         Danger Zone
         <span class="mx-2"></span>
