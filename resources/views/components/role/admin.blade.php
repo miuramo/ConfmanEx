@@ -177,6 +177,10 @@
             <x-element.linkbutton href="{{route('role.login-as', ['user'=> $random_paper_owner])}}" color="purple">{{$random_paper_owner}}</x-element.linkbutton> <br>
         @endforeach
     </div>
+    <div class="text-sm mx-10">
+        シェファーディング対象論文を担当しているメタ査読者<br>
+
+    </div>
     @endif
 
     <x-element.h1>Danger Zone：
