@@ -34,7 +34,7 @@
                 @isset($sub->paper->pdf_file)
                     <tr class="{{ $count % 2 === 0 ? 'bg-slate-200 dark:bg-slate-300' : 'bg-white dark:bg-slate-500' }}">
                         <td class="p-1 text-center">
-                            <input type="checkbox" name="s_{{ $sub->id }}" value="on">
+                            <input type="checkbox" name="s_{{ $sub->id }}" value="on" class="acc_{{$sub->accept_id}}">
                         </td>
                         <td class="p-1 text-center">
                             {{ $sub->paper->id_03d() }}

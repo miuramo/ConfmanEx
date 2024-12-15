@@ -5,7 +5,7 @@
         $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
         $cats = App\Models\Category::manage_cats();
     @endphp
-        @section('title', $cats[$cat_id].' 結果')
+    @section('title', $cats[$cat_id] . ' 結果')
 
     <x-slot name="header">
         {{-- <div class="mb-4">
@@ -31,40 +31,52 @@
             @method('post')
 
             @can('manage_cat', $cat_id)
-            <div class="py-4">
-            <x-element.button onclick="CheckAll('reviewresult')" color="lime" value="すべてチェック">
-            </x-element.button>
-            &nbsp;
-            <x-element.button onclick="UnCheckAll('reviewresult')" color="orange" value="すべてチェック解除">
-            </x-element.button>
-            @endcan
+                <div class="py-4">
+                    <x-element.button onclick="CheckAll('reviewresult')" color="lime" value="すべてチェック">
+                    </x-element.button>
+                    &nbsp;
+                    <x-element.button onclick="UnCheckAll('reviewresult')" color="orange" value="すべてチェック解除">
+                    </x-element.button>
+                @endcan
 
 
-            <x-review.resultmap :subs="$subs" :cat="$cat">
-            </x-review.resultmap>
+                <x-review.resultmap :subs="$subs" :cat="$cat">
+                </x-review.resultmap>
 
-            @can('manage_cat', $cat_id)
-            <div class="py-4">
-            <x-element.button onclick="CheckAll('reviewresult')" color="lime" value="すべてチェック">
-            </x-element.button>
-            &nbsp;
-            <x-element.button onclick="UnCheckAll('reviewresult')" color="orange" value="すべてチェック解除">
-            </x-element.button>
-            @endcan
-        </div>
-        @can('manage_cat', $cat_id)
-        <select id="uprev" name="uprev">
-                @foreach ($accepts as $n => $acc)
-                    <option value="{{ $n }}">{{ $acc }}</option>
-                @endforeach
-            </select>
-            <x-element.submitbutton value="chk" color="yellow">チェックした査読結果を更新
-            </x-element.submitbutton>
-            <div class="py-4">
-                <x-element.submitbutton value="excel" color="teal">査読結果をExcel Download
-                </x-element.submitbutton>
+                @can('manage_cat', $cat_id)
+                    <div class="py-1">
+                        <x-element.button onclick="CheckAll('reviewresult')" color="lime" value="すべてチェック">
+                        </x-element.button>
+                        &nbsp;
+                        <x-element.button onclick="UnCheckAll('reviewresult')" color="orange" value="すべてチェック解除">
+                        </x-element.button>
+                        &nbsp;
+                    </div>
+                    <div class="py-2 leading-loose">
+                        @foreach ($accepts as $n => $acc)
+                            @if (str_starts_with($acc, '予備'))
+                                @continue
+                            @endif
+                            <x-element.button onclick="CheckNoTag('reviewresult', 'acc_{{ $n }}')" color="lime"
+                                size="xs" value="{{ $acc }}のみチェック">
+                            </x-element.button>
+                        @endforeach
+                    </div>
+                @endcan
             </div>
-@endcan
+            @can('manage_cat', $cat_id)
+                <select id="uprev" name="uprev">
+                    @foreach ($accepts as $n => $acc)
+                        <option value="{{ $n }}">{{ $acc }}</option>
+                    @endforeach
+                </select>
+                <x-element.submitbutton value="chk" color="yellow">チェックした査読結果を更新
+                </x-element.submitbutton>
+                <div class="py-4">
+                    <x-element.submitbutton value="excel" color="teal">査読結果をExcel Download
+                    </x-element.submitbutton>
+                </div>
+            @endcan
         </form>
 
     </div>
@@ -75,6 +87,11 @@
                     document.forms[formname].elements[i].checked = true;
                 }
             }
+        }
+
+        function CheckNoTag(formname, cls) {
+            // JQueryで、クラスがclsである要素を取得し、その要素のチェックボックスをチェックする
+            $("." + cls).prop('checked', true);
         }
 
         function UnCheckAll(formname) {
