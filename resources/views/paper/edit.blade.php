@@ -129,7 +129,7 @@
 
         <div class="py-2 px-6">
             <div class="m-6">
-                @if(!$paper->locked)
+                @if($paper->can_upload_files())
                 <x-element.h1>ファイルをアップロードするには <span class="bg-lime-200 text-green-700 px-1 dark:bg-lime-500">Drop Files
                         Here</span> にドラッグ＆ドロップしてください。
                     <div class="text-sm mx-4 mt-2">

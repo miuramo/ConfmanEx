@@ -67,6 +67,9 @@
             @can('manage_cat', $cat_id)
                 <select id="uprev" name="uprev">
                     @foreach ($accepts as $n => $acc)
+                        @if (str_starts_with($acc, '予備'))
+                            @continue
+                        @endif
                         <option value="{{ $n }}">{{ $acc }}</option>
                     @endforeach
                 </select>

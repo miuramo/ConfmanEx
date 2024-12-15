@@ -767,6 +767,26 @@ class Paper extends Model
         }
         return false;
     }
+    /**
+     * 著者が、当初のフォームでファイルアップロードできるならtrue
+     * 投稿時はtrue
+     * 査読開始後はfalse
+     * カメラレディ投稿期間は、採択者のみtrue
+     * 予稿集編集準備期間は、false
+     */
+    public function can_upload_files()
+    {
+        $cat = Category::find($this->category_id);
+        if ($cat->status__revedit_on == 0) return true; // 投稿時（査読開始前）
+        else if ($cat->status__revreturn_on == 0) return false; // 査読中はfalse
+        else if ($cat->status__revreturn_on == 1) { // 査読開始後で、結果開示前
+            if ($this->is_accepted_in_any_category()) return true; // 採択者はアップロードできる
+            else return false; // それ以外はアップロード不可
+        } else {
+            return !($this->locked); // それ以外は、ロックされていないならアップロード可能
+        }
+        return false; // ここは使わない
+    }
 
     /**
      * このファイルの予稿集収録をとりやめる（参照をはずす）

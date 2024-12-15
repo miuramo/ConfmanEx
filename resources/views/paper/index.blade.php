@@ -74,7 +74,7 @@
                             &nbsp;
                             <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb, 'key' => $bb->key]) }}"
                                 color="pink" target="_blank">
-                                掲示板 </x-element.linkbutton>
+                                シェファーディング掲示板 </x-element.linkbutton>
                         @endisset
 
                         @php
