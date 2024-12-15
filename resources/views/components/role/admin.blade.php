@@ -153,7 +153,31 @@
         <x-element.linkbutton href="{{ route('admin.importpaperjson') }}" color="cyan">
             Import Paper JSON
         </x-element.linkbutton>
+
     </x-element.h1>
+
+    @if(env('APP_DEBUG'))
+    <div class="text-sm mx-10">
+        採択タグごとの、ランダムなPaperIDとその投稿者IDの表示<br>
+        @php
+            $paperlist = App\Models\Accept::acc_status(true);
+            $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+            $show = [];
+            $showpid = [];
+            foreach ($paperlist[1][1] as $accid => $pids) {
+                $random_idx = array_rand($pids);
+                $random_pid = $pids[$random_idx];
+                $random_paper_owner = App\Models\Paper::find($random_pid)->owner;
+                $showpid[$accid] = sprintf("%03d",$random_pid);
+                $show[$accid] = $random_paper_owner;
+            }
+        @endphp
+        @foreach ($show as $accid => $random_paper_owner)
+            {{ $accepts[$accid] }}: {{$showpid[$accid]}} - 
+            <x-element.linkbutton href="{{route('role.login-as', ['user'=> $random_paper_owner])}}" color="purple">{{$random_paper_owner}}</x-element.linkbutton> <br>
+        @endforeach
+    </div>
+    @endif
 
     <x-element.h1>Danger Zone：
         <x-element.linkbutton href="{{ route('admin.resetbidding') }}" color="pink"

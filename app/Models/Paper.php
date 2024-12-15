@@ -110,11 +110,18 @@ class Paper extends Model
         'deleted_at'
     ];
 
-    public static function mandatory_bibs(){
-        $koumoku = ['title' => '和文タイトル', 'abst' => '和文アブストラクト', 
-        'keyword' => '和文キーワード', 'authorlist' => '和文著者名', 
-        'etitle' => '英文Title', 'eabst' => '英文Abstract', 
-        'ekeyword' => '英文Keyword', 'eauthorlist' => '英文Author(s)'];
+    public static function mandatory_bibs()
+    {
+        $koumoku = [
+            'title' => '和文タイトル',
+            'abst' => '和文アブストラクト',
+            'keyword' => '和文キーワード',
+            'authorlist' => '和文著者名',
+            'etitle' => '英文Title',
+            'eabst' => '英文Abstract',
+            'ekeyword' => '英文Keyword',
+            'eauthorlist' => '英文Author(s)'
+        ];
         $skip_bibinfo = Setting::findByIdOrName("SKIP_BIBINFO", "value");
         $skip_bibinfo = json_decode($skip_bibinfo);
         foreach ($skip_bibinfo as $key) {
@@ -221,12 +228,12 @@ class Paper extends Model
     public function boothes_accepted()
     {
         $bs = [];
-        foreach($this->submits as $sub){
-            if ($sub->accept->judge > 0){
+        foreach ($this->submits as $sub) {
+            if ($sub->accept->judge > 0) {
                 $bs[] = $sub->booth;
             }
         }
-        return implode(" / ",$bs);
+        return implode(" / ", $bs);
     }
 
     /**
@@ -338,7 +345,7 @@ class Paper extends Model
                 $bcclist[] = $bcc;
             }
         }
-        return ["to" => $this->paperowner->email, "cc" => $cclist, "bcc" => $bcclist ];
+        return ["to" => $this->paperowner->email, "cc" => $cclist, "bcc" => $bcclist];
     }
 
     /**
@@ -372,17 +379,18 @@ class Paper extends Model
     /**
      * このPaperと、引数pidで与えられた論文との、contactsの重複があるか調べる。
      */
-    public function hasSharedContacts(int $pid){
+    public function hasSharedContacts(int $pid)
+    {
         $thispid = $this->id;
         $contacts = DB::select("select contact_id from paper_contact where paper_id in ({$pid} , {$thispid}) order by contact_id");
         $chkary = [];
-        foreach($contacts as $colary){
+        foreach ($contacts as $colary) {
             if (isset($chkary[$colary->contact_id])) return true;
             $chkary[$colary->contact_id] = 1;
         }
         return false;
     }
-    
+
 
     // public function submits()
     // {
@@ -519,18 +527,18 @@ class Paper extends Model
         $koumoku = Paper::mandatory_bibs();
         // 設定されていないものがあれば、error配列として返す。
         $errors = [];
-        foreach($koumoku as $key=>$expr){
-            if ($this->{$key} == null || strlen($this->{$key}) < 2){
-                $errors[$key] = "書誌情報の設定から、".$expr." を入力してください。";
+        foreach ($koumoku as $key => $expr) {
+            if ($this->{$key} == null || strlen($this->{$key}) < 2) {
+                $errors[$key] = "書誌情報の設定から、" . $expr . " を入力してください。";
             }
         }
 
         // 著者名(所属) のチェック
-        foreach($koumoku as $key=>$expr){
-            if ($key == "authorlist" || $key == "eauthorlist"){
+        foreach ($koumoku as $key => $expr) {
+            if ($key == "authorlist" || $key == "eauthorlist") {
                 $ret = $this->authorlist_check($key);
                 if (!$ret) {
-                    $errors[$key] = ($key=="authorlist"? "和文著者名(所属)":"英文Authors(所属)")." の書式が正しくありません。";
+                    $errors[$key] = ($key == "authorlist" ? "和文著者名(所属)" : "英文Authors(所属)") . " の書式が正しくありません。";
                 }
             }
         }
@@ -554,7 +562,7 @@ class Paper extends Model
             // info("note: category->extract_title is 0. SKIPPING.");
             return;
         }
-        if ($this->locked){
+        if ($this->locked) {
             // info("note: paper is locked. SKIPPING.");
             return;
         }
@@ -626,7 +634,7 @@ class Paper extends Model
         $lines = array_map("trim", $lines);
         if (count($lines) == 0) return true;
         $pattern = '/^([\p{Hiragana}\p{Katakana}\p{Han}\w\-,.]+(?:\s[\p{Hiragana}\p{Katakana}\p{Han}\w\-,.]+)*)\s*\([^\)]+\)$/u';
-        foreach($lines as $line){
+        foreach ($lines as $line) {
             if (!preg_match($pattern, $line)) {
                 return false;
             }
@@ -743,9 +751,16 @@ class Paper extends Model
 
     /**
      * いずれかのカテゴリで、採択されているならtrue
+     * ただし、著者に査読結果が返っている場合のみ返す。それ以外はfalse
      */
     public function is_accepted_in_any_category()
     {
+        $revreturn = Category::select('status__revreturn_on', 'id')
+            ->where('id', $this->category_id)
+            ->get()
+            ->pluck('status__revreturn_on', 'id')
+            ->toArray();
+        if ($revreturn[$this->category_id] == 0) return false;
         $subs = $this->submits;
         foreach ($subs as $sub) {
             if ($sub->accept->judge > 0) return true;
@@ -756,7 +771,8 @@ class Paper extends Model
     /**
      * このファイルの予稿集収録をとりやめる（参照をはずす）
      */
-    public function file_abandon(int $fileid){
+    public function file_abandon(int $fileid)
+    {
         if ($this->pdf_file_id == $fileid) {
             $this->pdf_file_id = null;
         }

@@ -30,6 +30,8 @@ class RoleController extends Controller
                 // reviewerはmetareviewerも見ることができる。
             } else if ($name == "pub" && auth()->user()->can('role', 'web')) {
                 return redirect()->route('role.top', ["role" => "web"]);
+            } else if ($name == "author"){
+                return redirect()->route('paper.index');
             } else {
                 abort(403);
             }
