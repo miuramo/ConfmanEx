@@ -156,31 +156,53 @@
 
     </x-element.h1>
 
-    @if(env('APP_DEBUG'))
-    <div class="text-sm mx-10">
-        採択タグごとの、ランダムなPaperIDとその投稿者IDの表示<br>
-        @php
-            $paperlist = App\Models\Accept::acc_status(true);
-            $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
-            $show = [];
-            $showpid = [];
-            foreach ($paperlist[1][1] as $accid => $pids) {
-                $random_idx = array_rand($pids);
-                $random_pid = $pids[$random_idx];
-                $random_paper_owner = App\Models\Paper::find($random_pid)->owner;
-                $showpid[$accid] = sprintf("%03d",$random_pid);
-                $show[$accid] = $random_paper_owner;
-            }
-        @endphp
-        @foreach ($show as $accid => $random_paper_owner)
-            {{ $accepts[$accid] }}: {{$showpid[$accid]}} - 
-            <x-element.linkbutton href="{{route('role.login-as', ['user'=> $random_paper_owner])}}" color="purple">{{$random_paper_owner}}</x-element.linkbutton> <br>
-        @endforeach
-    </div>
-    <div class="text-sm mx-10">
-        シェファーディング対象論文を担当しているメタ査読者<br>
+    @if (env('APP_DEBUG'))
+        <div class="text-sm mx-10">
+            採択タグごとの、ランダムなPaperIDとその投稿者IDの表示<br>
+            @php
+                $paperlist = App\Models\Accept::acc_status(true);
+                $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+                $show = [];
+                $showpid = [];
+                $metarev = [];
+                $rev = [];
+                foreach ($paperlist[1][1] as $accid => $pids) {
+                    $random_idx = array_rand($pids);
+                    $random_pid = $pids[$random_idx];
+                    $random_paper = App\Models\Paper::find($random_pid);
+                    $random_paper_owner = $random_paper->owner;
+                    $showpid[$accid] = sprintf('%03d', $random_pid);
+                    $show[$accid] = $random_paper_owner;
+                    $random_sub = App\Models\Submit::where('paper_id', $random_pid)->get()->first();
+                    $metarev[$accid] = App\Models\Review::where('submit_id', $random_sub->id)
+                        ->where('ismeta', 1)
+                        ->get()
+                        ->first();
+                    $rev[$accid] = App\Models\Review::where('submit_id', $random_sub->id)
+                        ->where('ismeta', 0)
+                        ->get()
+                        ->first();
+                    info($metarev[$accid]);
+                    info($rev[$accid]);
+                }
+            @endphp
+            @foreach ($show as $accid => $random_paper_owner)
+                {{ $accepts[$accid] }}: {{ $showpid[$accid] }} -
+                <x-element.linkbutton href="{{ route('role.login-as', ['user' => $random_paper_owner]) }}"
+                    color="purple">{{ $random_paper_owner }}</x-element.linkbutton> 
+                --
+                <x-element.linkbutton href="{{ route('role.login-as', ['user' => $metarev[$accid]->user_id]) }}"
+                    color="orange">meta</x-element.linkbutton> 
+                -
+                <x-element.linkbutton href="{{ route('role.login-as', ['user' => $rev[$accid]->user_id]) }}"
+                    color="lime">rev</x-element.linkbutton> <br>
+            @endforeach
+        </div>
+        <div class="text-sm mx-10">
+            シェファーディング対象論文を担当しているメタ査読者<br>
 
-    </div>
+
+        </div>
     @endif
 
     <x-element.h1>Danger Zone：

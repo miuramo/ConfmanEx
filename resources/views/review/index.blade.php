@@ -90,7 +90,7 @@
                     @endif
 
                     @if ($revbbon[$rev->paper->category_id])
-                        <x-element.bblink :rev="$rev">
+                        <x-element.bblink :rev="$rev" label="シェファーディング掲示板">
                         </x-element.bblink>
                     @endif
 
