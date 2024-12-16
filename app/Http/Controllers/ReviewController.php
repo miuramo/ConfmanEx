@@ -29,7 +29,7 @@ class ReviewController extends Controller
     {
         if (!auth()->user()->can('role_any', 'reviewer|metareviewer')) return abort(403);
         if (!Category::canBid($cat_id)) return abort(403);
-        
+
         // 自著分、共著分については、さきにRevConflictを作成しておく
         $author_papers = Paper::where("owner", auth()->user()->id)->get();
         foreach ($author_papers as $p) {
@@ -174,11 +174,11 @@ class ReviewController extends Controller
     public function comment_paper(Category $cat, Paper $paper, string $token)
     {
         if (!Category::isShowReview($cat->id)) {
-            if (!auth()->user()->can('role_any', 'metareviewer')){ //メタであれば見せる
+            if (!auth()->user()->can('role_any', 'metareviewer')) { //メタであれば見せる
                 return abort(403, 'review comment');
             }
         }
-        $am_i_meta = auth()->user()->can('role_any','pc|metareviewer');
+        $am_i_meta = auth()->user()->can('role_any', 'pc|metareviewer');
 
         $rigais = RevConflict::arr_pu_rigai();
         if ($rigais[$paper->id][auth()->id()] < 3) {
@@ -192,7 +192,7 @@ class ReviewController extends Controller
         // 掲示板
         $bb = Bb::where('category_id', $cat_id)->where('paper_id', $paper->id)->where('type', 1)->first();
         $bb2 = Bb::where('category_id', $cat_id)->where('paper_id', $paper->id)->where('type', 2)->first();
-        return view("review.commentpaper")->with(compact("sub", "cat_id", "cat", "paper", "bb", "bb2","am_i_meta"));
+        return view("review.commentpaper")->with(compact("sub", "cat_id", "cat", "paper", "bb", "bb2", "am_i_meta"));
     }
 
 
@@ -231,7 +231,9 @@ class ReviewController extends Controller
         foreach ($scoreobj as $ea) {
             $scores[$ea->viewpoint_id] = $ea;
         }
-        return view("review.show")->with(compact("review", "viewpoints", "scores"));
+        $am_i_meta = auth()->user()->can('role_any', 'pc|metareviewer');
+
+        return view("review.show")->with(compact("review", "viewpoints", "scores", "am_i_meta"));
         //
     }
 
@@ -243,7 +245,7 @@ class ReviewController extends Controller
         if (!auth()->user()->can('role_any', 'pc|reviewer|metareviewer',)) return abort(403);
         if ($review->token() != $token) return abort(403, "Review Browse TOKEN ERROR");
 
-        $am_i_meta = auth()->user()->can('role_any','pc|metareviewer');
+        $am_i_meta = auth()->user()->can('role_any', 'pc|metareviewer');
 
         if ($review->ismeta) {
             $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("formeta", 1)->orderBy("orderint")->get();
@@ -256,7 +258,7 @@ class ReviewController extends Controller
         foreach ($scoreobj as $ea) {
             $scores[$ea->viewpoint_id] = $ea;
         }
-        return view("review.show")->with(compact("review", "viewpoints", "scores","am_i_meta"));
+        return view("review.show")->with(compact("review", "viewpoints", "scores", "am_i_meta"));
     }
 
     /**
