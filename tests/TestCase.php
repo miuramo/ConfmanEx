@@ -8,6 +8,7 @@ use App\Models\RevConflict;
 use App\Models\Review;
 use App\Models\Role;
 use App\Models\Setting;
+use App\Models\Submit;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -149,6 +150,13 @@ abstract class TestCase extends BaseTestCase
             dump($line);
         }
     }
+    protected function dump_decision(int $cat_id = 1)
+    {
+        $submits = Submit::where('category_id', $cat_id)->get();
+        foreach ($submits as $submit) {
+            dump($submit->id . " " . $submit->accept->name. " " . $submit->paper->title);
+        }
+    }
     protected function bidding(string $rolename)
     {
         $users = Role::findByIdOrName($rolename)->users;
@@ -192,6 +200,19 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
+    /** 判定までを行う */
+    protected function revdecision(int $cat_id = 1)
+    {
+        $submits = Submit::where('category_id', $cat_id)->get();
+        // $accs = Accept::select("name", "id")->pluck("name", "id")->toArray();
+        $accids = [1,2,4,21];
+        foreach($submits as $submit) {
+            $randkey = array_rand($accids);
+            $submit->accept_id = $accids[$randkey];
+            $submit->save();
+        }
+    }
+
     protected function proceed_to_submit(int $cat_id)
     {
         $num_paper_per_author = 2;
@@ -218,5 +239,11 @@ abstract class TestCase extends BaseTestCase
         self::revassign($cat_id, 'reviewer', 2);
         self::revassign($cat_id, 'metareviewer', 1);
         self::dump_assign();
+    }
+
+    protected function proceed_to_decision(int $cat_id)
+    {
+        self::revdecision($cat_id);
+        self::dump_decision($cat_id);
     }
 }

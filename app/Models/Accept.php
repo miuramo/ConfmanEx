@@ -48,6 +48,39 @@ class Accept extends Model
         }
     }
 
+    public static function random_pids_for_each_accept($cat_id = 1){
+        $paperlist = Accept::acc_status(true);
+        $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+        $show = [];
+        $showpid = [];
+        $metarev = [];
+        $rev = [];
+        foreach ($paperlist[1][1] as $accid => $pids) {
+            $random_idx = array_rand($pids);
+            $random_pid = $pids[$random_idx];
+            $random_paper = Paper::find($random_pid);
+            $random_paper_owner = $random_paper->owner;
+            $showpid[$accid] = sprintf('%03d', $random_pid);
+            $show[$accid] = $random_paper_owner;
+            $random_sub = Submit::where('paper_id', $random_pid)->get()->first();
+            $metarev[$accid] = Review::where('submit_id', $random_sub->id)
+                ->where('ismeta', 1)
+                ->get()
+                ->first();
+            $rev[$accid] = Review::where('submit_id', $random_sub->id)
+                ->where('ismeta', 0)
+                ->get()
+                ->first();
+        }
+        return [
+            'accepts' => $accepts,
+            'show' => $show,
+            'showpid' => $showpid,
+            'metarev' => $metarev,
+            'rev' => $rev,
+        ];
+    }
+
     public static function nodes(){
         $nodes = [];
         $links = [];

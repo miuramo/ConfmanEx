@@ -160,31 +160,12 @@
         <div class="text-sm mx-10">
             採択タグごとの、ランダムなPaperIDとその投稿者IDの表示<br>
             @php
-                $paperlist = App\Models\Accept::acc_status(true);
-                $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
-                $show = [];
-                $showpid = [];
-                $metarev = [];
-                $rev = [];
-                foreach ($paperlist[1][1] as $accid => $pids) {
-                    $random_idx = array_rand($pids);
-                    $random_pid = $pids[$random_idx];
-                    $random_paper = App\Models\Paper::find($random_pid);
-                    $random_paper_owner = $random_paper->owner;
-                    $showpid[$accid] = sprintf('%03d', $random_pid);
-                    $show[$accid] = $random_paper_owner;
-                    $random_sub = App\Models\Submit::where('paper_id', $random_pid)->get()->first();
-                    $metarev[$accid] = App\Models\Review::where('submit_id', $random_sub->id)
-                        ->where('ismeta', 1)
-                        ->get()
-                        ->first();
-                    $rev[$accid] = App\Models\Review::where('submit_id', $random_sub->id)
-                        ->where('ismeta', 0)
-                        ->get()
-                        ->first();
-                    info($metarev[$accid]);
-                    info($rev[$accid]);
-                }
+                $combined = App\Models\Accept::random_pids_for_each_accept(1);
+                $show = $combined['show'];
+                $showpid = $combined['showpid'];
+                $metarev = $combined['metarev'];
+                $rev = $combined['rev'];
+                $accepts = $combined['accepts'];
             @endphp
             @foreach ($show as $accid => $random_paper_owner)
                 {{ $accepts[$accid] }}: {{ $showpid[$accid] }} -

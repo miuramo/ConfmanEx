@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 // use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use App\Models\Accept;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -16,30 +17,30 @@ class ReviewResultTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        parent::paper_submit(1, 1, 1);
+        parent::proceed_to_submit(1);
+        parent::proceed_to_assign(1);
+        parent::proceed_to_decision(1);
     }
 
-    public function test_the_application_returns_a_successful_response(): void
+
+
+    public function test_authorpage_before_and_after_revreturn(): void
     {
-        $response = $this->get('/');
-        $response->assertStatus(200);
-    }
+        $combined = Accept::random_pids_for_each_accept(1);
+        $show = $combined['show'];
+        $showpid = $combined['showpid'];
+        $metarev = $combined['metarev'];
+        $rev = $combined['rev'];
+        $accepts = $combined['accepts'];
 
-    
+        foreach ($show as $accid => $random_paper_owner) {
+            // $accepts[$accid] 判定
+            // $showpid[$accid] 論文ID
+            // $random_paper_owner; 論文の著者
+        }
 
-    public function test_reviewcomment_scoreonly_can_see_by_privileged_reviewers(): void
-    {
-        $response = $this->get('/');
-        $response->assertStatus(200);
-
-        $reviewer = User::factory()->withRoles('reviewer')->create();
-        $metareviewer = User::factory()->withRoles('metareviewer')->create();
-        $pc = User::factory()->withRoles('pc')->create();
-        $author = User::factory()->withPapers(2, 1)->create();
-
-        $cat1 = Category::find(1);
-        $cat1->status__revlist_on = 1;
-        $cat1->status__revlist_for = 'reviewer';
-        $cat1->save();
+        // ついでに、査読者も
+        // $metarev[$accid]->user_id
+        // $rev[$accid]->user_id
     }
 }

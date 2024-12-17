@@ -20,6 +20,9 @@ class ReviewTest extends TestCase
         parent::proceed_to_assign(1);
     }
 
+    /**
+     * 査読編集・参照のテスト
+     */
     public function test_reviewing() : void
     {
         $up = Review::arr_up_status(1);
