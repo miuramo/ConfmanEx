@@ -86,6 +86,10 @@ abstract class TestCase extends BaseTestCase
     {
         $this->sadoku_sinko_kanri($cat_id, 'status__revreturn_on', $on);
     }
+    public function show_bibinfo_button(int $cat_id, bool $on)
+    {
+        $this->sadoku_sinko_kanri($cat_id, 'show_bibinfo_btn', $on);
+    }
     protected function sadoku_sinko_kanri(int $cat_id, string $field, bool|string $on)
     {
         $cat = Category::find($cat_id);
@@ -211,6 +215,11 @@ abstract class TestCase extends BaseTestCase
             $submit->accept_id = $accids[$randkey];
             $submit->save();
         }
+    }
+
+    protected function prepare_pdf_file()
+    {
+        
     }
 
     protected function proceed_to_submit(int $cat_id)

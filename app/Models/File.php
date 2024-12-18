@@ -16,6 +16,14 @@ class File extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'paper_id',
+        'fname',
+        'mime',
+        'key',
+    ];
+
     public function paper()
     {
         return $this->belongsTo(Paper::class);

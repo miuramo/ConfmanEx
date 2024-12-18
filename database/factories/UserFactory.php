@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\File;
 use App\Models\Paper;
 use App\Models\Role;
 use App\Models\User;
@@ -68,13 +69,24 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(function (User $user) use ($num, $cat_id) {
             for($i=0; $i<$num; $i++){
+                $pdf = File::create([
+                    'fname' => fake()->word() . ".pdf",
+                    'origname' => fake()->word() . ".pdf",
+                    'mime' => "application/pdf",
+                    'key' => strtolower(bin2hex(random_bytes(16))),
+                    'user_id' => $user->id,
+                    'pagenum' => 6,
+                ]);
                 $paper = Paper::create([
                     'category_id' => $cat_id,
                     'contactemails' => $user->email,
                     'owner' => $user->id,
                     'title' => fake()->sentence(),
+                    'pdf_file_id' => $pdf->id,
                 ]);
                 $paper->updateContacts();
+                $pdf->paper_id = $paper->id;
+                $pdf->save();
             }
             // Paper::factory($num)->create(['owner' => $user->id]);
         });
