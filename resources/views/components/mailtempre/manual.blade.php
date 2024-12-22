@@ -50,6 +50,7 @@
                 'acc_id(accid1,accid2, ...)' => '採択IDの羅列',
                 'acc_judge(judge1,judge2, ...)' => '採択ジャッジ値の羅列',
                 'nofile(catid1,catid2,...)' => 'ファイル無し',
+                'notitle(catid1,catid2,...)' => 'タイトル無し',
                 'noauthorlist(catid)' => '著者リスト未記入',
                 'oldfile(catid, "2024-07-10")' => '期日以前のファイル',
                 'nobib(catid1,catid2,...)' => '書誌情報なし(和文アブスト、和文キーワード、英文Titleのうち1つ以上)',
