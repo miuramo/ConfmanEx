@@ -506,7 +506,7 @@ class Paper extends Model
     {
         if ($this->pdf_file_id == null) return true;
         // もし、pdf_file_id が無効なら、もう一度validateする。
-        if ($this->pdf_file()->deleted) {
+        if ($this->pdf_file->deleted) {
             $this->validateFiles();
             $this->refresh(); // validate reload
             if ($this->pdf_file()->deleted) {
