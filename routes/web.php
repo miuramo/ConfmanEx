@@ -134,6 +134,9 @@ Route::middleware('auth')->group(function () {
     // 査読割り当て
     Route::get('/role/{role}/revassign/{cat}', [RoleController::class, 'revassign'])->name('role.revassign');
     Route::post('/role/{role}/revassign/{cat}', [RoleController::class, 'revassignpost'])->name('role.revassignpost');
+    // ランダム割り当て
+    Route::get('/role_revassign_random', [RoleController::class, 'revassign_random'])->name('role.revassign_random');
+    Route::post('/role_revassign_random', [RoleController::class, 'revassign_random'])->name('role.revassign_randompost');
     // Bidding結果のExcel
     Route::get('/role/{role}/revassign_excel/{cat}', [RoleController::class, 'revassign_excel'])->name('role.revassign_excel');
     // 査読結果

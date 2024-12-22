@@ -394,14 +394,20 @@ class Review extends Model
         return $ret;
     }
 
-    public static function randomAssign()
+    /**
+     * Random assign reviewers to papers
+     * repnum: number of reviewers assigned to paper [regular, meta]
+     */
+    public static function randomAssign($repnum = [4, 1], $catids=[2,3], $exclude = [])
     {
         // 
         $revs[1] = Role::findByIdOrName("metareviewer")->users->pluck('affil', 'id')->toArray();
         $revs[0] = Role::findByIdOrName("reviewer")->users->pluck('affil', 'id')->toArray();
 
-        $papers[2] = Paper::where("category_id", 2)->get()->pluck('authorlist', 'id')->toArray();
-        $papers[3] = Paper::where("category_id", 3)->get()->pluck('authorlist', 'id')->toArray();
+        $papers = [];
+        foreach($catids as $catid){
+            $papers[$catid] = Paper::where("category_id", $catid)->get()->pluck('authorlist', 'id')->toArray();
+        }
 
         $count_of_revs[0] = count($revs[0]);
         $count_of_revs[1] = count($revs[1]);
@@ -411,23 +417,23 @@ class Review extends Model
         $ret = [];
         $dupcheck = []; //paper_id to reviewer_id, for checking duplicate
 
-        $repnum = [4, 1]; // number of reviewers assigned to paper
-
         for ($ism = 0; $ism < 2; $ism++) {
             $km = 0;
             for ($i = 0; $i < $repnum[$ism]; $i++) {
-                for ($cat = 2; $cat <= 3; $cat++) {
+                foreach ($catids as $cat) {
                     foreach ($papers[$cat] as $pid => $authers) {
                         if (!isset($ret[$pid]) || !is_array($ret[$pid])) $ret[$pid] = [];
                         $rid = $revids[$ism][$km];
                         while (
                             isset($dupcheck[$pid][$rid])
                             || Review::detectConflict($pid, $rid)
+                            || in_array($rid, $exclude)
                         ) { //repeat until no duplicate assignment
                             $km = ($km + 1) % $count_of_revs[$ism];
                             $rid = $revids[$ism][$km];
                         }
                         $ret[$pid][] = ['uid' => $rid, 'affil' => $revs[$ism][$rid]];
+                        Review::review_assign($pid, $rid, 1); // 一般査読者として登録
                         $dupcheck[$pid][$rid] = $ism . " " . $i;
                         $km = ($km + 1) % $count_of_revs[$ism];
                     }

@@ -229,6 +229,10 @@
         <x-element.linkbutton href="{{ route('revcon.revstat') }}" color="lime" target="_blank">
             査読割り当て Stat
         </x-element.linkbutton>
+        <span class="mx-3"></span>
+        <x-element.linkbutton href="{{ route('role.revassign_random') }}" color="green" target="_blank">
+            ランダム査読割り当て
+        </x-element.linkbutton>
 
 
     </x-element.h1>

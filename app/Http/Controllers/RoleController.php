@@ -30,7 +30,7 @@ class RoleController extends Controller
                 // reviewerはmetareviewerも見ることができる。
             } else if ($name == "pub" && auth()->user()->can('role', 'web')) {
                 return redirect()->route('role.top', ["role" => "web"]);
-            } else if ($name == "author"){
+            } else if ($name == "author") {
                 return redirect()->route('paper.index');
             } else {
                 abort(403);
@@ -142,7 +142,7 @@ class RoleController extends Controller
                     if (is_numeric($uid)) {
                         $u = User::find($uid);
                         if ($u != null) {
-                            $u->roles()->updateExistingPivot($role->id, ['mailnotify' => $req->input("notify")=='on']);
+                            $u->roles()->updateExistingPivot($role->id, ['mailnotify' => $req->input("notify") == 'on']);
                         }
                     }
                 }
@@ -241,8 +241,34 @@ class RoleController extends Controller
     }
 
     // TODO: call Review:randomAssign and analyze
-    public function revassign_random()
+    public function revassign_random(Request $req)
     {
-
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        $roles = Role::where("name", "like", "%reviewer")->get();
+        $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+        if ($req->has("action")) {
+            if ($req->input("action")=="assign"){
+                $num = $req->input("num");
+                $repnum = [$num[5], $num[4]];
+                $catids = $req->input("cat");
+                $exclude = $req->input("exclude");
+                if ($exclude) {
+                    $exclude = explode(",", $exclude);
+                } else {
+                    $exclude = [];
+                }
+                $out = Review::randomAssign($repnum, $catids, $exclude);
+                return redirect()->route('role.revassign_random')->with('feedback.success', "割り当てました。微調整が必要な場合は、下の「査読割り当て」ボタンから行ってください。");
+    
+            } else if ($req->input("action")=="reset"){
+                $catids = $req->input("cat");
+                Review::whereIn("paper_id", Paper::whereIn("category_id", $catids)->pluck("id"))->delete();
+                return redirect()->route('role.revassign_random')->with('feedback.success', "割り当てをリセットしました。");
+            }
+        } else {
+            $out = [];
+        }
+        // $result = 
+        return view('role.revassign_random')->with(compact("roles", "cats", "out"));
     }
 }
