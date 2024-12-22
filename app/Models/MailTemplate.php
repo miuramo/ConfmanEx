@@ -204,13 +204,25 @@ class MailTemplate extends Model
     public static function mt_nofile(...$args)
     {
         $papers = [];
-        $cols = Paper::whereIn('id', $args)->get();
+        $cols = Paper::whereIn('category_id', $args)->get();
         foreach ($cols as $paper) {
             if ($paper->check_nofile()) $papers[] = $paper;
         }
         // $collection = $cols->reject(function ($paper, $key) {
         //     return !$paper->check_nofile();
         // });
+        return $papers;
+    }
+    /**
+     * タイトルなし投稿
+     */
+    public static function mt_notitle(...$args)
+    {
+        $papers = [];
+        $cols = Paper::whereIn('category_id', $args)->get();
+        foreach ($cols as $paper) {
+            if ($paper->title == null || mb_strlen($paper->title) < 1) $papers[] = $paper;
+        }
         return $papers;
     }
     /**
