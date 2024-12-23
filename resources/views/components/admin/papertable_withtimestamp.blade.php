@@ -32,9 +32,9 @@
                 <td class="p-1 text-sm">{{ $paper->title }}
                     @endisset
                 </td>
-                <td class="p-1 text-sm">{{ $paper->paperowner->name }}
+                <td class="p-1 text-sm">{{ @$paper->paperowner->name}}
                 </td>
-                <td class="p-1 text-sm">{{ $paper->paperowner->affil }}
+                <td class="p-1 text-sm">{{ @$paper->paperowner->affil }}
                 </td>
                 <td class="p-1 text-sm">{{ $paper->created_at }}
                 </td>
