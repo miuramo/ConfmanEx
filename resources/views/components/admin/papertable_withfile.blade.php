@@ -35,9 +35,9 @@
                 </td>
                 <td class="p-1 text-sm">{{ $paper->title }}
                 </td>
-                <td class="p-1 text-sm">{{ $paper->paperowner->name }}
+                <td class="p-1 text-sm">{{ @$paper->paperowner->name }}
                 </td>
-                <td class="p-1 text-sm">{{ $paper->paperowner->affil }}
+                <td class="p-1 text-sm">{{ @$paper->paperowner->affil }}
                 </td>
                 <td class="p-1 text-sm">
                     @if ($paper->pdf_file_id != 0 && $paper->pdf_file != null)
