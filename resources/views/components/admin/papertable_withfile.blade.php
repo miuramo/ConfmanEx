@@ -1,6 +1,6 @@
 @props([
     'all' => [],
-    'heads' => ['chk', 'id', '削除日時', 'title', 'owner', 'owneraffil', 'pdf', 'img', 'video', 'altpdf'],
+    'heads' => ['chk'=>'unsortable', 'id'=>'', '削除日時'=>'', 'title'=>'', 'owner'=>'', 'owneraffil'=>'', 'pdf'=>'', 'img'=>'', 'video'=>'', 'altpdf'=>''],
     'enqans' => [],
 ])
 
@@ -13,8 +13,8 @@
 <table class="min-w-full divide-y divide-gray-200 sortable" id="sortable">
     <thead>
         <tr>
-            @foreach ($heads as $h)
-                <th class="p-1 bg-slate-300">{{ $h }}</th>
+            @foreach ($heads as $h=>$unchk)
+                <th class="p-1 bg-slate-300 {{$unchk}}">{{ $h }}</th>
             @endforeach
         </tr>
     </thead>
