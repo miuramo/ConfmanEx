@@ -106,9 +106,11 @@
                                     <x-element.submitbutton value="{{ $c->id }}" color="{{ $c->color }}">
                                         {{ $c->name }}に新規投稿する
                                     </x-element.submitbutton>
-                                    &nbsp;
+                                @elseif($c->isOpen() && !$c->isnotUpperLimit())
+<div class="bg-slate-50 p-2 text-pink-600">申し訳ありませんが、{{ $c->name }}の投稿可能枠数は、現在残り0枠となっています。</div>
                                 @endif
-                            @endforeach
+                                &nbsp;
+                                @endforeach
                         @else
                             （現在、投稿可能なカテゴリはありません）
                             <!-- PCのかたは、 投稿受付管理→ openstart, openend を確認してください。 -->
