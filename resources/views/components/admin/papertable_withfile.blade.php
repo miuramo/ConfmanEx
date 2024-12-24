@@ -1,20 +1,31 @@
 @props([
     'all' => [],
-    'heads' => ['chk'=>'unsortable', 'id'=>'', '削除日時'=>'', 'title'=>'', 'owner'=>'', 'owneraffil'=>'', 'pdf'=>'', 'img'=>'', 'video'=>'', 'altpdf'=>''],
+    'heads' => [
+        'chk' => 'unsortable',
+        'id' => '',
+        '削除日時' => '',
+        'title' => '',
+        'owner' => '',
+        'owneraffil' => '',
+        'pdf' => '',
+        'img' => '',
+        'video' => '',
+        'altpdf' => '',
+    ],
     'enqans' => [],
 ])
 
 <!-- components.admin.papertable -->
 <div class="my-2">
     <x-element.button onclick="checkAllByClass('nopdffile')" color="purple" value="PDFファイル無しにチェック">
-    </x-element.button>    
+    </x-element.button>
 </div>
 
 <table class="min-w-full divide-y divide-gray-200 sortable" id="sortable">
     <thead>
         <tr>
-            @foreach ($heads as $h=>$unchk)
-                <th class="p-1 bg-slate-300 {{$unchk}}">{{ $h }}</th>
+            @foreach ($heads as $h => $unchk)
+                <th class="p-1 bg-slate-300 {{ $unchk }}">{{ $h }}</th>
             @endforeach
         </tr>
     </thead>
@@ -24,10 +35,7 @@
             <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200' : 'bg-white' }}">
                 <td class="p-1 text-center">
                     <input type="checkbox" name="pid[]" value="{{ $paper->id }}"
-                    @if ($paper->deleted_at == null && ($paper->pdf_file_id == 0 || $paper->pdf_file == null))
-                        class="nopdffile bg-purple-200"
-                    @endif
-                    >
+                        @if ($paper->deleted_at == null && ($paper->pdf_file_id == 0 || $paper->pdf_file == null)) class="nopdffile bg-purple-200" @endif>
                 </td>
                 <td class="p-1 text-sm">{{ $paper->id_03d() }}
                 </td>
@@ -36,6 +44,10 @@
                 <td class="p-1 text-sm">{{ $paper->title }}
                 </td>
                 <td class="p-1 text-sm">{{ @$paper->paperowner->name }}
+                    @if (env('APP_DEBUG') && $paper->paperowner != null)
+                        <a href="{{ route('role.login-as', ['user' => @$paper->paperowner->id]) }}"
+                            class="text-xs text-blue-600 hover:bg-lime-200">{{ @$paper->paperowner->id }}</a>
+                    @endif
                 </td>
                 <td class="p-1 text-sm">{{ @$paper->paperowner->affil }}
                 </td>
@@ -69,7 +81,7 @@
                             video
                         </a>
                     @else
-                       --
+                        --
                     @endif
                 </td>
                 <td class="p-1 text-sm">
@@ -90,10 +102,10 @@
 </table>
 
 <script>
-    function checkAllByClass(cls){
+    function checkAllByClass(cls) {
         var checks = document.getElementsByClassName(cls);
-        for (var i = 0; i < checks.length; i++){
+        for (var i = 0; i < checks.length; i++) {
             checks[i].checked = true;
         }
     }
-    </script>
+</script>
