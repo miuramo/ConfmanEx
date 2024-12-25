@@ -19,6 +19,12 @@
             @csrf
             @method('post')
 
+            <div class="mt-2">
+                <x-element.submitbutton value="copy" color="yellow">
+                    チェックをいれた雛形をコピー
+                </x-element.submitbutton>
+            </div>
+
             <table class="table-auto w-full sortable" id="sortable">
                 <thead>
                     <tr class="bg-pink-200">

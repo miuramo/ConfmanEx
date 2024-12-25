@@ -20,10 +20,10 @@
 
     <div class="py-1">
     </div>
-    <div class="px-6 py-2">
+    <div class="px-6 py-2">切り替えリンク：
         @foreach ($cats as $catid => $catname)
             <a href="{{ route('admin.deletepaper', ['cat' => $catid]) }}">
-                <x-element.category :cat="$catid">
+                <x-element.category :cat="$catid" size="sm">
                 </x-element.category>
             </a>
             <span class="mx-1"></span>
@@ -54,6 +54,22 @@
 
         </div>
     </form>
+
+    <div class="px-6 py-2">
+    <x-element.category :cat="$cat_id">
+    </x-element.category>
+    </div>
+
+
+    <div class="px-6 pt-6 pb-12">切り替えリンク：
+        @foreach ($cats as $catid => $catname)
+            <a href="{{ route('admin.deletepaper', ['cat' => $catid]) }}">
+                <x-element.category :cat="$catid" size="sm">
+                </x-element.category>
+            </a>
+            <span class="mx-1"></span>
+        @endforeach
+    </div>
 
     @push('localjs')
         <script src="/js/sortable.js"></script>
