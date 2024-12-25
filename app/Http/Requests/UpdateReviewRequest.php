@@ -69,7 +69,6 @@ class UpdateReviewRequest extends FormRequest
                 $scr->save();                    
             });
         }
-        info($data);
         return json_encode($data);
     }
 
