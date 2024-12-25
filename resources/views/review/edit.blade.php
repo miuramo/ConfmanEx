@@ -64,6 +64,17 @@
             </x-element.paperid>
             &nbsp; {!! $catspans[$review->paper->category_id] !!}
         </x-element.h1>
+
+        {{-- 書誌情報 --}}
+        <div class="text-lg bg-pink-200 p-2">
+            以下の著者リスト（とくに人数）やタイトルがPDFと一致していない場合は、PC長向けコメントにて報告いただけると幸いです。
+        </div>
+
+        <div class="mt-2 ml-2">
+            {{-- まず、showonreviewerindex アンケートをあつめる。 --}}
+            <x-paper.shoshi_list :paper="$review->paper">
+            </x-paper.shoshi_list>
+        </div>
         <div class="mx-6 mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
             <div class="w-full">
                 <x-file.paperheadimg :paper="$review->paper">
@@ -75,6 +86,7 @@
                 </x-enquete.Rev_enqview>
             </div>
         </div>
+
 
         <div class="mb-4 my-10">
             <x-element.linkbutton href="{{ route('review.indexcat', ['cat' => $review->paper->category_id]) }}"
