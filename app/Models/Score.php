@@ -30,8 +30,8 @@ class Score extends Model
     public function submit_score_update()
     {
         // 点数に関係なければ終了
+        $this->review->validateOneRev();
         if ($this->viewpoint->weight < 1) {
-            $this->review->validateOneRev();
             return;
         }
         if ($this->review == null) return;

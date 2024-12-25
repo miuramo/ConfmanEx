@@ -220,17 +220,28 @@ class Review extends Model
     // status 0は未回答、1は回答中、2は完了 を更新する
     public function validateOneRev()
     {
-        $finish_vpids = Score::where('review_id', $this->id)->whereNotNull('valuestr')->get()->pluck('viewpoint_id')->count();
+        $finish_vpids_ary = Score::where('review_id', $this->id)->whereNotNull('valuestr')->get()->pluck('viewpoint_id')->toArray();
+        $finish_vpids = count($finish_vpids_ary);
         // 自分が　ismeta なら、formetaの項目を数える。そうでなければ、forrev の項目を数える。
-        $all_vpids = Viewpoint::where('category_id', $this->category_id)->where('mandatory', 1)->count();
         if (!$this->ismeta) {
-            $all_vpids = Viewpoint::where('category_id', $this->category_id)->where('forrev', 1)->where('mandatory', 1)->count();
+            $all_vpids = Viewpoint::where('category_id', $this->category_id)->where('forrev', 1)->where('mandatory', 1)->pluck('id')->toArray();
+        } else {
+            $all_vpids = Viewpoint::where('category_id', $this->category_id)->where('formeta', 1)->where('mandatory', 1)->pluck('id')->toArray();
         }
         // ->whereNotIn('id', $finish_vpids)->
         if ($finish_vpids == 0) {
             $this->status = 0;
-        } else if ($finish_vpids == $all_vpids) {
-            $this->status = 2;
+        } else if ($finish_vpids >= count($all_vpids)) {
+            // 厳密には、全ての必須項目が埋まっているかどうかをチェックするべき
+            sort($finish_vpids_ary);
+            sort($all_vpids);
+            $answered = serialize($finish_vpids_ary);
+            $expected = serialize($all_vpids);
+            if ($answered == $expected) {
+                $this->status = 2;
+            } else {
+                $this->status = 1;
+            }
         } else {
             $this->status = 1;
         }
