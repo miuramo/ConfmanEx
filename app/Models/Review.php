@@ -395,17 +395,22 @@ class Review extends Model
     }
 
     /**
+     * インタラクティブ発表のための査読者割り当て（ランダム割り当て）
      * Random assign reviewers to papers
      * repnum: number of reviewers assigned to paper [regular, meta]
      */
-    public static function randomAssign($repnum = [4, 1], $catids=[2,3], $exclude = [])
+    public static function randomAssign($repnum = [4, 1], $catids = [2, 3], $exclude = [])
     {
         // 
-        $revs[1] = Role::findByIdOrName("metareviewer")->users->pluck('affil', 'id')->toArray();
-        $revs[0] = Role::findByIdOrName("reviewer")->users->pluck('affil', 'id')->toArray();
+        $revs[1] = Role::findByIdOrName("metareviewer")->users->shuffle()->pluck('affil', 'id')->toArray();
+        $revs[0] = Role::findByIdOrName("reviewer")->users->shuffle()->pluck('affil', 'id')->toArray();
+        foreach ($exclude as $ex => $uid) {
+            unset($revs[0][$uid]);
+            unset($revs[1][$uid]);
+        }
 
         $papers = [];
-        foreach($catids as $catid){
+        foreach ($catids as $catid) {
             $papers[$catid] = Paper::where("category_id", $catid)->get()->pluck('authorlist', 'id')->toArray();
         }
 
@@ -413,33 +418,74 @@ class Review extends Model
         $count_of_revs[1] = count($revs[1]);
         $revids[0] = array_keys($revs[0]);
         $revids[1] = array_keys($revs[1]);
+
         $km = 0;
         $ret = [];
         $dupcheck = []; //paper_id to reviewer_id, for checking duplicate
+        $pool_for_later = [1 => [], 0 => []]; // 所属チェックで問題があったものを後で再割り当てを試みる
 
-        for ($ism = 0; $ism < 2; $ism++) {
+
+
+        for ($ism = 0; $ism < 2; $ism++) { // ism = ismeta
             $km = 0;
+            $num_of_assigned = [];
             for ($i = 0; $i < $repnum[$ism]; $i++) {
                 foreach ($catids as $cat) {
+                    // $copy_of_pool_for_later = $pool_for_later;
                     foreach ($papers[$cat] as $pid => $authers) {
                         if (!isset($ret[$pid]) || !is_array($ret[$pid])) $ret[$pid] = [];
-                        $rid = $revids[$ism][$km];
-                        while (
-                            isset($dupcheck[$pid][$rid])
-                            || Review::detectConflict($pid, $rid)
-                            || in_array($rid, $exclude)
-                        ) { //repeat until no duplicate assignment
-                            $km = ($km + 1) % $count_of_revs[$ism];
-                            $rid = $revids[$ism][$km];
+                        $rid = -1;
+                        if (count($pool_for_later[$ism]) > 0) {
+                            // info($pool_for_later);
+                            foreach ($pool_for_later[$ism] as $rrid) {
+                                if (
+                                    isset($dupcheck[$pid][$rrid])
+                                    || Review::detectConflict($pid, $rrid)
+                                ) {
+                                } else { //repeat until no duplicate assignment
+                                    $rid = $rrid;
+                                    $key = array_search($rrid, $pool_for_later[$ism]);
+                                    unset($pool_for_later[$ism][$key]);
+                                    break;
+                                }
+                            }
+                        }
+                        if ($rid == -1) {
+                            $rid = $revids[$ism][$km]; // reviewer id candidate
+                            while (
+                                isset($dupcheck[$pid][$rid])
+                                || Review::detectConflict($pid, $rid)
+                                || in_array($rid, $exclude)
+                            ) { //repeat until no duplicate assignment
+                                if (!in_array($rid, $exclude)) $pool_for_later[$ism][] = $rid; //次回以降、優先して割り当てる
+                                $km = ($km + 1) % $count_of_revs[$ism];
+                                $rid = $revids[$ism][$km];
+                            }
                         }
                         $ret[$pid][] = ['uid' => $rid, 'affil' => $revs[$ism][$rid]];
                         Review::review_assign($pid, $rid, 1); // 一般査読者として登録
+                        $num_of_assigned[$rid] = ($num_of_assigned[$rid] ?? 0) + 1;
                         $dupcheck[$pid][$rid] = $ism . " " . $i;
-                        $km = ($km + 1) % $count_of_revs[$ism];
+                        $km = ($km + 1);
+                        if ($km >= $count_of_revs[$ism]) {
+                            $km = 0;
+                            // ここで一旦、割り当て数をチェックし、少ない人には優先poolにはいってもらう。
+                            $max = max($num_of_assigned);
+                            foreach ($revs[$ism] as $rrid => $affil) {
+                                if (($num_of_assigned[$rrid] ?? 0) < $max) {
+                                    if (!in_array($rrid, $exclude)) {
+                                        $pool_for_later[$ism][] = $rrid;
+                                        info("added to pool_for_later: $rrid $affil"); // because {$num_of_assigned[$rrid]} < {$max}");
+                                    }
+                                }
+                            }
+                            shuffle($revids[$ism]);
+                        }
                     }
                 }
             }
         }
+        info("ended");
         return $ret; // not verified in terms of affils
     }
     /**
@@ -467,5 +513,4 @@ class Review extends Model
         }
         return false;
     }
-
 }

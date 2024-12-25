@@ -216,6 +216,7 @@ class RoleController extends Controller
     public function revassignpost(Request $req, Role $role, Category $cat)
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        set_time_limit(120);
         if ($req->has("paper_id") && $req->has("user_id") && $req->has("status")) {
             $status = $req->input("status");
             $paper_id = $req->input("paper_id");
@@ -257,8 +258,11 @@ class RoleController extends Controller
                 } else {
                     $exclude = [];
                 }
-                $out = Review::randomAssign($repnum, $catids, $exclude);
-                return redirect()->route('role.revassign_random')->with('feedback.success', "割り当てました。微調整が必要な場合は、下の「査読割り当て」ボタンから行ってください。");
+                dispatch(function () use ($repnum, $catids, $exclude) {
+                    Review::randomAssign($repnum, $catids, $exclude);
+                });
+                sleep(3);
+                return redirect()->route('role.revassign_random')->with('feedback.success', "割り当て処理をバックグラウンドで実行しています。進捗状況をみるには、このページを再読み込みしてください。微調整が必要な場合は、下の「査読割り当て」ボタンから行ってください。");
     
             } else if ($req->input("action")=="reset"){
                 $catids = $req->input("cat");
