@@ -475,7 +475,7 @@ class Review extends Model
                                 if (($num_of_assigned[$rrid] ?? 0) < $max) {
                                     if (!in_array($rrid, $exclude)) {
                                         $pool_for_later[$ism][] = $rrid;
-                                        info("added to pool_for_later: $rrid $affil"); // because {$num_of_assigned[$rrid]} < {$max}");
+                                        // info("added to pool_for_later: $rrid $affil"); // because {$num_of_assigned[$rrid]} < {$max}");
                                     }
                                 }
                             }
