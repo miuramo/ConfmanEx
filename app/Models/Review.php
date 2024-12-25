@@ -401,6 +401,7 @@ class Review extends Model
      */
     public static function randomAssign($repnum = [4, 1], $catids = [2, 3], $exclude = [])
     {
+        info("random assignment task started");
         // 
         $revs[1] = Role::findByIdOrName("metareviewer")->users->shuffle()->pluck('affil', 'id')->toArray();
         $revs[0] = Role::findByIdOrName("reviewer")->users->shuffle()->pluck('affil', 'id')->toArray();
@@ -485,7 +486,7 @@ class Review extends Model
                 }
             }
         }
-        info("ended");
+        info("random assignment task ended");
         return $ret; // not verified in terms of affils
     }
     /**
