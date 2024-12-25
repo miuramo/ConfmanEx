@@ -31,8 +31,9 @@
     @endpush
 
     <div class="py-2 px-6">
-        <x-element.h1>コメント欄を空にすると <span class="text-red-600 font-extrabold">(未入力)</span>
-            となります。<b>未入力が一つでもあると査読未完了として扱われます。未入力を避けるため、一言でもよいのでなにか書いてください。</b><br>
+        <x-element.h1><span class="text-red-600 font-extrabold">【必須】</span>のコメント欄を空にすると <span class="text-red-600 font-extrabold">(未入力)</span>
+            となります。<br><b>未入力が一つでもあると査読未完了として扱われます。未入力を避けるため、一言でもよいのでなにか書いてください。</b><br>
+            <span class="text-blue-600 font-extrabold">なお、【任意】のコメント欄は（未入力）でもかまいません。</span><br>
             各項目は、編集後フォーカスを外すと緑色にフラッシュして自動保存されます。本当に保存されたかどうか確認したいときはページを再読み込みしてください。（フォーム全体の保存ボタンはありません。）
         </x-element.h1>
 
@@ -46,6 +47,7 @@
                         <input type="hidden" name="paper_id" value="{{ $review->paper->id }}">
                         <input type="hidden" name="review_id" value="{{ $review->id }}">
                         <input type="hidden" name="viewpoint_id" value="{{ $vpt->id }}">
+                        <input type="hidden" name="mandatory" value="{{ $vpt->mandatory }}">
                         @php
                             $formid = "revform{$vpt->id}";
                             $current = isset($scores[$vpt->id]) ? $scores[$vpt->id]->valuestr : null;

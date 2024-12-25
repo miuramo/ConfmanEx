@@ -22,6 +22,17 @@
 <tr
     class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200' : 'bg-white-50 dark:bg-slate-400' }}">
     <td nowrap class="p-4">
+        @php
+            if($itm->mandatory){
+                $noinputcolor = "red";
+                $descmanda = "【必須】";
+            }else{
+                $noinputcolor = "blue";
+                $descmanda = "【任意】";
+            }
+        @endphp
+            <span class="text-{{$noinputcolor}}-600 font-extrabold">{{$descmanda}}</span>
+        <br>
         {{ $itm->desc }} →</td>
     @if ($type == 'selection')
         <td id="{{ $itm->name }}_answer" class="text-xl p-4">
@@ -42,7 +53,7 @@
     @elseif ($type == 'checkbox')  
     {{-- 注：checkbox は項目1つのみ対応。  --}}
         <td id="{{ $itm->name }}_answer" class="text-xl p-4">
-            {!! $current ?? '<span class="text-red-600 font-extrabold">(未入力)</span>' !!}</td>
+            {!! $current ?? "<span class=\"text-red-600 font-extrabold\">(未入力)</span>" !!}</td>
         <td class="p-2 pl-10">
             {!! $item_title !!}<br>
             @foreach ($sel as $choice)
@@ -60,7 +71,7 @@
         </td>
     @elseif($type == 'number')
         <td id="{{ $itm->name }}_answer" class="text-lg p-4">
-            {!! $current ?? '<span class="text-red-600 font-extrabold">(未入力)</span>' !!}</td>
+            {!! $current ?? "<span class=\"text-red-600 font-extrabold\">(未入力)</span>" !!}</td>
         <td class="p-2 pl-10">
             {!! $item_title !!}<br>
             <input type="number" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
@@ -73,7 +84,7 @@
         </td>
     @elseif($type == 'text')
         <td id="{{ $itm->name }}_answer" class="text-md p-4">
-            {!! $current ?? '<span class="text-red-600 font-extrabold">(未入力)</span>' !!}</td>
+            {!! $current ?? '<span class="text-blue-600 font-extrabold">(未入力)</span>' !!}</td>
         <td class="p-2 pl-10">
             {!! $item_title !!}<br>
             <input type="hidden" name="{{ $itm->name }}" value="">
@@ -85,7 +96,7 @@
         </td>
     @elseif($type == 'textarea')
         <td id="{{ $itm->name }}_answer" class="text-md p-4">
-            {!! $currentbr ?? '<span class="text-red-600 font-extrabold">(未入力)</span>' !!}</td>
+            {!! $currentbr ?? '<span class="text-blue-600 font-extrabold">(未入力)</span>' !!}</td>
         <td class="p-2 pl-10">
             {!! $item_title !!}<br>
             <input type="hidden" name="{{ $itm->name }}" value="">

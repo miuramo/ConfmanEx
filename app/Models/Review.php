@@ -222,9 +222,9 @@ class Review extends Model
     {
         $finish_vpids = Score::where('review_id', $this->id)->whereNotNull('valuestr')->get()->pluck('viewpoint_id')->count();
         // 自分が　ismeta なら、formetaの項目を数える。そうでなければ、forrev の項目を数える。
-        $all_vpids = Viewpoint::where('category_id', $this->category_id)->count();
+        $all_vpids = Viewpoint::where('category_id', $this->category_id)->where('mandatory', 1)->count();
         if (!$this->ismeta) {
-            $all_vpids = Viewpoint::where('category_id', $this->category_id)->where('forrev', 1)->count();
+            $all_vpids = Viewpoint::where('category_id', $this->category_id)->where('forrev', 1)->where('mandatory', 1)->count();
         }
         // ->whereNotIn('id', $finish_vpids)->
         if ($finish_vpids == 0) {
