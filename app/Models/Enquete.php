@@ -138,18 +138,30 @@ class Enquete extends Model
         return false;
     }
 
+    /**
+     * 期間内かどうか
+     * 06-01 〜 10-31 のように、begin<endなら、そのまま
+     * 11-01 〜 03-31 のように、begin>endの場合、
+     * 単純に、ひっくり返して、条件を反転すればよい
+     */
     public static function checkdayduration($openstart, $openend)
     {
         $s = array_map("intval", explode("-", $openstart));
         $e = array_map("intval", explode("-", $openend));
-        $nextyear = ($e[0] < $s[0]);  // 終了月のほうが開始月より小さいなら、終了は次の年
-        $year = date('Y');
         $month = date('n');
         $day = date('j');
-        $now = mktime(12, 12, 12, $month, $day); // 12:12:12に深い意味なし
-        $begin = mktime(12, 12, 12, intval($s[0]), intval($s[1]));
-        $end = mktime(12, 12, 12, intval($e[0]), intval($e[1]), $year + intval($nextyear));
-        return ($begin <= $now && $now <= $end);
+
+        $now = $month*100 + $day; // 06-01 なら 0601
+        $begin = $s[0]*100 + $s[1];
+        $end = $e[0]*100 + $e[1];
+        if ($begin < $end) {
+            return ($begin <= $now && $now <= $end);
+        } else {
+            $tmp = $begin;
+            $begin = $end;
+            $end = $tmp;
+            return !($begin < $now && $now < $end);
+        }
     }
 
     public static function mm_dd_fancy($mmdd)
