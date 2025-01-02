@@ -87,7 +87,7 @@ class BbController extends Controller
             if ($rev == null) $revid = null;
             else $revid = $rev->id;
             // 利害関係者は掲示板を見れないようにする
-            $rigais = RevConflict::arr_pu_rigai();
+            $rigais = RevConflict::arr_pu_rigai($bb->category_id);
             if (isset($rigais[$bb->paper->id][auth()->id()]) && $rigais[$bb->paper->id][auth()->id()] < 3) {
                 return abort(403, 'authors conflict');
             }

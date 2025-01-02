@@ -180,7 +180,7 @@ class ReviewController extends Controller
         }
         $am_i_meta = auth()->user()->can('role_any', 'pc|metareviewer');
 
-        $rigais = RevConflict::arr_pu_rigai();
+        $rigais = RevConflict::arr_pu_rigai($cat->id);
         if ($rigais[$paper->id][auth()->id()] < 3) {
             return abort(403, 'authors conflict');
         }

@@ -160,7 +160,7 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
         $papers_in_cat = $catid->paperswithpdf->pluck("title", "id")->toArray();
         $reviewers = Role::findByIdOrName($role_name)->users;
 
-        $rigais = RevConflict::arr_pu_rigai();
+        $rigais = RevConflict::arr_pu_rigai($cat_id);
 
         $log = [];
         foreach ($reviewers as $reviewer) {

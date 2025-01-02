@@ -115,7 +115,7 @@ class Bb extends Model
         $subary = explode("|", trim($this->subscribers));
 
         //利害関係配列
-        $rigais = RevConflict::arr_pu_rigai();
+        $rigais = RevConflict::arr_pu_rigai($this->category_id);
 
         foreach($subary as $role){
             if ($role=="author"){

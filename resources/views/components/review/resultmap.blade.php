@@ -3,7 +3,7 @@
     'subs' => [],
 ])
 @php
-    $rigais = App\Models\RevConflict::arr_pu_rigai();
+    $rigais = App\Models\RevConflict::arr_pu_rigai($cat->id);
     $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
     $cat_id = $cat->id;
 @endphp<!-- components.review.resultmap -->

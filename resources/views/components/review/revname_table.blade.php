@@ -10,7 +10,7 @@
         ->get()
         ->pluck('title', 'id')
         ->toArray();
-    $rigais = App\Models\RevConflict::arr_pu_rigai();
+    $rigais = App\Models\RevConflict::arr_pu_rigai($cat_id);
     $revnames = App\Models\Review::arr_pu_revname();
 @endphp
 

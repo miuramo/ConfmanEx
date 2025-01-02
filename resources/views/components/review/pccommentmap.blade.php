@@ -4,7 +4,7 @@
     'scoreonly' => 1,
 ])
 @php
-    $rigais = App\Models\RevConflict::arr_pu_rigai();
+    $rigais = App\Models\RevConflict::arr_pu_rigai($cat_id);
     $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
     // ユーザが担当しているrevがあれば、ハイライト
     $tantourev = App\Models\Review::where('user_id', auth()->id())->get()->pluck('paper_id', 'id')->toArray();
@@ -96,6 +96,8 @@
                                     <span class="text-gray-400">
                                         {{ $sub->paper->title }}
                                     </span>
+                                    <!-- enableTitleLink={{$enableTitleLink}} -->
+                                    <!-- rigais={{@$rigais[$sub->paper->id][auth()->id()]}} -->
                             @endif
                         </td>
                         <td class="p-1 text-center">

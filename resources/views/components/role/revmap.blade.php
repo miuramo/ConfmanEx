@@ -5,7 +5,7 @@
 ])
 @php
     $bids = App\Models\RevConflict::arr_pu_bname();
-    $rigais = App\Models\RevConflict::arr_pu_rigai();
+    $rigais = App\Models\RevConflict::arr_pu_rigai($cat->id);
     $stars = App\Models\Review::arr_pu_star();
 @endphp
 <!-- components.role.revmap -->
