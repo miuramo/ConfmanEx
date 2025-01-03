@@ -211,6 +211,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/revcon/revname/{cat}', [RevConflictController::class, 'revname'])->name('revcon.revname'); // 査読者の名前
     Route::get('/revcon/notdownloaded', [RevConflictController::class, 'notdownloaded'])->name('revcon.notdownloaded');
     Route::get('/revcon/norev', [RevConflictController::class, 'norev'])->name('revcon.norev');
+    Route::get('/revcon/fill_bidding', [RevConflictController::class, 'fillBidding'])->name('revcon.fill_bidding');
+    Route::post('/revcon/fill_bidding', [RevConflictController::class, 'fillBidding'])->name('revcon.fill_biddingpost');
 
     // Export and Import
     Route::get('viewpoints/export', [ViewpointController::class, 'export'])->name('viewpoint.export');

@@ -150,8 +150,13 @@
         <x-element.linkbutton href="{{ route('admin.paperauthorhead') }}" color="cyan">
             第一著者名の設定
         </x-element.linkbutton>
+        <span class="px-5"></span>
         <x-element.linkbutton href="{{ route('admin.importpaperjson') }}" color="cyan">
             Import Paper JSON
+        </x-element.linkbutton>
+        <span class="px-5"></span>
+        <x-element.linkbutton href="{{ route('revcon.fill_biddingpost') }}" color="lime">
+            Fill Bidding
         </x-element.linkbutton>
 
     </x-element.h1>

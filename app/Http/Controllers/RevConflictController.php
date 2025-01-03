@@ -127,6 +127,21 @@ class RevConflictController extends Controller
     {
     }
 
+    /**
+     * Biddingを忘れた査読者に、代理でBiddingを作成する
+     */
+    public function fillBidding(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc|admin')) abort(403);
+
+        if ($req->has('action')){
+            $catid = $req->catid;
+            $rolename = $req->rolename;
+            RevConflict::fillBidding($catid, $rolename, 7);
+            return redirect()->route('revcon.fill_bidding')->with('feedback.success', 'Biddingを代理作成しました (catid='.$catid."-".$rolename.')');
+        }
+        return view('revcon.fill_bidding');
+    }
 
 
     /**
