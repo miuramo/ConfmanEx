@@ -73,7 +73,7 @@ class BbMesController extends Controller
      */
     public function adopt(Request $req, int $bbid, string $key)
     {
-        if (!auth()->user()->can('role_any', 'admin|manager|pc|pub|web|demo')) abort(403);
+        if (!auth()->user()->can('role_any', 'admin|manager|pc|pub|web|demo|metareviewer')) abort(403);
         $bb = Bb::with("paper")->with("category")->where('id', $bbid)->where('key', $key)->first();
         if ($bb == null) abort(403, 'bb not found');
 
