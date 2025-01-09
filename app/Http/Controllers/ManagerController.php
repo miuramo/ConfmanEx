@@ -160,7 +160,7 @@ class ManagerController extends Controller
         $src = "";
         $updated = false;
         if ($req->has('paperjson')) { // テキストエリアがある場合
-            info($req->input('action'));
+            // info($req->input('action'));
             $src = $req->input('paperjson');
             $jsons = json_decode($req->input('paperjson'), true);
             foreach ($jsons as $json) {
@@ -185,5 +185,25 @@ class ManagerController extends Controller
             }
         }
         return view('admin.importpaperjson')->with(compact("out", "src", "updated"));
+    }
+
+    public function upsearch(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc|admin')) abort(403);
+        if ($req->has('query')) {
+            $search = $req->input('query');
+
+            $uresults = User::where('name', 'like', '%' . $search . '%')
+                ->orWhere('email', 'like', '%' . $search . '%')
+                ->orWhere('id', 'like', '%' . $search . '%')
+                ->get();
+            $presults = Paper::where('title', 'like', '%' . $search . '%')
+                ->orWhere('id', 'like', '%' . $search . '%')
+                ->orWhere('authorlist', 'like', '%' . $search . '%')
+                ->get();
+
+            return response()->json(['u'=>$uresults, 'p'=>$presults]);
+        }
+        return view('admin.upsearch');//->with(compact("out"));
     }
 }

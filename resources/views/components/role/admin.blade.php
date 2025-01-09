@@ -83,6 +83,7 @@
             @endphp
             App::environment(APP_ENV): {{ config('app.env') }} <span class="mx-4"></span>
             (use "production" for https)<br>
+            App::environment(APP_DEBUG): {{ env('APP_DEBUG') }} <span class="mx-4"></span>1の場合、login-asが使える<br>
             DB_Setting FILEPUT_DIR: {{ $fileput_dir }} <br>
             DB_Setting LAST_QUEUEWORK_DATE: {{ $queuework_date }}<br>
             config('database.default'): {{ $domain }} <br>
@@ -157,6 +158,10 @@
         <span class="px-5"></span>
         <x-element.linkbutton href="{{ route('revcon.fill_biddingpost') }}" color="lime">
             Fill Bidding
+        </x-element.linkbutton>
+        <span class="px-5"></span>
+        <x-element.linkbutton href="{{ route('admin.upsearch') }}" color="orange">
+            検索
         </x-element.linkbutton>
 
     </x-element.h1>

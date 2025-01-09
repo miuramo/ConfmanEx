@@ -200,6 +200,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/man_importpaperjson', [ManagerController::class, 'importpaperjson'])->name('admin.importpaperjson');
     Route::get('/man_importpaperjson', [ManagerController::class, 'importpaperjson'])->name('admin.importpaperjson');
 
+    Route::get('/man_upsearch', [ManagerController::class, 'upsearch'])->name('admin.upsearch');
+
     // 切り取った画像の一覧
     Route::get('/man_paperlist_headimg', [ManagerController::class, 'paperlist_headimg'])->name('admin.paperlist_headimg');
     Route::get('/man_paperlist_headimg_recrop', [ManagerController::class, 'paperlist_headimg_recrop'])->name('admin.paperlist_headimg_recrop');
@@ -259,7 +261,7 @@ require __DIR__ . '/auth.php';
 
 if (env('APP_DEBUG')) {
     Route::get('/login-as/{user}', function ($user) {
-        if (auth()->id() != 1) return redirect('/')->with('feedback.error', '特定ユーザ以外は代理ログインできません');
+        if (!auth()->user()->can('role_any', 'pc|admin')) return redirect('/')->with('feedback.error', '特定ユーザ以外は代理ログインできません');
         $targetUser = User::find($user);
         if ($targetUser) {
             Auth::login($targetUser);
