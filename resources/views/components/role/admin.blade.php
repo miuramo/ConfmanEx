@@ -166,7 +166,7 @@
 
     </x-element.h1>
 
-    @if (env('APP_DEBUG'))
+    @if (env('APP_DEBUG') && auth()->id() == 1) 
         <div class="text-sm mx-10">
             採択タグごとの、ランダムなPaperIDとその投稿者IDの表示<br>
             @php
