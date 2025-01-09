@@ -202,7 +202,7 @@ class ManagerController extends Controller
                 ->orWhere('authorlist', 'like', '%' . $search . '%')
                 ->get();
 
-            return response()->json(['u'=>$uresults, 'p'=>$presults]);
+            return response()->json(['u'=>$uresults, 'p'=>$presults, 'id'=>auth()->id()]);
         }
         return view('admin.upsearch');//->with(compact("out"));
     }

@@ -260,7 +260,7 @@ require __DIR__ . '/web_annotpaper.php';
 require __DIR__ . '/auth.php';
 
 if (env('APP_DEBUG')) {
-    Route::get('/login-as/{user}', function ($user) {
+    Route::get('/login-as/{user}/{from?}', function ($user) {
         if (!auth()->user()->can('role_any', 'pc|admin')) return redirect('/')->with('feedback.error', '特定ユーザ以外は代理ログインできません');
         $targetUser = User::find($user);
         if ($targetUser) {
