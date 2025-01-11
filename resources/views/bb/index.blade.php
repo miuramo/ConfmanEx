@@ -123,6 +123,13 @@
             </div>
         </form>
     </div>
+
+    <div class="m-6">
+        <x-element.linkbutton href="{{ route('bb.multisubmit') }}" color="blue" size="sm">
+            出版掲示板への一括書き込み
+        </x-element.linkbutton>
+    </div>
+
     <div class="mx-6 mt-10 p-3 bg-slate-300 rounded-lg dark:bg-slate-700 dark:text-gray-300">
         Danger Zone
         <span class="mx-2"></span>

@@ -89,7 +89,12 @@
                 </x-element.submitbutton>
             </div>
         </form>
+    </div>
 
+    <div class="m-6">
+        <x-element.linkbutton href="{{ route('bb.multisubmit') }}" color="blue" size="sm">
+            出版掲示板への一括書き込み
+        </x-element.linkbutton>
     </div>
 
     <div class="mx-6 mt-32 p-3 bg-slate-300 rounded-lg dark:bg-slate-700 dark:text-gray-300">

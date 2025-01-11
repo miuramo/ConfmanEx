@@ -142,4 +142,51 @@ class BbController extends Controller
         }
         return redirect()->route('bb.index')->with('feedback.success', "削除しました。");
     }
+
+    public function multisubmit(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403);
+        if ($req->has('action')) {
+            $lines = explode("\r\n", $req->csv);
+            $out = "";
+            $buf = "";
+            $subject = "";
+            $pid = 0;
+            $count = 0;
+            $bufary = [];
+            foreach ($lines as $n=>$l) {
+                $line = $l;// trim($l);
+                if (preg_match("/={6,30}/", $line)) {
+                    if ($pid == 0) {
+                        continue;
+                    }
+                    $bufary []= ["PID"=>$pid,
+                                      "subject"=>trim($req->subject),
+                                      "body"=>$req->preface ."\n". $buf];
+                    $buf = $subject = "";
+                    $pid = 0;
+                } elseif (preg_match("/^[0-9]+$/", $line)) {
+                    $pid = intval($line);
+                    $count = 0;
+                } else {
+                    $buf .= $line."\r\n";
+                }
+                $count++;
+            }
+            if ($req->input('action') == "submit") {
+                foreach ($bufary as $n=>$ba) {
+                    Bb::submitplain(
+                        $ba['paper_id'],
+                        3,
+                        $ba['subject'],
+                        $ba['body']
+                    );
+                }
+                return redirect()->route('bb.multisubmit')->with('feedback.success', "一括送信しました。");
+            } else {
+                return view('bb.multisubmit')->with(compact("out", "bufary"));
+            }
+        }
+        return view('bb.multisubmit');
+    }
 }
