@@ -176,7 +176,7 @@ class BbController extends Controller
             if ($req->input('action') == "submit") {
                 foreach ($bufary as $n=>$ba) {
                     Bb::submitplain(
-                        $ba['paper_id'],
+                        $ba['PID'],
                         3,
                         $ba['subject'],
                         $ba['body']
@@ -184,9 +184,33 @@ class BbController extends Controller
                 }
                 return redirect()->route('bb.multisubmit')->with('feedback.success', "一括送信しました。");
             } else {
-                return view('bb.multisubmit')->with(compact("out", "bufary"));
+                $preface = $req->preface;
+                $subject = $req->subject;
+                $csv = $req->csv;
+                return view('bb.multisubmit')->with(compact("out", "bufary", "preface", "subject", "csv"));
             }
         }
-        return view('bb.multisubmit');
+        $preface = "出版担当から著者の方に、個別の連絡事項があります。
+以下の点についてご対応いただき、修正原稿を 掲示板 からアップロードしてください。";
+        $subject = "出版担当からの連絡事項";
+        $csv = '"=======
+001
+BodyLine1
+BodyLine2
+BodyLine3
+======="
+"=======
+002
+BodyLine1
+BodyLine2
+BodyLine3
+======="
+"=======
+003
+BodyLine1
+BodyLine2
+BodyLine3
+======="';
+        return view('bb.multisubmit')->with(compact("preface", "subject", "csv"));
     }
 }

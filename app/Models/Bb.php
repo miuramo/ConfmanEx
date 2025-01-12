@@ -73,7 +73,25 @@ class Bb extends Model
             'subject' => 'ごあんない',
             'mes' => $firstmes[$type],
         ]);
-        return Bb::with("messages")->with("paper")->with("category")->find($bb->id);
+        return $bb; // Bb::with("messages")->with("paper")->with("category")->find($bb->id);
+    }
+
+    public static function submitplain(int $pid, int $type, string $subject, string $mes)
+    {
+        $paper = Paper::find($pid);
+        if ($paper == null) return null;
+        $bb = Bb::where("paper_id", $pid)->where("type", $type)->first();
+        if ($bb == null) {
+            $bb = Bb::make_bb($type, $pid, $paper->category_id);
+        }
+        $mes = BbMes::create([
+            'bb_id' => $bb->id,
+            'user_id' => auth()->id(),
+            'subject' => $subject,
+            'mes' => $mes,
+        ]);
+        (new BbNotify($bb, $mes))->process_send();
+        return $mes;
     }
 
     /**
