@@ -23,7 +23,7 @@
     class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200' : 'bg-white-50 dark:bg-slate-400' }}">
     <td nowrap class="p-4">
         @php
-            if($itm->mandatory){
+            if($itm->mandatory || $itm->is_mandatory){
                 $noinputcolor = "red";
                 $descmanda = "【必須】";
             }else{
