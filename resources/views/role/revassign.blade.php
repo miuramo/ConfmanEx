@@ -58,7 +58,7 @@
     </div>
 
     <div class="py-4 px-1">
-            <x-role.revmap :reviewers="$reviewers" :papers="$papers">
+            <x-role.revmap :reviewers="$reviewers" :papers="$papers" :cat="$cat">
             </x-role.revmap>
     </div>
 
