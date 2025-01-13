@@ -166,33 +166,36 @@
 
     </x-element.h1>
 
-    @if (env('APP_DEBUG') && auth()->id() == 1) 
+    @if (env('APP_DEBUG') && auth()->id() == 1)
         <div class="text-sm mx-10">
             採択タグごとの、ランダムなPaperIDとその投稿者IDの表示<br>
-            @php
-                $combined = App\Models\Accept::random_pids_for_each_accept(1);
-                $show = $combined['show'];
-                $showpid = $combined['showpid'];
-                $metarev = $combined['metarev'];
-                $rev = $combined['rev'];
-                $accepts = $combined['accepts'];
-            @endphp
-            @foreach ($show as $accid => $random_paper_owner)
-                {{ $accepts[$accid] }}: {{ $showpid[$accid] }} -
-                <x-element.linkbutton href="{{ route('role.login-as', ['user' => $random_paper_owner]) }}"
-                    color="purple">{{ $random_paper_owner }}</x-element.linkbutton> 
-                --
-                <x-element.linkbutton href="{{ route('role.login-as', ['user' => $metarev[$accid]->user_id]) }}"
-                    color="orange">meta</x-element.linkbutton> 
-                -
-                <x-element.linkbutton href="{{ route('role.login-as', ['user' => $rev[$accid]->user_id]) }}"
-                    color="lime">rev</x-element.linkbutton> <br>
+            @foreach (\App\Models\Category::where('status__revreturn_on', 1)->get() as $cat)
+                @php
+                    $combined = App\Models\Accept::random_pids_for_each_accept($cat->id);
+                    $show = $combined['show'];
+                    $showpid = $combined['showpid'];
+                    $metarev = $combined['metarev'];
+                    $rev = $combined['rev'];
+                    $accepts = $combined['accepts'];
+                @endphp
+                <span class="font-bold border border-blue-600 p-1 m-1">{{$cat->name}}</span><br>
+                @foreach ($show as $accid => $random_paper_owner)
+                    {{ $accepts[$accid] }}: {{ $showpid[$accid] }} -
+                    <x-element.linkbutton href="{{ route('role.login-as', ['user' => $random_paper_owner]) }}"
+                        color="purple">{{ $random_paper_owner }}</x-element.linkbutton>
+                    --
+                    @isset($metarev[$accid])
+                        <x-element.linkbutton href="{{ route('role.login-as', ['user' => $metarev[$accid]->user_id]) }}"
+                            color="orange">meta</x-element.linkbutton>
+                    @endisset
+                    -
+                    <x-element.linkbutton href="{{ route('role.login-as', ['user' => $rev[$accid]->user_id]) }}"
+                        color="lime">rev</x-element.linkbutton> <br>
+                @endforeach
             @endforeach
         </div>
         <div class="text-sm mx-10">
             シェファーディング対象論文を担当しているメタ査読者<br>
-
-
         </div>
     @endif
 

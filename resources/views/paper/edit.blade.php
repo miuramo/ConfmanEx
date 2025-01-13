@@ -70,7 +70,14 @@
             $submit_finished = false;
 
             // 査読結果が採択、または、デモ希望がある場合は、カメラレディ提出が必要(WISS)
-            $result_accepted = $paper->submits->where('status', 'accepted')->count();
+            // $result_accepted = $paper->submits->where('status', 'accepted')->count();
+            // $result_accepted = $paper->submits->where('accept_id', '<', 20)->count(); // 本来はJudgeをみるべき
+            $result_accepted = App\Models\Submit::with('accept')
+                ->where('paper_id', $paper->id)
+                ->whereHas('accept', function ($query) {
+                    $query->where('judge', '>', 0);
+                })
+                ->count();
             // ただし、デモ希望があっても、査読前に申請したものの場合は、通らない場合がある。
             $demo_ifaccepted = $paper->demo_ifaccepted();
             $need_camera_ready = ($result_accepted || $demo_ifaccepted) && $revreturn[$paper->category_id];
@@ -116,10 +123,10 @@
                     @endif
                 @endif
             @else
-                @if(!$paper->locked)
+                @if (!$paper->locked)
                     <x-alert.success>投稿に必要なファイルと情報は、そろっています。<br>
-                    投稿完了通知は「投稿完了通知メールを送信」を押すと送信します。<br>
-                    締め切り日時までは、ひきつづき修正可能です。</x-alert.success>
+                        投稿完了通知は「投稿完了通知メールを送信」を押すと送信します。<br>
+                        締め切り日時までは、ひきつづき修正可能です。</x-alert.success>
                 @endif
                 @php
                     $submit_finished = true;
@@ -129,23 +136,24 @@
 
         <div class="py-2 px-6">
             <div class="m-6">
-                @if($paper->can_upload_files())
-                <x-element.h1>ファイルをアップロードするには <span class="bg-lime-200 text-green-700 px-1 dark:bg-lime-500">Drop Files
-                        Here</span> にドラッグ＆ドロップしてください。
-                    <div class="text-sm mx-4 mt-2">
-                        複数のファイルをまとめてアップロードできます。ファイル種別は自動で認識します。
-                        @php
-                            $gendo = array_map('intval', explode('-', $cat->pdf_accept_end));
-                        @endphp
-                        <x-element.gendospan>{{ $gendo[0] }}月{{ $gendo[1] }}日まで修正可</x-element.gendospan>
-                    </div>
-                </x-element.h1>
+                @if ($paper->can_upload_files())
+                    <x-element.h1>ファイルをアップロードするには <span class="bg-lime-200 text-green-700 px-1 dark:bg-lime-500">Drop
+                            Files
+                            Here</span> にドラッグ＆ドロップしてください。
+                        <div class="text-sm mx-4 mt-2">
+                            複数のファイルをまとめてアップロードできます。ファイル種別は自動で認識します。
+                            @php
+                                $gendo = array_map('intval', explode('-', $cat->pdf_accept_end));
+                            @endphp
+                            <x-element.gendospan>{{ $gendo[0] }}月{{ $gendo[1] }}日まで修正可</x-element.gendospan>
+                        </div>
+                    </x-element.h1>
 
-                <div class="py-4 px-6">
-                    <x-element.filedropzone color="lime" :paper_id="$id"></x-element.filedropzone>
-                </div>
+                    <div class="py-4 px-6">
+                        <x-element.filedropzone color="lime" :paper_id="$id"></x-element.filedropzone>
+                    </div>
                 @else
-                <span class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、この画面からのファイルアップロードはできません。）</span>
+                    <span class="text-red-500 dark:text-red-400">（現在、投稿はロックされているため、この画面からのファイルアップロードはできません。）</span>
                 @endif
 
                 <div class="py-2 px-6">
