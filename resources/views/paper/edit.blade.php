@@ -71,13 +71,13 @@
 
             // 査読結果が採択、または、デモ希望がある場合は、カメラレディ提出が必要(WISS)
             // $result_accepted = $paper->submits->where('status', 'accepted')->count();
-            // $result_accepted = $paper->submits->where('accept_id', '<', 20)->count(); // 本来はJudgeをみるべき
-            $result_accepted = App\Models\Submit::with('accept')
-                ->where('paper_id', $paper->id)
-                ->whereHas('accept', function ($query) {
-                    $query->where('judge', '>', 0);
-                })
-                ->count();
+            $result_accepted = $paper->submits->where('accept_id', '<', 20)->count(); // 本来はJudgeをみるべき
+            // $result_accepted = App\Models\Submit::with('accept')
+            //     ->where('paper_id', $paper->id)
+            //     ->whereHas('accept', function ($query) {
+            //         $query->where('judge', '>', 0);
+            //     })
+            //     ->count();
             // ただし、デモ希望があっても、査読前に申請したものの場合は、通らない場合がある。
             $demo_ifaccepted = $paper->demo_ifaccepted();
             $need_camera_ready = ($result_accepted || $demo_ifaccepted) && $revreturn[$paper->category_id];
