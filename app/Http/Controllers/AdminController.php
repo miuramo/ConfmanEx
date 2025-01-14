@@ -625,6 +625,10 @@ class AdminController extends Controller
         $app_public_filedir = storage_path(File::apf());
         $mysql = config('database.default');
         $db_name = config('database.connections.' . str_replace('.', '_', $mysql) . '.database');
+        //フォルダがなければ作成する
+        if (!file_exists($app_public_filedir)) {
+            mkdir($app_public_filedir, 0777, true);
+        }
         chdir($app_public_filedir);
         shell_exec("mysqldump -u {$db_name} -p{$db_name} {$db_name} > dump.sql");
         shell_exec("zip -e --password={$pass} passdumpsql.zip dump.sql");
