@@ -36,6 +36,7 @@ class Role extends Model
         // 'metareviewer' => 'x',
         'acc' => 'x',
         'award' => 'x',
+        'demo' => 'x',
         'local' => 'x',
         'cast' => 'x',
         'ban' => 'x',
