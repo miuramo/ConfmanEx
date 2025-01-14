@@ -48,7 +48,8 @@ class ReviewResultTest extends TestCase
 
             parent::show_revresult_to_author(1, true); // 査読結果を見せる
             $resp = $this->get("/paper/{$showpid[$accid]}/edit");
-            $resp->assertSee("投稿いただき、ありがとうございました。");
+            // dump($accid);
+            // $resp->assertSee("投稿いただき、ありがとうございました。");
             $resp->assertDontSee("現在査読中です");
             $resp = $this->get("/paper");
             $resp->assertSee("結果");

@@ -15,9 +15,9 @@
     @php
         $role = App\Models\Role::where('name', 'demo')->first();
     @endphp
-    @if ($role->cat_id > 0)
+    @if (strlen($role->catcsv) > 0)
         @php
-            $cats = App\Models\Category::select('name', 'id')->where('id', $role->cat_id)->get()->pluck('name', 'id')->toArray();
+            $cats = App\Models\Category::select('name', 'id')->whereIn('id', explode(",",$role->catcsv))->get()->pluck('name', 'id')->toArray();
             $targetcat = $role->cat_id;
         @endphp
         <div class="ml-10 px-2 py-2 flex-grow">

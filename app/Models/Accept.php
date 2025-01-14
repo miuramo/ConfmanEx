@@ -84,42 +84,39 @@ class Accept extends Model
     public static function nodes(){
         $nodes = [];
         $links = [];
-        // 最初に、カテゴリのノードを作成
-        // $cats = Category::all();
-        // foreach ($cats as $cat) {
-        //     $nodes[] = [
-        //         "id" => 'c'.$cat->id,
-        //         "label" => $cat->name,
-        //         "type" => "A",
-        //         "width"=> 80,
-        //         "shape" => "box",
-        //         "color" => "lightblue",
-        //     ];
-        // }
-        // $links[] = [
-        //     "source" => 'c1',
-        //     "target" => 'c3',
-        // ];
-        // $links[] = [
-        //     "source" => 'c2',
-        //     "target" => 'c4',
-        // ];
-        $links[] = [
-            "source" => 'h3a3',
-            "target" => 'h3a4',
-        ];
-        $links[] = [
-            "source" => 'h1a1',
-            "target" => 'h1a2',
-        ];
-        $links[] = [
-            "source" => 'h1a2',
-            "target" => 'h1a21',
-        ];
+        $conftitle_base = Setting::findByIdOrName('CONFTITLE_BASE', 'value');
+        if ($conftitle_base=='インタラクション'){
+            $links[] = [
+                "source" => 'h1a1',
+                "target" => 'h1a6',
+            ];
+            // $links[] = [
+            //     "source" => 'h2a3',
+            //     "target" => 'h2a4',
+            // ];
+            // $links[] = [
+            //     "source" => 'h3a3',
+            //     "target" => 'h3a4',
+            // ];
 
-        $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+        } else if ($conftitle_base=='WISS'){
+            $links[] = [
+                "source" => 'h3a3',
+                "target" => 'h3a4',
+            ];
+            $links[] = [
+                "source" => 'h1a1',
+                "target" => 'h1a2',
+            ];
+            $links[] = [
+                "source" => 'h1a2',
+                "target" => 'h1a21',
+            ];    
+        }
+
+        $accepts = Accept::select('shortname', 'id')->get()->pluck('shortname', 'id')->toArray();
         $acc_judges = Accept::select('judge', 'id')->get()->pluck('judge', 'id')->toArray();
-        $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+        $cats = Category::select('id', 'shortname')->get()->pluck('shortname', 'id')->toArray();
 
         // 二重につくらないようにする
         $alerady = [];
@@ -136,7 +133,7 @@ class Accept extends Model
             $nodes[] = [
                 "id" => $id, 
                 "accid" => $st->accept_id, 
-                "label" => mb_substr($cats[$st->hanteicat],0,2).'-'. mb_substr($accepts[$st->accept_id],0,3),
+                "label" => $cats[$st->hanteicat].'-'. $accepts[$st->accept_id],
                 "type" => "A",
                 "width"=> 80,
                 "shape" => "ellipse",

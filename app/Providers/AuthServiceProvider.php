@@ -100,11 +100,25 @@ class AuthServiceProvider extends ServiceProvider
                 // いずれかのRoleに所属していれば、true
                 if ($role->containsUser($user->id)) return true;
             }
+            //catcsv についても調査
+            $catcsv_roles = Role::where('catcsv', 'like', '%'.$category.'%')->get(); // ここではLIKEでざっくりと絞り込む。
+            foreach ($catcsv_roles as $role) {
+                $csv = explode(',', $role->catcsv);
+                if (!in_array($category, $csv)) continue;
+                // いずれかのRoleに所属していれば、true
+                if ($role->containsUser($user->id)) return true;
+            }
             return false;
         });
         Gate::define('manage_cat_any', function ($user) {
             $catid_roles = Role::where('cat_id', '>', 0)->get();
             foreach ($catid_roles as $role) {
+                // いずれかのRoleに所属していれば、true
+                if ($role->containsUser($user->id)) return true;
+            }
+            //catcsv についても調査
+            $catcsv_roles = Role::whereNotNull('catcsv')->get(); // ここではLIKEでざっくりと絞り込む。
+            foreach ($catcsv_roles as $role) {
                 // いずれかのRoleに所属していれば、true
                 if ($role->containsUser($user->id)) return true;
             }
