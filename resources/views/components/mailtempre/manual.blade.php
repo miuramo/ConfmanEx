@@ -48,6 +48,7 @@
                 'reject(catid1,catid2,...)' => 'catidで不採択 (judgeが負)',
                 'paperid(pid1,pid2, ...)' => 'PaperIDの羅列',
                 'acc_id(accid1,accid2, ...)' => '採択IDの羅列',
+                'cat_acc_id(catid, accid1,accid2, ...)' => '投稿時catid X 採択IDの羅列',
                 'acc_judge(judge1,judge2, ...)' => '採択ジャッジ値の羅列',
                 'nofile(catid1,catid2,...)' => 'ファイル無し',
                 'notitle(catid1,catid2,...)' => 'タイトル無し',
