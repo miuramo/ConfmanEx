@@ -15,7 +15,7 @@ class Role extends Model
     public static $roles = [
         'admin' => '管理者',
         'manager' => '設定マネージャ',
-        'pc' => 'PC',
+        'pc' => 'PC長',
         'metareviewer' => 'メタ査読者',
         'reviewer' => '査読者',
         'pub' => '出版',
@@ -29,6 +29,17 @@ class Role extends Model
         'exe' => '運営委員',
         // 'author' => '著者',
         // 'participant' => '参加者',
+    ];
+
+    public static $role_navi = [
+        'manager' => 'x',
+        'metareviewer' => 'x',
+        'acc' => 'x',
+        'award' => 'x',
+        'local' => 'x',
+        'cast' => 'x',
+        'ban' => 'x',
+        'exe' => 'x',
     ];
 
 

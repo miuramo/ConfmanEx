@@ -40,6 +40,7 @@ class AcceptSeeder extends Seeder
         foreach ($data as $d => $n) {
             \App\Models\Accept::factory()->create([
                 'name' => $d,
+                'shortname' => $d,
                 'judge' => $n,
                 'bgcolor' => ($n > 0) ? "orange" : "gray",
                 'color' => ($n > 0) ? "red" : "black",

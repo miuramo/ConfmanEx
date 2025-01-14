@@ -35,6 +35,7 @@ class CategorySeeder extends Seeder
         foreach ($data as $n => $d) {
             \App\Models\Category::factory()->create([
                 'name' => $d,
+                'shortname' => str_replace("発表","",$d),
                 'bgcolor' => $bg[$n],
                 'color' => $fg[$n],
                 'openend' => $oe[$n],

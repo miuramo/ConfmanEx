@@ -13,12 +13,12 @@ class SettingSeeder extends Seeder
      */
     public function run(): void
     {
-        $confname = "SSS";
-        $confyear = "2024";
+        $confname = env('CONFNAME', "SSS");
+        $confyear = env('CONFYEAR', date('Y'));
         $mailfrom = "ssstoukou@istlab.info"; // "toukouadmin@interaction-ipsj.org"
         Setting::factory()->create([
             'name' => "CONFTITLE",
-            'value' => $confname.$confyear,
+            'value' => $confname . $confyear,
         ]);
         Setting::factory()->create([
             'name' => "CONFTITLE_BASE",
@@ -34,7 +34,7 @@ class SettingSeeder extends Seeder
         ]);
         Setting::factory()->create([
             'name' => "CONF_URL",
-            'value' => "https://cm.istlab.info/",
+            'value' => "https://".strtolower($confname).$confyear.".istlab.info/",
         ]);
         Setting::factory()->create([
             'name' => "PSEUDOTESTSITE",
@@ -50,7 +50,7 @@ class SettingSeeder extends Seeder
         ]);
         Setting::factory()->create([
             'name' => "FILEPUT_DIR",
-            'value' => "z".$confyear,
+            'value' => "z" . $confyear,
             'isnumber' => false,
             'isbool' => false,
         ]);

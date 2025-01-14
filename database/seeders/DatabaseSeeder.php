@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
                     'name' => $name,
                     'desc' => $desc,
                     'abbr' => $name,
+                    'navi' => \App\Models\Role::$role_navi[$name] ?? '',
                 ]);
                 $tmp->users()->syncWithoutDetaching(1);
             }
