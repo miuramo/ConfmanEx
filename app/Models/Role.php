@@ -33,7 +33,7 @@ class Role extends Model
 
     public static $role_navi = [
         'manager' => 'x',
-        'metareviewer' => 'x',
+        // 'metareviewer' => 'x',
         'acc' => 'x',
         'award' => 'x',
         'local' => 'x',
