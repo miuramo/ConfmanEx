@@ -40,7 +40,7 @@ class Setting extends Model
                 if ($tmpu == null) continue;
                 if (!$role->containsUser($tmpu->id)){ // ふくまれていなければ
                     $tmpu->roles()->syncWithoutDetaching($role);
-                    debug("auto_role_member {$name} {$role->name}");
+                    dump("auto_role_member {$name} {$role->name}");
                 }
             }
         }
