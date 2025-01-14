@@ -135,6 +135,13 @@ class Setting extends Model
             'isbool' => false,
         ]);
         Setting::firstOrCreate([
+            'name' => "CFP_URL",
+        ], [
+            'value' => "https://exconf.istlab.info/cfp",
+            'isnumber' => false,
+            'isbool' => false,
+        ]);
+        Setting::firstOrCreate([
             'name' => "INTRO_VIDEO_URL",
         ], [
             'value' => "https://exconf.istlab.info/SSS_tutorial.mp4",
