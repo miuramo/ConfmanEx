@@ -22,6 +22,8 @@ function performSearch(query) {
                 // console.log(data);
                 data['mt'].forEach((mt, idx) => {
                     let row = (idx % 2 == 1) ? 'bg-pink-50 dark:bg-pink-400' : 'bg-white  dark:bg-pink-300';
+                    if (mt.name == null) mt.name = '';
+                    if (mt.lastsent == null) mt.lastsent = '';
                     $('#results').append('<tr class="' + row + '"><td class="px-2 py-1 text-center">' +
                         '<input type="checkbox" name="mt_' + mt.id + '" value="on">' +
                         '</td>' +
