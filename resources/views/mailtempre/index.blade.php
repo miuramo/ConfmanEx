@@ -12,6 +12,12 @@
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
 
+    @php
+        if (!isset($keywords)) {
+            $keywords = '';
+        }
+        $mt_keywords = explode(" ", App\Models\Setting::getvalue('MT_KEYWORDS'));
+    @endphp
 
     <div class="py-2 px-6">
 
@@ -23,6 +29,21 @@
                 <x-element.submitbutton value="copy" color="yellow">
                     チェックをいれた雛形をコピー
                 </x-element.submitbutton>
+                <span class="mx-2"></span>
+                <input id="search-box" placeholder="キーワードで絞り込み（キーワード例：採択 登壇 査読）半角または全角スペース区切り" type="text"
+                    name="query" value="{{ $keywords }}" class="text-sm px-2 py-1 text-teal-700 bg-teal-100" size=100><br>
+                    <span class="mx-16"></span>
+                    <x-element.linkbutton2 href="javascript:query_clear()"
+                        color="gray" size="xs">
+                        キーワードをクリア
+                    </x-element.linkbutton2>
+
+                @foreach ($mt_keywords as $tag)
+                    <x-element.linkbutton2 href="javascript:addToTextField('{{ $tag }} ')" color="teal"
+                        size="xs">
+                        {{ $tag }}
+                    </x-element.linkbutton2>
+                @endforeach
             </div>
 
             <table class="table-auto w-full sortable" id="sortable">
@@ -38,7 +59,7 @@
                         <th class="px-2 unsortable">(action)</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="results">
                     @foreach ($mts as $mt)
                         <tr
                             class="{{ $loop->iteration % 2 === 0 ? 'bg-pink-50 dark:bg-pink-400' : 'bg-white  dark:bg-pink-300' }}">
@@ -68,10 +89,12 @@
                                 {{ $mt->updated_at }}
                             </td>
                             <td class="px-2 py-1">
-                                <x-element.linkbutton2 href="{{ route('mt.show', ['mt' => $mt]) }}" color="lime" size="xs">
+                                <x-element.linkbutton2 href="{{ route('mt.show', ['mt' => $mt]) }}" color="lime"
+                                    size="xs">
                                     送信前確認
                                 </x-element.linkbutton2>
-                                <x-element.linkbutton2 href="{{ route('mt.edit', ['mt' => $mt]) }}" color="blue" size="xs">
+                                <x-element.linkbutton2 href="{{ route('mt.edit', ['mt' => $mt]) }}" color="blue"
+                                    size="xs">
                                     雛形を編集
                                 </x-element.linkbutton2>
                             </td>
@@ -102,7 +125,8 @@
             </div>
         </form>
 
-        <form action="{{ route('mt.import') }}" method="post" id="mtimport" enctype="multipart/form-data" class="inline-block">
+        <form action="{{ route('mt.import') }}" method="post" id="mtimport" enctype="multipart/form-data"
+            class="inline-block">
             @csrf
             @method('post')
             Excelエクスポートファイルを選択→
@@ -128,6 +152,7 @@
                 }
             }
         }
+
         function UnCheckAll(formname) {
             for (var i = 0; i < document.forms[formname].elements.length; i++) {
                 if (document.forms[formname].elements[i].type != "radio") {
@@ -135,10 +160,28 @@
                 }
             }
         }
-    </script>
 
+        function addToTextField(label) {
+            const textField = document.getElementById('search-box');
+            // すでに値があればスペースを追加してラベルを結合
+            textField.value = textField.value ? textField.value + ' ' + label : label;
+
+            performSearch(textField.value);
+        }
+
+        function query_clear() {
+            const textField = document.getElementById('search-box');
+            textField.value = '';
+            performSearch(textField.value);
+        }
+    </script>
+    <script>
+        var searchUrl = "{{ route('mt.mtsearch') }}";
+    </script>
     @push('localjs')
         <script src="/js/sortable.js"></script>
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/mtsearch.js"></script>
     @endpush
 
 </x-app-layout>

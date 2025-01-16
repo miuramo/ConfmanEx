@@ -16,6 +16,7 @@ use App\Mail\ForAuthor;
 use App\Models\File;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Client\Request as ClientRequest;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class MailTemplateController extends Controller
@@ -24,13 +25,31 @@ class MailTemplateController extends Controller
      * Display a listing of the resource.
      * List
      */
-    public function index()
+    public function index(Request $req)
     {
         if (!auth()->user()->can('role_any', 'manager|pc|pub')) {
             if (!auth()->user()->can('manage_cat_any')) abort(403);
         }
-        $mts = MailTemplate::orderBy('updated_at', 'desc')->get();
-        return view('mailtempre.index')->with(compact("mts"));
+        if ($req->has('kw')) {
+            $keywords = $req->input('kw');
+            $kws = preg_split('/[\x{0020}\x{3000}]+/u', $keywords); // 半角または全角スペースで分割
+            $query = MailTemplate::query();
+            if (count($kws) > 0) {
+                foreach ($kws as $keyword) {
+                    $query->where(function ($subQuery) use ($keyword) {
+                        $subQuery->where('name', 'like', "%{$keyword}%")
+                            ->orWhere('subject', 'like', "%{$keyword}%")
+                            ->orWhere('to', 'like', "{$keyword}%")
+                            ->orWhere('body', 'like', "%{$keyword}%");
+                    });
+                }
+            }
+            $mts = $query->orderBy('updated_at', 'desc')->get();
+            return view('mailtempre.index')->with(compact("mts", "keywords"));
+        } else {
+            $mts = MailTemplate::orderBy('updated_at', 'desc')->get();
+            return view('mailtempre.index')->with(compact("mts"));
+        }
     }
 
     /**
@@ -99,7 +118,7 @@ class MailTemplateController extends Controller
             $mt->user_id = auth()->user()->id;
             $mt->save();
             if ($req->expectsJson()) return response()->json(['result' => '保存成功']);
-            return redirect()->route('mt.edit',['mt'=>$id])->with('feedback.success', "メール雛形を保存しました。");
+            return redirect()->route('mt.edit', ['mt' => $id])->with('feedback.success', "メール雛形を保存しました。");
         }
         if ($req->expectsJson()) return response()->json(['result' => '保存失敗']);
         return redirect()->route('mt.index')->with('feedback.error', "保存できませんでした。");
@@ -170,5 +189,39 @@ class MailTemplateController extends Controller
         $fullpath = storage_path(File::apf() . '/' . $hashname);
         Excel::import(new MailTemplatesImport, $fullpath);
         return redirect(route('mt.index'))->with('feedback.success', 'メール雛形をインポートしました。');
+    }
+
+    /**
+     * メール雛形の絞り込み
+     */
+    public function mtsearch(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'manager|pc|pub')) {
+            if (!auth()->user()->can('manage_cat_any')) abort(403);
+        }
+        if ($req->has('query') && $req->input('query') != '') {
+            $search = $req->input('query');
+            $kws = preg_split('/[\x{0020}\x{3000}]+/u', $search); // 半角または全角スペースで分割
+            $query = DB::table('mail_templates');
+            // info("mtsearch: query is " . $search);
+            if (count($kws) > 0) {
+                foreach ($kws as $keyword) {
+                    $query->where(function ($subQuery) use ($keyword) {
+                        $subQuery->where('name', 'like', "%{$keyword}%")
+                            ->orWhere('subject', 'like', "%{$keyword}%")
+                            ->orWhere('to', 'like', "{$keyword}%")
+                            ->orWhere('body', 'like', "%{$keyword}%");
+                    });
+                }
+                $results = $query->orderBy('updated_at', 'desc')->get();
+            }
+            return response()->json(['mt' => $results, 'id' => auth()->id()]);
+        } else {
+            // info("mtsearch: query not found");
+            $query = DB::table('mail_templates');
+            $results = $query->orderBy('updated_at', 'desc')->get();
+            return response()->json(['mt' => $results, 'id' => auth()->id()]);
+        }
+        return view('mt.index'); //基本的にはつかわない
     }
 }

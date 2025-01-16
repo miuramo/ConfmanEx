@@ -168,6 +168,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('mt', MailTemplateController::class);
     Route::post('mt/bundle', [MailTemplateController::class, 'bundle'])->name('mt.bundle');
     Route::post('mt/import', [MailTemplateController::class, 'import'])->name('mt.import');
+    Route::get('mtsearch', [MailTemplateController::class, 'mtsearch'])->name('mt.mtsearch');
 
     Route::get('/admin_crud', [AdminController::class, 'crud'])->name('admin.crud');
     Route::get('/admin_crudcopy', [AdminController::class, 'crudcopy'])->name('admin.crudcopy');

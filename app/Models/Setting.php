@@ -182,6 +182,14 @@ class Setting extends Model
             'isbool' => false,
             'misc' => '/paper/create | /paper | /vote',
         ]);
+        Setting::firstOrCreate([
+            'name' => "MT_KEYWORDS",
+        ], [
+            'value' => "査読 登壇 デモ ポスター 採択 不採択 リマインド プレミアム メタ 締切",
+            'isnumber' => false,
+            'isbool' => false,
+            'misc' => 'メール雛形の絞り込みキーワード候補。半角スペース区切り',
+        ]);
 
         Vote::init();
         VoteItem::init();
