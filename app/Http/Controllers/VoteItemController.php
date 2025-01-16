@@ -6,7 +6,7 @@ use App\Http\Requests\Storevote_itemsRequest;
 use App\Http\Requests\Updatevote_itemsRequest;
 use App\Models\vote_items;
 
-class VoteItemsController extends Controller
+class VoteItemController extends Controller
 {
     /**
      * Display a listing of the resource.
