@@ -144,6 +144,14 @@
             </div>
         </div>
 
+        <div class="mx-6 my-2">
+            <div class="text-lg mt-6 my-2 p-3 bg-slate-300 rounded-lg dark:bg-slate-800 dark:text-slate-400">
+            <input id="search-box" placeholder="ユーザを検索" type="text"
+                    name="query" value="" class="text-sm px-2 py-1 text-teal-700 bg-teal-100" size=20>
+            <ul id="results" class="list-disc list-inside">
+            </ul>
+            </div>
+        </div>
 
         <div class="mx-6 my-2">
             <div class="text-lg mt-10 my-2 p-3 bg-slate-300 rounded-lg dark:bg-slate-800 dark:text-slate-400">
@@ -213,10 +221,15 @@
         </div>
     @endisset
 
+    <script>
+        var searchUrl = "{{ route('user.search') }}";
+        var rolename = "{{ $role->name }}";
+    </script>
     @push('localjs')
         <script src="/js/jquery.min.js"></script>
         <script src="/js/openclose.js"></script>
         <script src="/js/chk_all.js"></script>
+        <script src="/js/usearch.js"></script>
     @endpush
 
 

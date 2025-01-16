@@ -56,6 +56,23 @@ class RoleController extends Controller
     }
 
     /**
+     * Ajax search からのRoleへのユーザ追加
+     */
+    public function add_to_role(string $name, int $uid)
+    {
+        $role = Role::findByIdOrName($name);
+        $aboveroles = $role->aboveRoles();
+        if (!auth()->user()->can('role_any', $aboveroles)) abort(403);
+        if (is_numeric($uid)) {
+            $u = User::find($uid);
+            if ($u != null) {
+                $u->roles()->syncWithoutDetaching($role);
+            }
+            return redirect()->route('role.edit', ["role" => $name]);
+        }
+    }
+
+    /**
      * role.editpost
      */
     public function editpost(Request $req, string $name)
@@ -248,7 +265,7 @@ class RoleController extends Controller
         $roles = Role::where("name", "like", "%reviewer")->get();
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
         if ($req->has("action")) {
-            if ($req->input("action")=="assign"){
+            if ($req->input("action") == "assign") {
                 $num = $req->input("num");
                 $repnum = [$num[5], $num[4]];
                 $catids = $req->input("cat");
@@ -263,8 +280,7 @@ class RoleController extends Controller
                 });
                 sleep(3);
                 return redirect()->route('role.revassign_random')->with('feedback.success', "割り当て処理をバックグラウンドで実行しています。進捗状況をみるには、このページを再読み込みしてください。微調整が必要な場合は、下の「査読割り当て」ボタンから行ってください。");
-    
-            } else if ($req->input("action")=="reset"){
+            } else if ($req->input("action") == "reset") {
                 $catids = $req->input("cat");
                 Review::whereIn("paper_id", Paper::whereIn("category_id", $catids)->pluck("id"))->delete();
                 return redirect()->route('role.revassign_random')->with('feedback.success', "割り当てをリセットしました。");

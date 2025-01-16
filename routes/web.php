@@ -203,6 +203,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/man_upsearch', [ManagerController::class, 'upsearch'])->name('admin.upsearch');
 
+    Route::get('/user_search', [UserController::class, 'search'])->name('user.search');
+    Route::get('/add_to_role/{role}/{user}', [RoleController::class, 'add_to_role'])->name('role.add_to_role');
+
     // 切り取った画像の一覧
     Route::get('/man_paperlist_headimg', [ManagerController::class, 'paperlist_headimg'])->name('admin.paperlist_headimg');
     Route::get('/man_paperlist_headimg_recrop', [ManagerController::class, 'paperlist_headimg_recrop'])->name('admin.paperlist_headimg_recrop');
