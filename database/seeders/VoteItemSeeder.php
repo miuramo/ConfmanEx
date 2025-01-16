@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class VoteItemsSeeder extends Seeder
+class VoteItemSeeder extends Seeder
 {
     /**
      * Run the database seeds.
