@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
                     'desc' => $desc,
                     'abbr' => $name,
                     'navi' => \App\Models\Role::$role_navi[$name] ?? '',
+                    'orderint' => ($name == 'admin') ? 900 : 10,
                 ]);
                 $tmp->users()->syncWithoutDetaching(1);
             }
