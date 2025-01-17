@@ -49,6 +49,7 @@ Route::get('/file/favicon', [FileController::class, 'favicon'])->name('file.favi
 Route::get('awards/json_booth_title_author/{key?}/{readable?}', [SubmitController::class, 'json_bta'])->name('pub.json_booth_title_author');
 Route::get('json_review/{cat}/{key?}', [SubmitController::class, 'json_review'])->name('pub.json_review');
 Route::get('paper_reviews_json/{key}', [PaperController::class, 'paper_reviews_json'])->name('paper.paper_reviews_json');
+Route::get('json_fileinfo/{key?}/{readable?}', [SubmitController::class, 'json_fileinfo'])->name('pub.json_fileinfo');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

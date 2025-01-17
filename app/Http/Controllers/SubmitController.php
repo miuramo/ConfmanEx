@@ -255,7 +255,7 @@ class SubmitController extends Controller
             $subs2 = [];
         }
 
-        return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs", "subs2","catid"));
+        return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs", "subs2", "catid"));
     }
     /**
      * update maydirty (for reset) 確認済みにする (falseをセットする)
@@ -290,7 +290,7 @@ class SubmitController extends Controller
             $query->where("judge", ">", 0);
         })->orderBy("orderint")->get();
 
-        return view('pub.bibinfo', ["cat" => $catid])->with(compact("subs", "catid", "abbr","filechk"));
+        return view('pub.bibinfo', ["cat" => $catid])->with(compact("subs", "catid", "abbr", "filechk"));
     }
 
     /**
@@ -314,26 +314,28 @@ class SubmitController extends Controller
     /**
      * 採択状況一覧
      */
-    public function accstatus(){
+    public function accstatus()
+    {
         if (!auth()->user()->can('role_any', 'admin|pc|pub|demo|web')) abort(403);
         $stats = Accept::acc_status();
         $paperlist = Accept::acc_status(true);
         $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
         $acc_judges = Accept::select('judge', 'id')->get()->pluck('judge', 'id')->toArray();
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
-        return view('pub.accstatus')->with(compact("stats","accepts","cats","paperlist","acc_judges"));
+        return view('pub.accstatus')->with(compact("stats", "accepts", "cats", "paperlist", "acc_judges"));
     }
     /**
      * 採択状況一覧（グラフ）
      */
-    public function accstatusgraph(){
+    public function accstatusgraph()
+    {
         if (!auth()->user()->can('role_any', 'admin|pc|pub|demo|web')) abort(403);
         $stats = Accept::acc_status();
         $paperlist = Accept::acc_status(true);
         $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
         $acc_judges = Accept::select('judge', 'id')->get()->pluck('judge', 'id')->toArray();
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
-        return view('pub.accstatusgraph')->with(compact("stats","accepts","cats","paperlist","acc_judges"));
+        return view('pub.accstatusgraph')->with(compact("stats", "accepts", "cats", "paperlist", "acc_judges"));
     }
 
     /**
@@ -427,8 +429,7 @@ class SubmitController extends Controller
             $subs = Submit::subs_accepted($catid, "orderint");
             foreach ($subs as $sub) {
                 $booth = $sub->booth;
-                if (strlen($booth)==0) $booth = sprintf("p%03d", $sub->paper->id);
-                if ($sub->paper->category_id != $sub->category_id) info($sub->paper->id . " ".$sub->paper->title);
+                if (strlen($booth) == 0) $booth = sprintf("p%03d", $sub->paper->id);
                 //  $ary['title']
                 //  $ary['authors'] = [ "著者1" , "著者2", ...]
                 //  $ary['affils'] = [ 著者1の所属, 著者2の所属, ... ]
@@ -439,6 +440,7 @@ class SubmitController extends Controller
                 $out[$booth]['paperid'] = $sub->paper_id;
                 $out[$booth]['abst'] = $sub->paper->abst;
                 $out[$booth]['pagenum'] = $sub->paper->pdf_file->pagenum;
+                $out[$booth]['bibauthors'] = $sub->paper->bibauthors(1); //同一所属を省略
 
                 if (isset($enqans[$sub->paper_id])) {
                     foreach ($enqans[$sub->paper_id] as $enqid => $ary) {
@@ -449,8 +451,8 @@ class SubmitController extends Controller
                 }
             }
         }
-        if ($readable){
-            return '<pre>' . htmlspecialchars(json_encode($out, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT), ENT_QUOTES, 'UTF-8') . '</pre>';
+        if ($readable) {
+            return '<pre>' . htmlspecialchars(json_encode($out, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), ENT_QUOTES, 'UTF-8') . '</pre>';
         } else {
             return json_encode($out, JSON_THROW_ON_ERROR);
         }
@@ -470,22 +472,80 @@ class SubmitController extends Controller
         if ($key != $downloadkey) abort(403);
 
         // Viewpointで、formeta = 1 and doReturn = 1 のものを取得
-        $vps = Viewpoint::select("name","id")->where("formeta", 1)->where("forrev",0)->where("doReturn", 1)->where("doReturnAcceptOnly",1)->pluck("name","id")->toArray();
+        $vps = Viewpoint::select("name", "id")->where("formeta", 1)->where("forrev", 0)->where("doReturn", 1)->where("doReturnAcceptOnly", 1)->pluck("name", "id")->toArray();
         // 
         $accepted_subs = Submit::subs_accepted($catid);
-        $revid2pid = Review::where("category_id", $catid)->where("ismeta", 1)->whereIn("paper_id", $accepted_subs->pluck("paper_id"))->pluck("paper_id","id")->toArray();
+        $revid2pid = Review::where("category_id", $catid)->where("ismeta", 1)->whereIn("paper_id", $accepted_subs->pluck("paper_id"))->pluck("paper_id", "id")->toArray();
         $scores = Score::whereIn("review_id", array_keys($revid2pid))->whereIn("viewpoint_id", array_keys($vps))->get();
 
         if (count($scores) == 0) {
             return json_encode([], JSON_THROW_ON_ERROR);
         }
         $out = [];
-        foreach($scores as $score){
-            $out[ $vps[$score->viewpoint_id] ][ $revid2pid[$score->review_id] ] = $score->valuestr;
+        foreach ($scores as $score) {
+            $out[$vps[$score->viewpoint_id]][$revid2pid[$score->review_id]] = $score->valuestr;
         }
         // [ viewpoint1 => [ paper11 => コメント1, paper22 => コメント2, ... ] ]
         // return $out;
         return json_encode($out, JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * ファイル情報のJSON
+     * PIDごとに返す。
+     */
+    public function json_fileinfo(string $key = null, bool $readable = false)
+    {
+        $skip_unlink = true;
+        $downloadkey = Setting::findByIdOrName("AWARDJSON_DLKEY", "value");
+        if ($key != $downloadkey) abort(403);
+
+        $out = [];
+        $files = File::where('valid', 1)->where('deleted', 0)->get()->keyBy('id');
+        $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+        // $enqans = EnqueteAnswer::getAnswers();
+        $out = [];
+        foreach ($cats as $catid => $cname) {
+            // if ($catid != 1) continue;
+            $subs = Submit::subs_accepted($catid, "orderint");
+            foreach ($subs as $sub) {
+                $pid = $sub->paper->id;
+                $booth = $sub->booth;
+                $paper = $sub->paper;
+                foreach ($paper->files as $file) {
+                    $tmp = [];
+                    $tmp['id'] = $file->id;
+                    $tmp['fname'] = $file->fname;
+                    $tmp['origname'] = $file->origname;
+                    $tmp['key'] = $file->key;
+                    $tmp['fullpath'] = $file->fullpath();
+                    $fid = $file->id;
+                    $tmp['ispdf'] = ($paper->pdf_file_id == $fid);
+                    $tmp['isvideo'] = ($paper->video_file_id == $fid);
+                    $tmp['isimg'] = ($paper->img_file_id == $fid);
+                    $tmp['isaltpdf'] = ($paper->altpdf_file_id == $fid);
+                    foreach (['ispdf', 'isvideo', 'isimg', 'isaltpdf'] as $k) {
+                        if ($tmp[$k]) {
+                            $tmp['filetype'] = substr($k, 2);
+                            break;
+                        }
+                        $tmp['filetype'] = 'unlink_' . $file->id;
+                    }
+                    if ($skip_unlink && $tmp['filetype'] == 'unlink_' . $file->id) continue;
+                    $tmp['mime'] = $file->mime;
+                    $tmp['filesize'] = filesize($file->fullpath());
+                    $tmp['pagenum'] = $file->pagenum;
+                    if ($tmp['isimg']) $tmp['imagesize'] = getimagesize($file->fullpath());
+                    $tmp['url'] = route('file.showhash', ['file'=>$fid, 'hash' => substr($file->key, 0, 10)]);
+                    $out[$pid][$tmp['filetype']] = $tmp;
+                }
+            }
+        }
+        if ($readable) {
+            return '<pre>' . htmlspecialchars(json_encode($out, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), ENT_QUOTES, 'UTF-8') . '</pre>';
+        } else {
+            return json_encode($out, JSON_THROW_ON_ERROR);
+        }
     }
 
     public function paperfile(int $paperid)
