@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateEnqueteRequest;
 use App\Models\Category;
 use App\Models\Enquete;
 use App\Models\EnqueteAnswer;
+use App\Models\EnqueteConfig;
 use App\Models\EnqueteItem;
 use App\Models\Paper;
 use App\Models\Role;
@@ -184,7 +185,8 @@ class EnqueteController extends Controller
         $itms = EnqueteItem::where('enquete_id', $enq->id)->orderBy('orderint');
         $enqans = [];
         $enqs["canedit"][$enq->id] = $enq;
-        $enqs["until"][$enq->id] = "(dummy)";
+        $config = EnqueteConfig::where('enquete_id', $enq->id)->first();
+        $enqs["until"][$enq->id] = Enquete::mm_dd_fancy($config->openend);
         $paper = new Paper();
         $paper->id = 0;
         $paper->category_id = 1;
