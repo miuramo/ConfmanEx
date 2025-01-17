@@ -53,7 +53,7 @@ $(document).ready(function () {
         //     var gid4u = u2g[usr.uid];
         //     if (gid4u) Oya.parentObjs[gid4u].kodomo.push(ud);
         // Oya.parentObjs[0].addKodomo(ud);
-        if (sub.psession_id != null){
+        if (sub.psession_id != null && Oya.parentObjs[sub.psession_id] != null){
             ud.y = sub.orderint*200;
             Oya.parentObjs[sub.psession_id].addKodomo(ud);
         } else {

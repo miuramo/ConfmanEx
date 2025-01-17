@@ -427,6 +427,8 @@ class SubmitController extends Controller
             $subs = Submit::subs_accepted($catid, "orderint");
             foreach ($subs as $sub) {
                 $booth = $sub->booth;
+                if (strlen($booth)==0) $booth = sprintf("p%03d", $sub->paper->id);
+                if ($sub->paper->category_id != $sub->category_id) info($sub->paper->id . " ".$sub->paper->title);
                 //  $ary['title']
                 //  $ary['authors'] = [ "著者1" , "著者2", ...]
                 //  $ary['affils'] = [ 著者1の所属, 著者2の所属, ... ]
