@@ -545,6 +545,12 @@ class Paper extends Model
         return $errors;
     }
 
+    public function bibinfo_error()
+    {
+        $errors = $this->validateBibinfo();
+        return implode("\n", $errors);
+    }
+
 
     public function between(int $s, int $x, int $e)
     {
@@ -636,6 +642,10 @@ class Paper extends Model
         $pattern = '/^([\p{Hiragana}\p{Katakana}\p{Han}\w\-,.]+(?:\s[\p{Hiragana}\p{Katakana}\p{Han}\w\-,.]+)*)\s*\([^\)]+\)$/u';
         foreach ($lines as $line) {
             if (!preg_match($pattern, $line)) {
+                return false;
+            }
+            // もし、()がない場合、エラー
+            if (strpos($line, "(") === false && strpos($line, ")") === false) {
                 return false;
             }
         }

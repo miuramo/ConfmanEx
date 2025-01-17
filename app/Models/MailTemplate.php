@@ -59,6 +59,9 @@ class MailTemplate extends Model
             $replacetxt["ACCNAME"] = Accept::find($accid)->name;
             $replacetxt["CATNAME"] = Category::find($p_or_u->category_id)->name;
             $replacetxt["OWNER"] = $p_or_u->paperowner->affil . " " . $p_or_u->paperowner->name . " 様";
+            $replacetxt["AUTHORS"] = $p_or_u->bibauthors(true);
+            $replacetxt["ABSTRACT"] = $p_or_u->abst;
+            $replacetxt["BIBINFO_ERROR"] = $p_or_u->bibinfo_error();
         }
         $replacetxt["CONFTITLE"] = Setting::findByIdOrName("CONFTITLE", "value");
         $replacetxt["APP_URL"] = env('APP_URL');
@@ -402,18 +405,33 @@ class MailTemplate extends Model
      */
     public static function mt_nobib(...$args)
     {
+        // info($koumoku);
         $accPIDs = Submit::with('paper')->whereIn("category_id", $args)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
         })->get()->pluck("paper_id")->toArray();
 
         $papers = [];
         // $cols = Paper::whereIn('category_id', $args)->whereNull("abst")->orWhereNull("keyword")->orWhereNull("etitle")->get();
+        $koumoku = Paper::mandatory_bibs(); // 必要項目は、SKIP_BIBINFOにないもの
         $cols = Paper::whereIn('id', $accPIDs)
-            ->where(function ($query) {
-                $query->whereNull("abst")->orWhereNull("keyword")->orWhereNull("etitle");
+            ->where(function ($query) use ($koumoku) {
+                foreach ($koumoku as $k => $v) {
+                    $query->orWhereNull($k);
+                }
             })->get();
+        $error_ids = [];
         foreach ($cols as $paper) {
             $papers[] = $paper;
+            $error_ids[] = $paper->id;
+        }
+        //エラーについても追加する
+        $cols = Paper::whereIn('id', $accPIDs)->whereNotIn('id', $error_ids)->get();
+        foreach ($cols as $paper) {
+            if (count($paper->validateBibinfo())>0) {
+                // info($paper->id." ".$paper->title);
+                // info($paper->validateBibinfo());
+                $papers[] = $paper;
+            }
         }
         return $papers;
     }
@@ -464,19 +482,20 @@ class MailTemplate extends Model
      * review_score(1, 'metasuisenjournal', '>=', 2) とする。
      * 注：現在は、1つでも条件にあうスコアがあれば、含まれる。平均値で絞り込む場合は、別途実装が必要。その場合は、$revid_scoreval と$revid_paperidを使って,paper毎の平均スコアを計算する。
      */
-    public static function mt_review_score($catid, $name, $cop, $score){
+    public static function mt_review_score($catid, $name, $cop, $score)
+    {
         // catidは、reviewを絞り込むため。
 
         $vp = Viewpoint::where("name", $name/*"metasuisenjournal"*/)->first();
-        $revid_scoreval = Score::where('viewpoint_id', $vp->id)->where('value', $cop, $score)->pluck('value','review_id')->toArray();
+        $revid_scoreval = Score::where('viewpoint_id', $vp->id)->where('value', $cop, $score)->pluck('value', 'review_id')->toArray();
 
         // まず、scoresから、該当するreview_idを取得する。
-        $revid_paperid = Review::whereIn('id', array_keys($revid_scoreval))->where('category_id', $catid)->pluck('paper_id','id')->toArray();
+        $revid_paperid = Review::whereIn('id', array_keys($revid_scoreval))->where('category_id', $catid)->pluck('paper_id', 'id')->toArray();
 
         // そのpaper_idから、paperを取得する。
         $papers = Paper::whereIn('id', array_values($revid_paperid))->get();
         $array_papers = [];
-        foreach($papers as $paper){
+        foreach ($papers as $paper) {
             $array_papers[] = $paper;
         }
         return $array_papers;
