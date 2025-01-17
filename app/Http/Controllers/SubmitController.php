@@ -439,7 +439,12 @@ class SubmitController extends Controller
                 $out[$booth]['category'] = $sub->category_id;
                 $out[$booth]['paperid'] = $sub->paper_id;
                 $out[$booth]['abst'] = $sub->paper->abst;
-                $out[$booth]['pagenum'] = $sub->paper->pdf_file->pagenum;
+                if ($sub->paper->pdf_file != null){
+                    $out[$booth]['pagenum'] = $sub->paper->pdf_file->pagenum;
+                } else {
+                    info("no pdf file for " . $sub->paper->id);
+                    $out[$booth]['pagenum'] = '◆◆ no pdf◆◆';
+                }
                 $out[$booth]['bibauthors'] = $sub->paper->bibauthors(1); //同一所属を省略
 
                 if (isset($enqans[$sub->paper_id])) {
