@@ -29,7 +29,7 @@
                 <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-pink-50' : 'bg-gray-50' }}">
                     <td class="px-2 py-1 text-center">
                         @if ($st->origcat != $st->hanteicat)
-                            {!!$catspans[$st->origcat]!!}
+                            {!! $catspans[$st->origcat] !!}
                         @else
                             →
                         @endif
@@ -44,10 +44,16 @@
                             <span class="text-slate-600">{{ $accepts[$st->accept_id] }}</span>
                         @endif
                         <span class="mx-1"></span>
-                        <sub>{{$st->accept_id}}</sub>
+                        <sub>{{ $st->accept_id }}</sub>
                     </td>
                     <td class="px-2 py-1 text-center">
-                        {{ $st->cnt }}
+                        <label
+                            for="o{{ $st->origcat }}h{{ $st->hanteicat }}a{{ $st->accept_id }}">{{ $st->cnt }}</label>
+                        <span class="mx-1"></span>
+                        <input type="checkbox" class="text-pink-600 text-sm sumcheckbox"
+                            name="o{$st->origcat}h{$st->hanteicat}a{$st->accept_id}"
+                            id="o{{ $st->origcat }}h{{ $st->hanteicat }}a{{ $st->accept_id }}"
+                            value="{{ $st->cnt }}">
                     </td>
                     <td class="px-2 py-1 w-96">
                         {{ implode(', ', $paperlist[$st->origcat][$st->hanteicat][$st->accept_id]) }}
@@ -55,6 +61,12 @@
                 </tr>
             @endforeach
         </table>
+
+        <x-element.h1>チェックした件数の合計： <span id="total">0</span></x-element.h1>
+
+        <x-element.button value="チェックを全てつける" onclick="checkAll(true)" color="lime" size="sm" />
+        <span class="mx-2"></span>
+        <x-element.button value="チェックを全て外す" onclick="checkAll(false)" color="orange" size="sm" />
 
     </div>
 
@@ -65,5 +77,49 @@
     @if (session('feedback.error'))
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
+
+    <script>
+        // JavaScript 部分
+        document.addEventListener("DOMContentLoaded", () => {
+            const checkboxes = document.querySelectorAll(".sumcheckbox");
+            const totalElement = document.getElementById("total");
+
+            const calculateTotal = () => {
+                // console.log("calculateTotal");
+                let total = 0;
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        total += parseInt(checkbox.value, 10); // 値を数値に変換して加算
+                    }
+                });
+                totalElement.textContent = total;
+            };
+
+            // 各チェックボックスのクリックイベントにリスナーを追加
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener("change", calculateTotal);
+            });
+        });
+
+        function checkAll(chk) {
+            const checkboxes = document.querySelectorAll(".sumcheckbox");
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = chk;
+            });
+
+            const totalElement = document.getElementById("total");
+            let total = 0;
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    total += parseInt(checkbox.value, 10); // 値を数値に変換して加算
+                }
+            });
+            totalElement.textContent = total;
+        }
+    </script>
+    @push('localjs')
+        <script src="/js/chk_all.js"></script>
+    @endpush
+
 
 </x-app-layout>
