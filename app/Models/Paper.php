@@ -156,14 +156,14 @@ class Paper extends Model
         return $count;
     }
     // こちらも https://github.com/stechstudio/laravel-zipstream を使用
-    public function addFilesToZip_ForPub(Builder $zip, array $filetypes, string $fn)
+    public function addFilesToZip_ForPub(Builder $zip, array $filetypes, string $fn_prefix, string $fn)
     {
         $count = 0;
         foreach ($filetypes as $ft) {
             $fti = "{$ft}_file_id"; // file_id for $ft (filetype)
             $file = File::find($this->{$fti});
             if ($file == null) continue;
-            $zip->add(ZipFile::make($file->fullpath(), $fn . "." . $file->extension()));
+            $zip->add(ZipFile::make($file->fullpath(), $fn_prefix. $fn . "." . $file->extension()));
             $count++;
         }
         return $count;

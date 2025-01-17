@@ -226,7 +226,13 @@ class SubmitController extends Controller
             $zipFN = 'files.zip';
             $zipstream = Zip::create($zipFN);
             foreach ($papers as $paper) {
-                $paper->addFilesToZip_ForPub($zipstream, $filetypes, $req->input("fn_prefix") . $accept_papers[$paper->id]);
+                if ($req->input('use_pid')){
+                    $paper->addFilesToZip_ForPub($zipstream, $filetypes, $req->input("fn_prefix") , sprintf("%03d", $paper->id));
+                } else {
+                    $fn = $accept_papers[$paper->id];
+                    if (strlen($fn)<1) $fn = sprintf("pid%03d", $paper->id);
+                    $paper->addFilesToZip_ForPub($zipstream, $filetypes, $req->input("fn_prefix") , $fn);
+                }
                 $addcount_tozip++;
             }
 

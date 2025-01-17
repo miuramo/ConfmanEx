@@ -158,6 +158,13 @@
                             class="dark:text-gray-300">{{ $ft }}</label>&nbsp;
                     @endforeach
                 </div>
+                <div class="bg-orange-100 p-2">
+                    <input type="radio" name="use_pid" value="1" id="labeluse_pid1" checked="checked">
+                    <label for="labeluse_pid1" class="dark:text-gray-300 hover:bg-orange-200">ブース記番の代わりに、PaperID (3桁) を使用する</label>
+                    <span class="mx-2"></span>
+                    <input type="radio" name="use_pid" value="0" id="labeluse_pid0">
+                    <label for="labeluse_pid0" class="dark:text-gray-300 hover:bg-orange-200">ブース記番を使用する（注：未定義の場合、「pid+PaperID」を使用します）</label>&nbsp;
+                </div>
                 <div class="dark:text-gray-400">
                     ファイル名は、Prefix→ <input type="text" name="fn_prefix"
                         value="{{ env('PUB_DL_PREFIX', 'IPSJ-SSS2024') }}" class="p-1 dark:bg-slate-600"> +
