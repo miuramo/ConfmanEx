@@ -36,19 +36,19 @@
         @endforeach
 
         @foreach ($opts as $i => $lbl)
-            <div class="hidden-content bg-{{$colors[$i]}}-200 p-2 mt-2 dark:text-gray-600" id="div_type{{ $i }}"
-                style="display:none;">
+            <div class="hidden-content bg-{{ $colors[$i] }}-200 p-2 mt-2 dark:text-gray-600"
+                id="div_type{{ $i }}" style="display:none;">
 
                 @foreach ($bbs[$i] as $bb)
                     <div>
                         @isset($bb->paper)
-                        <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb->id, 'key' => $bb->key]) }}"
-                            :color="$colors[$i]" target="_blank" size="sm">
-                            {{ $bb->paper->id_03d() }} {{ $bb->paper->title }} 
-                            ({{ $bb->nummessages() }} messages)
-                        </x-element.linkbutton>
+                            <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb->id, 'key' => $bb->key]) }}"
+                                :color="$colors[$i]" target="_blank" size="sm">
+                                {{ $bb->paper->id_03d() }} {{ $bb->paper->title }}
+                                ({{ $bb->nummessages() }} messages)
+                            </x-element.linkbutton>
                         @else
-                        <div>Error: No Paper associated {{$bb->id}}</div>
+                            <div>Error: No Paper associated {{ $bb->id }}</div>
                         @endisset
                     </div>
                 @endforeach
@@ -60,10 +60,19 @@
         <form action="{{ route('bb.createnew') }}" method="post" id="bb_new">
             @csrf
             @method('post')
-            <div class="">
-                <label>掲示板をまとめて作成する発表の対象カテゴリ</label>
+            <div class="mt-2">
+                <label>作成する掲示板の種類：<b>出版と著者</b></label>
             </div>
-            <div class="px-2 py-2">
+            <div class="mb-1 mt-3">
+                <label for="pids">掲示板をまとめて作成する Paper ID List (カンマ区切り) または all または accepted</label>
+            </div>
+            <input type="text" name="pids" id="pids" size="80" placeholder="012, 023, 034, ..."
+                class="mx-2 p-1">
+            <div class="mt-4 ml-4 text-pink-600">
+                <label>掲示板を all または accepted で作成する際の、対象カテゴリ</label>
+            {{-- </div>
+            <div class="px-2 py-2"> --}}
+                <br>
                 @php
                     $cats = App\Models\Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
                 @endphp
@@ -71,17 +80,11 @@
                     <input type="radio" name="catid" value="{{ $val }}" id="cat{{ $val }}">
                     <label for="cat{{ $val }}" class="mr-3">{{ $lbl }}</label>
                 @endforeach
-            </div>
-            <div class="mb-1">
-                <label for="pids">掲示板をまとめて作成する Paper ID List (カンマ区切り) / all / accepted</label>
-            </div>
-            <input type="text" name="pids" id="pids" size="80" placeholder="012, 023, 034, ..."
-                class="mx-2 p-1">
-            <div class="mt-2">
-                <label>作成する掲示板の種類：<b>出版と著者</b></label>
+                <br>
+                (上で all または accepted を指定したときは必須。それ以外は入力しても無視される) 
             </div>
             <div class="px-2 py-1">
-                    <input type="hidden" name="type" value="3" id="rad3">
+                <input type="hidden" name="type" value="3" id="rad3">
             </div>
             <input type="hidden" name="for_pub" value="1">
             <div>

@@ -64,7 +64,7 @@ class BbController extends Controller
             $ary = Paper::whereIn('id', explode(",", $pids))->get();
         }
         foreach ($ary as $n => $paper) {
-            Bb::make_bb($type, $paper->id, $catid);
+            Bb::make_bb($type, $paper->id, $paper->category_id);
         }
         // 出版担当からの作成のとき 1
         $for_pub = $req->input("for_pub");
