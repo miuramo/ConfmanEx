@@ -92,7 +92,7 @@
             @csrf
             @method('post')
             <div class="">
-                <label>掲示板をまとめて作成する発表の対象カテゴリ</label>
+                <label>掲示板をまとめて作成する発表の対象カテゴリ (all または accepted の場合に使用)</label>
             </div>
             <div class="px-2 py-2">
                 @php
@@ -104,7 +104,7 @@
                 @endforeach
             </div>
             <div class="mb-1">
-                <label for="pids">掲示板をまとめて作成する Paper ID List (カンマ区切り) / all / accepted</label>
+                <label for="pids">掲示板をまとめて作成する Paper ID List (カンマ区切り) または all または accepted</label>
             </div>
             <textarea name="pids" id="pids" cols="80" rows="5" placeholder="012, 023, 034, ..." class="mx-2 p-1"></textarea>
             <div class="mt-2">
@@ -125,7 +125,7 @@
     </div>
 
     <div class="m-6">
-        <x-element.linkbutton href="{{ route('bb.multisubmit') }}" color="blue" size="sm">
+        <x-element.linkbutton href="{{ route('bb.multisubmit') }}" color="blue" size="md">
             出版掲示板への一括書き込み
         </x-element.linkbutton>
     </div>

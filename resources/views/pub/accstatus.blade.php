@@ -56,7 +56,14 @@
                             value="{{ $st->cnt }}">
                     </td>
                     <td class="px-2 py-1 w-96">
-                        {{ implode(', ', $paperlist[$st->origcat][$st->hanteicat][$st->accept_id]) }}
+                        @php
+                            $ary = $paperlist[$st->origcat][$st->hanteicat][$st->accept_id];
+                            // 配列 ary の要素について、map関数でコールバック関数を適用し、配列に格納
+                            $ary = array_map(function ($x) {
+                                return sprintf("%03d", $x);
+                            }, $ary);
+                        @endphp
+                        {{ implode(', ', $ary) }}
                     </td>
                 </tr>
             @endforeach

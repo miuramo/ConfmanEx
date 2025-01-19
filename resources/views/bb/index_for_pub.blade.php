@@ -3,6 +3,12 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
             {{ __('掲示板の管理') }}
         </h2>
+        <div class="text-right">
+            <x-element.linkbutton2 href="{{ route('pub.accstatus') }}" color="cyan" target="_blank" size="sm">
+                採択状況の確認
+            </x-element.linkbutton2>
+            <span class="mx-4"></span>
+        </div>
     </x-slot>
     <style>
         .hidden-content {
@@ -66,11 +72,12 @@
             <div class="mb-1 mt-3">
                 <label for="pids">掲示板をまとめて作成する Paper ID List (カンマ区切り) または all または accepted</label>
             </div>
-            <input type="text" name="pids" id="pids" size="80" placeholder="012, 023, 034, ..."
-                class="mx-2 p-1">
+            <textarea name="pids" id="pids" cols="80" rows="5" placeholder="012, 023, 034, ..." class="mx-2 p-1"></textarea>
+            {{-- <input type="text" name="pids" id="pids" size="80" placeholder="012, 023, 034, ..."
+                class="mx-2 p-1"> --}}
             <div class="mt-4 ml-4 text-pink-600">
                 <label>掲示板を all または accepted で作成する際の、対象カテゴリ</label>
-            {{-- </div>
+                {{-- </div>
             <div class="px-2 py-2"> --}}
                 <br>
                 @php
@@ -81,7 +88,7 @@
                     <label for="cat{{ $val }}" class="mr-3">{{ $lbl }}</label>
                 @endforeach
                 <br>
-                (上で all または accepted を指定したときは必須。それ以外は入力しても無視される) 
+                (上で all または accepted を指定したときは必須。それ以外は入力しても無視される)
             </div>
             <div class="px-2 py-1">
                 <input type="hidden" name="type" value="3" id="rad3">
@@ -95,7 +102,7 @@
     </div>
 
     <div class="m-6">
-        <x-element.linkbutton href="{{ route('bb.multisubmit') }}" color="blue" size="sm">
+        <x-element.linkbutton href="{{ route('bb.multisubmit') }}" color="blue" size="md">
             出版掲示板への一括書き込み
         </x-element.linkbutton>
     </div>
