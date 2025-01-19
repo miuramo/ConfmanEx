@@ -21,7 +21,7 @@
             @endisset
             <div
                 class="text-lg mt-4 font-bold bg-slate-200 py-2 px-4 inline-block rounded-md dark:text-slate-200 dark:bg-slate-500">
-                {{ $bb->paper->title }}</div>
+                {{ $paper->title }}</div>
         </h2>
         <style>
             .hidden-content {
