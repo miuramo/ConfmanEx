@@ -15,6 +15,12 @@
                     href="https://scrapbox.io/confman/ConfmanEx_PC%E5%A7%94%E5%93%A1%E9%95%B7%E5%90%91%E3%81%91%E3%81%AE%E8%B3%87%E6%96%99"
                     color="cyan" size="sm" target="_blank">
                     マニュアル (Cosense/Scrapbox)</x-element.linkbutton>
+            @elseif($role->name == 'pub')
+            <x-element.linkbutton
+            href="https://scrapbox.io/confman/%E5%87%BA%E7%89%88%E6%8B%85%E5%BD%93%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%B8"
+            color="orange" size="sm" target="_blank">
+            出版マニュアル (Cosense/Scrapbox)</x-element.linkbutton>
+
             @endif
         </h2>
     </x-slot>
