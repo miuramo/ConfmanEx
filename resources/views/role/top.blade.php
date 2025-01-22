@@ -16,11 +16,15 @@
                     color="cyan" size="sm" target="_blank">
                     マニュアル (Cosense/Scrapbox)</x-element.linkbutton>
             @elseif($role->name == 'pub')
-            <x-element.linkbutton
-            href="https://scrapbox.io/confman/%E5%87%BA%E7%89%88%E6%8B%85%E5%BD%93%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%B8"
-            color="orange" size="sm" target="_blank">
-            出版マニュアル (Cosense/Scrapbox)</x-element.linkbutton>
-
+                <x-element.linkbutton
+                    href="https://scrapbox.io/confman/%E5%87%BA%E7%89%88%E6%8B%85%E5%BD%93%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%B8"
+                    color="orange" size="sm" target="_blank">
+                    出版マニュアル (Cosense/Scrapbox)</x-element.linkbutton>
+            @elseif($role->name == 'web')
+                <x-element.linkbutton
+                    href="https://scrapbox.io/confman/%E5%87%BA%E7%89%88%E6%8B%85%E5%BD%93%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%B8"
+                    color="yellow" size="sm" target="_blank">
+                    Web／出版マニュアル (Cosense/Scrapbox)</x-element.linkbutton>
             @endif
         </h2>
     </x-slot>
