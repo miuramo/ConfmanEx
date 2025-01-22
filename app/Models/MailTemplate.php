@@ -500,4 +500,27 @@ class MailTemplate extends Model
         }
         return $array_papers;
     }
+
+    /**
+     * catids のいずれかでアクセプトされ、まだnameのアンケートに回答していないPaper
+     */
+    public static function mt_noenqans($name, ...$catids)
+    {
+        $accPIDs = Submit::with('paper')->whereIn("category_id", $catids)->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->get()->pluck("paper_id")->toArray();
+        $enqitm = EnqueteItem::where("name", $name)->first();
+        $exist_enqansers_pid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->pluck('paper_id')->toArray();
+
+        $noenqansPIDs = Submit::with('paper')->whereIn("category_id", $catids)->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->whereNotIn('paper_id', $exist_enqansers_pid)->get()->pluck("paper_id")->toArray();
+
+        $papers = Paper::whereIn('id', $noenqansPIDs)->get();
+        $array_papers = [];
+        foreach ($papers as $paper) {
+            $array_papers[] = $paper;
+        }
+        return $array_papers;
+    }
 }
