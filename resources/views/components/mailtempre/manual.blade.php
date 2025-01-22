@@ -57,6 +57,7 @@
                 'nobib(catid1,catid2,...)' => '書誌情報なし(和文アブスト、和文キーワード、英文Titleのうち1つ以上)',
                 'hasvideo(catid1,catid2,...)' => '公開予定のビデオファイルあり',
                 'review_score(catid,"name",">=",score)' => '査読観点「name」のスコアのうちscore以上が1つでもある論文',
+                'noenqans("name", catid1, catid2,...)' => 'アンケート項目「name」に未回答で、catidに採択されている論文',
                 '' => '',
             ];
         @endphp
