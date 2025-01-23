@@ -728,12 +728,12 @@ class Paper extends Model
      * 著者名、文字列をかえす
      * abbr 連続する著者の所属を省略する
      */
-    public function bibauthors(bool $abbr = false)
+    public function bibauthors(bool $abbr = false, bool $use_short = false, string $field = "authorlist") 
     {
         $name = [];
         $affil = [];
         $count = 0;
-        foreach ($this->authorlist_ary() as $uu) {
+        foreach ($this->authorlist_ary($field, $use_short) as $uu) {
             $name[] = $uu[0];
             $affil[] = (isset($uu[1])) ? $uu[1] : ""; //そもそも所属がなければ、空にせざるを得ない
             $count++;
