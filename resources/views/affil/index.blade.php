@@ -9,7 +9,7 @@
 
         </div>
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('所属の修正') }}
+            {{ __('所属の修正ルールの一覧') }}
             <span class="mx-6"></span>
         </h2>
 

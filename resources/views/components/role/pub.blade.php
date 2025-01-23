@@ -54,6 +54,10 @@
                 {{ $cname }}
             </x-element.linkbutton>
         @endforeach
+        <span class="px-2"></span>
+        <x-element.linkbutton href="{{ route('affil.index') }}" color="purple" target="_blank">
+            所属修正ルールの一覧
+        </x-element.linkbutton>
     </x-element.h1>
 
     <x-element.h1>
