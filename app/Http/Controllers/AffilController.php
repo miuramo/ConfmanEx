@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAffilRequest;
 use App\Http\Requests\UpdateAffilRequest;
 use App\Models\Affil;
+use Illuminate\Http\Request;
 
 class AffilController extends Controller
 {
@@ -30,6 +31,9 @@ class AffilController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('role_any', 'manager|pc|pub')) abort(403);
+        Affil::distill();
+        return redirect()->route('affil.index')->with('feedback.success', '所属の修正ルールを再構成しました');
         //
     }
 
@@ -60,12 +64,11 @@ class AffilController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAffilRequest $request, Affil $affil)
+    public function update(Request $req)
     {
+        if (!auth()->user()->can('role_any', 'manager|pc|pub')) abort(403);
         //
-        $affil = Affil::find($request->id);
-        $affil->after = $request->after;
-        $affil->save();
+        info($req->all());
         return redirect()->route('affil.index')->with('feedback.success', '所属を更新しました');
     }
 

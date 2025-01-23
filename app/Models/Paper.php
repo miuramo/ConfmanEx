@@ -706,9 +706,9 @@ class Paper extends Model
     }
     public function apply_affil_fix($affil)
     {
-        $affil = str_replace("、", "/", $affil);
-        $affil = str_replace(",", "/", $affil);
-        $affil = str_replace("，", "/", $affil);
+        // $affil = str_replace("、", "/", $affil);
+        // $affil = str_replace(",", "/", $affil);
+        // $affil = str_replace("，", "/", $affil);
         $afary = explode("/", $affil);
         $afary = array_map('trim', $afary);
 

@@ -34,14 +34,14 @@ class Affil extends Model
                     $affil = $uu[1];
                     if ($affil) {
                         // ・、，/で区切る
-                        $affil = str_replace("、", "/", $affil);
-                        $affil = str_replace(",", "/", $affil);
-                        $affil = str_replace("，", "/", $affil);
+                        // $affil = str_replace("、", "/", $affil);
+                        // $affil = str_replace(",", "/", $affil);
+                        // $affil = str_replace("，", "/", $affil);
                         $afary = explode("/", $affil);
                         $afary = array_map('trim', $afary);
                         foreach ($afary as $a) {
                             $after = Affil::after_kouho($a);
-                            $obj = Affil::firstOrCreate(['before' => $a], ['after' => $after]);
+                            $obj = Affil::firstOrCreate(['before' => $a], ['after' => $after, 'orderint' => 1]);
                             // pidsを配列として取得し、新しいpaper.idを追加（重複を避ける）
                             $currentPids = $obj->pids ?? [];
                             $obj->pids = array_unique(array_merge($currentPids, [$paper->id]));

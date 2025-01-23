@@ -263,6 +263,16 @@ class SubmitController extends Controller
 
         return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs", "subs2", "catid"));
     }
+    public function bibinfochk_paper(Request $req, int $paperid)
+    {
+        if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
+
+        $sub = Submit::with('paper')->where("paper_id", $paperid)->first();
+        // もし、subsが空なら、代替として、全てのsubmitsを表示する
+
+        return view('pub.bibinfochk_paper')->with(compact("sub"));
+    }
+
     /**
      * update maydirty (for reset) 確認済みにする (falseをセットする)
      */

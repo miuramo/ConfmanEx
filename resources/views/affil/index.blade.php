@@ -11,6 +11,9 @@
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('所属の修正ルールの一覧') }}
             <span class="mx-6"></span>
+            <x-element.linkbutton href="{{ route('affil.create') }}" color="blue" size="sm">
+                ルールの再構築
+            </x-element.linkbutton>
         </h2>
 
     </x-slot>
@@ -41,14 +44,20 @@
                             <td class="px-2 py-2">{{ $affil->id }}</td>
                             <td class="px-2 py-2">{{ $affil->before }}</td>
                             <td class="px-2 py-2">
+                                <input type="text" name="orderint[]" value="{{ $affil->orderint }}"
+                                    class=" border-gray-300 dark:border-gray-700 rounded-md shadow-sm" size="1">
                                 <input type="text" name="after[]" value="{{ $affil->after }}"
                                     class=" border-gray-300 dark:border-gray-700 rounded-md shadow-sm" size="64">
                                 <input type="hidden" name="id[]" value="{{ $affil->id }}">
                             </td>
                             <td class="px-2 py-2">
-                                @if (is_array($affil->pids))
+                                @if(is_array($affil->pids))
                                     @foreach ($affil->pids as $pid)
-                                        {{ $pid }}
+                                        <x-element.linkbutton
+                                            href="{{ route('pub.bibinfochk_paper', ['paper' => $pid]) }}"
+                                            target="bibinfochk_paper" color="blue" size="sm">
+                                            {{ $pid }}
+                                        </x-element.linkbutton>
                                     @endforeach
                                 @endif
                             </td>
