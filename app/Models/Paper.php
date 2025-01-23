@@ -653,7 +653,7 @@ class Paper extends Model
     }
 
     // 著者名と所属のパース結果を配列で返す。英文所属は引数にeauthorlist を指定する。
-    public function authorlist_ary($field = "authorlist")
+    public function authorlist_ary($field = "authorlist", bool $use_short = false)
     {
         $ret = [];
         // まず、カッコをおきかえる
@@ -668,7 +668,7 @@ class Paper extends Model
             $ary = explode("\t", trim($line));
             $ary = array_map("trim", $ary);
             // ここまでで、ary[0]には氏名、ary[1]には所属がはいる
-            $ary[1] = $this->apply_affil_fix($ary[1]);
+            if ($use_short) $ary[1] = $this->apply_affil_fix($ary[1]);
             $ret[] = $ary;
         }
         return $ret;
