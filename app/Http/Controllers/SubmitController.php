@@ -451,7 +451,7 @@ class SubmitController extends Controller
                     info("no pdf file for " . $sub->paper->id);
                     $out[$booth]['pagenum'] = '◆◆ no pdf◆◆';
                 }
-                $out[$booth]['bibauthors'] = $sub->paper->bibauthors(true); //同一所属を省略、use_short=true
+                $out[$booth]['bibauthors'] = $sub->paper->bibauthors(true, true); //同一所属を省略 , use_short=true
 
                 if (isset($enqans[$sub->paper_id])) {
                     foreach ($enqans[$sub->paper_id] as $enqid => $ary) {
