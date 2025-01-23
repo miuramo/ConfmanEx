@@ -696,7 +696,9 @@ class Paper extends Model
             $ret['authors'][] = $uu[0];
             if (!isset($uu[1])) $fixed_affil = "未設定";
             else
-            $fixed_affil = $this->apply_affil_fix($uu[1]);
+            $fixed_affil = $uu[1];
+
+            if ($use_short) $fixed_affil = $this->apply_affil_fix($fixed_affil);
 
             $ret['affils'][] = $fixed_affil;
         }
