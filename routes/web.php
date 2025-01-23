@@ -19,6 +19,7 @@ use App\Http\Controllers\SubmitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewpointController;
 use App\Http\Controllers\VoteController;
+use App\Http\Controllers\AffilController;
 use App\Models\RevConflict;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -246,6 +247,10 @@ Route::middleware('auth')->group(function () {
     Route::get('down_voteanswers', [VoteController::class, 'download_answers'])->name('vote.download_answers');
     Route::get('resetall_voteanswers/{isclose}', [VoteController::class, 'resetall'])->name('vote.resetall'); // すべて削除
 
+    // 所属修正
+    // Route::resource('affil', AffilController::class);
+    Route::get('affil', [AffilController::class, 'index'])->name('affil.index');
+    Route::post('affil/update', [AffilController::class, 'update'])->name('affil.update');
 });
 
 // 投票

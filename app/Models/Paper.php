@@ -668,6 +668,7 @@ class Paper extends Model
             $ary = explode("\t", trim($line));
             $ary = array_map("trim", $ary);
             // ここまでで、ary[0]には氏名、ary[1]には所属がはいる
+            $ary[1] = $this->apply_affil_fix($ary[1]);
             $ret[] = $ary;
         }
         return $ret;
@@ -685,7 +686,7 @@ class Paper extends Model
     /**
      * 配列をかえす
      */
-    public function bibinfo()
+    public function bibinfo(bool $use_short = true)
     {
         $ret = [];
         $ret['title'] = $this->title;
@@ -693,9 +694,32 @@ class Paper extends Model
         $ret['affils'] = [];
         foreach ($this->authorlist_ary() as $uu) {
             $ret['authors'][] = $uu[0];
-            $ret['affils'][] = (isset($uu[1])) ? $uu[1] : "未設定";
+            if (!isset($uu[1])) $fixed_affil = "未設定";
+            else
+            $fixed_affil = $this->apply_affil_fix($uu[1]);
+
+            $ret['affils'][] = $fixed_affil;
         }
         return $ret;
+    }
+    public function apply_affil_fix($affil)
+    {
+        $affil = str_replace("、", "/", $affil);
+        $affil = str_replace(",", "/", $affil);
+        $affil = str_replace("，", "/", $affil);
+        $afary = explode("/", $affil);
+        $afary = array_map('trim', $afary);
+
+        $ret = [];
+        foreach ($afary as $af){
+            $obj = Affil::where('before', $af)->first();
+            if ($obj != null){
+                $ret[] = $obj->after;
+            } else {
+                $ret[] = $af;
+            }
+        }
+        return implode("/", $ret);
     }
 
     /**
