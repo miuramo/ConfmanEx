@@ -439,7 +439,7 @@ class SubmitController extends Controller
                 //  $ary['title']
                 //  $ary['authors'] = [ "著者1" , "著者2", ...]
                 //  $ary['affils'] = [ 著者1の所属, 著者2の所属, ... ]
-                $out[$booth] = $sub->paper->bibinfo(); // title=>xxx  authors = [xxx,xxx]  affils = [xxx,xxx]
+                $out[$booth] = $sub->paper->bibinfo(0); // title=>xxx  authors = [xxx,xxx]  affils = [xxx,xxx]
                 $out[$booth]['session'] = $sub->psession_id;
                 $out[$booth]['accept'] = $sub->accept_id;
                 $out[$booth]['category'] = $sub->category_id;
