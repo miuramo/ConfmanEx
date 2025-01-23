@@ -686,7 +686,7 @@ class Paper extends Model
     /**
      * 配列をかえす
      */
-    public function bibinfo(bool $use_short = true)
+    public function bibinfo(bool $use_short = false)
     {
         $ret = [];
         $ret['title'] = $this->title;
