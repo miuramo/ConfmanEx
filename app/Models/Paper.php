@@ -710,7 +710,7 @@ class Paper extends Model
         // $affil = str_replace(",", "/", $affil);
         // $affil = str_replace("，", "/", $affil);
         // 事前適用ルールを取得
-        $pre_rules = Affil::where('pre', true)->get();
+        $pre_rules = Affil::where('pre', true)->where('skip', false)->get();
         foreach ($pre_rules as $rule) {
             $affil = str_replace($rule->before, $rule->after, $affil);
         }
@@ -731,9 +731,9 @@ class Paper extends Model
         $ret = array_filter($ret, function ($v) {
             return strlen($v) > 0;
         });
-        $ret = array_filter($ret, function ($v) {
-            return str_replace(" ","",$v);// $this->remove_hankaku_between_zenkaku($v);
-        });
+        $ret = array_map(function ($v) {
+            return $this->remove_hankaku_between_zenkaku($v); // $this->remove_hankaku_between_zenkaku($v);
+        }, $ret);
         return implode("/", $ret);
     }
     public static function remove_hankaku_between_zenkaku(string $val): string

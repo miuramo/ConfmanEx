@@ -22,7 +22,7 @@ class AffilController extends Controller
             Affil::distill();
         }
 
-        $affils = Affil::orderByDesc('pre')->orderByDesc('orderint')->get();
+        $affils = Affil::orderByDesc('pre')->orderBy('skip')->orderByDesc('orderint')->get();
         return view('affil.index')->with(compact('affils'));
     }
 
