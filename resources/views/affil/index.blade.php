@@ -28,6 +28,13 @@
     @if (session('feedback.error'))
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
+    <div class="m-4 py-2 px-2 bg-white">
+        <span class="bg-gray-500 text-white px-2 py-1">説明</span> pre は事前適用ルールです。複数所属分割文字列が / 以外になっている場合に、指定してください。修正後は「所属1/所属2」のように指定してください。<br>
+        pre_score は、事前適用ルール候補になりうるものに、大きい値を与えています。<br>
+        skip がチェックされているルールは、適用しません。<br>
+        「修正後」が空になっているルールは、削除ルールです。学部・学科などの所属を削除する場合には、修正後を空にしてください。<br>
+        元テキストは、投稿者が入力した際のテキストです。ただし、関連PaperIDが複数の場合、それらのうちの一つのみが表示されます。<br>
+    </div>
 
     <div class="py-2 px-2">
         <form action="{{ route('affil.update') }}" method="post">
@@ -68,8 +75,10 @@
                                 {{ $affil->orderint }}
                             </td>
                             <td class="px-2 py-2">
+                                @if($affil->skip) <span class="text-pink-600 text-xs">skip</span> @endif
                                 <input type="checkbox" name="skip[{{$affil->id}}]" @if ($affil->skip) checked @endif
                                     class=" border-red-500 text-pink-500">
+                                @if(!$affil->skip && $affil->before == $affil->after) <br><span class="text-pink-600 text-xs">SKIP候補</span> @endif
                             </td>
                             <td class="px-2 py-2">
                                 @if (is_array($affil->pids))

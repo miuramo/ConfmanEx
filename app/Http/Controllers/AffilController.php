@@ -39,9 +39,8 @@ class AffilController extends Controller
     public function rebuild()
     {
         if (!auth()->user()->can('role_any', 'manager|pc|pub')) abort(403);
-        
+        Affil::rebuild();
         return redirect()->route('affil.index')->with('feedback.success', '所属の修正ルールを再構成しました');
-
     }
 
     /**
