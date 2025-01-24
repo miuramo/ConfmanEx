@@ -22,7 +22,7 @@ class AffilController extends Controller
             Affil::distill();
         }
 
-        $affils = Affil::orderBy('before')->get();
+        $affils = Affil::orderByDesc('pre')->orderByDesc('orderint')->get();
         return view('affil.index')->with(compact('affils'));
     }
 
@@ -35,6 +35,13 @@ class AffilController extends Controller
         Affil::distill();
         return redirect()->route('affil.index')->with('feedback.success', '所属の修正ルールを再構成しました');
         //
+    }
+    public function rebuild()
+    {
+        if (!auth()->user()->can('role_any', 'manager|pc|pub')) abort(403);
+        
+        return redirect()->route('affil.index')->with('feedback.success', '所属の修正ルールを再構成しました');
+
     }
 
     /**
@@ -68,8 +75,33 @@ class AffilController extends Controller
     {
         if (!auth()->user()->can('role_any', 'manager|pc|pub')) abort(403);
         //
-        info($req->all());
-        return redirect()->route('affil.index')->with('feedback.success', '所属を更新しました');
+        $pres = $req->input('pre');
+        if (is_array($pres)) {
+            foreach ($pres as $affilid => $pre) {
+                $affil = Affil::find($affilid);
+                $affil->pre = ($pre == 'on') ? 1 : 0;
+                $affil->save();
+            }
+        }
+        $skips = $req->input('skip');
+        if (is_array($skips)){
+            foreach ($skips as $affilid => $skip) {
+                $affil = Affil::find($affilid);
+                $affil->skip = ($skip == 'on') ? 1 : 0;
+                $affil->save();
+            }    
+        }
+        $afters = $req->input('after');
+        if (is_array($afters)){
+            foreach ($afters as $affilid => $after) {
+                $affil = Affil::find($affilid);
+                if ($affil->after != $after){
+                    $affil->after = $after;
+                    $affil->save();
+                }                
+            }    
+        }
+        return redirect()->route('affil.index')->with('feedback.success', '修正ルールを更新しました');
     }
 
     /**

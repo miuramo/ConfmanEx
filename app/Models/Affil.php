@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Affil extends Model
 {
@@ -15,12 +16,25 @@ class Affil extends Model
 
     public $timestamps = false;
 
+
+    /**
+     * すべて再構築
+     */
+    public static function rebuild($border_score = 100) {
+        Affil::truncate();
+        Affil::distill($border_score);
+    }
     /**
      * 書誌情報の著者所属を、抽出する
      */
-    public static function distill()
+    public static function distill($border_score = 100)
     {
-        Affil::truncate();
+        // Affil::truncate();
+
+        Affil::where("pre", false)->whereNotNull("after")->delete();
+        DB::statement('ALTER TABLE affils AUTO_INCREMENT = 1');
+
+        mb_internal_encoding('UTF-8');
 
         $cats = Category::pluck('id')->toArray();
         foreach ($cats as $catid) {
@@ -37,14 +51,33 @@ class Affil extends Model
                         // $affil = str_replace("、", "/", $affil);
                         // $affil = str_replace(",", "/", $affil);
                         // $affil = str_replace("，", "/", $affil);
+                        // 複数所属を/以外で区切っている場合の、orderintを高く設定する
+                        $orderint = mb_strlen($affil, 'UTF-8');
+                        if (preg_match('/[、，,]/u', $affil)) {
+                            $orderint += 100;
+                        }
+                        if (preg_match('/[・]/u', $affil)) {
+                            $orderint += 20;
+                        }
+                        if (preg_match('/大学/u', $affil) && preg_match('/研究所/u', $affil)) {
+                            $orderint += 40;
+                        }
+                        if ($sc = substr_count($affil, '/') > 0) {
+                            $orderint += 30 * $sc;
+                        }
+
                         $afary = explode("/", $affil);
                         $afary = array_map('trim', $afary);
                         foreach ($afary as $a) {
-                            $after = Affil::after_kouho($a);
-                            $obj = Affil::firstOrCreate(['before' => $a], ['after' => $after, 'orderint' => 1]);
+                            $after = ($orderint < $border_score) ? Affil::after_kouho($a) : $a;
+                            if (preg_match('/学部/u', $after) || preg_match('/学科/u', $after) || preg_match('/教授/u', $after)) {
+                                $after = '';
+                            }
+                            $obj = Affil::firstOrCreate(['before' => $a], ['after' => $after, 'orderint' => $orderint]);
                             // pidsを配列として取得し、新しいpaper.idを追加（重複を避ける）
                             $currentPids = $obj->pids ?? [];
                             $obj->pids = array_unique(array_merge($currentPids, [$paper->id]));
+                            $obj->origtxt = $affil;
                             $obj->save();
                         }
                     }
@@ -62,6 +95,9 @@ class Affil extends Model
             $str = substr($str, 0, $matches[0][1] + 3);
         }
         $reps = [
+            "日本電信電話株式会社 NTT" => "NTT",
+            "日本電信電話株式会社NTT" => "NTT",
+            "日本電信電話株式会社" => "NTT",
             "株式会社" => "",
             "合同会社" => "",
             "\(株\)" => "",
@@ -69,6 +105,7 @@ class Affil extends Model
             "　" => "",
             "高等専門学校" => "高専",
             "研究所" => "研",
+            "Sony" => "ソニー",
         ];
         $pats = [
             "明石工業高等" => "明石高専",
@@ -105,8 +142,8 @@ class Affil extends Model
             "総合研究大学院" => "総研大",
             "NTTドコモ" => "NTTドコモ",
             "NTTアイティ" => "NTT-IT",
-            "NTT" => "NTT",
-            "日本電信電話" => "NTT",
+            // "NTT" => "NTT",
+            // "日本電信電話" => "NTT",
             "NHK" => "NHK",
             "LINEヤフー" => "LINEヤフー",
             "楽天モバイル" => "楽天モバイル",
@@ -144,7 +181,8 @@ class Affil extends Model
             "情報科学芸術" => "IAMAS",
             "情報通信研究機構" => "NICT",
             "情報処理学会" => "IPSJ",
-            "日本学術振興会" => "JSPS",
+            "^日本学術振興会" => "JSPS",
+            "学振" => "JSPS",
             "科学技術振興機構" => "JST",
             "豊橋技術科学" => "豊橋技科大",
             "台湾大" => "台湾大",
@@ -162,9 +200,6 @@ class Affil extends Model
         ];
 
         foreach ($reps as $o => $r) {
-            // $o = Normalizer::normalize($o, Normalizer::FORM_C);
-            // $r = Normalizer::normalize($r, Normalizer::FORM_C);
-
             $str = preg_replace('/' . $o . '/u', $r, $str);
         }
 
@@ -173,8 +208,6 @@ class Affil extends Model
         }
 
         foreach ($pats as $o => $r) {
-            // $o = Normalizer::normalize($o, Normalizer::FORM_C);
-            // $r = Normalizer::normalize($r, Normalizer::FORM_C);
             if (strlen($o) > 0) {
                 if (preg_match('|' . $o . '|u', $str)) {
                     return $r;

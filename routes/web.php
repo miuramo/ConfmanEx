@@ -47,7 +47,7 @@ Route::get('/dashboard', function () {
 Route::get('/file/favicon', [FileController::class, 'favicon'])->name('file.favicon');
 
 //表彰状作成用のJSON
-Route::get('awards/json_booth_title_author/{key?}/{readable?}', [SubmitController::class, 'json_bta'])->name('pub.json_booth_title_author');
+Route::get('awards/json_booth_title_author/{key?}/{readable?}/{usa1?}/{usa2?}', [SubmitController::class, 'json_bta'])->name('pub.json_booth_title_author');
 Route::get('json_review/{cat}/{key?}', [SubmitController::class, 'json_review'])->name('pub.json_review');
 Route::get('paper_reviews_json/{key}', [PaperController::class, 'paper_reviews_json'])->name('paper.paper_reviews_json');
 Route::get('json_fileinfo/{key?}/{readable?}', [SubmitController::class, 'json_fileinfo'])->name('pub.json_fileinfo');
@@ -253,6 +253,7 @@ Route::middleware('auth')->group(function () {
     Route::get('affil', [AffilController::class, 'index'])->name('affil.index');
     Route::post('affil/update', [AffilController::class, 'update'])->name('affil.update');
     Route::get('affil/create', [AffilController::class, 'create'])->name('affil.create');
+    Route::get('affil/rebuild', [AffilController::class, 'rebuild'])->name('affil.rebuild');
 });
 
 // 投票

@@ -163,7 +163,7 @@ class Paper extends Model
             $fti = "{$ft}_file_id"; // file_id for $ft (filetype)
             $file = File::find($this->{$fti});
             if ($file == null) continue;
-            $zip->add(ZipFile::make($file->fullpath(), $fn_prefix. $fn . "." . $file->extension()));
+            $zip->add(ZipFile::make($file->fullpath(), $fn_prefix . $fn . "." . $file->extension()));
             $count++;
         }
         return $count;
@@ -696,7 +696,7 @@ class Paper extends Model
             $ret['authors'][] = $uu[0];
             if (!isset($uu[1])) $fixed_affil = "未設定";
             else
-            $fixed_affil = $uu[1];
+                $fixed_affil = $uu[1];
 
             if ($use_short) $fixed_affil = $this->apply_affil_fix($fixed_affil);
 
@@ -709,26 +709,48 @@ class Paper extends Model
         // $affil = str_replace("、", "/", $affil);
         // $affil = str_replace(",", "/", $affil);
         // $affil = str_replace("，", "/", $affil);
+        // 事前適用ルールを取得
+        $pre_rules = Affil::where('pre', true)->get();
+        foreach ($pre_rules as $rule) {
+            $affil = str_replace($rule->before, $rule->after, $affil);
+        }
+
         $afary = explode("/", $affil);
         $afary = array_map('trim', $afary);
 
         $ret = [];
-        foreach ($afary as $af){
-            $obj = Affil::where('before', $af)->first();
-            if ($obj != null){
+        foreach ($afary as $af) {
+            $obj = Affil::where('before', $af)->where('skip', false)->first();
+            if ($obj != null) {
                 $ret[] = $obj->after;
             } else {
                 $ret[] = $af;
             }
         }
+        //配列retの要素が空文字列なら、要素を削除する
+        $ret = array_filter($ret, function ($v) {
+            return strlen($v) > 0;
+        });
+        $ret = array_filter($ret, function ($v) {
+            return str_replace(" ","",$v);// $this->remove_hankaku_between_zenkaku($v);
+        });
         return implode("/", $ret);
+    }
+    public static function remove_hankaku_between_zenkaku(string $val): string
+    {
+        $val = preg_replace('/([一-龥ぁ-ゔァ-ヴー々〆〤．，。、Ａ-Ｚａ-ｚ０-９])\s+([a-zA-Z0-9Ａ-Ｚａ-ｚ０-９一-龥ぁ-ゔァ-ヴー々〆〤．，。、])/u', '$1$2', $val);
+        $val = preg_replace('/([a-zA-Z0-9Ａ-Ｚａ-ｚ０-９])\s+([一-龥ぁ-ゔァ-ヴー々〆〤．，。、Ａ-Ｚａ-ｚ０-９])/u', '$1$2', $val);
+        $pattern = '/(?<=\p{Han})\s(?=\p{ASCII})|(?<=\p{ASCII})\s(?=\p{Han})/u';
+        $val = preg_replace($pattern, '', $val);
+
+        return $val;
     }
 
     /**
      * 著者名、文字列をかえす
      * abbr 連続する著者の所属を省略する
      */
-    public function bibauthors(bool $abbr = false, bool $use_short = false, string $field = "authorlist") 
+    public function bibauthors(bool $abbr = false, bool $use_short = false, string $field = "authorlist")
     {
         $name = [];
         $affil = [];

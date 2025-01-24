@@ -431,7 +431,7 @@ class SubmitController extends Controller
      * awards/json_booth_title_author/{key}
      * プログラム生成にも使えるように、affils を追加。
      */
-    public function json_bta(string $key = null, bool $readable = false)
+    public function json_bta(string $key = null, bool $readable = false, bool $use_short_for_affils = false, bool $use_short_for_bibauthors = false)
     {
         $downloadkey = Setting::findByIdOrName("AWARDJSON_DLKEY", "value");
         if ($key != $downloadkey) abort(403);
@@ -449,7 +449,7 @@ class SubmitController extends Controller
                 //  $ary['title']
                 //  $ary['authors'] = [ "著者1" , "著者2", ...]
                 //  $ary['affils'] = [ 著者1の所属, 著者2の所属, ... ]
-                $out[$booth] = $sub->paper->bibinfo(false); // title=>xxx  authors = [xxx,xxx]  affils = [xxx,xxx] $use_short=false
+                $out[$booth] = $sub->paper->bibinfo($use_short_for_affils); // title=>xxx  authors = [xxx,xxx]  affils = [xxx,xxx] $use_short=false
                 $out[$booth]['session'] = $sub->psession_id;
                 $out[$booth]['accept'] = $sub->accept_id;
                 $out[$booth]['category'] = $sub->category_id;
@@ -461,7 +461,7 @@ class SubmitController extends Controller
                     info("no pdf file for " . $sub->paper->id);
                     $out[$booth]['pagenum'] = '◆◆ no pdf◆◆';
                 }
-                $out[$booth]['bibauthors'] = $sub->paper->bibauthors(true, false); //同一所属を省略 , use_short=true
+                $out[$booth]['bibauthors'] = $sub->paper->bibauthors(true, $use_short_for_bibauthors); //同一所属を省略 , use_short=true
 
                 if (isset($enqans[$sub->paper_id])) {
                     foreach ($enqans[$sub->paper_id] as $enqid => $ary) {
