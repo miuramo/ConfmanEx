@@ -15,6 +15,21 @@ class Accept extends Model
         return $this->belongsTo(Submit::class); //逆はhasOne
     }
 
+    /**
+     * 与えられたカテゴリにおいて、判定で使用されているaccept_idを key & value の両方で返す。
+     * key にしているのは、isset() での判定ができるため。
+     */
+    public static function used_accepts($cat_id = 1)
+    {
+        $res = DB::select("select distinct accept_id from submits where category_id = ? " +
+            " and paper_id in (select id from papers where deleted_at is null) order by accept_id", [$cat_id]);
+        $ret = [];
+        foreach ($res as $r) {
+            $ret[$r->accept_id] = $r->accept_id;
+        }
+        return $ret;
+    }
+
     public static function acc_status($include_paperid = false)
     {
         $fs = [
@@ -48,7 +63,8 @@ class Accept extends Model
         }
     }
 
-    public static function random_pids_for_each_accept($cat_id = 1){
+    public static function random_pids_for_each_accept($cat_id = 1)
+    {
         $paperlist = Accept::acc_status(true);
         $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
         $show = [];
@@ -81,11 +97,12 @@ class Accept extends Model
         ];
     }
 
-    public static function nodes(){
+    public static function nodes()
+    {
         $nodes = [];
         $links = [];
         $conftitle_base = Setting::findByIdOrName('CONFTITLE_BASE', 'value');
-        if ($conftitle_base=='インタラクション'){
+        if ($conftitle_base == 'インタラクション') {
             $links[] = [
                 "source" => 'h1a1',
                 "target" => 'h1a6',
@@ -99,7 +116,7 @@ class Accept extends Model
             //     "target" => 'h3a4',
             // ];
 
-        } else if ($conftitle_base=='WISS'){
+        } else if ($conftitle_base == 'WISS') {
             $links[] = [
                 "source" => 'h3a3',
                 "target" => 'h3a4',
@@ -111,7 +128,7 @@ class Accept extends Model
             $links[] = [
                 "source" => 'h1a2',
                 "target" => 'h1a21',
-            ];    
+            ];
         }
 
         $accepts = Accept::select('shortname', 'id')->get()->pluck('shortname', 'id')->toArray();
@@ -122,20 +139,20 @@ class Accept extends Model
         $alerady = [];
         // 次に、acceptのノードを作成
         $stats = Accept::acc_status();
-        foreach($stats as $st){
+        foreach ($stats as $st) {
             if ($st->accept_id == 20) {
                 continue;
             }
-            $id = 'h'.$st->hanteicat.'a'.$st->accept_id;
+            $id = 'h' . $st->hanteicat . 'a' . $st->accept_id;
             if (isset($alerady[$id])) {
                 continue;
             }
             $nodes[] = [
-                "id" => $id, 
-                "accid" => $st->accept_id, 
-                "label" => $cats[$st->hanteicat].'-'. $accepts[$st->accept_id],
+                "id" => $id,
+                "accid" => $st->accept_id,
+                "label" => $cats[$st->hanteicat] . '-' . $accepts[$st->accept_id],
                 "type" => "A",
-                "width"=> 80,
+                "width" => 80,
                 "shape" => "ellipse",
                 "color" => "lightgreen",
             ];
@@ -144,30 +161,30 @@ class Accept extends Model
         }
         // 最後に、paperのノードを作成
         $pids = Accept::acc_status(true);
-        foreach($pids as $origcat=>$ooo){
-            foreach($ooo as $hanteicat=>$hhh){
-                foreach($hhh as $accept_id=>$ppp){
+        foreach ($pids as $origcat => $ooo) {
+            foreach ($ooo as $hanteicat => $hhh) {
+                foreach ($hhh as $accept_id => $ppp) {
                     if ($acc_judges[$accept_id] == 0) {
                         continue;
                     }
-                    $id = 'h'.$hanteicat.'a'.$accept_id;
-                    foreach($ppp as $pid){
+                    $id = 'h' . $hanteicat . 'a' . $accept_id;
+                    foreach ($ppp as $pid) {
                         if (isset($alerady[$pid])) {
-                            $links[] = ['source' => $id, 'target' => 'p'.$pid];
+                            $links[] = ['source' => $id, 'target' => 'p' . $pid];
                             continue;
                         } else {
                             $nodes[] = [
-                                "id" => 'p'.$pid,
+                                "id" => 'p' . $pid,
                                 "accid" => "--",
                                 "label" => $pid,
                                 "type" => "B",
-                                "width"=> 30,
+                                "width" => 30,
                                 "shape" => "ellipse",
                                 "color" => "lightyellow",
-                            ];    
+                            ];
                             $alerady[$pid] = 1;
                         }
-                        $links[] = ['source' => $id, 'target' => 'p'.$pid];
+                        $links[] = ['source' => $id, 'target' => 'p' . $pid];
                     }
                 }
             }

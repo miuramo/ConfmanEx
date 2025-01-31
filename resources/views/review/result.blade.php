@@ -3,6 +3,7 @@
     @php
         $catspans = App\Models\Category::spans();
         $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+        $used_accepts = App\Models\Accept::used_accepts($cat_id);
         $cats = App\Models\Category::manage_cats();
     @endphp
     @section('title', $cats[$cat_id] . ' 結果')
@@ -54,7 +55,7 @@
                     </div>
                     <div class="py-2 leading-loose">
                         @foreach ($accepts as $n => $acc)
-                            @if (str_starts_with($acc, '予備'))
+                            @if (str_starts_with($acc, '予備') || !isset($used_accepts[$n]))
                                 @continue
                             @endif
                             <x-element.button onclick="CheckNoTag('reviewresult', 'acc_{{ $n }}')" color="lime"
