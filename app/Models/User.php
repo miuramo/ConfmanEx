@@ -60,6 +60,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
+    public function papers()
+    {
+        return $this->hasMany(Paper::class, 'owner');
+    }
     public function roles()
     {
         $tbl = 'role_user';

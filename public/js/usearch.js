@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     // デバウンス関数の定義
     function debounce(func, wait) {
         let timeout;
@@ -17,9 +17,14 @@ $(document).ready(function() {
                 data: { query: query },
                 success: function (data) {
                     $('#results').empty();
-                    // console.log(data);
                     data['u'].forEach(user => {
-                        $('#results').append(`<li><a class="font-bold text-blue-600" href="/add_to_role/${rolename}/${user.id}">[追加]</a> (u${user.id}) ${user.name} ${user.affil} ${user.email} </li>`);
+                        // console.log(user);
+                        // PaperIDs を羅列    
+                        var paperids = "";
+                        user.papers.forEach(paper => {
+                            paperids += `<span class="font-bold text-red-500" title="${paper.title}">pid${paper.id}_cat${paper.category_id}</span> `;
+                        });
+                        $('#results').append(`<li><a class="font-bold text-blue-600" href="/add_to_role/${rolename}/${user.id}">[追加]</a> (u${user.id}) ${user.name} ${user.affil} ${user.email} ` + paperids + ` </li>`);
                     });
                 }
             });
