@@ -165,8 +165,8 @@ class BbController extends Controller
                                       "body"=>$req->preface ."\n". $buf];
                     $buf = $subject = "";
                     $pid = 0;
-                } elseif (preg_match("/^[0-9]+$/", $line)) {
-                    $pid = intval($line);
+                } elseif (preg_match("/^[0-9０-９]+$/", $line)) {
+                    $pid = intval(mb_convert_kana($line, 'n', 'UTF-8'));
                     $count = 0;
                 } else {
                     $buf .= $line."\r\n";
