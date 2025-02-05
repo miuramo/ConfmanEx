@@ -468,7 +468,7 @@ class PaperController extends Controller
     {
         if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
         if ($req->method() === 'POST') {
-            if ($req->has('action')) { // action is lock or unlock
+            if (!str_starts_with($req->input('action'), "kobetsu")) { // action is lock or unlock, not "kobetsu"
                 foreach ($req->all() as $k => $v) {
                     if (strpos($k, "targetcat") === 0) {
                         DB::transaction(function () use ($req, $v) {
@@ -480,8 +480,19 @@ class PaperController extends Controller
                         });
                     }
                 }
+                return redirect()->route('paper.adminlock')->with('feedback.success', "選択カテゴリの投稿Paperを{$req->input('action')}にしました。（ただし、deleted is null が対象）");
+            } else { // "kobetsu" case
+                $pids = explode(",", $req->input('pid'));
+                DB::transaction(function () use ($pids, $req) {
+                    $papers = Paper::whereIn("id", $pids)->get();
+                    foreach ($papers as $paper) {
+                        $paper->locked = ($req->input('action') === 'kobetsu_lock');
+                        $paper->save();
+                    }
+                });
+                $mes = substr($req->input('action'), 8);
+                return redirect()->route('paper.adminlock')->with('feedback.success', "指定されたPaperを{$mes}にしました。（ただし、deleted is null が対象）");
             }
-            return redirect()->route('paper.adminlock')->with('feedback.success', "選択カテゴリの投稿Paperを{$req->input('action')}にしました。（ただし、deleted is null が対象）");
         }
 
         $fs = ["valid", "locked"];

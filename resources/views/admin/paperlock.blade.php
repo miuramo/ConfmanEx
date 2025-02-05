@@ -15,6 +15,13 @@
         </h2>
     </x-slot>
 
+    @if (session('feedback.success'))
+        <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
+    @endif
+    @if (session('feedback.error'))
+        <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
+    @endif
+
     @php
         $fs = ['category_id', 'valid', 'locked', 'cnt'];
     @endphp
@@ -75,14 +82,19 @@
             <x-element.submitbutton value="unlock" color="orange">アンロックする
             </x-element.submitbutton>
             <x-element.gendospan>操作対象は、deleted_at is null のみです。</x-element.gendospan>
+
+            <div class="my-4 px-3 py-2 bg-slate-300">
+                <div>
+                    または、PaperIDをカンマ区切りで指定して、個別にロック／アンロックする</div>
+                <textarea name="pid" id="pid" class="" cols="60" rows="2"
+                    placeholder="例: 3, 5, 17, 019 (0埋めは無視されます)"></textarea>
+                <x-element.submitbutton value="kobetsu_lock" color="green">個別にロックする
+                </x-element.submitbutton>
+                <x-element.submitbutton value="kobetsu_unlock" color="orange">個別にアンロックする
+                </x-element.submitbutton>
+            </div>
         </form>
     </div>
-    @if (session('feedback.success'))
-        <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
-    @endif
-    @if (session('feedback.error'))
-        <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
-    @endif
 
 
 </x-app-layout>
