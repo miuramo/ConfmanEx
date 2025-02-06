@@ -189,8 +189,10 @@
                             color="orange">meta</x-element.linkbutton>
                     @endisset
                     -
-                    <x-element.linkbutton href="{{ route('role.login-as', ['user' => $rev[$accid]->user_id]) }}"
-                        color="lime">rev</x-element.linkbutton> <br>
+                    @isset($rev[$accid])
+                        <x-element.linkbutton href="{{ route('role.login-as', ['user' => $rev[$accid]->user_id]) }}"
+                            color="lime">rev</x-element.linkbutton>
+                    @endisset
                 @endforeach
             @endforeach
         </div>
