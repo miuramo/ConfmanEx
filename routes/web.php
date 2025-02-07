@@ -239,6 +239,7 @@ Route::middleware('auth')->group(function () {
     Route::post('bb/{bb}/{key}/adopt', [BbMesController::class, 'adopt'])->name('bb.adopt')->where('key', '([0-9A-Za-z]+)');
     Route::get('bb_multisubmit', [BbController::class, 'multisubmit'])->name('bb.multisubmit');
     Route::post('bb_multisubmit', [BbController::class, 'multisubmit'])->name('bb.multisubmitpost');
+    Route::post('bb_needreply', [BbController::class, 'needreply'])->name('bb.needreply');
 
     // 参加登録
     Route::resource('part', ParticipantController::class);

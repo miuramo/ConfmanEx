@@ -107,6 +107,60 @@
         </x-element.linkbutton>
     </div>
 
+    <div class="m-6">
+        <x-element.h1c color="orange" dark="300">要対応の掲示板一覧</x-element.h1c>
+        <form action="{{route('bb.needreply')}}" method="post" id="bb_needreply">
+            @csrf
+            @method('post')
+            <input type="hidden" name="type" value="3">
+            <input type="hidden" name="for_pub" value="1">
+            <div class="mx-4">
+            <x-element.submitbutton value="submit" color="lime" form="bb_needreply">
+                チェックをつけた掲示板を「対応済み」にする
+            </x-element.submitbutton>
+            </div>
+            <table class="min-w-full">
+                @foreach ($bbs[3] as $bb)
+                        @isset($bb->paper)
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="bbids[]" value="{{ $bb->id }}" id="bbids_{{ $bb->id }}" class="bg-orange-100">
+                            </td>
+                            <td>
+                                <label for="bbids_{{ $bb->id }}" class="hover:bg-lime-200">                                    
+                                {{ $bb->paper->id_03d() }} 
+                                </label>
+                            </td>
+                            <td class="text-sm">
+                                <label for="bbids_{{ $bb->id }}" class="hover:bg-lime-200">
+                            {{ $bb->paper->title }}
+                                </label>
+<span class="mx-2"></span>
+                                <a href="{{ route('bb.show', ['bb' => $bb->id, 'key' => $bb->key]) }}"
+                                    class="hover:bg-pink-200 border border-pink-200 px-1 py-0.5 text-sm" 
+                                    target="_blank">
+                                {{ $bb->nummessages() }} mes
+                                </a>
+
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        @endisset
+                @endforeach
+            </table>
+            <div class="mx-4">
+            <x-element.submitbutton value="submit" color="lime" form="bb_needreply">
+                チェックをつけた掲示板を「対応済み」にする
+            </x-element.submitbutton>
+        </div>
+        </form>
+    </div>
+
+    <div class="m-6">
+        <x-element.h1c color="lime">対応済みの掲示板一覧</x-element.h1c>
+    </div>
+
     <div class="mx-6 mt-32 p-3 bg-slate-300 rounded-lg dark:bg-slate-700 dark:text-gray-300">
         Danger Zone
         <span class="mx-2"></span>

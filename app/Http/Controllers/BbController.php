@@ -213,4 +213,20 @@ BodyLine3
 ======="';
         return view('bb.multisubmit')->with(compact("preface", "subject", "csv"));
     }
+
+    public function needreply_submit(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403);
+        $bbid = $req->input("bbid");
+        $bb = Bb::find($bbid);
+        $bb->status = 2;
+        $bb->save();
+        return redirect()->route('bb.needreply')->with('feedback.success', "返信済にしました。");
+    }
+    public function needreply(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403);
+        $bbs = Bb::where("type", 3)->where("status", 1)->get();
+        return view('bb.needreply')->with(compact("bbs"));
+    }
 }
