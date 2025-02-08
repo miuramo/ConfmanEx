@@ -33,7 +33,10 @@ class BbController extends Controller
         if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403);
 
         $i = 3;
-        $bbs[$i] = Bb::with("paper")->with("category")->where("type", $i)->get();
+        $bbs[$i] = Bb::with("paper")->with("category")->with('last_message')->where("type", $i)->get();
+
+        // 最終のメッセージ(bbmes)を含めて、掲示板(BB)を取得
+
 
         return view("bb.index_for_pub")->with(compact("bbs"));
         //
@@ -223,10 +226,21 @@ BodyLine3
         $bb->save();
         return redirect()->route('bb.needreply')->with('feedback.success', "返信済にしました。");
     }
+
+    /**
+     * 未対応の掲示板フラグを変更
+     */
     public function needreply(Request $req)
     {
         if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403);
-        $bbs = Bb::where("type", 3)->where("status", 1)->get();
-        return view('bb.needreply')->with(compact("bbs"));
+
+        $needreply = $req->input("needreply");
+        foreach($req->input("bbids") as $n=>$bbid){
+            $bb = Bb::find($bbid);
+            $bb->needreply = $needreply;
+            $bb->save();
+        }
+        return redirect()->route('bb.index_for_pub')->with('feedback.success', "フラグを変更しました。");
+
     }
 }

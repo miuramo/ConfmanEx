@@ -35,6 +35,10 @@ class Bb extends Model
     {
         return $this->hasMany(BbMes::class, 'bb_id');
     }
+    public function last_message()
+    {
+        return $this->hasOne(BbMes::class, 'bb_id')->latest();
+    }
 
     public function nummessages()
     {

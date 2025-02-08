@@ -108,57 +108,25 @@
     </div>
 
     <div class="m-6">
-        <x-element.h1c color="orange" dark="300">要対応の掲示板一覧</x-element.h1c>
-        <form action="{{route('bb.needreply')}}" method="post" id="bb_needreply">
+        <x-element.h1c color="orange" dark="300">対応未完了の出版掲示板一覧</x-element.h1c>
+        <form action="{{ route('bb.needreply') }}" method="post" id="bb_needreply0">
             @csrf
             @method('post')
-            <input type="hidden" name="type" value="3">
-            <input type="hidden" name="for_pub" value="1">
-            <div class="mx-4">
-            <x-element.submitbutton value="submit" color="lime" form="bb_needreply">
-                チェックをつけた掲示板を「対応済み」にする
-            </x-element.submitbutton>
-            </div>
-            <table class="min-w-full">
-                @foreach ($bbs[3] as $bb)
-                        @isset($bb->paper)
-                        <tr>
-                            <td>
-                                <input type="checkbox" name="bbids[]" value="{{ $bb->id }}" id="bbids_{{ $bb->id }}" class="bg-orange-100">
-                            </td>
-                            <td>
-                                <label for="bbids_{{ $bb->id }}" class="hover:bg-lime-200">                                    
-                                {{ $bb->paper->id_03d() }} 
-                                </label>
-                            </td>
-                            <td class="text-sm">
-                                <label for="bbids_{{ $bb->id }}" class="hover:bg-lime-200">
-                            {{ $bb->paper->title }}
-                                </label>
-<span class="mx-2"></span>
-                                <a href="{{ route('bb.show', ['bb' => $bb->id, 'key' => $bb->key]) }}"
-                                    class="hover:bg-pink-200 border border-pink-200 px-1 py-0.5 text-sm" 
-                                    target="_blank">
-                                {{ $bb->nummessages() }} mes
-                                </a>
-
-                            </td>
-                            <td>
-                            </td>
-                        </tr>
-                        @endisset
-                @endforeach
-            </table>
-            <div class="mx-4">
-            <x-element.submitbutton value="submit" color="lime" form="bb_needreply">
-                チェックをつけた掲示板を「対応済み」にする
-            </x-element.submitbutton>
-        </div>
+            <input type="hidden" name="needreply" value="0">
+            <x-bb.needreply color="orange" form="bb_needreply0" :bbs="$bbs[3]">
+            </x-bb.needreply>
         </form>
     </div>
 
     <div class="m-6">
-        <x-element.h1c color="lime">対応済みの掲示板一覧</x-element.h1c>
+        <x-element.h1c color="cyan">対応済みの出版掲示板一覧</x-element.h1c>
+        <form action="{{ route('bb.needreply') }}" method="post" id="bb_needreply1">
+            @csrf
+            @method('post')
+            <input type="hidden" name="needreply" value="1">
+            <x-bb.needreply color="cyan" form="bb_needreply1" future="orange" :bbs="$bbs[3]">
+            </x-bb.needreply>
+        </form>
     </div>
 
     <div class="mx-6 mt-32 p-3 bg-slate-300 rounded-lg dark:bg-slate-700 dark:text-gray-300">
@@ -178,6 +146,8 @@
     @push('localjs')
         <script src="/js/jquery.min.js"></script>
         <script src="/js/openclose.js"></script>
+        <script src="/js/chk_all.js"></script>
+        <script src="/js/sortable.js"></script>
     @endpush
 
 </x-app-layout>
