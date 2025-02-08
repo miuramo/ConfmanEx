@@ -69,6 +69,7 @@ class Bb extends Model
         ], [
             'key' => Str::random(30),
             'subscribers' => $subs[$type],
+            'needreply' => ($type==3)?1:0,
         ]);
         $mes = BbMes::firstOrCreate([
             'bb_id' => $bb->id,
