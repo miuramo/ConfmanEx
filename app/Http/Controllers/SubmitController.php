@@ -160,7 +160,8 @@ class SubmitController extends Controller
                     return $v !== "";
                 });
                 if (count($ary) !== 3) {
-                    return redirect()->route('pub.boothtxt', ["cat" => $catid])->with("sbmap", $sbmap)->with('feedback.error', ($n + 1) . '行目付近にエラーがあります。要素は3つである必要があります。');
+                    continue;
+                    // return redirect()->route('pub.boothtxt', ["cat" => $catid])->with("sbmap", $sbmap)->with('feedback.error', ($n + 1) . '行目付近にエラーがあります。要素は3つである必要があります。');
                 }
                 //
                 if (!is_numeric($ary[0]) || !is_numeric($ary[1])) {
@@ -226,12 +227,12 @@ class SubmitController extends Controller
             $zipFN = 'files.zip';
             $zipstream = Zip::create($zipFN);
             foreach ($papers as $paper) {
-                if ($req->input('use_pid')){
-                    $paper->addFilesToZip_ForPub($zipstream, $filetypes, $req->input("fn_prefix") , sprintf("%03d", $paper->id));
+                if ($req->input('use_pid')) {
+                    $paper->addFilesToZip_ForPub($zipstream, $filetypes, $req->input("fn_prefix"), sprintf("%03d", $paper->id));
                 } else {
                     $fn = $accept_papers[$paper->id];
-                    if (strlen($fn)<1) $fn = sprintf("pid%03d", $paper->id);
-                    $paper->addFilesToZip_ForPub($zipstream, $filetypes, $req->input("fn_prefix") , $fn);
+                    if (strlen($fn) < 1) $fn = sprintf("pid%03d", $paper->id);
+                    $paper->addFilesToZip_ForPub($zipstream, $filetypes, $req->input("fn_prefix"), $fn);
                 }
                 $addcount_tozip++;
             }
@@ -455,7 +456,7 @@ class SubmitController extends Controller
                 $out[$booth]['category'] = $sub->category_id;
                 $out[$booth]['paperid'] = $sub->paper_id;
                 $out[$booth]['abst'] = $sub->paper->abst;
-                if ($sub->paper->pdf_file != null){
+                if ($sub->paper->pdf_file != null) {
                     $out[$booth]['pagenum'] = $sub->paper->pdf_file->pagenum;
                 } else {
                     info("no pdf file for " . $sub->paper->id);
@@ -557,7 +558,7 @@ class SubmitController extends Controller
                     $tmp['filesize'] = filesize($file->fullpath());
                     $tmp['pagenum'] = $file->pagenum;
                     if ($tmp['isimg']) $tmp['imagesize'] = getimagesize($file->fullpath());
-                    $tmp['url'] = route('file.showhash', ['file'=>$fid, 'hash' => substr($file->key, 0, 10)]);
+                    $tmp['url'] = route('file.showhash', ['file' => $fid, 'hash' => substr($file->key, 0, 10)]);
                     $out[$pid][$tmp['filetype']] = $tmp;
                 }
             }
