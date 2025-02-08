@@ -43,7 +43,7 @@ class Bb extends Model
     public function nummessages()
     {
         // メッセージの数を返す
-        
+
         return $this->hasMany(BbMes::class, 'bb_id')->count();
     }
     public static function make_bb(int $type, int $pid, int $cid)
@@ -59,8 +59,8 @@ class Bb extends Model
             3 => "ここは出版担当と著者の掲示板です。",
         ];
         $nameofmeta = Setting::findByIdOrName('NAME_OF_META')->value;
-        if ($nameofmeta != null){
-            $firstmes[2] = "ここは".$nameofmeta."と著者の掲示板です。（プログラム委員長も閲覧できます。）";
+        if ($nameofmeta != null) {
+            $firstmes[2] = "ここは" . $nameofmeta . "と著者の掲示板です。（プログラム委員長も閲覧できます。）";
         }
         $bb = Bb::firstOrCreate([
             'paper_id' => $pid,
@@ -69,7 +69,7 @@ class Bb extends Model
         ], [
             'key' => Str::random(30),
             'subscribers' => $subs[$type],
-            'needreply' => ($type==3)?1:0,
+            'needreply' => ($type == 3) ? 1 : 0,
         ]);
         $mes = BbMes::firstOrCreate([
             'bb_id' => $bb->id,
@@ -106,28 +106,27 @@ class Bb extends Model
     {
         // pcのみ利害関係に注意する。
         (new BbNotify($bb, $bbmes))->process_send();
-
     }
     public function url()
     {
         return route('bb.show', ['bb' => $this->id, 'key' => $this->key]);
     }
-    public static function url_from_rev(Review $rev, int $type=1)
+    public static function url_from_rev(Review $rev, int $type = 1)
     {
         $bb = Bb::where("paper_id", $rev->paper_id)->where("category_id", $rev->category_id)->where("type", $type)->first();
-        if ($bb==null) return null;
+        if ($bb == null) return null;
         return $bb->url();
     }
     public static function url_from_bbmesid(int $bbmesid)
     {
         $bbmes = BbMes::find($bbmesid);
-        if ($bbmes==null) return null;
+        if ($bbmes == null) return null;
         return $bbmes->bb->url();
     }
     public static function url_from_bbid(int $bbid)
     {
         $bb = Bb::find($bbid);
-        if ($bb==null) return null;
+        if ($bb == null) return null;
         return $bb->url();
     }
 
@@ -140,24 +139,24 @@ class Bb extends Model
         //利害関係配列
         $rigais = RevConflict::arr_pu_rigai($this->category_id);
 
-        foreach($subary as $role){
-            if ($role=="author"){
+        foreach ($subary as $role) {
+            if ($role == "author") {
                 $to_cc_list = $this->paper->get_mail_to_cc();
                 $tolist[] = $to_cc_list['to'];
                 $bcclist = array_merge($bcclist, $to_cc_list['cc']);
-            } else if ($role=="pc" || $role=="pub"){
+            } else if ($role == "pc" || $role == "pub") {
                 $role = Role::findByIdOrName($role);
-                foreach($role->users as $u){
-                    if ( isset($rigais[$this->paper_id][$u->id]) && $rigais[$this->paper_id][$u->id]<3 ) continue; //利害or共著
+                foreach ($role->users as $u) {
+                    if (isset($rigais[$this->paper_id][$u->id]) && $rigais[$this->paper_id][$u->id] < 3) continue; //利害or共著
                     // 出版掲示板ならば、利害関係者であっても送信してよいという考え方はある。ただ、通常はauthor(cc)で追加されるはずなので、ここで特別な処理をする必要はない。
-                    if ( $u->pivot->mailnotify == 0 ) continue; // mailnotifyが0のときは送信しない
+                    if ($u->pivot->mailnotify == 0) continue; // mailnotifyが0のときは送信しない
                     $bcclist[] = $u->email;
                 }
-            } else if ($role=="metareviewer" || $role=="reviewer"){
-                $revuids = Review::where("paper_id", $this->paper_id)->where("category_id",$this->category_id)->where("ismeta", $role=="metareviewer")->pluck("user_id", "id")->toArray();
+            } else if ($role == "metareviewer" || $role == "reviewer") {
+                $revuids = Review::where("paper_id", $this->paper_id)->where("category_id", $this->category_id)->where("ismeta", $role == "metareviewer")->pluck("user_id", "id")->toArray();
                 $revus = User::whereIn("id", $revuids)->get();
-                foreach($revus as $u){
-                    if ($this->type == 1 && $role=="metareviewer"){ //査読者同士の事前議論掲示板のときは、to:metaになる。 (メタと著者の掲示板のときは、to: author になるので、metaはbccに加わる。)
+                foreach ($revus as $u) {
+                    if ($this->type == 1 && $role == "metareviewer") { //査読者同士の事前議論掲示板のときは、to:metaになる。 (メタと著者の掲示板のときは、to: author になるので、metaはbccに加わる。)
                         $tolist[] = $u->email;
                     } else {
                         $bcclist[] = $u->email;
@@ -166,20 +165,20 @@ class Bb extends Model
             }
         }
         // 保険のため、もしtolistが空だった場合は、個別に送信する
-        if (count($tolist)==0){
+        if (count($tolist) == 0) {
             return ["separate_to" => $bcclist];
         }
-        return ["to" => $tolist, "bcc" => $bcclist ];
+        return ["to" => $tolist, "bcc" => $bcclist];
     }
 
     public function get_reviewers()
     {
-        $revuids = Review::where("paper_id", $this->paper_id)->where("category_id",$this->category_id)->where("ismeta", 0)->pluck("user_id", "id")->toArray();
+        $revuids = Review::where("paper_id", $this->paper_id)->where("category_id", $this->category_id)->where("ismeta", 0)->pluck("user_id", "id")->toArray();
         return User::whereIn("id", $revuids)->get();
     }
     public function revuid2rev()
     {
-        $revuid2rev = Review::where("paper_id", $this->paper_id)->where("category_id",$this->category_id)->where("ismeta", 0)->pluck("id", "user_id")->toArray();
+        $revuid2rev = Review::where("paper_id", $this->paper_id)->where("category_id", $this->category_id)->where("ismeta", 0)->pluck("id", "user_id")->toArray();
         return $revuid2rev;
     }
     public function ismeta_myself()
@@ -204,5 +203,4 @@ class Bb extends Model
         $metarev_pids = Review::where('user_id', $user_id)->where('ismeta', 1)->get()->pluck('paper_id')->toArray();
         return Bb::whereIn('paper_id', $metarev_pids)->where('type', 2)->get();
     }
-
 }
