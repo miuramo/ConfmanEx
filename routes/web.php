@@ -20,6 +20,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewpointController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\AffilController;
+use App\Http\Controllers\EnqueteConfigController;
 use App\Models\RevConflict;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -84,6 +85,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/enq_maptoroles', [EnqueteController::class, 'map_to_roles'])->name('enq.maptoroles');
     Route::post('/enq_manualset', [EnqueteAnswerController::class, 'manualset'])->name('enq.manualset'); // マニュアル設定
     Route::get('/enq/{enq}/preview', [EnqueteController::class, 'edit_dummy'])->name('enq.preview');
+    Route::get('/enq/{enq}/config', [EnqueteController::class, 'config'])->name('enq.config'); // 受付設定
+    Route::post('/enq/{enq}/config', [EnqueteController::class, 'config'])->name('enq.config');// 受付設定
+    Route::delete('/enqconfig/{enqconfig}/delete', [EnqueteConfigController::class, 'destroy'])->name('enqconfig.delete');// 受付設定
 
     Route::get('/paper/{paper}/enq/{enq}/edit', [EnqueteController::class, 'edit'])->name('enquete.pageedit'); //インラインではなく個別のpageで表示
     Route::get('/paper/{paper}/enq/{enq}', [EnqueteController::class, 'show'])->name('enquete.pageview');
@@ -196,8 +200,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin_passdumpsql', [AdminController::class, 'passdumpsql'])->name('admin.passdumpsql');
 
+    Route::get('/man_add_invited_paper', [ManagerController::class, 'addInvitedPaper'])->name('add_invited_paper');
+    Route::post('/man_add_invited_paper', [ManagerController::class, 'addInvitedPaper'])->name('add_invited_paper');
     Route::get('/man_rebuildpdf', [ManagerController::class, 'rebuildPDFThumb'])->name('admin.rebuildpdf');
-    Route::get('/man_mailtest', [ManagerController::class, 'mailtest'])->name('admin.mailtest');
+    // Route::get('/man_mailtest', [ManagerController::class, 'mailtest'])->name('admin.mailtest');
     Route::get('/man_9wtest', [ManagerController::class, 'test9w'])->name('admin.test9w');
     Route::get('/man_paperauthorhead', [ManagerController::class, 'paperauthorhead'])->name('admin.paperauthorhead');
     Route::post('/man_paperauthorhead', [ManagerController::class, 'paperauthorhead'])->name('admin.paperauthorhead');

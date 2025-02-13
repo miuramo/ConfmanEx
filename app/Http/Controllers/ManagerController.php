@@ -69,23 +69,48 @@ class ManagerController extends Controller
         return redirect()->route('admin.paperlist_headimg')->with('feedback.success', 'タイトル画像の再クロップを開始しました。');
     }
 
-
-
-
-    public function mailtest()
+    public function addInvitedPaper(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
-        if (!auth()->user()->id == 1) abort(403);
-        $papers = Paper::all();
-        $mts = MailTemplate::all();
-        foreach ($mts as $mt) {
-            foreach ($papers as $paper) {
-                (new ForAuthor($paper, $mt))->process_send();
-                // Mail::send(new ForAuthor($paper, $mt));
+        if (!auth()->user()->can('role_any', 'admin|pc')) abort(403);
+        if ($req->has('action') && $req->input('catid') != null) {
+            try {
+                $paper = Paper::create([
+                    'category_id' => $req->input("catid"),
+                    'contactemails' => Auth::user()->email,
+                    'owner' => Auth::user()->id,
+                    'title' => $req->input("title"),
+                    'authorlist' => $req->input("authorlist"),
+                    'abst' => $req->input("abst"),
+                ]);
+            } catch (QueryException $e) {
+                return redirect()->route('paper.create')->with('feedback.error', "QueryException on Paper create");
             }
+            // find corresponding submit (created by observer)
+            $submit = Submit::where('paper_id', $paper->id)->first();
+            $submit->accept_id = $req->input("accid");
+            $submit->save();
+
+            return redirect()->route('add_invited_paper')->with('feedback.success', '招待論文を追加しました (pid=' . $paper->id . ', subid=' . $submit->id.')');
         }
-        return redirect()->route('admin.admindb');
+
+        return view('admin.add_invited_paper');
     }
+
+
+    // public function mailtest()
+    // {
+    //     if (!auth()->user()->can('role_any', 'pc')) abort(403);
+    //     if (!auth()->user()->id == 1) abort(403);
+    //     $papers = Paper::all();
+    //     $mts = MailTemplate::all();
+    //     foreach ($mts as $mt) {
+    //         foreach ($papers as $paper) {
+    //             (new ForAuthor($paper, $mt))->process_send();
+    //             // Mail::send(new ForAuthor($paper, $mt));
+    //         }
+    //     }
+    //     return redirect()->route('admin.admindb');
+    // }
 
     public function test9w()
     {
@@ -202,8 +227,8 @@ class ManagerController extends Controller
                 ->orWhere('authorlist', 'like', '%' . $search . '%')
                 ->get();
 
-            return response()->json(['u'=>$uresults, 'p'=>$presults, 'id'=>auth()->id()]);
+            return response()->json(['u' => $uresults, 'p' => $presults, 'id' => auth()->id()]);
         }
-        return view('admin.upsearch');//->with(compact("out"));
+        return view('admin.upsearch'); //->with(compact("out"));
     }
 }

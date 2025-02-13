@@ -29,11 +29,37 @@
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
 
+    @php
+        $configs = App\Models\EnqueteConfig::all();
+    @endphp
+
     <div class="py-4 px-6  dark:text-gray-400">
         @foreach ($enqs as $enq)
             <div class="bg-white mx-2 my-4 px-4 py-2 inline-block">
                 {{-- {{$enq->id}} --}}
                 {{ $enq->name }} <span class="ml-2 text-gray-400">(enqID:{{$enq->id}})</span>
+                <div class="my-2">
+                    @foreach($configs as $config)
+                        @if($config->enquete_id == $enq->id)
+                            @if($config->valid)
+                            @if($config->isopen())
+                                <span class="text-sm bg-green-200 text-green-800 rounded-md px-2 py-1">受付中
+                                @else
+                                <span class="text-sm bg-blue-200 text-blue-800 rounded-md px-2 py-1">受付期間外
+                                @endif
+                                [{{$config->catcsv}}] {{$config->openstart}} 〜 {{$config->openend}} (id:{{$config->id}})</span>
+                            @else 
+                                <span class="text-sm bg-red-100 text-red-800 rounded-md px-2 py-1">無効 (not valid)
+                                    [{{$config->catcsv}}] (id:{{$config->id}})
+                                </span>
+                            @endif
+                        @endif
+                    @endforeach
+                    <span class="mx-1"></span>
+                    <x-element.linkbutton2 href="{{ route('enq.config', ['enq' => $enq->id]) }}" color="slate" size="sm">
+                        受付設定
+                    </x-element.linkbutton2>
+                </div>
                 <div class="my-2">
                     <x-element.linkbutton href="{{ route('enq.answers', ['enq' => $enq->id]) }}" color="green"
                         size="sm">
@@ -44,19 +70,6 @@
                         color="teal" size="sm">
                         Excel
                     </x-element.linkbutton>
-
-
-
-                    {{-- <form class="inline" action="{{ route('admin.crud') }}?table=enquete_items" method="post"
-                        id="admincrudwhere{{ $enq->id }}">
-                        @csrf
-                        @method('post')
-                        <input id="whereby" type="hidden"
-                            class="whereBy text-sm bg-slate-100 font-thin mr-2 p-0 h-5 w-full"
-                            name="whereBy__enquete_id" value={{ $enq->id }}>
-                        <x-element.submitbutton2 color="yellow" size="sm">項目編集
-                        </x-element.submitbutton2>
-                    </form> --}}
                 </div>
 
                 <div class="text-sm ml-0 text-gray-400">
