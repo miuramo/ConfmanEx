@@ -10,6 +10,10 @@
             ->get()
             ->pluck('status__revreturn_on', 'id')
             ->toArray();
+        $show_booth = App\Models\Category::select('status__show_booth', 'id')
+            ->get()
+            ->pluck('status__show_booth', 'id')
+            ->toArray();
     @endphp
     @if (session('feedback.success'))
         <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
@@ -42,6 +46,11 @@
                     @endif
                     <x-element.paperid size=2 :paper_id="$paper->id">
                     </x-element.paperid>
+                    @if ($show_booth[$paper->category_id])
+                        &nbsp;
+                        <x-element.boothid size="xl" :paper="$paper">
+                        </x-element.boothid>
+                    @endif
                     &nbsp;
                     &nbsp;
                     <x-element.category :cat="$paper->category_id">
@@ -91,14 +100,14 @@
                                 出版掲示板 </x-element.linkbutton>
                         @endisset
 
-                        @if(App\Models\Setting::isTrue("ENABLE_ANNOTPAPER"))
-                        &nbsp;
-                        &nbsp;
-                        <x-element.linkbutton href="{{ route('annot.create') }}"
-                            color="lime" target="_blank">
-                            AnnotPaper </x-element.linkbutton>
+                        @if (App\Models\Setting::isTrue('ENABLE_ANNOTPAPER'))
+                            &nbsp;
+                            &nbsp;
+                            <x-element.linkbutton href="{{ route('annot.create') }}" color="lime" target="_blank">
+                                AnnotPaper </x-element.linkbutton>
+                        @endif
                     @endif
-                    @endif
+
 
                     <a href="{{ route('paper.edit', ['paper' => $paper->id]) }}">
                         <x-file.paperheadimg :paper=$paper>
