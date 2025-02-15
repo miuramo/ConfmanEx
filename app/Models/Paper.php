@@ -428,9 +428,9 @@ class Paper extends Model
 
                 if ($file->deleted) continue;
                 if ($file->pending) continue;
-                if ($cat->accept_altpdf > 0 && $this->between($cat->altpdf_page_min, $file->pagenum, $cat->altpdf_page_max)) {
+                if ($cat->accept_altpdf > 0 && $cat->pagenum_between($file->pagenum, "altpdf")) {
                     $checkary['altpdf'][] = $file->id;
-                } else if ($this->between($cat->pdf_page_min, $file->pagenum, $cat->pdf_page_max)) {
+                } else if ($cat->pagenum_between($file->pagenum, "pdf")) {
                     $checkary['pdf'][] = $file->id;
                 } else {
                     $errorary[] = "PDFのページ数を確認してください。";
@@ -838,8 +838,9 @@ class Paper extends Model
         if ($cat->status__revedit_on == 0) return true; // 投稿時（査読開始前）
         else if ($cat->status__revreturn_on == 0) return false; // 査読中はfalse
         else if ($cat->status__revreturn_on == 1) { // 査読開始後で、結果開示前
-            if ($this->locked) return false; // カメラレディ投稿期間が過ぎて、ロックされているならアップロード不可
-            else {
+            if ($this->locked) {
+                return $cat->is_accept_altpdf(); // カメラレディ投稿期間が過ぎて、ロックされているならアップロード不可。ただしAltPDFは設定による。
+            } else {
                 if ($this->is_accepted_in_any_category()) return true; // カメラレディ投稿期間のあいだ、採択者はアップロードできる
                 else return false; // 採択者以外はアップロード不可
             }

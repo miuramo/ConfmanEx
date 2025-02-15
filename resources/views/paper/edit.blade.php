@@ -143,9 +143,15 @@
                         <div class="text-sm mx-4 mt-2">
                             複数のファイルをまとめてアップロードできます。ファイル種別は自動で認識します。
                             @php
-                                $gendo = array_map('intval', explode('-', $cat->pdf_accept_end));
+                                if ($cat->is_accept_altpdf()){
+                                    $gendo = array_map('intval', explode('-', $cat->altpdf_accept_end));
+                                    $mes = "【概要説明スライド】のみ、{$gendo[0]}月{$gendo[1]}日まで修正可";
+                                } else {
+                                    $gendo = array_map('intval', explode('-', $cat->pdf_accept_end));
+                                    $mes = "{$gendo[0]}月{$gendo[1]}日まで修正可";
+                                }
                             @endphp
-                            <x-element.gendospan>{{ $gendo[0] }}月{{ $gendo[1] }}日まで修正可</x-element.gendospan>
+                            <x-element.gendospan>{{$mes}}</x-element.gendospan>
                         </div>
                     </x-element.h1>
 

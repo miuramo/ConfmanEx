@@ -494,7 +494,7 @@ class AdminController extends Controller
             $title = "投稿受付管理";
             $note = "査読中（revedit_on = 1 && revreturn_on = 0）は「書誌情報の設定ボタンを表示する」を設定しても、著者の編集画面に表示しません。";
         } else if ($req->has("mandatoryfile")) { // 必須ファイル関係
-            $ary = ['name', 'accept_video', 'accept_pptx', 'accept_img', 'img_max_width', 'img_max_height', 'accept_altpdf', 'altpdf_page_min', 'altpdf_page_max'];
+            $ary = ['name', 'accept_video', 'accept_pptx', 'accept_img', 'img_max_width', 'img_max_height', 'accept_altpdf', 'altpdf_page_min', 'altpdf_page_max','altpdf_accept_start','altpdf_accept_end'];
             $cold2 = [];
             foreach ($ary as $f) {
                 $cold2[$f] = $coldetails[$f];

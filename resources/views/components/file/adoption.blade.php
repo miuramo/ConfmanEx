@@ -26,7 +26,7 @@
     @elseif($file->id == $file->paper->altpdf_file_id)
         <span
             class="mx-0 sm:rounded-lg border-2 border-blue-600 bg-cyan-200 px-1 py-1 font-bold text-blue-600 text-sm dark:bg-cyan-400">
-            ALTPDFとして収録予定
+            概要説明スライド (AltPDF) として使用予定
         </span>
     @endif
 @endif

@@ -77,7 +77,11 @@ class StoreFileRequest extends FormRequest
             // 受け入れ期間をチェックする
             $paper = Paper::find($file->paper_id);
             $cat = Category::find($paper->category_id);
-            if ($cat->is_accept_pdf()) { // 受け入れ開始日〜終了日のあいだなら
+            if ($cat->is_accept_altpdf() && $cat->pagenum_between($pnum, "altpdf")) { // AltPDF受付期間で、かつページ数が範囲内なら
+                info("cat accept altpdf");
+                $file->pending = false;
+                $file->save();
+            } else if ($cat->is_accept_pdf()) { // 受け入れ開始日〜終了日のあいだなら
                 // info("cat accept pdf");
                 // すでにPDFがあるか？
                 if ($paper->pdf_file_id != null) {
@@ -100,7 +104,7 @@ class StoreFileRequest extends FormRequest
                     $paper->save();
                 }
             } else {
-                // info("cat pdf duration over. pending.");
+                info("cat pdf duration over. pending.");
                 if ($cat->pdf_accept_revise) { // 受け入れ最終日を過ぎていても、Pendingにするか？
                     $file->pending = true;
                 } else {
@@ -113,21 +117,20 @@ class StoreFileRequest extends FormRequest
             shell_exec("pdftoppm -png -singlefile {$fullpath} " . storage_path(File::apf() . '/' . substr($hashname, 0, -4)));
             // 残りのタスク
             PdfJob::dispatch($file);
-        } else if ( strpos($file->mime,"video")===0 ){
+        } else if (strpos($file->mime, "video") === 0) {
             // ビデオのサムネをつくる
-            shell_exec("ffmpeg -i {$fullpath} -vf thumbnail=100,scale=600:-1 -vframes 1 " . storage_path(File::apf() . '/' . substr($hashname, 0, -4)).".png" );
+            shell_exec("ffmpeg -i {$fullpath} -vf thumbnail=100,scale=600:-1 -vframes 1 " . storage_path(File::apf() . '/' . substr($hashname, 0, -4)) . ".png");
             // not implemented VideoJob::dispatch($file);
         } else {
             // PDF以外のとき、すでに同一mimeでのロックファイルが1つでもあれば、Pendingにする
             // ただし、pngのあとでjpegをアップロードして通らないように、mimeの前半部分がマッチしたらPendingにする。
-            $firstmime = explode("/",$file->mime)[0];
+            $firstmime = explode("/", $file->mime)[0];
             info($firstmime);
-            $countlocked_similar = File::where("paper_id",$pid)->where("locked",1)->where("mime", "like", "{$firstmime}%")->count();
-            if ($countlocked_similar > 0){
+            $countlocked_similar = File::where("paper_id", $pid)->where("locked", 1)->where("mime", "like", "{$firstmime}%")->count();
+            if ($countlocked_similar > 0) {
                 $file->pending = true;
                 $file->save();
             }
-
         }
         return redirect()->route('paper.edit', ['paper' => $pid])->with('feedback.success', "ファイルをアップロードしました。");
     }

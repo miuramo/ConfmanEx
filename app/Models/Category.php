@@ -55,6 +55,21 @@ class Category extends Model
         return Enquete::checkdayduration($this->pdf_accept_start, $this->pdf_accept_end);
     }
 
+    public function is_accept_altpdf()
+    {
+        return Enquete::checkdayduration($this->altpdf_accept_start, $this->altpdf_accept_end);
+    }
+    public function pagenum_between($pdf_page,$field="pdf"){
+        $page_max = $this->{$field . '_page_max'};
+        $page_min = $this->{$field . '_page_min'};
+        return $this->between($page_min, $pdf_page, $page_max);
+    }
+    public function between(int $s, int $x, int $e)
+    {
+        return ($s <= $x && $x <= $e);
+    }
+
+
     /**
      * 投稿数が設定の上限(upperlimit)を超えたらfalse
      */
