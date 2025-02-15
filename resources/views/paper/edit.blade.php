@@ -145,7 +145,7 @@
                             @php
                                 if ($cat->is_accept_altpdf()){
                                     $gendo = array_map('intval', explode('-', $cat->altpdf_accept_end));
-                                    $mes = "【概要説明スライド】のみ、{$gendo[0]}月{$gendo[1]}日まで修正可";
+                                    $mes = "【概要説明スライド】のみ、{$gendo[0]}月{$gendo[1]}日まで追加可";
                                 } else {
                                     $gendo = array_map('intval', explode('-', $cat->pdf_accept_end));
                                     $mes = "{$gendo[0]}月{$gendo[1]}日まで修正可";
