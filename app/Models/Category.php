@@ -57,6 +57,8 @@ class Category extends Model
 
     public function is_accept_altpdf()
     {
+        if ($this->altpdf_accept_start == null || $this->altpdf_accept_end == null) return false;
+        if ($this->altpdf_accept_start == $this->altpdf_accept_end) return false;
         return Enquete::checkdayduration($this->altpdf_accept_start, $this->altpdf_accept_end);
     }
     public function pagenum_between($pdf_page,$field="pdf"){
