@@ -78,7 +78,7 @@ class StoreFileRequest extends FormRequest
             $paper = Paper::find($file->paper_id);
             $cat = Category::find($paper->category_id);
             if ($cat->is_accept_altpdf() && $cat->pagenum_between($pnum, "altpdf")) { // AltPDF受付期間で、かつページ数が範囲内なら
-                info("cat accept altpdf");
+                // info("cat accept altpdf");
                 $file->pending = false;
                 $file->save();
             } else if ($cat->is_accept_pdf()) { // 受け入れ開始日〜終了日のあいだなら
@@ -104,7 +104,7 @@ class StoreFileRequest extends FormRequest
                     $paper->save();
                 }
             } else {
-                info("cat pdf duration over. pending.");
+                // info("cat pdf duration over. pending.");
                 if ($cat->pdf_accept_revise) { // 受け入れ最終日を過ぎていても、Pendingにするか？
                     $file->pending = true;
                 } else {
