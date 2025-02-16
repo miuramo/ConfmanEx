@@ -526,4 +526,34 @@ class MailTemplate extends Model
         }
         return $array_papers;
     }
+
+    /**
+     * AltPDFのアンケート回答と、PDF提出の不一致
+     */
+    public static function mt_altpdf_inconsistent(array $catids, $enqname="30sec_presen", $enqans_yes="希望する")
+    {
+        // アンケート回答と、PDF提出を、それぞれ取得する。
+        // まず、アンケート回答を取得
+        $enqitm = EnqueteItem::where("name", $enqname)->first();
+        $enqanswers_pid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->get()->where('valuestr', $enqans_yes)->pluck('paper_id')->toArray();
+
+        //AltPDF提出
+        $accPIDs = Submit::with('paper')->whereIn("category_id", $catids)->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->get()->pluck("paper_id")->toArray();
+        $altpdf_pids = Paper::whereIn('id', $accPIDs)->whereNotNull('altpdf_file_id')->whereNull('deleted_at')->pluck('id')->toArray();
+
+        // enqanswers_pid と、altpdf_pids の差分をとる
+        $nofile = array_diff($enqanswers_pid, $altpdf_pids);
+        $noenq = array_diff($altpdf_pids,$enqanswers_pid);
+        $both = array_merge($nofile, $noenq);
+        // return ["enq"=> $enqanswers_pid, "file"=>$altpdf_pids, "nofile"=>$nofile,"noenq"=>$noenq, "both"=>$both];
+
+        $papers = Paper::whereIn('id', $both)->get();
+        $array_papers = [];
+        foreach ($papers as $paper) {
+            $array_papers[] = $paper;
+        }
+        return $array_papers;
+    }
 }
