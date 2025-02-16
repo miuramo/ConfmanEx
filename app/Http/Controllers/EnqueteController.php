@@ -76,6 +76,7 @@ class EnqueteController extends Controller
                 $openend = $req->input('openend');
                 $valid = $req->input('valid');
                 $memo = $req->input('memo');
+                $orderint = $req->input('orderint');
                 foreach($ecid_idx as $ecid => $idx){
                     $enqconf = EnqueteConfig::find($ecid);
                     $enqconf->catcsv = $catcsv[$idx];
@@ -83,6 +84,7 @@ class EnqueteController extends Controller
                     $enqconf->openend = $openend[$idx];
                     $enqconf->valid = $valid[$idx];
                     $enqconf->memo = $memo[$idx];
+                    $enqconf->orderint = $orderint[$idx];
                     $enqconf->save();
                 }
                 return redirect()->route('enq.config', ["enq"=>$enq_id])->with('feedback.success', '設定を更新しました');

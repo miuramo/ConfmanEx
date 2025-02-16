@@ -15,7 +15,7 @@
 
     <div class="bg-teal-200 px-4 py-3 m-6">
         catcsv は、受け付ける対象の投稿カテゴリIDをカンマ区切りで入力してください。<br>
-        例：カテゴリが登壇1、デモ発表2、ポスター発表3 のとき、<b>d1,2,3</b> と書くと、登壇のデモ希望と、デモ発表と、ポスター発表が対象となります。<br>
+        例：<b>d1,2,3</b> と書くと、登壇のデモ希望と、デモ発表と、ポスター発表が対象となります。（カテゴリIDが 1:登壇、2:デモ発表、3:ポスター発表 の場合）<br>
         <br>
         投稿論文のカテゴリによって、受付の期間を変えたい場合は、行を追加してください。<br>
         <br>
@@ -39,6 +39,27 @@
     <div class="mx-6">
         <x-element.h1>
             アンケート 【{{ $enq->name }}】 (enqid: {{ $enq->id }}) の受付設定
+            <span class="mx-6"></span>
+            <x-element.linkbutton2 href="{{ route('enq.preview', ['enq' => $enq->id]) }}" color="blue" size="sm">
+                プレビュー
+            </x-element.linkbutton2>
+            <span class="mx-1"></span>
+            <x-element.linkbutton2
+                href="{{ route('enq.enqitmsetting', ['enq_id' => $enq->id, 'enq_name' => $enq->name]) }}" color="yellow"
+                size="sm">
+                項目編集
+            </x-element.linkbutton2>
+            <span class="mx-4"></span>
+            <x-element.linkbutton href="{{ route('enq.answers', ['enq' => $enq->id]) }}" color="green"
+                size="sm">
+                回答をみる
+            </x-element.linkbutton>
+            <span class="mx-1"></span>
+            <x-element.linkbutton href="{{ route('enq.answers', ['enq' => $enq->id, 'action' => 'excel']) }}"
+                color="teal" size="sm">
+                Excel
+            </x-element.linkbutton>
+
         </x-element.h1>
 
         <div class="py-2 px-2">
@@ -60,16 +81,16 @@
                         <tr class="border border-gray-400 p-2">
                             <input form="ec" type="hidden" name="id[]" value="{{ $config->id }}" />
                             <td class="p-2 text-center">
-                                <input form="ec" type="number" name="valid[]" value="{{ $config->valid }}" min="0"
-                                    max="1" />
+                                <input form="ec" type="number" name="valid[]" value="{{ $config->valid }}"
+                                    min="0" max="1" />
                             </td>
                             <td class="p-2 text-center">
                                 <input form="ec" type="text" name="catcsv[]" value="{{ $config->catcsv }}"
                                     size="10" />
                             </td>
                             <td class="p-2 text-center">
-                                <input form="ec" type="text" name="openstart[]" value="{{ $config->openstart }}"
-                                    size="6" />
+                                <input form="ec" type="text" name="openstart[]"
+                                    value="{{ $config->openstart }}" size="6" />
                             </td>
                             <td class="p-2 text-center">
                                 <input form="ec" type="text" name="openend[]" value="{{ $config->openend }}"
@@ -81,7 +102,7 @@
                             </td>
                             <td class="p-2 text-center">
                                 <input form="ec" type="number" name="orderint[]" value="{{ $config->orderint }}"
-                                    min="1" max="999" />
+                                    min="0" max="999" />
                             </td>
                             <td class="p-2">
                                 <x-element.deletebutton
