@@ -201,6 +201,60 @@ class SubmitController extends Controller
         return view('pub.boothtxt', ["cat" => $catid])->with(compact("subs", "sbmap"));
     }
 
+    /** 
+     * ブースの割り当てを修正する
+     */
+    public function boothmodify(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc|pub|web|demo')) abort(403);
+        $tableName = 'submits';
+        $coldetails = AdminController::column_details($tableName);
+        $ary = ['paper_id', 'booth','orderint', 'psession_id'];
+        $cold2 = [];
+        foreach ($ary as $f) {
+            if (isset($coldetails[$f])) $cold2[$f] = $coldetails[$f];
+        }
+        $coldetails = $cold2;
+        $title = "ブース割り当ての修正（注：査読結果に紐づいているため、PaperIDの編集はしないでください）";
+
+        $domain = config('database.default');
+        $db_name = config('database.connections.' . str_replace('.', '_', $domain) . '.database');
+
+        $whereBy['booth'] = $req->input("booth");
+        $tableComments = AdminController::get_table_comments($db_name, $tableName);
+        $data = DB::table($tableName)->whereIn("booth", explode("_", $req->input("booth")))
+        ->orWhereIn("paper_id", explode("_", $req->input("pid")))->orderBy('orderint')->limit(10)->get()->toArray();
+        $numdata = count($data);
+        if ($req->input('action')=='swap' && $numdata == 2){
+            // booth, orderint, psession_id をいれかえる
+            $first = Submit::find($data[0]->id);
+            $second = Submit::find($data[1]->id);
+            $fields = ['booth', 'orderint', 'psession_id'];
+            foreach($fields as $f){
+                $tmp = $first->{$f};
+                $first->{$f} = $second->{$f};
+                $second->{$f} = $tmp;
+            }
+            $first->save();
+            $second->save();
+            return redirect()->route('pub.boothmodify', ['booth'=>$req->input("booth"), 'pid'=>$req->input('pid')])->with('feedback.success', 'ブースを入れ替えました。');
+        }
+
+        $back_link_href = route("role.top", ['role'=>'demo']);
+        $back_link_label = "Topに戻る";
+        return view('admin.crudtable2')->with(compact(
+            "tableName",
+            "coldetails",
+            "data",
+            "whereBy",
+            "numdata",
+            "tableComments",
+            "title",
+            "back_link_href",
+            "back_link_label",
+        ));
+    }
+
 
     /**
      * ZIP file download for publication

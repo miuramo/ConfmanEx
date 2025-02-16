@@ -189,6 +189,31 @@
         </x-element.linkbutton>
     </x-element.h1>
 
+    <x-element.h1>ブース番号の微調整</x-element.h1>
+    <div class="mx-2 px-6 py-2">
+        <form action="{{ route('pub.boothmodify') }}" method="get" target="result">
+            <div class="w-full">
+                <label for="booth">ブース番号（複数入力するときはアンダースコア _ で区切ってください）</label>
+                <input type="text" name="booth" id="booth" class="w-96" size="30"
+                    placeholder="1A01_3A33">
+            </div>
+            <div class="w-full">
+                <label for="pid">PaperID（複数入力するときはアンダースコア _ で区切ってください）</label>
+                <input type="text" name="pid" id="pid" class="w-96" size="30"
+                    placeholder="111_222">
+            </div>
+            <div class="w-full mt-2 mx-6">
+                <x-element.submitbutton color="cyan" value="show">
+                    編集画面をひらく
+                </x-element.submitbutton>
+                <span class="mx-2"></span>
+                <x-element.submitbutton color="yellow" value="swap" confirm="すぐに交換しますがよろしいですか？">
+                    （ブース番号が2つのとき）2つの発表ブースを交換する
+                </x-element.submitbutton>
+            </div>
+        </form>
+    </div>
+
     <x-element.h1>自分の権限確認（Role一覧）
         <span class="mx-3"></span>
         @php
