@@ -23,6 +23,8 @@ $(".clicktoedit").click(function (e) {
     // グローバルにsizecols が定義されていれば、それを用いる。
     var localsizecols = (typeof sizecols !=='undefined') ? sizecols : 50;
     var txt = $('#' + tdid).text().trim();
+    txt = txt.replaceAll('"', '&quot;');
+    console.log(txt);
     var inputType = "";
     if (/text$/.test(m[3].toLowerCase())) { // text, longtext, mediumtext...
         var attr = $('#' + tdid).data('orig');
@@ -102,27 +104,12 @@ $(".clicktoedit").keydown(function (e) {
         if ($('#' + tdid).find("textarea").length > 0 && !e.ctrlKey && !e.metaKey) return; // textareaはCTRLorMetaが必要
         else {
             saveText(tdid);
-            // if ($('#' + tdid).find("textarea").length > 0) {
-            //     var text = $('#' + tdid).find("textarea").val();
-            //     $('#' + tdid).data('orig', text);
-            //     if (typeof mode_br !== 'undefined' && mode_br === true){
-            //         var showtext = text.replaceAll("\n", "<br>");
-            //         $('#' + tdid).html(showtext);
-            //     } else {
-            //         $('#' + tdid).text(text.replaceAll("\n", "\r\n"));
-            //     }
-            // }
-            // if ($('#' + tdid).find("input").length > 0) {
-            //     var text = $('#' + tdid).find("input").val();
-            //     $('#' + tdid).text(text);
-            // }
-            // crudpost(m[1], m[2], text, m[3]);
         }
     } else if (e.key === "Escape" || e.key === "Esc") {
         if (typeof mode_br !== 'undefined' && mode_br === true){
             $('#' + tdid).html(origData[tdid].replaceAll("\n", "<br>"));
         } else {
-            $('#' + tdid).text(origData[tdid]);
+            $('#' + tdid).text(origData[tdid].replaceAll("&quot;", '"'));
         }
         $('#' + tdid).addClass('hover:text-blue-600');
         origData[tdid] = null;
