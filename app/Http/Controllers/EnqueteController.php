@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\EnqExportFromView;
 use App\Http\Requests\StoreEnqueteRequest;
 use App\Http\Requests\UpdateEnqueteRequest;
+use App\Models\Accept;
 use App\Models\Category;
 use App\Models\Enquete;
 use App\Models\EnqueteAnswer;
@@ -55,19 +56,96 @@ class EnqueteController extends Controller
     }
 
     /**
+     * アンケート回答の概要表示
+     */
+    public function anssummary(int $enq_id, Request $req)
+    {
+        $aEnq = Enquete::accessibleEnquetes(true);
+        if (!isset($aEnq[$enq_id])) abort(403);
+        // if (!auth()->user()->can('role_any', 'pc')) abort(403);
+
+        $enq = Enquete::find($enq_id);
+        // 含まれるアンケート項目を取得
+        $enqitems = EnqueteItem::where('enquete_id', $enq_id)->orderBy('orderint')->get();
+        // アンケート項目ごとに、回答と件数を集計
+        $sql1 = "select count(id) as cnt, valuestr, enquete_item_id from enquete_answers where enquete_id = {$enq_id} group by valuestr, enquete_item_id";
+        $cols = DB::select($sql1);
+        $res = [];
+        foreach ($cols as $c) {
+            $res[$c->enquete_item_id][$c->valuestr] = $c->cnt;
+        }
+
+        // さらに、カテゴリと、採択フラグで分類
+        $sql2 = "select count(enquete_answers.id) as cnt, valuestr, enquete_item_id, category_id, accept_id " .
+            "from enquete_answers " .
+            "left join submits on enquete_answers.paper_id = submits.paper_id " .
+            "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" . 
+            "group by valuestr, enquete_item_id, category_id, accept_id " .
+            "order by valuestr, enquete_item_id, category_id, accept_id ";
+        $cols2 = DB::select($sql2);
+        $res2 = [];
+        foreach ($cols2 as $c) {
+            $res2[$c->enquete_item_id][$c->valuestr][$c->category_id][$c->accept_id] = $c->cnt;
+        }
+        // カテゴリのみで分類
+        $sql2c = "select count(enquete_answers.id) as cnt, valuestr, enquete_item_id, category_id " .
+            "from enquete_answers " .
+            "left join submits on enquete_answers.paper_id = submits.paper_id " .
+            "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" . 
+            "group by valuestr, enquete_item_id, category_id " .
+            "order by valuestr, enquete_item_id, category_id ";
+        $cols2c = DB::select($sql2c);
+        $res2c = [];
+        foreach ($cols2c as $c) {
+            $res2c[$c->enquete_item_id][$c->valuestr][$c->category_id] = $c->cnt;
+        }
+
+        // PaperIDを羅列するために、group by をしない
+        $sql3 = "select enquete_answers.paper_id, valuestr, enquete_item_id, category_id, accept_id " .
+            "from enquete_answers " .
+            "left join submits on enquete_answers.paper_id = submits.paper_id " .
+            "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" . 
+            "order by valuestr, enquete_item_id, category_id, accept_id, enquete_answers.paper_id ";
+        $cols3 = DB::select($sql3);
+        $res3 = [];
+        foreach ($cols3 as $c) {
+            $res3[$c->enquete_item_id][$c->valuestr][$c->category_id][$c->accept_id][] = $c->paper_id;
+        }
+
+        // 未回答を、submit から、enquete_answers.paper_id にないものを取得
+        foreach($enqitems as $ei){
+            $sql4 = "select count(id) as cnt, category_id from submits ". 
+            "where paper_id not in (select paper_id from enquete_answers where enquete_item_id = {$ei->id}) ".
+            "and accept_id in (select id from accepts where judge > 0)" .
+            "group by category_id ". 
+            "order by category_id ";
+            $cols4 = DB::select($sql4); 
+            $noans_cat = [];
+            foreach ($cols4 as $c) {
+                $noans_cat[$c->category_id] = $c->cnt;
+            }
+        }
+
+
+        $catlist = Category::select('id', 'shortname')->get()->pluck('shortname', 'id')->toArray();
+        $acclist = Accept::select('id', 'shortname')->get()->pluck('shortname', 'id')->toArray();
+        return view("enquete.anssummary")->with(compact("enq", "enqitems", "res", "res2", "res2c", "res3", "catlist", "acclist", "noans_cat"));
+    }
+
+    /**
      * アンケートの受付設定（期間、対象カテゴリ等）
      */
     public function config(int $enq_id, Request $req)
     {
         $aEnq = Enquete::accessibleEnquetes(true);
         if (!isset($aEnq[$enq_id])) abort(403);
-        if ($req->has('action')){
-            if ($req->input('action')=='addrow'){
+        if ($req->has('action')) {
+            if ($req->input('action') == 'addrow') {
                 $enq = Enquete::find($enq_id);
                 $newdatum = new EnqueteConfig();
                 $newdatum->enquete_id = $enq_id;
                 $newdatum->save();
-                return redirect()->route('enq.config', ["enq"=>$enq_id])->with('feedback.success', '行を追加しました');
+                return redirect()->route('enq.config', ["enq" => $enq_id])->with('feedback.success', '行を追加しました');
             } else {
                 // 設定更新
                 $ecid_idx = array_flip($req->input('id')); // enq config id => index
@@ -77,7 +155,7 @@ class EnqueteController extends Controller
                 $valid = $req->input('valid');
                 $memo = $req->input('memo');
                 $orderint = $req->input('orderint');
-                foreach($ecid_idx as $ecid => $idx){
+                foreach ($ecid_idx as $ecid => $idx) {
                     $enqconf = EnqueteConfig::find($ecid);
                     $enqconf->catcsv = $catcsv[$idx];
                     $enqconf->openstart = $openstart[$idx];
@@ -87,7 +165,7 @@ class EnqueteController extends Controller
                     $enqconf->orderint = $orderint[$idx];
                     $enqconf->save();
                 }
-                return redirect()->route('enq.config', ["enq"=>$enq_id])->with('feedback.success', '設定を更新しました');
+                return redirect()->route('enq.config', ["enq" => $enq_id])->with('feedback.success', '設定を更新しました');
             }
         }
 

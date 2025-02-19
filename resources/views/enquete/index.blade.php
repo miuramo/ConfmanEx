@@ -66,6 +66,11 @@
                         回答をみる
                     </x-element.linkbutton>
                     <span class="mx-1"></span>
+                    <x-element.linkbutton2 href="{{ route('enq.anssummary', ['enq' => $enq->id]) }}" color="green"
+                        size="sm">
+                        サマリー
+                    </x-element.linkbutton2>
+                    <span class="mx-1"></span>
                     <x-element.linkbutton href="{{ route('enq.answers', ['enq' => $enq->id, 'action' => 'excel']) }}"
                         color="teal" size="sm">
                         Excel
