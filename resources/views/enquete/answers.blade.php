@@ -45,6 +45,7 @@
     @push('localjs')
         <script src="/js/jquery.min.js"></script>
         <script src="/js/form_changed_revconflict.js"></script>
+        <script src="/js/sortable.js"></script>
     @endpush
 
 </x-app-layout>
