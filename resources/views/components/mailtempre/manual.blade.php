@@ -8,6 +8,7 @@
                 'TITLE' => 'タイトル',
                 'OWNER' => '投稿者の「所属 氏名 様」',
                 'ACCNAME' => '採択Name',
+                'BOOTH' => '発表番号(ブース番号)',
                 'CATNAME' => '投稿カテゴリ',
             ];
         @endphp

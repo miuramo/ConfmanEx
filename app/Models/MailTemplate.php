@@ -55,8 +55,10 @@ class MailTemplate extends Model
             $replacetxt["PID"] = $p_or_u->id_03d();
             $replacetxt["TITLE"] = $p_or_u->title;
             $subid = $p_or_u->submits->first()->id;
-            $accid = Submit::find($subid)->accept_id;
+            $sub = Submit::find($subid);
+            $accid = $sub->accept_id;
             $replacetxt["ACCNAME"] = Accept::find($accid)->name;
+            $replacetxt["BOOTH"] = $sub->booth ?? "(未設定)";
             $replacetxt["CATNAME"] = Category::find($p_or_u->category_id)->name;
             $replacetxt["OWNER"] = $p_or_u->paperowner->affil . " " . $p_or_u->paperowner->name . " 様";
             $replacetxt["AUTHORS"] = $p_or_u->bibauthors(true);
