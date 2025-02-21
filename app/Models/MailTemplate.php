@@ -432,7 +432,7 @@ class MailTemplate extends Model
         //エラーについても追加する
         $cols = Paper::whereIn('id', $accPIDs)->whereNotIn('id', $error_ids)->get();
         foreach ($cols as $paper) {
-            if (count($paper->validateBibinfo())>0) {
+            if (count($paper->validateBibinfo()) > 0) {
                 // info($paper->id." ".$paper->title);
                 // info($paper->validateBibinfo());
                 $papers[] = $paper;
@@ -511,9 +511,11 @@ class MailTemplate extends Model
      */
     public static function mt_noenqans($name, ...$catids)
     {
-        $accPIDs = Submit::with('paper')->whereIn("category_id", $catids)->whereHas("accept", function ($query) {
-            $query->where("judge", ">", 0);
-        })->get()->pluck("paper_id")->toArray();
+        // 当初投稿時のcategory_idで絞り込む
+        $target_paperids = Paper::whereIn('category_id', $catids)->whereNull('deleted_at')->pluck('id')->toArray();
+        // $accPIDs = Submit::with('paper')->whereIn("category_id", $catids)->whereHas("accept", function ($query) {
+        //         $query->where("judge", ">", 0);
+        //     })->get()->pluck("paper_id")->toArray();
         $enqitm = EnqueteItem::where("name", $name)->first();
         $exist_enqansers_pid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->pluck('paper_id')->toArray();
 
@@ -521,7 +523,7 @@ class MailTemplate extends Model
             $query->where("judge", ">", 0);
         })->whereNotIn('paper_id', $exist_enqansers_pid)->get()->pluck("paper_id")->toArray();
 
-        $papers = Paper::whereIn('id', $noenqansPIDs)->get();
+        $papers = Paper::whereIn('id', $noenqansPIDs)->whereIn("id", $target_paperids)->get();
         $array_papers = [];
         foreach ($papers as $paper) {
             $array_papers[] = $paper;
@@ -532,7 +534,7 @@ class MailTemplate extends Model
     /**
      * AltPDFのアンケート回答と、PDF提出の不一致
      */
-    public static function mt_altpdf_inconsistent(array $catids, $enqname="30sec_presen", $enqans_yes="希望する")
+    public static function mt_altpdf_inconsistent(array $catids, $enqname = "30sec_presen", $enqans_yes = "希望する")
     {
         // アンケート回答と、PDF提出を、それぞれ取得する。
         // まず、アンケート回答を取得
@@ -547,7 +549,7 @@ class MailTemplate extends Model
 
         // enqanswers_pid と、altpdf_pids の差分をとる
         $nofile = array_diff($enqanswers_pid, $altpdf_pids);
-        $noenq = array_diff($altpdf_pids,$enqanswers_pid);
+        $noenq = array_diff($altpdf_pids, $enqanswers_pid);
         $both = array_merge($nofile, $noenq);
         // return ["enq"=> $enqanswers_pid, "file"=>$altpdf_pids, "nofile"=>$nofile,"noenq"=>$noenq, "both"=>$both];
 

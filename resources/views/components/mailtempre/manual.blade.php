@@ -58,7 +58,7 @@
                 'nobib(catid1,catid2,...)' => '書誌情報なし(和文アブスト、和文キーワード、英文Titleのうち1つ以上)',
                 'hasvideo(catid1,catid2,...)' => '公開予定のビデオファイルあり',
                 'review_score(catid,"name",">=",score)' => '査読観点「name」のスコアのうちscore以上が1つでもある論文',
-                'noenqans("name", catid1, catid2,...)' => 'アンケート項目「name」に未回答で、catidに採択されている論文',
+                'noenqans("name", catid1, catid2,...)' => 'アンケート項目「name」に未回答で、catidのカテゴリに最初に投稿し、採択されている論文',
                 'altpdf_inconsistent([catid1,catid2,...], "name", "ans")' => 'アンケート項目「name」の「ans」回答と、altpdf提出とが一致しない論文（name省略時は"30sec_presen"、ans省略時は"希望する"、アンケート未回答は希望しないに含める。）',
                 '' => '',
             ];
