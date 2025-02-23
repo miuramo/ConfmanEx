@@ -214,6 +214,10 @@
         </form>
     </div>
 
+    <x-element.h1>ファイルダウンロード (お手数ですが、カテゴリごとにダウンロードしてください)</x-element.h1>
+    <x-file.bundle_download def_cat="2" def_fts="altpdf" />
+
+
     <x-element.h1>自分の権限確認（Role一覧）
         <span class="mx-3"></span>
         @php
