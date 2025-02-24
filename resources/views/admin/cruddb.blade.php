@@ -20,6 +20,7 @@
                         <th class="px-2">cnt</th>
                         <th class="px-2">table name</th>
                         <th class="px-2">(row mode)</th>
+                        <th class="px-2">(ajax mode)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,6 +34,9 @@
                             </td>
                             <td class="px-2 text-center">
                                 <a href="{{ route('admin.crud') }}?table={{ $table }}&row" class="hover:underline hover:text-blue-500"> {{ $table }} </a>
+                            </td>
+                            <td class="px-2 text-center">
+                                <a href="{{ route('admin.crudajax') }}?table={{ $table }}" class="hover:underline hover:text-blue-500"> {{ $table }} </a>
                             </td>
                         </tr>
                     @endforeach

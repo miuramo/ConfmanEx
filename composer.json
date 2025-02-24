@@ -11,8 +11,9 @@
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "livewire/livewire": "^3.5",
         "maatwebsite/excel": "^3.1.47",
-	"psr/simple-cache": "^2.0",
+        "psr/simple-cache": "^2.0",
         "stechstudio/laravel-zipstream": "^5.0"
     },
     "require-dev": {

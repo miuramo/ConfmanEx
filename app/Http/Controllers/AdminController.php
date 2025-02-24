@@ -466,6 +466,19 @@ class AdminController extends Controller
     }
 
 
+    public function crudajax(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
+        if ($req->has('table')) {
+            $table = $req->input('table');
+            $model = Str::studly(Str::singular($table));
+            return view('admin.crudajax')->with(compact("model"));
+        } else {
+            return redirect('admin.cruddb');
+        }
+    }
+
+
     /** カテゴリごとの査読進行管理設定 */
     public function catsetting(Request $req)
     {
