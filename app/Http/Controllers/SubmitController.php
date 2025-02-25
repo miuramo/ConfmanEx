@@ -261,7 +261,7 @@ class SubmitController extends Controller
      */
     public function zipdownload(Request $req)
     {
-        if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
+        if (!auth()->user()->can('role_any', 'pc|pub|web|demo')) abort(403);
         // Formからのカテゴリ選択を配列にいれる
         $targets = [];
         $filetypes = []; // pdf, video, img, altpdf
