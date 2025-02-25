@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreFileRequest;
 use App\Http\Requests\UpdateFileRequest;
 use App\Jobs\PdfJob;
+use App\Models\EnqueteAnswer;
+use App\Models\EnqueteItem;
 use App\Models\File;
 use App\Models\MailTemplate;
 use App\Models\Paper;
 use App\Models\Setting;
+use App\Models\Submit;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -292,6 +295,33 @@ class FileController extends Controller
         }
 
         return view('admin.filelock')->with(compact("cols", "pids", "fileids", "filekeys", "timestamps"));
+    }
+
+    /**
+     * 30秒プレゼンの提出状況を確認する
+     */
+    public function enq_file_status(array $catids = [2,3], $filetype = "altpdf", $enqname = "30sec_presen", $enqans_yes = "希望する")
+    {
+        if (!auth()->user()->can('role_any', 'pc|demo|pub')) abort(403);
+                // アンケート回答と、PDF提出を、それぞれ取得する。
+        // まず、アンケート回答を取得
+        $enqitm = EnqueteItem::where("name", $enqname)->first();
+        $enqanswers_pid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->get()->pluck('valuestr', 'paper_id')->toArray();
+
+        //AltPDF提出
+        $accPIDs = Submit::with('paper')->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->whereHas("paper", function ($query) use ($filetype) {
+            $query->whereNotNull($filetype.'_file_id')->whereNull('deleted_at');
+        })->get()->pluck("paper_id","booth")->toArray();
+
+        //all accepted papers in the category
+        $accAcceptedSubs = Submit::whereIn("category_id", $catids)->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->orderBy("booth")->get()->pluck("paper_id","booth")->toArray();
+
+        $altpdf_fileids = Paper::whereIn("category_id", $catids)->whereNotNull($filetype.'_file_id')->whereNull('deleted_at')->get()->pluck($filetype.'_file_id', 'id')->toArray();
+        return view('file.enq_file_status')->with(compact("enqanswers_pid", "accPIDs", "accAcceptedSubs", "enqans_yes", "altpdf_fileids","filetype"));
     }
 
     public function favicon()
