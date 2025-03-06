@@ -12,6 +12,9 @@ function other_textchange(event) {
     } else if (event.target.value == "replace_kuten") {
         var newtext = text.replace(/、/g, "，").replace(/。/g, "．");
         $("#" + tdid).val(newtext);
+    } else if (event.target.value == "replace_kuten_maru") {
+        var newtext = text.replace(/，/g, "、").replace(/．/g, "。");
+        $("#" + tdid).val(newtext);
     }
 }
 
@@ -33,6 +36,7 @@ $(".clicktoedit").click(function (e) {
             "<select class=\"font-sans text-xs\" id='select__" + tdid + "' onchange=\"other_textchange(event);\"><option>【テキスト一括処理】</option>"+
             "<option value=\"remove_spaces_between_japanese\">日本語文字間の半角スペース・改行を削除</option>"+
             "<option value=\"replace_kuten\">、。を，．に変換</option>"+
+            "<option value=\"replace_kuten_maru\">，．を、。に変換</option>"+
             "</select>"+
             // "<button class=\"text-xs bg-gray-200 p-1\" onclick=\"saveText('edit__"+tdid + "');\">保存</input>"+
             "</div>");
