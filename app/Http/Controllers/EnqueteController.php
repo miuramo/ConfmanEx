@@ -79,7 +79,7 @@ class EnqueteController extends Controller
         $sql2 = "select count(enquete_answers.id) as cnt, valuestr, enquete_item_id, category_id, accept_id " .
             "from enquete_answers " .
             "left join submits on enquete_answers.paper_id = submits.paper_id " .
-            "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" . 
+            "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" .
             "group by valuestr, enquete_item_id, category_id, accept_id " .
             "order by valuestr, enquete_item_id, category_id, accept_id ";
         $cols2 = DB::select($sql2);
@@ -91,7 +91,7 @@ class EnqueteController extends Controller
         $sql2c = "select count(enquete_answers.id) as cnt, valuestr, enquete_item_id, category_id " .
             "from enquete_answers " .
             "left join submits on enquete_answers.paper_id = submits.paper_id " .
-            "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" . 
+            "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" .
             "group by valuestr, enquete_item_id, category_id " .
             "order by valuestr, enquete_item_id, category_id ";
         $cols2c = DB::select($sql2c);
@@ -104,7 +104,7 @@ class EnqueteController extends Controller
         $sql3 = "select enquete_answers.paper_id, valuestr, enquete_item_id, category_id, accept_id " .
             "from enquete_answers " .
             "left join submits on enquete_answers.paper_id = submits.paper_id " .
-            "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" . 
+            "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" .
             "order by valuestr, enquete_item_id, category_id, accept_id, enquete_answers.paper_id ";
         $cols3 = DB::select($sql3);
         $res3 = [];
@@ -113,13 +113,13 @@ class EnqueteController extends Controller
         }
 
         // 未回答を、submit から、enquete_answers.paper_id にないものを取得
-        foreach($enqitems as $ei){
-            $sql4 = "select count(id) as cnt, category_id from submits ". 
-            "where paper_id not in (select paper_id from enquete_answers where enquete_item_id = {$ei->id}) ".
-            "and accept_id in (select id from accepts where judge > 0)" .
-            "group by category_id ". 
-            "order by category_id ";
-            $cols4 = DB::select($sql4); 
+        foreach ($enqitems as $ei) {
+            $sql4 = "select count(id) as cnt, category_id from submits " .
+                "where paper_id not in (select paper_id from enquete_answers where enquete_item_id = {$ei->id}) " .
+                "and accept_id in (select id from accepts where judge > 0)" .
+                "group by category_id " .
+                "order by category_id ";
+            $cols4 = DB::select($sql4);
             $noans_cat = [];
             foreach ($cols4 as $c) {
                 $noans_cat[$c->category_id] = $c->cnt;
@@ -296,11 +296,16 @@ class EnqueteController extends Controller
     }
 
     // enq preview (for every user)
-    public function edit_dummy(Enquete $enq, bool $foradmin = false)
+    public function edit_dummy(Enquete $enq, string $key = "foradmin")
     {
         //Paperアンケートのときは、Paperのカテゴリが要求するアンケート→それぞれの質問項目、の順に集めたが、プレビューなので後者のみ。
-        // $aEnq = Enquete::accessibleEnquetes(true);
-        // if (!isset($aEnq[$enq->id])) abort(403);
+        if ($key == "foradmin") {
+            $aEnq = Enquete::accessibleEnquetes(true);
+            if (!isset($aEnq[$enq->id])) abort(403);
+        } else {
+            $sha1 = $enq->getkey(7);
+            if (strpos($key, $sha1) !== 0) abort(403);
+        }
         $itms = EnqueteItem::where('enquete_id', $enq->id)->orderBy('orderint');
         $enqans = [];
         $enqs["canedit"][$enq->id] = $enq;
@@ -309,7 +314,7 @@ class EnqueteController extends Controller
         $paper = new Paper();
         $paper->id = 0;
         $paper->category_id = 1;
-        return view("enquete.pageedit")->with(compact("enq", "enqs", "enqans", "paper", "foradmin"));
+        return view("enquete.pageedit")->with(compact("enq", "enqs", "enqans", "paper", "key"));
     }
 
 

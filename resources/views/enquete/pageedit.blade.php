@@ -15,7 +15,7 @@
                 </x-element.category>
             @else
                 アンケート「{{ $enq->name }}」の質問項目確認
-                @if ($foradmin)
+                @if ($key=="foradmin")
                     <span class="mx-4 p-2 border-2 border-blue-500 bg-cyan-100 text-blue-500">プレビュー</span>
                 @else
                     <div class="mt-4 mx-4 p-2 border-2 border-red-500 bg-pink-100 text-red-500">
@@ -34,7 +34,7 @@
                 &larr; 投稿{{ $paper->id_03d() }} 編集に戻る
             </x-element.linkbutton>
         @else
-            @if ($foradmin)
+            @if ($key=="foradmin")
                 <x-element.linkbutton href="{{ route('enq.index') }}" color="gray" size="sm">
                     &larr; アンケート一覧に戻る
                 </x-element.linkbutton>
@@ -88,7 +88,7 @@
                 &larr; 投稿{{ $paper->id_03d() }} 編集に戻る
             </x-element.linkbutton>
         @else
-            @if ($foradmin)
+            @if ($key=="foradmin")
                 <x-element.linkbutton href="{{ route('enq.index') }}" color="gray" size="sm">
                     &larr; アンケート一覧に戻る
                 </x-element.linkbutton>

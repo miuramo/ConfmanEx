@@ -86,7 +86,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/enq_maptoroles', [EnqueteController::class, 'map_to_roles'])->name('enq.maptoroles');
     Route::post('/enq_maptoroles', [EnqueteController::class, 'map_to_roles'])->name('enq.maptoroles');
     Route::post('/enq_manualset', [EnqueteAnswerController::class, 'manualset'])->name('enq.manualset'); // マニュアル設定
-    Route::get('/enq/{enq}/preview/{foradmin?}', [EnqueteController::class, 'edit_dummy'])->name('enq.preview');
+    Route::get('/enq/{enq}/preview/{key?}', [EnqueteController::class, 'edit_dummy'])->name('enq.preview');
     Route::get('/enq/{enq}/config', [EnqueteController::class, 'config'])->name('enq.config'); // 受付設定
     Route::post('/enq/{enq}/config', [EnqueteController::class, 'config'])->name('enq.config');// 受付設定
     Route::delete('/enqconfig/{enqconfig}/delete', [EnqueteConfigController::class, 'destroy'])->name('enqconfig.delete');// 受付設定

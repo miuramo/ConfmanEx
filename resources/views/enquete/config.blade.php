@@ -40,7 +40,7 @@
         <x-element.h1>
             アンケート 【{{ $enq->name }}】 (enqid: {{ $enq->id }}) の受付設定
             <span class="mx-6"></span>
-            <x-element.linkbutton2 href="{{ route('enq.preview', ['enq' => $enq->id, 'foradmin' => true]) }}"
+            <x-element.linkbutton2 href="{{ route('enq.preview', ['enq' => $enq->id, 'key'=>'foradmin']) }}"
                 color="blue" size="sm">
                 プレビュー
             </x-element.linkbutton2>

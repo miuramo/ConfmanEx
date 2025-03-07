@@ -20,10 +20,16 @@ class Enquete extends Model
         $tbl = 'enquete_roles';
         return $this->belongsToMany(Role::class, $tbl);
     }
+
+    public function getkey(int $len = 5)
+    {
+        return substr(sha1($this->id . $this->name), 0, $len);
+    }
     /**
      * デモ希望をだしているPaperID を返す
      */
-    public static function paperids_demoifaccepted($cat_id){
+    public static function paperids_demoifaccepted($cat_id)
+    {
         $demoenqitem = EnqueteItem::where("name", "demoifaccepted")->first();
         if ($demoenqitem != null) {
             $demoenqitemid = $demoenqitem->id;
@@ -151,9 +157,9 @@ class Enquete extends Model
         $month = date('n');
         $day = date('j');
 
-        $now = $month*100 + $day; // 06-01 なら 0601
-        $begin = $s[0]*100 + $s[1];
-        $end = $e[0]*100 + $e[1];
+        $now = $month * 100 + $day; // 06-01 なら 0601
+        $begin = $s[0] * 100 + $s[1];
+        $end = $e[0] * 100 + $e[1];
         if ($begin < $end) {
             return ($begin <= $now && $now <= $end);
         } else {
@@ -198,13 +204,13 @@ class Enquete extends Model
             ->toArray();
         // PCをもっていれば、ぜんぶみれる
         if (isset($rolename_id['pc'])) {
-            if ($returnAry) return Enquete::select("id","name")->get()->pluck("name","id")->toArray();
+            if ($returnAry) return Enquete::select("id", "name")->get()->pluck("name", "id")->toArray();
             return Enquete::with("roles")->get();
         }
-        if ($returnAry){
-            return Enquete::select("id","name")->whereHas('roles', function ($query) use ($rolename_id) {
+        if ($returnAry) {
+            return Enquete::select("id", "name")->whereHas('roles', function ($query) use ($rolename_id) {
                 $query->whereIn('roles.id', array_values($rolename_id));
-            })->get()->pluck("name","id")->toArray();
+            })->get()->pluck("name", "id")->toArray();
         }
         // それ以外は、自分が所属しているroleから、参照許可されているアンケートをかえす。
         return Enquete::with("roles")->whereHas('roles', function ($query) use ($rolename_id) {

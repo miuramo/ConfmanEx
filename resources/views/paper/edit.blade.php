@@ -264,7 +264,7 @@
                             </x-element.linkbutton>
                         @endif
                         <span class="mx-10"></span>
-                        <x-element.linkbutton2 href="{{route('enq.preview', ['enq'=>$enq->id])}}" size="xs" color="cyan"
+                        <x-element.linkbutton2 href="{{route('enq.preview', ['enq'=>$enq->id, 'key'=>$enq->getkey(7)])}}" size="xs" color="cyan"
                             target="_blank">質問項目をみる</x-element.linkbutton2>
 
                     </div>
