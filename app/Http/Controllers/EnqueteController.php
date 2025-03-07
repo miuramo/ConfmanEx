@@ -296,7 +296,7 @@ class EnqueteController extends Controller
     }
 
     // enq preview
-    public function edit_dummy(Enquete $enq)
+    public function edit_dummy(Enquete $enq, bool $foradmin = false)
     {
         //Paperアンケートのときは、Paperのカテゴリが要求するアンケート→それぞれの質問項目、の順に集めたが、プレビューなので後者のみ。
         $aEnq = Enquete::accessibleEnquetes(true);
@@ -310,7 +310,7 @@ class EnqueteController extends Controller
         $paper = new Paper();
         $paper->id = 0;
         $paper->category_id = 1;
-        return view("enquete.pageedit")->with(compact("enq", "enqs", "enqans", "paper"));
+        return view("enquete.pageedit")->with(compact("enq", "enqs", "enqans", "paper", "foradmin"));
     }
 
 

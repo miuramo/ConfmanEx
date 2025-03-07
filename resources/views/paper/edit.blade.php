@@ -143,7 +143,7 @@
                         <div class="text-sm mx-4 mt-2">
                             複数のファイルをまとめてアップロードできます。ファイル種別は自動で認識します。
                             @php
-                                if ($cat->is_accept_altpdf()){
+                                if ($cat->is_accept_altpdf()) {
                                     $gendo = array_map('intval', explode('-', $cat->altpdf_accept_end));
                                     $mes = "【概要説明スライド】のみ、{$gendo[0]}月{$gendo[1]}日まで追加可";
                                 } else {
@@ -151,7 +151,7 @@
                                     $mes = "{$gendo[0]}月{$gendo[1]}日まで修正可";
                                 }
                             @endphp
-                            <x-element.gendospan>{{$mes}}</x-element.gendospan>
+                            <x-element.gendospan>{{ $mes }}</x-element.gendospan>
                         </div>
                     </x-element.h1>
 
@@ -226,7 +226,8 @@
                 {{-- 査読中は、編集可能なアンケートは表示しない。（査読結果を返すタイミングでの設定変更が難しいため） --}}
                 @if (!$is_reviewing)
                     @foreach ($enqs['canedit'] as $enq)
-                        <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-gray-400">
+                        <a name="enq_{{ $enq->id }}"></a>
+                        <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-gray-400 hover:bg-green-300 dark:hover:bg-green-800">
                             {{ $enq->name }}
                             @if (!$enq->showonpaperindex)
                                 &nbsp; → <x-element.linkbutton
@@ -262,6 +263,10 @@
                                 ここをクリックして回答参照
                             </x-element.linkbutton>
                         @endif
+                        <span class="mx-10"></span>
+                        <x-element.linkbutton2 href="{{route('enq.preview', ['enq'=>$enq->id])}}" size="xs" color="cyan"
+                            target="_blank">質問項目をみる</x-element.linkbutton2>
+
                     </div>
                     @if ($enq->showonpaperindex)
                         <div class="mx-10">

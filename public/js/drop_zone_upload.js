@@ -13,8 +13,10 @@ $(function () {
     $('input[type="file"]').on('change', onChange);
 
     var dropZone = document.getElementById('drop_zone');
-    dropZone.addEventListener('dragover', handleDragOver, false);
-    dropZone.addEventListener('drop', handleFileSelect, false);
+    if (dropZone) {
+        dropZone.addEventListener('dragover', handleDragOver, false);
+        dropZone.addEventListener('drop', handleFileSelect, false);
+    }
     function handleDragOver(evt) {
         evt.stopPropagation();
         evt.preventDefault();
@@ -42,22 +44,22 @@ $(function () {
 
     // ファイル送信処理の最初の入り口
     async function sendFileToServer(files) {
-        for(const onefile of files){
+        for (const onefile of files) {
             // console.log(onefile);
-            console.log(onefile.name + " "+onefile.size);
-            if (onefile.size > upload_max_filesize){
-                alert("upload_max_filesize : "+onefile.name+" "+onefile.size+ " > "+upload_max_filesize);
+            console.log(onefile.name + " " + onefile.size);
+            if (onefile.size > upload_max_filesize) {
+                alert("upload_max_filesize : " + onefile.name + " " + onefile.size + " > " + upload_max_filesize);
                 continue;
             }
-            if (onefile.size >= post_max_size){
-                alert("post_max_size : "+onefile.name+" "+onefile.size+" > "+post_max_size);
+            if (onefile.size >= post_max_size) {
+                alert("post_max_size : " + onefile.name + " " + onefile.size + " > " + post_max_size);
                 continue;
             }
             await sendOneFile(onefile);
         }
     }
 
-    async function sendOneFile(onefile){
+    async function sendOneFile(onefile) {
         var fd = new FormData();
         fd.append('file', onefile);
         fd.append('_token', $('meta[name="csrf-token"]').attr("content"));
@@ -98,9 +100,9 @@ $(function () {
         // AJAXでindexを呼び、#filelist にさしかえる
         reloadFileList();
     }
-    function reloadFileList(){
+    function reloadFileList() {
         var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
+        xhr.onreadystatechange = function () {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
                     // データの取得が成功した場合
@@ -112,7 +114,7 @@ $(function () {
                 }
             }
         };
-        xhr.open('GET', '/paper/'+paper_id+'/filelist', false);
+        xhr.open('GET', '/paper/' + paper_id + '/filelist', false);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest'); // これがないとAjax判定にならない
         xhr.send();
     }

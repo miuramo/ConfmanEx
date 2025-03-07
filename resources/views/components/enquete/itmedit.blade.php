@@ -19,6 +19,7 @@
     }
     $after = nl2br($itm->contentafter); // input要素のあとの説明など
 @endphp
+<a name="{{ $itm->name }}"></a>
 <tr
     class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200' : 'bg-white-50 dark:bg-slate-400' }}">
     <td nowrap class="p-4">

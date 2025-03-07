@@ -5,16 +5,19 @@
             {{-- <a href="/" title="トップページへのリンク"
                 class="font-semibold text-gray-800 hover:text-blue-700 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">{{ env('APP_NAME') }}</a> --}}
 
-            「{{ $enq->name}}」{{__('の編集')}}
 
-            @if($paper->id > 0)
-            <x-element.paperid size=2 :paper_id="$paper->id">
-            </x-element.paperid>
-            <span class="mx-2"></span>
-            <x-element.category :cat="$paper->category_id">
-            </x-element.category>
+            @if ($paper->id > 0)
+                「{{ $enq->name }}」{{ __('の編集') }}
+                <x-element.paperid size=2 :paper_id="$paper->id">
+                </x-element.paperid>
+                <span class="mx-2"></span>
+                <x-element.category :cat="$paper->category_id">
+                </x-element.category>
             @else
-            <span class="mx-4 p-2 border-2 border-blue-500 bg-cyan-100 text-blue-500">プレビュー</span>
+                アンケート「{{ $enq->name }}」の質問項目確認
+                @if ($foradmin)
+                    <span class="mx-4 p-2 border-2 border-blue-500 bg-cyan-100 text-blue-500">プレビュー</span>
+                @endif
             @endif
         </h2>
     </x-slot>
@@ -23,14 +26,16 @@
     @endpush
 
     <div class="mt-4 px-6 mb-10">
-        @if($paper->id > 0)
-        <x-element.linkbutton href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="gray" size="lg">
-            &larr; 投稿{{ $paper->id_03d() }} 編集に戻る
-        </x-element.linkbutton>
+        @if ($paper->id > 0)
+            <x-element.linkbutton href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="gray" size="lg">
+                &larr; 投稿{{ $paper->id_03d() }} 編集に戻る
+            </x-element.linkbutton>
         @else
-        <x-element.linkbutton href="{{ route('enq.index') }}" color="gray" size="sm">
-            &larr; アンケート一覧に戻る
-        </x-element.linkbutton>
+            @if ($foradmin)
+                <x-element.linkbutton href="{{ route('enq.index') }}" color="gray" size="sm">
+                    &larr; アンケート一覧に戻る
+                </x-element.linkbutton>
+            @endif
         @endif
     </div>
 
@@ -48,7 +53,7 @@
                     {{ $enq->name }}
                     <x-element.gendospan>{{ $enqs['until'][$enq->id] }}まで修正可</x-element.gendospan>
                 </div>
-{{-- EDIT --}}
+                {{-- EDIT --}}
                 <form action="{{ route('enquete.update', ['paper' => $paper->id, 'enq' => $enq]) }}" method="post"
                     id="enqform{{ $enq->id }}">
                     @csrf
@@ -61,7 +66,7 @@
                     </div>
                 </form>
 
-{{-- VIEW --}}
+                {{-- VIEW --}}
                 {{-- <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
                     {{ $enq->name }}
                 </div>
@@ -74,14 +79,17 @@
     </div>
 
     <div class="mt-4 px-6 pb-10">
-        @if($paper->id > 0)
-        <x-element.linkbutton href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="gray" size="lg">
-            &larr; 投稿{{ $paper->id_03d() }} 編集に戻る
-        </x-element.linkbutton>
+        @if ($paper->id > 0)
+            <x-element.linkbutton href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="gray"
+                size="lg">
+                &larr; 投稿{{ $paper->id_03d() }} 編集に戻る
+            </x-element.linkbutton>
         @else
-        <x-element.linkbutton href="{{ route('enq.index') }}" color="gray" size="sm">
-            &larr; アンケート一覧に戻る
-        </x-element.linkbutton>
+            @if ($foradmin)
+                <x-element.linkbutton href="{{ route('enq.index') }}" color="gray" size="sm">
+                    &larr; アンケート一覧に戻る
+                </x-element.linkbutton>
+            @endif
         @endif
     </div>
 
