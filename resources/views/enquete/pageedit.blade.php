@@ -17,6 +17,9 @@
                 アンケート「{{ $enq->name }}」の質問項目確認
                 @if ($foradmin)
                     <span class="mx-4 p-2 border-2 border-blue-500 bg-cyan-100 text-blue-500">プレビュー</span>
+                @else
+                    <div class="mt-4 mx-4 p-2 border-2 border-red-500 bg-pink-100 text-red-500">
+                        注意：ここで回答しても、アンケートの回答には反映されません。</div>
                 @endif
             @endif
         </h2>
