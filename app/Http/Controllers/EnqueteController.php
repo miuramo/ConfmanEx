@@ -295,13 +295,12 @@ class EnqueteController extends Controller
         //
     }
 
-    // enq preview
+    // enq preview (for every user)
     public function edit_dummy(Enquete $enq, bool $foradmin = false)
     {
         //Paperアンケートのときは、Paperのカテゴリが要求するアンケート→それぞれの質問項目、の順に集めたが、プレビューなので後者のみ。
-        $aEnq = Enquete::accessibleEnquetes(true);
-        if (!isset($aEnq[$enq->id])) abort(403);
-        // if (!auth()->user()->can('role', 'pc')) return abort(403);
+        // $aEnq = Enquete::accessibleEnquetes(true);
+        // if (!isset($aEnq[$enq->id])) abort(403);
         $itms = EnqueteItem::where('enquete_id', $enq->id)->orderBy('orderint');
         $enqans = [];
         $enqs["canedit"][$enq->id] = $enq;
