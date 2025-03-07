@@ -92,7 +92,7 @@
                         項目編集
                     </x-element.linkbutton2>
                     <span class="mx-1"></span>
-                    <x-element.linkbutton2 href="{{ route('enq.preview', ['enq' => $enq->id]) }}" color="blue"
+                    <x-element.linkbutton2 href="{{ route('enq.preview', ['enq' => $enq->id, 'foradmin'=>true]) }}" color="blue"
                         size="sm">
                         プレビュー
                     </x-element.linkbutton2>

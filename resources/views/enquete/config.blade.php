@@ -40,7 +40,8 @@
         <x-element.h1>
             アンケート 【{{ $enq->name }}】 (enqid: {{ $enq->id }}) の受付設定
             <span class="mx-6"></span>
-            <x-element.linkbutton2 href="{{ route('enq.preview', ['enq' => $enq->id]) }}" color="blue" size="sm">
+            <x-element.linkbutton2 href="{{ route('enq.preview', ['enq' => $enq->id, 'foradmin' => true]) }}"
+                color="blue" size="sm">
                 プレビュー
             </x-element.linkbutton2>
             <span class="mx-1"></span>
@@ -50,8 +51,7 @@
                 項目編集
             </x-element.linkbutton2>
             <span class="mx-4"></span>
-            <x-element.linkbutton href="{{ route('enq.answers', ['enq' => $enq->id]) }}" color="green"
-                size="sm">
+            <x-element.linkbutton href="{{ route('enq.answers', ['enq' => $enq->id]) }}" color="green" size="sm">
                 回答をみる
             </x-element.linkbutton>
             <span class="mx-1"></span>
