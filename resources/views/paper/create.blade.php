@@ -29,7 +29,7 @@
                                 <input type="checkbox" id="{{ $name }}" name="{{ $name }}"
                                     {{ old($name) == 'on' ? 'checked' : '' }} class="dark:bg-slate-300"> <label
                                     for="{{ $name }}"
-                                    class="hover:bg-yellow-100 dark:text-slate-400 dark:hover:bg-yellow-950">{{ $mes }}</label>
+                                    class="hover:bg-yellow-100 dark:text-slate-400 dark:hover:bg-yellow-950">{!! $mes !!}</label>
                             </li>
                         @endforeach
                     </ul>
@@ -68,7 +68,7 @@
                                     <input type="checkbox" id="{{ $name }}" name="{{ $name }}"
                                         {{ old($name) == 'on' ? 'checked' : '' }} class="dark:bg-slate-300"> <label
                                         for="{{ $name }}"
-                                        class="hover:bg-lime-100 dark:text-slate-400 dark:hover:bg-lime-950">{{ $mes }}</label>
+                                        class="hover:bg-lime-100 dark:text-slate-400 dark:hover:bg-lime-950">{!! $mes !!}</label>
                                 </li>
                             @endforeach
                         </ul>
