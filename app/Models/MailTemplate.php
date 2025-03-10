@@ -508,6 +508,7 @@ class MailTemplate extends Model
 
     /**
      * catids のいずれかでアクセプトされ、まだnameのアンケートに回答していないPaper
+     * （投稿時のカテゴリと、採択カテゴリが異なっている場合は、含まれないので、mt_noenqans_submitを使用する）
      */
     public static function mt_noenqans($name, ...$catids)
     {
@@ -523,6 +524,26 @@ class MailTemplate extends Model
             $query->where("judge", ">", 0);
         })->whereNotIn('paper_id', $exist_enqansers_pid)->get()->pluck("paper_id")->toArray();
 
+        $papers = Paper::whereIn('id', $noenqansPIDs)->whereIn("id", $target_paperids)->get();
+        $array_papers = [];
+        foreach ($papers as $paper) {
+            $array_papers[] = $paper;
+        }
+        return $array_papers;
+    }
+    /**
+     * catids のいずれかでアクセプトされ、まだnameのアンケートに回答していないPaper
+     * （投稿時のカテゴリを指定）
+     */
+    public static function mt_noenqans_submit($name, ...$catids)
+    {
+        // 当初投稿時のcategory_idで絞り込む
+        $target_paperids = Paper::whereIn('category_id', $catids)->whereNull('deleted_at')->pluck('id')->toArray();
+        $enqitm = EnqueteItem::where("name", $name)->first();
+        $exist_enqansers_pid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->pluck('paper_id')->toArray();
+        $noenqansPIDs = Submit::with('paper')->whereIn("paper_id", $target_paperids)->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->whereNotIn('paper_id', $exist_enqansers_pid)->get()->pluck("paper_id")->toArray();
         $papers = Paper::whereIn('id', $noenqansPIDs)->whereIn("id", $target_paperids)->get();
         $array_papers = [];
         foreach ($papers as $paper) {
