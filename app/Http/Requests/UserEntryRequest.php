@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Mail\FirstInvitation;
 use App\Models\User;
+use GuzzleHttp\Client;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Hash;
@@ -38,6 +39,19 @@ class UserEntryRequest extends FormRequest
      */
     public function shori(): object
     {
+        // reCAPTCHA
+        $client = new Client();
+        $response = $client->post('https://www.google.com/recaptcha/api/siteverify', [
+            'form_params' => [
+                'secret' => env('RECAPTCHA_SECRET_KEY'),
+                'response' => $this->input('g-recaptcha-response')
+            ]
+        ]);
+        $body = json_decode($response->getBody());
+        if (!$body->success) {
+            return back()->with(['feedback.error' => 'reCAPTCHA verification failed']);
+        }
+
         $em = $this->input("email");
         try {
             $user = User::create([

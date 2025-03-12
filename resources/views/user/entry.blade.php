@@ -34,6 +34,8 @@
                         placeholder="your@email.com" required />
                 </div>
 
+                <div class="pb-2 g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
+
                 <div>
                     <x-element.submitbutton>
                         認証URLをメール送信
@@ -65,6 +67,8 @@
             @endisset
         </x-element.sankou>
     </div>
-
+    @push('localjs')
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    @endpush
 
 </x-app-layout>
