@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
+<!-- APP LAYOUT -->
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -54,11 +54,6 @@
     </div>
     <!-- 最後に差し込む、個別のJS -->
     @stack('localjs')
-
-    {{-- <script>
-        var darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        console.log("darkMode:"+darkMode);
-    </script> --}}
     @livewireScripts
 </body>
 
