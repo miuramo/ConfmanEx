@@ -61,7 +61,7 @@ class Enquete extends Model
             $willDemo = false;
         }
         $matcher = ($willDemo) ? "d" . $cat_id : $cat_id;
-        $configs = EnqueteConfig::where('valid', 1)->get();
+        $configs = EnqueteConfig::where('valid', 1)->orderBy('openstart', 'desc')->get();
         $canedit = [];
         $readonly = [];
         $until = []; //enqid=>deadline
