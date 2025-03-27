@@ -21,7 +21,7 @@
             </x-element.button>
             を押してください。（もう一度押すと、説明を閉じます。）
             <span class="mx-2"></span>
-            <x-element.button id="toggleButton" value="和文著者名の設定方法を表示" color='gray' size='md'
+            <x-element.button id="toggleButton" value="著者名の設定方法を表示" color='gray' size='md'
                 onclick="openclose('ex_authorlist')">
             </x-element.button>
 
@@ -39,7 +39,7 @@
                     <div class="my-2 mx-4 bg-pink-50 px-4 py-1">
                         <b>半角スペース以外の文字の追加や修正はできません。ただし、PDFテキストのコピーのみで正しく設定できない場合は</b>
                         <x-element.button onclick="maydirty_mode(true);" value="直接入力モードに切替" size="sm"
-                            color="purple" >
+                            color="purple">
                             {{-- color="purple" confirm="本当に直接入力モードにしますか？必要がなければキャンセルを押してください。"> --}}
                         </x-element.button>
                         {{-- <span class="border border-gray-600 bg-purple-200 p-0.5">直接入力モードに切替</span> --}}
@@ -69,15 +69,21 @@
 
             <div class="hidden-content bg-slate-100 p-2 mt-2 dark:text-gray-600" id="ex_authorlist"
                 style="display:none;">
-                <div class="text-sm px-2  dark:text-gray-400">和文著者名の設定方法：一名につき、一行ずつ記入してください。氏名のあいだには半角スペースをいれてください。
+                <div class="text-sm px-2  dark:text-gray-400">著者名の設定方法：一名につき、一行ずつ記入してください。氏名のあいだには半角スペースをいれてください。
                     氏名のあとに、所属を半角 ( ) または全角（ ）で囲って記載してください。複数の所属がある場合は半角スラッシュ / で区切ってください。<br>
                     とくに外国人の氏名については、論文PDFでの表記（カナ/英文）とおなじであることを確認してください。共著者のかたも、投稿一覧からご確認いただけます。</div>
                 <div class="mt-2 text-sm px-2  dark:text-gray-400">和文著者名の設定例：</div>
-                <textarea id="jpex" name="jpexample" rows="3"
-                    class="inline-flex mb-1 block p-2.5 w-full text-md text-gray-900 bg-gray-200 rounded-lg border border-gray-300
-                     focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
-                      dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="投稿 太郎 (投稿大学)&#10;和布蕪 二郎 (和布蕪大学)&#10;昆布 巻子 (ダシ大学/昆布研究所)" readonly></textarea>
+                <div class="grid gap-6 lg:grid-cols-2 lg:gap-1">
+                    <textarea id="jpex" name="jpexample" rows="3"
+                        class="inline-flex mb-1 block p-2.5 w-full text-md text-gray-900 bg-gray-200 rounded-lg border border-gray-300
+                 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
+                  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="投稿 太郎 (投稿大学)&#10;和布蕪 二郎 (和布蕪大学)&#10;昆布 巻子 (ダシ大学/昆布研究所)" readonly></textarea>
+                    <textarea id="eauthors" name="eauthorlist" rows="3"
+                        class="inline-flex mb-1 p-2.5 w-full text-md text-gray-900 bg-gray-200 rounded-lg  border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-900 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="Toukou, Taro (Toukou University)&#10;Mekabu, Jiro (Mekebu University)&#10;Kombu, Makiko (Dashi University/Kombu Laboratory)"
+                        readonly></textarea>
+                </div>
 
                 <div class="px-10 text-red-800 text-sm">
                     シンポジウムの予稿集・出版担当が所属表記の短縮や修正を行う場合があります。ご了承ください。</div>
@@ -97,8 +103,7 @@
                 color="yellow"></x-element.button>
             <span class="mx-10"></span>
             <x-element.button onclick="maydirty_mode(true);" value="直接入力モードに切替" size="sm" color="purple"
-                {{-- confirm="本当に直接入力モードにしますか？必要がなければキャンセルを押してください。" --}}
-                >
+                {{-- confirm="本当に直接入力モードにしますか？必要がなければキャンセルを押してください。" --}}>
             </x-element.button>
         </div>
 
@@ -148,8 +153,7 @@
     </form>
 
     <div class="mt-4 px-6 pb-10">
-        <x-element.linkbutton href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="gray"
-            size="lg">
+        <x-element.linkbutton href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="gray" size="lg">
             &larr; 投稿{{ $paper->id_03d() }} に戻る
         </x-element.linkbutton>
     </div>

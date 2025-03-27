@@ -208,14 +208,20 @@
                                 @endforeach
                             </table>
 
-                            <div class="mt-2 text-sm px-2  dark:text-gray-400">注：和文著者名の書き方は、以下の例に合わせてください。詳細は
-                                [書誌情報の設定]→[和文著者名の設定方法を表示] を参照してください。</div>
-                            <textarea id="jpex" name="jpexample" rows="3"
-                                class="inline-flex mb-1 block p-2.5 w-full text-md text-gray-900 bg-gray-200 rounded-lg border border-gray-300
+                            <div class="mt-2 text-sm px-2  dark:text-gray-400">
+                                注：和文著者名、英文Author(s)の書き方は、以下の例に合わせてください。詳細は
+                                [書誌情報の設定]→[著者名の設定方法を表示] を参照してください。</div>
+                            <div class="grid gap-6 lg:grid-cols-2 lg:gap-1">
+                                <textarea id="jpex" name="jpexample" rows="3"
+                                    class="inline-flex mb-1 block p-2.5 w-full text-md text-gray-900 bg-gray-200 rounded-lg border border-gray-300
                              focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
                               dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="投稿 太郎 (投稿大学)&#10;和布蕪 二郎 (和布蕪大学)&#10;昆布 巻子 (ダシ大学/昆布研究所)" readonly></textarea>
-
+                                    placeholder="投稿 太郎 (投稿大学)&#10;和布蕪 二郎 (和布蕪大学)&#10;昆布 巻子 (ダシ大学/昆布研究所)" readonly></textarea>
+                                <textarea id="eauthors" name="eauthorlist" rows="3"
+                                    class="inline-flex mb-1 p-2.5 w-full text-md text-gray-900 bg-gray-200 rounded-lg  border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-900 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Toukou, Taro (Toukou University)&#10;Mekabu, Jiro (Mekebu University)&#10;Kombu, Makiko (Dashi University/Kombu Laboratory)"
+                                    readonly></textarea>
+                            </div>
                         </div>
                     </x-element.h1>
                 </div>
@@ -227,7 +233,8 @@
                 @if (!$is_reviewing)
                     @foreach ($enqs['canedit'] as $enq)
                         <a name="enq_{{ $enq->id }}"></a>
-                        <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-gray-400 hover:bg-green-300 dark:hover:bg-green-800">
+                        <div
+                            class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-gray-400 hover:bg-green-300 dark:hover:bg-green-800">
                             {{ $enq->name }}
                             @if (!$enq->showonpaperindex)
                                 &nbsp; → <x-element.linkbutton
@@ -264,8 +271,9 @@
                             </x-element.linkbutton>
                         @endif
                         <span class="mx-10"></span>
-                        <x-element.linkbutton2 href="{{route('enq.preview', ['enq'=>$enq->id, 'key'=>$enq->getkey(7)])}}" size="xs" color="cyan"
-                            target="_blank">質問項目をみる</x-element.linkbutton2>
+                        <x-element.linkbutton2
+                            href="{{ route('enq.preview', ['enq' => $enq->id, 'key' => $enq->getkey(7)]) }}" size="xs"
+                            color="cyan" target="_blank">質問項目をみる</x-element.linkbutton2>
 
                     </div>
                     @if ($enq->showonpaperindex)
