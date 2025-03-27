@@ -72,7 +72,7 @@
                 <div class="text-sm px-2  dark:text-gray-400">著者名の設定方法：一名につき、一行ずつ記入してください。氏名のあいだには半角スペースをいれてください。
                     氏名のあとに、所属を半角 ( ) または全角（ ）で囲って記載してください。複数の所属がある場合は半角スラッシュ / で区切ってください。<br>
                     とくに外国人の氏名については、論文PDFでの表記（カナ/英文）とおなじであることを確認してください。共著者のかたも、投稿一覧からご確認いただけます。</div>
-                <div class="mt-2 text-sm px-2  dark:text-gray-400">和文著者名の設定例：</div>
+                {{-- <div class="mt-2 text-sm px-2  dark:text-gray-400">和文著者名の設定例：</div> --}}
                 <div class="grid gap-6 lg:grid-cols-2 lg:gap-1">
                     <textarea id="jpex" name="jpexample" rows="3"
                         class="inline-flex mb-1 block p-2.5 w-full text-md text-gray-900 bg-gray-200 rounded-lg border border-gray-300
