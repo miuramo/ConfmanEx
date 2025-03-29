@@ -109,7 +109,11 @@
                         <x-element.submitbutton value="addtemplate" color="pink">
                             チェックをいれた人をTo:に指定した雛形を、新規作成
                         </x-element.submitbutton>
-                        （注：ボタンを押してもメールは送信しません。）
+                        <div>
+                        （注：上の「新規作成」を押しても、メールは送信しません。
+                        <x-element.linkbutton href="{{route('mt.index')}}" color="pink" size="sm">メール雛形一覧</x-element.linkbutton>
+                        から送信してください。）
+                        </div>
                     </div>
                 </div>
 
