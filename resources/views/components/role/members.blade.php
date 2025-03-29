@@ -5,7 +5,7 @@
     'chkfor' => null,
 ])
 <!-- components.role.members -->
-<table class="min-w-full divide-y divide-gray-200">
+<table class="min-w-full divide-y divide-gray-200 sortable" id="members">
     <thead>
         <tr>
             @foreach ($heads as $h)

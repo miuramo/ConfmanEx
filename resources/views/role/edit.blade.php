@@ -230,6 +230,7 @@
         <script src="/js/openclose.js"></script>
         <script src="/js/chk_all.js"></script>
         <script src="/js/usearch.js"></script>
+        <script src="/js/sortable.js"></script>
     @endpush
 
 
