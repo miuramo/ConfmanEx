@@ -624,8 +624,22 @@ class Paper extends Model
         // アンケートエラー
         $enqerrors = Enquete::validateEnquetes($this);
 
+        $biberrors = $this->biberrors();
+        $enqerrors = array_merge($enqerrors, $biberrors);
+
         $this->accepted = (count($fileerrors) == 0 && count($enqerrors) == 0);
         $this->save();
+    }
+    public function biberrors()
+    {
+        $cat = Category::find($this->category_id);
+        // 書誌情報エラー(もしshow_bibinfo_btnが1かつ、書誌情報が無い場合)
+        if ($cat->show_bibinfo_btn) {
+            $biberrors = $this->validateBibinfo();
+        } else {
+            $biberrors = [];
+        }
+        return $biberrors;
     }
 
     /**

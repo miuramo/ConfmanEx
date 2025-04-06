@@ -293,19 +293,14 @@ class PaperController extends Controller
 
             $cat = Category::find($paper->category_id);
             // 書誌情報エラー(もしshow_bibinfo_btnが1かつ、書誌情報が無い場合)
-            if ($cat->show_bibinfo_btn) {
-                $biberrors = $paper->validateBibinfo();
-            } else {
-                $biberrors = [];
-            }
+            $biberrors = $paper->biberrors(); 
             $enqerrors = array_merge($enqerrors, $biberrors);
-
-            $koumoku = Paper::mandatory_bibs(); //必須書誌情報            
 
             // paper->validate_accepted()でもよいが、せっかくエラーを調べたので、それを使う。
             $paper->accepted = (count($fileerrors) == 0 && count($enqerrors) == 0);
             $paper->save();
 
+            $koumoku = Paper::mandatory_bibs(); //必須書誌情報            
 
             return view("paper.edit", ["paper" => $id])->with(compact("id", "id_03d", "all", "paper", "enqs", "enqans", "fileerrors", "enqerrors", "biberrors", "cat", "koumoku"));
         } catch (ModelNotFoundException $ex) {
