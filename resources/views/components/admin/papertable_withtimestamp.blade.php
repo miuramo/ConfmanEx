@@ -3,6 +3,7 @@
     // 'heads' => ['chk', 'id', '削除日時', 'title', 'owner', 'owneraffil', 'pdf', 'img', 'video', 'altpdf'],
     'heads' => ['id', 'title', 'owner', 'owneraffil', '投稿作成', 'pdf', 'img', 'video', 'altpdf'],
     'enqans' => [],
+    'past' => [],
 ])
 
 <!-- components.admin.papertable -->
@@ -19,20 +20,20 @@
     <tbody class="bg-white divide-y divide-gray-200">
         @foreach ($all as $paper)
             <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200' : 'bg-white' }}">
-                {{-- <td class="p-1 text-center">
-                    <input type="checkbox" name="pid[]" value="{{ $paper->id }}">
-                </td> --}}
-                <td class="p-1 text-sm">{{ $paper->id_03d() }}
+                <td class="p-1 text-sm">
+                    <input type="checkbox" name="pid[]" value="{{ $paper->id }}"
+                        @isset($past[$paper->id]) class="pastlimit bg-pink-200" @endisset>
+                    {{ $paper->id_03d() }}
                 </td>
                 @isset($paper->deleted_at)
                     <td class="p-1 text-sm text-red-700 {{ $loop->iteration % 2 === 0 ? 'bg-gray-300' : 'bg-gray-100' }}">
                         {{ $paper->title }} (論理削除済み：{{ $paper->deleted_at }})
                     </td>
-                    @else
-                <td class="p-1 text-sm">{{ $paper->title }}
+                @else
+                    <td class="p-1 text-sm">{{ $paper->title }}
                     @endisset
                 </td>
-                <td class="p-1 text-sm">{{ @$paper->paperowner->name}}
+                <td class="p-1 text-sm">{{ @$paper->paperowner->name }}
                 </td>
                 <td class="p-1 text-sm">{{ @$paper->paperowner->affil }}
                 </td>
@@ -66,7 +67,7 @@
                             target="_blank">
                             {{ $paper->video_file->created_at }}</a>
                     @else
-                       --
+                        --
                     @endif
                 </td>
                 <td class="p-1 text-sm">
@@ -84,3 +85,19 @@
         @endforeach
     </tbody>
 </table>
+
+<script>
+    function checkAllByClass(cls) {
+        var checks = document.getElementsByClassName(cls);
+        for (var i = 0; i < checks.length; i++) {
+            checks[i].checked = true;
+        }
+    }
+    function UnCheckAll(formname) {
+        for (var i = 0; i < document.forms[formname].elements.length; i++) {
+            if (document.forms[formname].elements[i].type != "radio") {
+                document.forms[formname].elements[i].checked = false;
+            }
+        }
+    }
+</script>

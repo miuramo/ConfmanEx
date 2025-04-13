@@ -40,17 +40,25 @@
         @csrf
         @method('post')
         <div class="mx-10 py-4">
-            <x-admin.papertable_withtimestamp :all="$all">
+            <div class="my-2">
+                <x-element.button onclick="checkAllByClass('pastlimit')" color="pink" value="「タイトル未設定」＆「PDFなし」& 「24時間経過した投稿」にチェック">
+                </x-element.button>
+                <span class="mx-2"></span>
+                <x-element.button onclick="UnCheckAll('admin_timestamp')" color="gray" value="全てのチェックを外す">
+                </x-element.button>
+            </div>
+            
+            <x-admin.papertable_withtimestamp :all="$all" :past="$past">
             </x-admin.papertable_withtimestamp>
 
-            {{-- <div class="my-2"></div>
+            <div class="my-2"></div>
             チェックを入れた投稿を
             <span class="mx-1"></span>
             <x-element.submitbutton value="revoke" color="cyan">復活する
             </x-element.submitbutton>
             <span class="mx-2"></span>
             <x-element.submitbutton value="delete" color="red">論理削除する
-            </x-element.submitbutton> --}}
+            </x-element.submitbutton>
 
         </div>
     </form>

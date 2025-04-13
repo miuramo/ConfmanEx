@@ -127,6 +127,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_deletepaper/{cat}', [AdminController::class, 'deletepaper'])->name('admin.deletepaper');          // PC Top
     Route::post('/admin_deletepaper/{cat}', [AdminController::class, 'deletepaper'])->name('admin.deletepaper');          // PC Top
     Route::get('/admin_timestamp/{cat}', [AdminController::class, 'timestamp'])->name('admin.timestamp');          // PC Top
+    Route::post('/admin_timestamp/{cat}', [AdminController::class, 'timestamp'])->name('admin.timestamp');          // PC Top
     Route::post('/admin_zipf', [AdminController::class, 'zipdownload'])->name('admin.zipdownload');
     Route::post('/admin_zipds', [AdminController::class, 'zipdownloadstream'])->name('admin.zipstream');
     Route::get('/admin_paperlist_excel', [AdminController::class, 'paperlist_excel'])->name('admin.paperlist_excel');

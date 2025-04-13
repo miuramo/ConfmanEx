@@ -161,12 +161,35 @@ class AdminController extends Controller
         }
         return view('admin.deletepaper')->with(compact("all", "cat_id"));
     }
-    public function timestamp(int $cat_id){
+    public function timestamp(int $cat_id, Request $req){
         if (!auth()->user()->can('role_any', 'pc')) {
             if (!auth()->user()->can('manage_cat', $cat_id)) abort(403);
         }
+        if ($req->has("action") ) {
+            foreach ($req->input("pid") as $n => $pid) {
+                $paper = Paper::withTrashed()->find($pid);
+                if ($paper != null) {
+                    if ($req->input("action") == "revoke"){
+                        $paper->deleted_at = null;
+                        $paper->save();
+                        $mes = "復活";
+                    } else if ($req->input("action") == "delete"){
+                        $paper->softdelete_me();
+                        $mes = "論理削除";
+                    }
+                }
+            }
+            return redirect()->route('admin.timestamp', ['cat' => $cat_id])->with('feedback.success', '投稿を'.$mes.'しました');
+        }
         $all = Paper::withTrashed()->where("category_id", $cat_id)->orderBy('deleted_at', 'asc')->orderBy('id')->get();
-        return view('admin.timestamp')->with(compact("all", "cat_id"));
+        
+        $now = date("Y-m-d H:i:s");
+        $before24h = date("Y-m-d H:i:s", strtotime($now) - 24 * 60 * 60);
+        // 24時間経過後の投稿で、PDFファイルなし、タイトルなしを抽出。
+        $past = Paper::where("category_id", $cat_id)->whereNull("title")->where('created_at', '<', $before24h)
+        ->whereNull('pdf_file_id')
+        ->select('id', 'owner')->pluck('owner', 'id')->toArray();
+        return view('admin.timestamp')->with(compact("all", "cat_id", "past"));
     }
 
 
