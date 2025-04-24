@@ -41,6 +41,10 @@
             <x-element.submitbutton value="active_all" color="red" confirm="本当に通常ファイルを全削除しますか？">
                 {{ __('通常ファイルの全削除') }}
             </x-element.submitbutton>
+            <span class="mx-2"></span>
+            <x-element.submitbutton value="notindb" color="lime" confirm="本当にDBで管理されていないファイルを全削除しますか？">
+                {{ __('DBで管理されていないファイルの全削除') }}
+            </x-element.submitbutton>
         </form>
     </div>
 

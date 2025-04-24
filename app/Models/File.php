@@ -292,7 +292,7 @@ class File extends Model
     }
 
 
-    public function removeDirectory($path)
+    public static function removeDirectory($path)
     {
         if (!is_dir($path)) {
             return;
@@ -302,7 +302,7 @@ class File extends Model
         foreach ($files as $file) {
             if ($file != '.' && $file != '..') {
                 if (is_dir("$path/$file")) {
-                    $this->removeDirectory("$path/$file");
+                    self::removeDirectory("$path/$file");
                 } else {
                     @unlink("$path/$file");
                 }
@@ -492,7 +492,7 @@ class File extends Model
         $parentdir = storage_path(File::apf());
         // ファイル一覧
         $files = scandir($parentdir);
-        // info($files);
+        $files = array_diff($files, ['.', '..','.DS_Store','dump.sql','nofile.png','passdumpsql.zip']);
         return $files;
     }
 
@@ -511,17 +511,41 @@ class File extends Model
     }
     public static function getFileNamesNotInDB()
     {
-        $folders = self::getRealFolderNames();
+        $fnames = self::getRealFileNames();
         $notindb = [];
         $indb = [];
-        foreach ($folders as $folder) {
-            $f = File::where("fname", "like", $folder . "%")->first();
+        foreach ($fnames as $fname) {
+            $base = basename($fname);
+            $f = File::where("fname", "like", $base . "%")->first();
             if ($f) {
-                $indb[$f->id] = $folder;
+                $indb[$f->id] = $fname;
             } else {
-                $notindb[] = $folder;
+                $notindb[] = $fname;
             }
         }
         return ['notindb' => $notindb, 'indb' => $indb];
+    }
+    public static function delete_notindb()
+    {
+        $folders = self::getFileNamesNotInDB();
+        $notindb = $folders['notindb'];
+        foreach ($notindb as $filename) {
+            $fullpath = storage_path(File::apf() . '/' . $filename);
+            if (is_dir($fullpath)) {
+                self::removeDirectory($fullpath);
+            } else {
+                @unlink($fullpath);
+            }
+            // // getRealFileNames();から検索する
+            // foreach($realfiles as $file) {
+            //     if (preg_match("/^{$filename}/", $file)) {
+            //         $fullpath = storage_path(File::apf() . '/' . $file);
+            //         if (is_file($fullpath)) {
+            //             @unlink($fullpath);
+            //         }
+            //     }
+            // }
+            // info($realfiles);
+        }
     }
 }

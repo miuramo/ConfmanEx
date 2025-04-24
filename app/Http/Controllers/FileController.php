@@ -394,6 +394,9 @@ class FileController extends Controller
                     $file->delete_me();
                 }
                 return redirect()->route('file.cleanup_files')->with('feedback.success', '通常ファイルを完全に削除しました');
+            }else if ($req->has('action') && $req->input('action') == 'notindb'){
+                File::delete_notindb();
+                return redirect()->route('file.cleanup_files')->with('feedback.success', 'DBに登録されていないファイルを削除しました');
             }
         }
         $totalsize = [0=> 0, 1 => 0, 2 => 0, 3 => 0];
