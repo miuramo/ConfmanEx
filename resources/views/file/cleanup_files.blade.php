@@ -21,6 +21,10 @@
         </h2>        
         size : {{sprintf("%.2f MB", $totalsize[$key]/1024/1024) }}<br>
         count : {{$totalcount[$key]}}<br>
+
+        <h3 class="font-semibold">うち、ビデオファイル</h3>
+        size : {{sprintf("%.2f MB", $totalsize[$key+2]/1024/1024) }}<br>
+        count : {{$totalcount[$key+2]}}<br>
     </div>
     @endforeach
         <form action="{{ route('file.cleanup_files') }}" method="post" id="cleanup">

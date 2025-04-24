@@ -371,28 +371,39 @@ class FileController extends Controller
     {
         if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
 
-        $files = File::where('deleted', 1)->get();
+        $videofiles = File::where('deleted', 0)->where('mime', 'like', 'video%')->get();
         if ($req->method() === 'POST') {
-            info($req->all());
-            if ($req->has('action') && $req->input('action') == 'delete') { // action is lock or unlock
+            if ($req->has('action') && $req->input('action') == 'delete') { // 削除済みファイルを完全削除
+                $files = File::where('deleted', 1)->get();
                 foreach ($files as $file) {
                     $file->remove_the_file();
                     $file->delete_me();
                 }
                 return redirect()->route('file.cleanup_files')->with('feedback.success', '削除済みファイルを完全に削除しました');
+            }else if ($req->has('action') && $req->input('action') == 'delete_active_video'){
+                $files = File::where('deleted', 0)->where('mime', 'like', 'video%')->get();
+                foreach ($files as $file) {
+                    $file->remove_the_file();
+                    $file->delete_me();
+                }
+                return redirect()->route('file.cleanup_files')->with('feedback.success', '動画ファイルを完全に削除しました');
             }
         }
-        $totalsize = [0=> 0, 1 => 0];
-        $totalcount = [0=> 0, 1 => 0];
-        foreach ($files as $file) {
-            $totalsize[1] += $file->getFileSize();
-            $totalcount[1] += 1;
+        $totalsize = [0=> 0, 1 => 0, 2 => 0, 3 => 0];
+        $totalcount = [0=> 0, 1 => 0, 2 => 0, 3 => 0];
+        foreach([0,1] as $i){
+            $files = File::where('deleted', $i)->get();
+            foreach ($files as $file) {
+                $totalsize[$i] += $file->getFileSize();
+                $totalcount[$i] += 1;
+            }
+            $files = File::where('deleted', $i)->where('mime', 'like', 'video%')->get();
+            foreach ($files as $file) {
+                $totalsize[$i+2] += $file->getFileSize();
+                $totalcount[$i+2] += 1;
+            }
         }
-        $factive = File::where('deleted', 0)->get();
-        foreach ($factive as $file) {
-            $totalsize[0] += $file->getFileSize();
-            $totalcount[0] += 1;
-        }
+        
         return view('file.cleanup_files')->with(compact("files","totalsize","totalcount"));
     }
 }
