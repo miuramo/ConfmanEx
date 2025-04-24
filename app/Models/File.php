@@ -486,4 +486,42 @@ class File extends Model
         }
         return 0;
     }
+
+    public static function getRealFileNames()
+    {
+        $parentdir = storage_path(File::apf());
+        // ファイル一覧
+        $files = scandir($parentdir);
+        // info($files);
+        return $files;
+    }
+
+    public static function getRealFolderNames()
+    {
+        $parentdir = storage_path(File::apf());
+        $list = self::getRealFileNames();
+        $folders = [];
+        foreach ($list as $file) {
+            if ($file == "." || $file == "..") continue;
+            if (is_dir($parentdir . "/".$file)) {
+                $folders[] = $file;
+            }
+        }
+        return $folders;
+    }
+    public static function getFileNamesNotInDB()
+    {
+        $folders = self::getRealFolderNames();
+        $notindb = [];
+        $indb = [];
+        foreach ($folders as $folder) {
+            $f = File::where("fname", "like", $folder . "%")->first();
+            if ($f) {
+                $indb[$f->id] = $folder;
+            } else {
+                $notindb[] = $folder;
+            }
+        }
+        return ['notindb' => $notindb, 'indb' => $indb];
+    }
 }
