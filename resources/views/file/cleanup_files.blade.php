@@ -63,7 +63,7 @@
     @php
         $list = App\Models\File::getFileNamesNotInDB();
     @endphp
-    <div class="py-6 px-6">
+    <div class="py-6 px-6 bg-yellow-100">
         DBで管理されていないファイル<br>
         <ul>
             @foreach ($list['notindb'] as $n => $fn)
@@ -73,7 +73,7 @@
             @endforeach
         </ul>
     </div>
-    <div class="py-6 px-6">
+    <div class="py-6 px-6 bg-cyan-100">
         DBで管理されているファイル<br>
         <ul>
             @foreach ($list['indb'] as $fid => $fn)
