@@ -111,7 +111,7 @@ class FileController extends Controller
             }
             if (!is_numeric($pagenum)) {
                 // return view("file.pdfimages")->with(compact("file"));
-            // } else {
+                // } else {
                 $pagenum = 1;
             }
             return response()->file($file->getPdfThumbPath($pagenum));
@@ -300,10 +300,10 @@ class FileController extends Controller
     /**
      * 30秒プレゼンの提出状況を確認する
      */
-    public function enq_file_status(array $catids = [2,3], $filetype = "altpdf", $enqname = "30sec_presen", $enqans_yes = "希望する")
+    public function enq_file_status(array $catids = [2, 3], $filetype = "altpdf", $enqname = "30sec_presen", $enqans_yes = "希望する")
     {
         if (!auth()->user()->can('role_any', 'pc|demo|pub')) abort(403);
-                // アンケート回答と、PDF提出を、それぞれ取得する。
+        // アンケート回答と、PDF提出を、それぞれ取得する。
         // まず、アンケート回答を取得
         $enqitm = EnqueteItem::where("name", $enqname)->first();
         $enqanswers_pid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->get()->pluck('valuestr', 'paper_id')->toArray();
@@ -312,16 +312,16 @@ class FileController extends Controller
         $accPIDs = Submit::with('paper')->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
         })->whereHas("paper", function ($query) use ($filetype) {
-            $query->whereNotNull($filetype.'_file_id')->whereNull('deleted_at');
-        })->get()->pluck("paper_id","booth")->toArray();
+            $query->whereNotNull($filetype . '_file_id')->whereNull('deleted_at');
+        })->get()->pluck("paper_id", "booth")->toArray();
 
         //all accepted papers in the category
         $accAcceptedSubs = Submit::whereIn("category_id", $catids)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
-        })->orderBy("booth")->get()->pluck("paper_id","booth")->toArray();
+        })->orderBy("booth")->get()->pluck("paper_id", "booth")->toArray();
 
-        $altpdf_fileids = Paper::whereIn("category_id", $catids)->whereNotNull($filetype.'_file_id')->whereNull('deleted_at')->get()->pluck($filetype.'_file_id', 'id')->toArray();
-        return view('file.enq_file_status')->with(compact("enqanswers_pid", "accPIDs", "accAcceptedSubs", "enqans_yes", "altpdf_fileids","filetype"));
+        $altpdf_fileids = Paper::whereIn("category_id", $catids)->whereNotNull($filetype . '_file_id')->whereNull('deleted_at')->get()->pluck($filetype . '_file_id', 'id')->toArray();
+        return view('file.enq_file_status')->with(compact("enqanswers_pid", "accPIDs", "accAcceptedSubs", "enqans_yes", "altpdf_fileids", "filetype"));
     }
 
     public function favicon()
@@ -361,5 +361,38 @@ class FileController extends Controller
         imagedestroy($im);
 
         // return response()->file(storage_path(File::apf() . '/' . substr($file->fname, 0, -4) . ".png"));
+    }
+
+    /**
+     * ファイル管理・削除済みファイルの完全削除
+     * @param Request $req
+     */
+    public function cleanup_files(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
+
+        $files = File::where('deleted', 1)->get();
+        if ($req->method() === 'POST') {
+            info($req->all());
+            if ($req->has('action') && $req->input('action') == 'delete') { // action is lock or unlock
+                foreach ($files as $file) {
+                    $file->remove_the_file();
+                    $file->delete_me();
+                }
+                return redirect()->route('file.cleanup_files')->with('feedback.success', '削除済みファイルを完全に削除しました');
+            }
+        }
+        $totalsize = [0=> 0, 1 => 0];
+        $totalcount = [0=> 0, 1 => 0];
+        foreach ($files as $file) {
+            $totalsize[1] += $file->getFileSize();
+            $totalcount[1] += 1;
+        }
+        $factive = File::where('deleted', 0)->get();
+        foreach ($factive as $file) {
+            $totalsize[0] += $file->getFileSize();
+            $totalcount[0] += 1;
+        }
+        return view('file.cleanup_files')->with(compact("files","totalsize","totalcount"));
     }
 }

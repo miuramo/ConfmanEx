@@ -197,6 +197,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_resetaccesslog', [AdminController::class, 'resetaccesslog'])->name('admin.resetaccesslog'); // Danger Zone
     Route::get('/admin_resetbidding', [AdminController::class, 'resetbidding'])->name('admin.resetbidding');       // Danger Zone
     Route::get('/admin_forcedelete', [AdminController::class, 'forcedelete'])->name('admin.forcedelete');      // Danger Zone
+    Route::get('/admin_cleanup_files', [FileController::class, 'cleanup_files'])->name('file.cleanup_files'); // Danger Zone
+    Route::post('/admin_cleanup_files', [FileController::class, 'cleanup_files'])->name('file.cleanup_files'); // Danger Zone
+
     // 査読結果の選択的削除 (Score)
     Route::get('/resetscore', [ScoreController::class, 'resetscore'])->name('score.resetscore');       // Danger Zone
     Route::post('/resetscore', [ScoreController::class, 'resetscore'])->name('score.resetscore');      // Danger Zone

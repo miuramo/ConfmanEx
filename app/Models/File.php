@@ -477,4 +477,13 @@ class File extends Model
     {
         $this->write_textfile($this->getHintFilePath(), $txt);
     }
+
+    public function getFileSize()
+    {
+        $fullpath = $this->fullpath();
+        if (file_exists($fullpath)) {
+            return filesize($fullpath);
+        }
+        return 0;
+    }
 }

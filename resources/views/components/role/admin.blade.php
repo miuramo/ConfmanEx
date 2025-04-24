@@ -224,6 +224,10 @@
             ソフトデリート済みUserの削除
         </x-element.linkbutton>
         <span class="px-5"></span>
+        <x-element.linkbutton href="{{ route('file.cleanup_files') }}" color="cyan">
+            削除済みファイル管理
+        </x-element.linkbutton>
+        <span class="px-5"></span>
         <x-element.linkbutton href="{{ route('admin.resetpaper') }}" color="red"
             confirm="ユーザやロール、設定、アクセスログ以外、すべて消えます。ファイルを含め、事前にバックアップをとってください。本当に、リセットしてよいですか？">
             投稿をすべてリセットする
