@@ -516,7 +516,7 @@ class File extends Model
         $indb = [];
         foreach ($fnames as $fname) {
             $base = basename($fname);
-            $f = File::where("fname", "like", $base . "%")->first();
+            $f = File::withTrashed()->where("fname", "like", $base . "%")->first(); //softdeleteはつかっていない。
             if ($f) {
                 $indb[$f->id] = $fname;
             } else {
