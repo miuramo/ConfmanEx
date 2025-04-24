@@ -43,7 +43,7 @@ class FileObserver
         $this->meta_deleted($file);
         // Log::info("[FileObserver@deleted] ", ["file" => $file]);
         DB::transaction(function () use ($file) {
-            $paper = Paper::find($file->paper_id);
+            $paper = Paper::withTrashed()->find($file->paper_id);
             if ($paper == null) {
                 return;
             }

@@ -101,6 +101,7 @@ class EnqueteAnswer extends Model
 
     public static function demoPaperIDs_eachCat_eachAccID(){
         $demoPaperIDs = self::demoPaperIDs_CatID();
+        if (count($demoPaperIDs) == 0) return ["ary"=>[], "cat"=>[], "acc"=>[]];
 
         $fs = ["submits.category_id", "submits.accept_id", "submits.paper_id"];
         $sql1 = "select ".implode(",", $fs). ", accepts.name, categories.name as catname";

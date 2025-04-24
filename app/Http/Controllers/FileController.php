@@ -380,13 +380,20 @@ class FileController extends Controller
                     $file->delete_me();
                 }
                 return redirect()->route('file.cleanup_files')->with('feedback.success', '削除済みファイルを完全に削除しました');
-            }else if ($req->has('action') && $req->input('action') == 'delete_active_video'){
+            }else if ($req->has('action') && $req->input('action') == 'active_video'){
                 $files = File::where('deleted', 0)->where('mime', 'like', 'video%')->get();
                 foreach ($files as $file) {
                     $file->remove_the_file();
                     $file->delete_me();
                 }
-                return redirect()->route('file.cleanup_files')->with('feedback.success', '動画ファイルを完全に削除しました');
+                return redirect()->route('file.cleanup_files')->with('feedback.success', '通常ビデオファイルを完全に削除しました');
+            }else if ($req->has('action') && $req->input('action') == 'active_all'){
+                $files = File::where('deleted', 0)->get();
+                foreach ($files as $file) {
+                    $file->remove_the_file();
+                    $file->delete_me();
+                }
+                return redirect()->route('file.cleanup_files')->with('feedback.success', '通常ファイルを完全に削除しました');
             }
         }
         $totalsize = [0=> 0, 1 => 0, 2 => 0, 3 => 0];

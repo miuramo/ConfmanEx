@@ -71,6 +71,7 @@ class Accept extends Model
         $showpid = [];
         $metarev = [];
         $rev = [];
+        if (!isset($paperlist[$cat_id])) return ['accepts' => [], 'show' => [], 'showpid' => [], 'metarev' => [], 'rev' => []];
         foreach ($paperlist[$cat_id][$cat_id] as $accid => $pids) {
             $random_idx = array_rand($pids);
             $random_pid = $pids[$random_idx];

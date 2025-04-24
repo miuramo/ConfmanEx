@@ -31,7 +31,13 @@
             @csrf
             @method('post')
             <x-element.submitbutton value="delete" color="orange">
-                {{ __('削除済みファイルの削除') }}
+                {{ __('削除済みファイルの全削除') }}
+            </x-element.submitbutton>
+            <x-element.submitbutton value="active_video" color="yellow" confirm="本当に通常ビデオファイルを削除しますか？">
+                {{ __('通常ビデオファイルの全削除') }}
+            </x-element.submitbutton>
+            <x-element.submitbutton value="active_all" color="red" confirm="本当に通常ファイルを削除しますか？">
+                {{ __('通常ファイルの全削除') }}
             </x-element.submitbutton>
         </form>
     </div>
