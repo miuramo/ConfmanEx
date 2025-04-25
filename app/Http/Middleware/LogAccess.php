@@ -15,7 +15,7 @@ class LogAccess
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next) : Response
+    public function handle(Request $request, Closure $next): Response
     {
         $hozon = $next($request);
 
@@ -26,14 +26,26 @@ class LogAccess
         $allreq = $request->all();
         // unset($allreq['password']);
         $hidden = ['password', 'current_password', 'password_confirmation'];
-        foreach($hidden as $h){
+        foreach ($hidden as $h) {
             if (isset($allreq[$h])) $allreq[$h] = '(hidden)';
         }
+
+        // URLを取得
+        $basePath = '/' . ltrim($request->path(), '/');
+        $queryParams = $request->query();
+        unset($queryParams['url']); // 不要なパラメータを除外
+
+        if (count($queryParams) > 0) {
+            $url = $basePath . '?' . http_build_query($queryParams);
+        } else {
+            $url = $basePath;
+        }
+
         $accessLog = new ModelsLogAccess([
             'uid' => $uid,
-            'url' => substr($request->fullUrl(), strlen($rooturl)),
+            'url' => $url, // substr($request->fullUrl(), strlen($rooturl)),
             'method' => $request->method(),
-            'request' => $allreq,//'-',// $request->headers->all(),
+            'request' => $allreq, //'-',// $request->headers->all(),
         ]);
         $accessLog->save();
 
