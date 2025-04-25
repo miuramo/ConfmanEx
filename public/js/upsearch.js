@@ -19,7 +19,7 @@ $(document).ready(function() {
                     $('#results').empty();
                     // console.log(data);
                     data['u'].forEach(item => {
-                        $('#results').append(`<li><a class="font-bold text-green-600" href="/login-as/${item.id}/${data['id']}">(u${item.id})</a> ${item.name} ${item.affil} ${item.email} </li>`);
+                        $('#results').append(`<li><a class="font-bold text-green-600" href="/login-as/${item.id}/${data['id']}">(u${item.id})</a> ${item.name} ${item.affil} ${item.email} <a class="font-bold text-blue-600" href="/logac/${item.id}}">[Log]</a></li>`);
                     });
                     data['p'].forEach(item => {
                         $('#presults').append(`<li><a class="font-bold text-orange-600" href="/login-as/${item.owner}/${data['id']}">(p${item.id})</a> ${item.title} ${item.authorlist} </li>`);

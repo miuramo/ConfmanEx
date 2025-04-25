@@ -21,6 +21,7 @@ use App\Http\Controllers\ViewpointController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\AffilController;
 use App\Http\Controllers\EnqueteConfigController;
+use App\Http\Controllers\LogAccessController;
 use App\Models\RevConflict;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -133,6 +134,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_paperlist_excel', [AdminController::class, 'paperlist_excel'])->name('admin.paperlist_excel');
     Route::get('/admin_hiroba_excel', [AdminController::class, 'hiroba_excel'])->name('admin.hiroba_excel');
     Route::get('/admin_filelist', [AdminController::class, 'filelist'])->name('admin.filelist');
+
+    Route::get('/logac/{user?}', [LogAccessController::class, 'index'])->name('logac.index');
+    Route::post('/logac/{user?}', [LogAccessController::class, 'index'])->name('logac.index');
+
 
     Route::get('/role/{role}/top', [RoleController::class, 'top'])->name('role.top');
     // Route::get('/role/{role}/pc', [RoleController::class, 'top'])->name('role.pc'); //本当はrole.topがあればよいのだが、navigationをactiveにするため...
