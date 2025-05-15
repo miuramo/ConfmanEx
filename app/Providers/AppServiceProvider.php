@@ -58,9 +58,9 @@ class AppServiceProvider extends ServiceProvider
         Contact::observe(GenericObserver::class);
         Submit::observe(GenericObserver::class);
 
-        if (PHP_OS == "Linux") { // 本番環境なら
-            URL::forceScheme('https');
-        }
+        // if (PHP_OS == "Linux") { // 本番環境なら
+        //     URL::forceScheme('https');
+        // }
         if (config('app.env') == "production"){ // App::environment(['production'])) {
             URL::forceScheme('https');
         }
