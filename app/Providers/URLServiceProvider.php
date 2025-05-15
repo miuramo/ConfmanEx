@@ -19,6 +19,6 @@ class URLServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // \Illuminate\Support\Facades\URL::forceRootUrl(config('app.url'));
+        \Illuminate\Support\Facades\URL::forceRootUrl(config('app.url'));
     }
 }
