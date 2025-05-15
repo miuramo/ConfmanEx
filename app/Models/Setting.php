@@ -46,6 +46,30 @@ class Setting extends Model
         }
     }
 
+    public static function getval($setting_name)
+    {
+        $setting = Setting::where('name', $setting_name)->first();
+        if ($setting) {
+            return $setting->value;
+        }
+        return null;
+    }
+    public static function setval($setting_name, $setting_value)
+    {
+        $setting = Setting::where('name', $setting_name)->first();
+        if ($setting) {
+            $setting->value = $setting_value;
+            $setting->save();
+        } else {
+            Setting::create([
+                'name' => $setting_name,
+                'value' => $setting_value,
+                'valid' => 1,
+                'isnumber' => 0,
+                'isbool' => 0,
+            ]);
+        }
+    }
 
     public static function seeder()
     {

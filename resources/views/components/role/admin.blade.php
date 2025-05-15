@@ -237,6 +237,11 @@
             confirm="アクセスログが消えます。本当に、リセットしてよいですか？">
             アクセスログをすべてリセットする
         </x-element.linkbutton>
+        <span class="px-5"></span>
+        <x-element.linkbutton href="{{ route('admin.gen_dlkey') }}" color="yellow"
+            confirm="AWARDJSON_DLKEYの先頭4文字が、CONFTITLE_YEARと異なる場合のみ、変更します。変更してよいですか？">
+            AWARDJSON_DLKEYの変更
+        </x-element.linkbutton>
     </x-element.h1>
 
 

@@ -70,7 +70,7 @@ class AdminController extends Controller
         $em = $req->input("invalid_email");
         $dryrun = $req->input("dryrun");
         if (strlen($em) < 4) {
-            return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.error', '無効にしたいメールアドレスを入力してください。');
+            return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.error', '無効にしたいメールアドレスを入力してください。');
         }
 
         // Contactから辿れる、papersについて、投稿連絡用メールアドレスcontactemails から抜く。抜いた後でcontactsリレーションを更新。
@@ -88,7 +88,7 @@ class AdminController extends Controller
             }
         }
 
-        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', 'すべてのPaperの投稿連絡用メールアドレスから削除しました。' . implode(",", $ids));
+        return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.success', 'すべてのPaperの投稿連絡用メールアドレスから削除しました。' . implode(",", $ids));
     }
 
     public function paperlist(Request $req)
@@ -143,52 +143,53 @@ class AdminController extends Controller
             if (!auth()->user()->can('manage_cat', $cat_id)) abort(403);
         }
         $all = Paper::withTrashed()->where("category_id", $cat_id)->orderBy('deleted_at', 'asc')->orderBy('id')->get();
-        if ($req->has("action") ) {
+        if ($req->has("action")) {
             foreach ($req->input("pid") as $n => $pid) {
                 $paper = Paper::withTrashed()->find($pid);
                 if ($paper != null) {
-                    if ($req->input("action") == "revoke"){
+                    if ($req->input("action") == "revoke") {
                         $paper->deleted_at = null;
                         $paper->save();
                         $mes = "復活";
-                    } else if ($req->input("action") == "delete"){
+                    } else if ($req->input("action") == "delete") {
                         $paper->softdelete_me();
                         $mes = "論理削除";
                     }
                 }
             }
-            return redirect()->route('admin.deletepaper', ['cat' => $cat_id])->with('feedback.success', '投稿を'.$mes.'しました');
+            return redirect()->route('admin.deletepaper', ['cat' => $cat_id])->with('feedback.success', '投稿を' . $mes . 'しました');
         }
         return view('admin.deletepaper')->with(compact("all", "cat_id"));
     }
-    public function timestamp(int $cat_id, Request $req){
+    public function timestamp(int $cat_id, Request $req)
+    {
         if (!auth()->user()->can('role_any', 'pc')) {
             if (!auth()->user()->can('manage_cat', $cat_id)) abort(403);
         }
-        if ($req->has("action") ) {
+        if ($req->has("action")) {
             foreach ($req->input("pid") as $n => $pid) {
                 $paper = Paper::withTrashed()->find($pid);
                 if ($paper != null) {
-                    if ($req->input("action") == "revoke"){
+                    if ($req->input("action") == "revoke") {
                         $paper->deleted_at = null;
                         $paper->save();
                         $mes = "復活";
-                    } else if ($req->input("action") == "delete"){
+                    } else if ($req->input("action") == "delete") {
                         $paper->softdelete_me();
                         $mes = "論理削除";
                     }
                 }
             }
-            return redirect()->route('admin.timestamp', ['cat' => $cat_id])->with('feedback.success', '投稿を'.$mes.'しました');
+            return redirect()->route('admin.timestamp', ['cat' => $cat_id])->with('feedback.success', '投稿を' . $mes . 'しました');
         }
         $all = Paper::withTrashed()->where("category_id", $cat_id)->orderBy('deleted_at', 'asc')->orderBy('id')->get();
-        
+
         $now = date("Y-m-d H:i:s");
         $before24h = date("Y-m-d H:i:s", strtotime($now) - 24 * 60 * 60);
         // 24時間経過後の投稿で、PDFファイルなし、タイトルなしを抽出。
         $past = Paper::where("category_id", $cat_id)->whereNull("title")->where('created_at', '<', $before24h)
-        ->whereNull('pdf_file_id')
-        ->select('id', 'owner')->pluck('owner', 'id')->toArray();
+            ->whereNull('pdf_file_id')
+            ->select('id', 'owner')->pluck('owner', 'id')->toArray();
         return view('admin.timestamp')->with(compact("all", "cat_id", "past"));
     }
 
@@ -530,7 +531,7 @@ class AdminController extends Controller
             $title = "投稿受付管理";
             $note = "査読中（revedit_on = 1 && revreturn_on = 0）は「書誌情報の設定ボタンを表示する」を設定しても、著者の編集画面に表示しません。";
         } else if ($req->has("mandatoryfile")) { // 必須ファイル関係
-            $ary = ['name', 'accept_video', 'accept_pptx', 'accept_img', 'img_max_width', 'img_max_height', 'accept_altpdf', 'altpdf_page_min', 'altpdf_page_max','altpdf_accept_start','altpdf_accept_end'];
+            $ary = ['name', 'accept_video', 'accept_pptx', 'accept_img', 'img_max_width', 'img_max_height', 'accept_altpdf', 'altpdf_page_min', 'altpdf_page_max', 'altpdf_accept_start', 'altpdf_accept_end'];
             $cold2 = [];
             foreach ($ary as $f) {
                 $cold2[$f] = $coldetails[$f];
@@ -563,7 +564,7 @@ class AdminController extends Controller
         $tableComments = $this->get_table_comments($db_name, $tableName);
         $data = DB::table($tableName)->orderBy('id')->limit(100)->get()->toArray();
         $numdata = DB::table($tableName)->count();
-        return view('admin.crudtable2')->with(compact("tableName", "coldetails", "data", "whereBy", "numdata", "tableComments", "title","note"));
+        return view('admin.crudtable2')->with(compact("tableName", "coldetails", "data", "whereBy", "numdata", "tableComments", "title", "note"));
     }
 
     /**
@@ -573,7 +574,7 @@ class AdminController extends Controller
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         RevConflict::truncate();
-        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', '利害表明とBiddingをすべてリセットしました');
+        return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.success', '利害表明とBiddingをすべてリセットしました');
     }
     /**
      * UserのsoftDeleted を 完全削除 する。
@@ -582,7 +583,26 @@ class AdminController extends Controller
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         User::onlyTrashed()->whereNotNull('id')->forceDelete();
-        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', 'User softDeleted を完全削除しました');
+        return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.success', 'User softDeleted を完全削除しました');
+    }
+
+    /**
+     * AWARDJSON_DLKEY の生成。ただし、先頭4文字がCONFTITLE_YEARと異なっている場合のみ。
+     */
+    public function gen_dlkey()
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        // 現在の設定
+        $current = Setting::findByIdOrName("AWARDJSON_DLKEY", "value");
+        // 現在の年設定
+        $year = Setting::findByIdOrName("CONFTITLE_YEAR", "value");
+        if (substr($current, 0, 4) == $year) {
+            return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.error', '今年のAWARDJSON_DLKEYはすでに生成されているため、生成をキャンセルしました。');
+        }
+        $temporal_key = Setting::findByIdOrName("CONFTITLE_YEAR", "value") . Str::random(10);
+        Setting::setval("AWARDJSON_DLKEY", $temporal_key);
+
+        return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.success', 'ダウンロードキーを生成しました。');
     }
 
 
@@ -615,13 +635,13 @@ class AdminController extends Controller
         Bb::truncate();
         BbMes::truncate();
 
-        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', '投稿をすべてリセットしました');
+        return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.success', '投稿をすべてリセットしました');
     }
     public function resetaccesslog()
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         LogAccess::truncate();
-        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', 'アクセスログをすべてリセットしました');
+        return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.success', 'アクセスログをすべてリセットしました');
     }
 
     /**
