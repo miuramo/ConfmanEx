@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(\App\Http\Middleware\LogAccess::class);
         $middleware->append(\App\Http\Middleware\ReplaceKutenMiddleware::class);
+        $middleware->append(\App\Http\Middleware\TrustProxies::class);
 
         // $middleware->append(\App\Http\Middleware\EncryptCookies::class);
         // $middleware->append(\Illuminate\Session\Middleware\StartSession::class);
