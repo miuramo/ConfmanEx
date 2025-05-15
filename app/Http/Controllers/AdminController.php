@@ -70,7 +70,7 @@ class AdminController extends Controller
         $em = $req->input("invalid_email");
         $dryrun = $req->input("dryrun");
         if (strlen($em) < 4) {
-            return redirect()->route('admin.dashboard')->with('feedback.error', '無効にしたいメールアドレスを入力してください。');
+            return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.error', '無効にしたいメールアドレスを入力してください。');
         }
 
         // Contactから辿れる、papersについて、投稿連絡用メールアドレスcontactemails から抜く。抜いた後でcontactsリレーションを更新。
@@ -88,7 +88,7 @@ class AdminController extends Controller
             }
         }
 
-        return redirect()->route('admin.dashboard')->with('feedback.success', 'すべてのPaperの投稿連絡用メールアドレスから削除しました。' . implode(",", $ids));
+        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', 'すべてのPaperの投稿連絡用メールアドレスから削除しました。' . implode(",", $ids));
     }
 
     public function paperlist(Request $req)
@@ -573,7 +573,7 @@ class AdminController extends Controller
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         RevConflict::truncate();
-        return redirect()->route('admin.dashboard')->with('feedback.success', '利害表明とBiddingをすべてリセットしました');
+        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', '利害表明とBiddingをすべてリセットしました');
     }
     /**
      * UserのsoftDeleted を 完全削除 する。
@@ -582,7 +582,7 @@ class AdminController extends Controller
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         User::onlyTrashed()->whereNotNull('id')->forceDelete();
-        return redirect()->route('admin.dashboard')->with('feedback.success', 'User softDeleted を完全削除しました');
+        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', 'User softDeleted を完全削除しました');
     }
 
 
@@ -615,13 +615,13 @@ class AdminController extends Controller
         Bb::truncate();
         BbMes::truncate();
 
-        return redirect()->route('admin.dashboard')->with('feedback.success', '投稿をすべてリセットしました');
+        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', '投稿をすべてリセットしました');
     }
     public function resetaccesslog()
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         LogAccess::truncate();
-        return redirect()->route('admin.dashboard')->with('feedback.success', 'アクセスログをすべてリセットしました');
+        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', 'アクセスログをすべてリセットしました');
     }
 
     /**

@@ -6,7 +6,7 @@
 
     <x-slot name="header">
         <div class="mb-4">
-            <x-element.linkbutton href="{{ route('admin.dashboard') }}" color="gray" size="sm">
+            <x-element.linkbutton href="{{ route('role.top', ['role'=>'admin']) }}" color="gray" size="sm">
                 &larr; Admin Topに戻る
             </x-element.linkbutton>
         </div>
@@ -78,7 +78,7 @@
         </div>
 
         <div class="mb-4 my-10">
-            <x-element.linkbutton href="{{ route('admin.dashboard') }}" color="gray" size="sm">
+            <x-element.linkbutton href="{{ route('role.top', ['role'=>'admin']) }}" color="gray" size="sm">
                 &larr; Admin Topに戻る
             </x-element.linkbutton>
         </div>

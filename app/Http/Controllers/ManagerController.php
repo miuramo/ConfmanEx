@@ -45,7 +45,7 @@ class ManagerController extends Controller
     {
         if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);
         File::rebuildPDFThumb();
-        return redirect()->route('admin.dashboard');
+        return redirect()->route('role.top', ['role'=>'admin']);
     }
 
 
@@ -118,7 +118,7 @@ class ManagerController extends Controller
         Test9w::dispatch();
         // $this->ocr9w();
         ExportHintFileJob::dispatch();
-        return redirect()->route('admin.dashboard')->with('feedback.success', 'テストQueueを実行しました。再読み込みして各種設定→LAST_QUEUEWORK_DATEが更新されていることを確認してください。');
+        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', 'テストQueueを実行しました。再読み込みして各種設定→LAST_QUEUEWORK_DATEが更新されていることを確認してください。');
     }
 
     public function ocr9w()
@@ -126,7 +126,7 @@ class ManagerController extends Controller
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         File::rebuildOcrTsv();
         // OcrJob::dispatch();
-        return redirect()->route('admin.dashboard')->with('feedback.success', 'OCR Queueを実行しました。');
+        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', 'OCR Queueを実行しました。');
     }
 
     public function paperauthorhead(Request $req)

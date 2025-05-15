@@ -43,13 +43,13 @@ class RoleTest extends TestCase
         $u = User::find(1);
         $u->roles()->detach(1); // admin
         $u->roles()->detach(2); // manager
-        $response = $this->actingAs($u)->get(route('admin.dashboard'));
+        $response = $this->actingAs($u)->get(route('role.top', ['role'=>'admin']));
         $response->assertStatus(403);
 
         // $u->roles()->syncWithoutDetaching(1); // admin
         $u->roles()->syncWithoutDetaching(2); // manager
 
-        $response = $this->actingAs($u)->get(route('admin.dashboard'));
+        $response = $this->actingAs($u)->get(route('role.top', ['role'=>'admin']));
         $response->assertStatus(200);
     }
 
@@ -67,7 +67,7 @@ class RoleTest extends TestCase
     public function test_manager_role(): void
     {
         // var_dump(self::$users);
-        $response = $this->actingAs(self::$users['manager'])->get(route('admin.dashboard'));
+        $response = $this->actingAs(self::$users['manager'])->get(route('role.top', ['role'=>'admin']));
         $response->assertStatus(200);
 
         $response = $this->actingAs(self::$users['manager'])
@@ -76,7 +76,7 @@ class RoleTest extends TestCase
                 ["invalid_email" => "test@gmail.com", "dryrun" => "DRYRUN"]
             );
         $response->assertStatus(302)
-        ->assertRedirect(route('admin.dashboard'))
+        ->assertRedirect(route('role.top', ['role'=>'admin']))
         ->assertSessionHas("feedback.success", "すべてのPaperの投稿連絡用メールアドレスから削除しました。");
     }
 }

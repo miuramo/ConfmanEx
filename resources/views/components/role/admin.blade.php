@@ -23,12 +23,12 @@
         @endforeach
     </div>
 </div>
-@if (session('feedback.success'))
+{{-- @if (session('feedback.success'))
     <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
 @endif
 @if (session('feedback.error'))
     <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
-@endif
+@endif --}}
 
 <div class="px-4">
     <x-element.h1>CRUD</x-element.h1>

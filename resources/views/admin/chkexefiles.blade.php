@@ -2,7 +2,7 @@
 
     <x-slot name="header">
         <div class="mb-4">
-            <x-element.linkbutton href="{{ route('admin.dashboard') }}" color="gray" size="sm">
+            <x-element.linkbutton href="{{ route('role.top', ['role'=>'admin']) }}" color="gray" size="sm">
                 &larr; Admin Topに戻る
             </x-element.linkbutton>
         </div>
@@ -20,7 +20,7 @@
             <pre class="mx-3 text-sm">{{$out[$com]}}</pre>
         @endforeach
         <div class="mb-4">
-            <x-element.linkbutton href="{{ route('admin.dashboard') }}" color="gray" size="sm">
+            <x-element.linkbutton href="{{ route('role.top', ['role'=>'admin']) }}" color="gray" size="sm">
                 &larr; Admin Topに戻る
             </x-element.linkbutton>
         </div>
