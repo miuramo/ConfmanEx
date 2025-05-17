@@ -190,6 +190,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_crud', [AdminController::class, 'crud'])->name('admin.crud');
     Route::get('/admin_crudcopy', [AdminController::class, 'crudcopy'])->name('admin.crudcopy');
     Route::get('/admin_cruddelete', [AdminController::class, 'cruddelete'])->name('admin.cruddelete');
+    Route::post('/admin_crudchkdelete', [AdminController::class, 'crudchkdelete'])->name('admin.crudchkdelete'); // チェックしたものを削除
     Route::get('/admin_crudnew', [AdminController::class, 'crudnew'])->name('admin.crudnew');
     Route::get('/admin_crudtruncate', [AdminController::class, 'crudtruncate'])->name('admin.crudtruncate');
     Route::post('/admin_crud', [AdminController::class, 'crud'])->name('admin.crudpost');

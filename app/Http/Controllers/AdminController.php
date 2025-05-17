@@ -502,6 +502,17 @@ class AdminController extends Controller
         }
     }
 
+    public function crudchkdelete(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager|ec')) abort(403);
+        $tableName = $req->input("table");
+        $eloModelName = 'App\\Models\\' . Str::studly(Str::singular($tableName)); //　studly でUpperCamelCaseにする
+        if (class_exists($eloModelName)) {
+            $dids = $req->input('did');
+            $eloModelName::whereIn('id', $dids)->forceDelete();
+        }
+        return redirect()->route('admin.crud', ['table' => $tableName]);
+    }
 
     /** カテゴリごとの査読進行管理設定 */
     public function catsetting(Request $req)
