@@ -310,7 +310,11 @@ class EnqueteController extends Controller
         $enqans = [];
         $enqs["canedit"][$enq->id] = $enq;
         $config = EnqueteConfig::where('enquete_id', $enq->id)->first();
-        $enqs["until"][$enq->id] = Enquete::mm_dd_fancy($config->openend);
+        if ($config) {
+            $enqs["until"][$enq->id] = Enquete::mm_dd_fancy($config->openend);
+        } else {
+            $enqs["until"][$enq->id] = " (最終日未設定) ";
+        }
         $paper = new Paper();
         $paper->id = 0;
         $paper->category_id = 1;
