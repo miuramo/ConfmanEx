@@ -30,5 +30,5 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withSchedule(function (Schedule $schedule) {
-        $schedule->command('app:check-failed-jobs')->everyTenMinutes();
+        $schedule->command('app:check-failed-jobs')->everyMinute();
     })->create();

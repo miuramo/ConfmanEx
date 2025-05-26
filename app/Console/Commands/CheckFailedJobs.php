@@ -29,12 +29,11 @@ class CheckFailedJobs extends Command
     public function handle()
     {
         $failedJobsCount = DB::table('failed_jobs')->count();
-
         if ($failedJobsCount > 0) {
             Mail::to(env('MAIL_BCC_ADDRESS','miuramo@gmail.com'))->send(new FailedJobsAlert($failedJobsCount));
-            $this->info("Warning email sent to admin.");
+            info("Warning email sent to admin.");
         } else {
-            $this->info("No failed jobs found.");
+            // info("No failed jobs found.");
         }
         //
     }
