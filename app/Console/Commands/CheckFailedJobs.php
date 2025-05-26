@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\FailedJobsAlert;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class CheckFailedJobs extends Command
 {

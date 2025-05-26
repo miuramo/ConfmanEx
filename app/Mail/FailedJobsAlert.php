@@ -39,7 +39,7 @@ class FailedJobsAlert extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.failed_jobs_alert',
+            markdown: 'emails.failed_jobs_alert',
             with: [
                 'count' => $this->count,
             ],

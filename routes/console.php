@@ -19,6 +19,3 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 
-return function (Schedule $schedule) {
-    $schedule->command('app:check-failed-jobs')->everyMinute();
-};
