@@ -29,7 +29,7 @@
         @foreach ($cats as $cid => $cname)
             <x-element.h1>{{ $cname }} </x-element.h1>
             <div class="m-2 p-2">
-                <table class="min-w-full divide-y divide-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 sortable" id="st001">
                     <thead>
                         <tr>
                             @foreach ($heads as $h=>$num)
@@ -62,5 +62,8 @@
         @endforeach
     </div>
 
+    @push('localjs')
+        <script src="/js/sortable.js"></script>
+    @endpush
 
 </x-app-layout>
