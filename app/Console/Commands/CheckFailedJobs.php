@@ -33,7 +33,6 @@ class CheckFailedJobs extends Command
             Mail::to(env('MAIL_BCC_ADDRESS','miuramo@gmail.com'))->send(new FailedJobsAlert($failedJobsCount));
             $this->warn("Warning email sent to admin.");
         } else {
-            Mail::to(env('MAIL_BCC_ADDRESS','miuramo@gmail.com'))->send(new FailedJobsAlert($failedJobsCount));
             $this->info("No failed jobs found.");
         }
         //
