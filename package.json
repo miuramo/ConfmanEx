@@ -2,7 +2,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "vite",
+        "dev": "concurrently \"php artisan serve  --port 8912\" \"php artisan queue:work\" \"npm run dev-only\"",
+        "dev-only": "vite",
         "build": "vite build"
     },
     "devDependencies": {
@@ -10,6 +11,7 @@
         "alpinejs": "^3.4.2",
         "autoprefixer": "^10.4.2",
         "axios": "^1.6.4",
+        "concurrently": "^9.1.2",
         "laravel-vite-plugin": "^1.0.0",
         "postcss": "^8.4.31",
         "tailwindcss": "^3.1.0",
