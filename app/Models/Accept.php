@@ -21,7 +21,7 @@ class Accept extends Model
      */
     public static function used_accepts($cat_id = 1)
     {
-        $res = DB::select("select distinct accept_id from submits where category_id = ? " +
+        $res = DB::select("select distinct accept_id from submits where category_id = ? " .
             " and paper_id in (select id from papers where deleted_at is null) order by accept_id", [$cat_id]);
         $ret = [];
         foreach ($res as $r) {
