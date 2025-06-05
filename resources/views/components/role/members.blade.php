@@ -22,7 +22,8 @@
                 </td>
                 <td class="p-1 text-center">{{ $u->id }}
                 </td>
-                <td class="p-1">{{ $u->name }}
+                <td class="p-1">
+                    <x-element.login_as :user="$u"></x-element.login_as>
                 </td>
                 <td class="p-1">{{ $u->affil }}
                 </td>

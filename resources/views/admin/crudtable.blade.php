@@ -38,6 +38,7 @@
                         @csrf
                         @method('post')
                         <tr class="m-0">
+                            <th></th>
                             @foreach ($coldetails as $nam => $typ)
                                 <th><input id="whereby{{ $nam }}" type="text"
                                         class="whereBy text-sm bg-slate-100 font-thin mr-2 p-0 h-5 w-full"
