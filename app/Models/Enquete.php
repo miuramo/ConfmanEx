@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -150,12 +151,12 @@ class Enquete extends Model
      * 11-01 〜 03-31 のように、begin>endの場合、
      * 単純に、ひっくり返して、条件を反転すればよい
      */
-    public static function checkdayduration($openstart, $openend)
+    public static function checkdayduration($openstart, $openend, $debugmonth = null, $debugday = null)
     {
         $s = array_map("intval", explode("-", $openstart));
         $e = array_map("intval", explode("-", $openend));
-        $month = date('n');
-        $day = date('j');
+        $month = $debugmonth ?? date('n');
+        $day = $debugday ?? date('j');
 
         $now = $month * 100 + $day; // 06-01 なら 0601
         $begin = $s[0] * 100 + $s[1];
@@ -168,6 +169,21 @@ class Enquete extends Model
             $end = $tmp;
             return !($begin < $now && $now < $end);
         }
+    }
+
+    // 明日の日付を、MM-DD 形式で返す
+    // 例: 01-02, 12-31
+    public static function getTomorrowMonthDay(int $month, int $day): string
+    {
+        $year = date('Y'); // 仮に今年で扱う（年は不要なら何でも良い）
+        // 日付を作る
+        $date = DateTime::createFromFormat('Y-n-j', "$year-$month-$day");
+        if (!$date) {
+            throw new InvalidArgumentException("不正な日付です: $month/$day");
+        }
+        // 1日進める
+        $date->modify('+1 day');
+        return sprintf('%02d-%02d', (int) $date->format('n'), (int) $date->format('j'));
     }
 
     public static function mm_dd_fancy($mmdd)
