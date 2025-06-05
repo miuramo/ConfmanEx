@@ -6,7 +6,7 @@
 @section('title', '査'.$review->id)
     <x-slot name="header">
         <div class="mb-4">
-            <x-element.linkbutton href="{{ route('review.index') }}" color="gray" size="sm">
+            <x-element.linkbutton href="{{ url()->previous() ?? route('review.index') }}" color="gray" size="sm">
                 &larr; 担当査読一覧に戻る
             </x-element.linkbutton>
         </div>
@@ -47,7 +47,7 @@
         </table>
 
         <div class="mb-4 my-10">
-            <x-element.linkbutton href="{{ route('review.index') }}" color="gray" size="sm">
+            <x-element.linkbutton href="{{ url()->previous() ?? route('review.index') }}" color="gray" size="sm">
                 &larr; 担当査読一覧に戻る
             </x-element.linkbutton>
         </div>

@@ -75,7 +75,7 @@
                 {{-- <div class="mt-2 text-sm px-2  dark:text-gray-400">和文著者名の設定例：</div> --}}
                 <div class="grid gap-6 lg:grid-cols-2 lg:gap-1">
                     <textarea id="jpex" name="jpexample" rows="3"
-                        class="inline-flex mb-1 block p-2.5 w-full text-md text-gray-900 bg-gray-200 rounded-lg border border-gray-300
+                        class="mb-1 block p-2.5 w-full text-md text-gray-900 bg-gray-200 rounded-lg border border-gray-300
                  focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
                   dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="投稿 太郎 (投稿大学)&#10;和布蕪 二郎 (和布蕪大学)&#10;昆布 巻子 (ダシ大学/昆布研究所)" readonly></textarea>
@@ -131,20 +131,6 @@
                 </tr>
             @endforeach
         </table>
-
-        {{-- <div class="mx-10 mt-2">
-            <div class="text-sm px-2  dark:text-gray-400">和文著者名の設定方法：一名につき、一行ずつ記入してください。氏名のあいだには半角スペースをいれてください。
-                氏名のあとに、所属を半角 ( ) または全角（ ）で囲って記載してください。複数の所属がある場合は半角スラッシュ / で区切ってください。<br>
-                とくに外国人の氏名については、論文PDFでの表記（カナ/英文）とおなじであることを確認してください。共著者のかたも、投稿一覧からご確認いただけます。</div>
-            <div class="mt-2 text-sm px-2  dark:text-gray-400">和文著者名の設定例：</div>
-            <textarea id="jpex" name="jpexample" rows="3"
-                class="inline-flex mb-1 block p-2.5 w-full text-md text-gray-900 bg-gray-200 rounded-lg border border-gray-300
-                 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
-                  dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="投稿 太郎 (投稿大学)&#10;和布蕪 二郎 (和布蕪大学)&#10;昆布 巻子 (ダシ大学/昆布研究所)" readonly></textarea>
-        </div>
-        <div class="px-10 text-red-800 text-sm">
-            シンポジウムの予稿集・出版担当が所属表記の短縮や修正を行う場合があります。ご了承ください。</div> --}}
     </div>
 
     <form action="{{ route('paper.dragontextpost', ['paper' => $paper->id]) }}" method="post" id="dragontextpost">
@@ -153,7 +139,7 @@
     </form>
 
     <div class="mt-4 px-6 pb-10">
-        <x-element.linkbutton href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="gray" size="lg">
+        <x-element.linkbutton href="{{ url()->previous() ?? route('paper.edit', ['paper' => $paper->id]) }}" color="gray" size="lg">
             &larr; 投稿{{ $paper->id_03d() }} に戻る
         </x-element.linkbutton>
     </div>
