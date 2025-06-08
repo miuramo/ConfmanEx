@@ -455,6 +455,8 @@ class AdminController extends Controller
         $eloModelName = 'App\\Models\\' . Str::studly(Str::singular($tableName)); //　studly でUpperCamelCaseにする
         if (class_exists($eloModelName)) {
             eval("{$eloModelName}::truncate();");
+        } else {
+            DB::statement("TRUNCATE TABLE {$tableName}");
         }
         return redirect()->route('admin.crud', ['table' => $tableName]);
     }
