@@ -32,5 +32,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function (Schedule $schedule) {
         $schedule->command('app:check-failed-jobs')->everyTenMinutes();
         $schedule->command('app:check-enquete-duration')->dailyAt('08:00');
-        $schedule->job(new Test9w(), 'test9w')->everyMinute();
+        $schedule->call(function () {
+            Test9w::dispatch();
+            // Log::info("Test9w job executed at " . date("Y-m-d H:i:s"));
+        })->everyMinute();
     })->create();
