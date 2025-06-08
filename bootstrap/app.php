@@ -1,6 +1,6 @@
 <?php
 
-use App\Console\Commands\CheckFailedJobs;
+use App\Jobs\Test9w;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -32,4 +32,5 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function (Schedule $schedule) {
         $schedule->command('app:check-failed-jobs')->everyTenMinutes();
         $schedule->command('app:check-enquete-duration')->dailyAt('08:00');
+        $schedule->job(new Test9w(), 'test9w')->everyMinute();
     })->create();
