@@ -15,6 +15,14 @@
     @if (session('feedback.error'))
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
+    
+    <div class="py-2 px-6">
+        @foreach ($recentusers as $uid => $uname)
+            <a class="text-sm bg-lime-200 p-1 m-1 hover:bg-yellow-200" href="{{ route('logac.index', ['user' => $uid]) }}">
+                {{ $uname }}
+            </a>
+        @endforeach
+    </div>
 
     <div class="py-2 px-6">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
