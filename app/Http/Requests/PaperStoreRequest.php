@@ -120,8 +120,6 @@ class PaperStoreRequest extends FormRequest
             return redirect()->route('paper.create')->with('feedback.error', "QueryException on Paper create");
         }
         return redirect()->route('paper.edit', ['paper' => $paper->id])->with('feedback.success', "投稿情報を作成しました。");
-        // }
-        return null;
     }
 
     // papers.edit からの更新
