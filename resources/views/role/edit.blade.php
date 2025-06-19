@@ -142,7 +142,7 @@
 
                 <div class="hidden-content mt-2 bg-red-200 dark:bg-red-600 p-2" id="leaverole" style="display:none;">
 
-                    <x-element.submitbutton value="leaverole" color="red">
+                    <x-element.submitbutton value="leaverole" color="red" confirm="チェックした人のRole『{{ $role->desc }}』をまとめて削除してよいですか？（ユーザは消えません）">
                         チェックをいれた人のRole『{{ $role->desc }}』をまとめて削除する
                     </x-element.submitbutton>
                     <span class="mx-2"></span> Role『{{ $role->desc }}』からは脱退しますが、ユーザ情報は残ります。
