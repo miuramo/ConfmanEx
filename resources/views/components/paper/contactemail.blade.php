@@ -19,7 +19,7 @@
             <x-input-error-md class="mx-2 mt-2 px-1" :messages="$errors->get('contactemails')" />
 
             <textarea id="contact" name="contactemails" rows="5"
-                class="mb-1 block p-2.5 w-3/4 text-md text-gray-900 bg-gray-50 rounded-lg dark:bg-slate-800 dark:text-slate-400 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                class="mb-1 block p-2.5 w-3/4 text-md text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="your-secondary@email.com&#10;coauthor1@email.com&#10;coauthor2@email.com">{{ $paper->contactemails }}</textarea>
             <x-element.submitbutton color="yellow" :value="9999">
                 投稿連絡用メールアドレスを更新

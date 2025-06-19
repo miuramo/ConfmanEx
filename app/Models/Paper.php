@@ -176,8 +176,23 @@ class Paper extends Model
 
     public function contacts()
     {
-        // $table_fields = Schema::getColumnListing('paper_contact');
-        return $this->belongsToMany(Contact::class, 'paper_contact'); // ->withPivot($table_fields)->using(PapersUser::class);
+        $instance = new Contact();
+        return (new \App\Relations\BTMwithListener(
+            $instance->newQuery(),
+            $this,
+            'paper_contact',
+            'paper_id',
+            'contact_id',
+            $this->getKeyName(),
+            $instance->getKeyName()
+        ))->withListener(function ($operation, $parent, $related, $relatedId) {
+            if ($relatedId instanceof Contact) {
+            } else {
+                $relatedId = Contact::find($relatedId);
+            }
+            Log::info("{$operation}: {$related->getTable()} ID {$relatedId->id} ({$relatedId->email}) <=> {$parent->getTable()} ID {$parent->getKey()} {$parent->name}");
+        });            //
+        // return $this->belongsToMany(Contact::class, 'paper_contact'); 
     }
     // $p = Paper::find(1)
     //   ->contacts()
@@ -289,7 +304,7 @@ class Paper extends Model
                     $con->infoprovider = $this->owner;
                     $con->save();
                 }
-                $this->contacts()->syncWithoutDetaching($con->id);
+                $this->contacts()->syncWithoutDetaching($con->id, ['updated_at' => now()]);
             });
         }
         $this->refresh();
@@ -319,7 +334,7 @@ class Paper extends Model
     // contactemailsに足す
     public function add_contact(Contact $con)
     {
-        $this->contacts()->syncWithoutDetaching($con->id);
+        $this->contacts()->syncWithoutDetaching($con->id, ['created_at' => now(), 'updated_at' => now()]);
         $this->updateContactemailsFromContacts();
         $this->refresh();
     }
