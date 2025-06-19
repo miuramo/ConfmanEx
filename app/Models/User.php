@@ -66,11 +66,91 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function roles()
     {
-        $tbl = 'role_user';
+        $instance = new Role();
+        return (new \App\Relations\BTMwithListener(
+            $instance->newQuery(),
+            $this,
+            'role_user',
+            'user_id',
+            'role_id',
+            $this->getKeyName(),
+            $instance->getKeyName()
+        ))->withListener(function ($operation, $parent, $related, $relatedId) {
+            if ($relatedId instanceof Role) {
+            } else {
+                $relatedId = Role::find($relatedId);
+            }
+            Log::info("{$operation}: {$related->getTable()} ID {$relatedId->id} ({$relatedId->desc}) <=> {$parent->getTable()} ID {$parent->getKey()} {$parent->name}");
+            // Log::info("{$operation}: {$related->getTable()} ID {$relatedId->id} ({$relatedId->desc}) <=> {$parent->getTable()} ID {$parent->getKey()} {$parent->name}");
+            // Log::info("{$operation}: {$related->getTable()} ID {$relatedId} {$parent->id} <=> {$parent->getTable()} ID {$parent->getKey()} {$parent->name} ({$parent->affil}) {$parent->email} {$operation} role {$relatedId}");
+        });            //
+
+        // $tbl = 'role_user';
+        // return $this->belongsToMany(Role::class, $tbl)->withPivot('mailnotify')->orderBy('orderint')->orderBy('roles.id'); //->using(RolesUser::class);
         // $table_fields = Schema::getColumnListing($tbl);
         // return $this->belongsToMany(User::class, $tbl, 'role_id', 'user_id');// ->withPivot($table_fields)->using(RolesUser::class);
-        return $this->belongsToMany(Role::class, $tbl)->withPivot('mailnotify')->orderBy('orderint')->orderBy('id'); //->using(RolesUser::class);
     }
+
+    // attach をラップする関数（role_userの追加削除をログに記録するため）
+    /*
+    public function syncRolesWithLogging(array $newRoleIds)
+    {
+        info("syncRolesWithLogging: for user {$this->id} {$this->name} {$this->affil} {$this->email}");
+        info("syncRolesWithLogging: newRoleIds: " . implode(',', $newRoleIds));
+
+        // 呼び出し前の関連ID一覧を取得
+        $before = $this->roles()
+            ->select('role_user.role_id')
+            ->pluck('role_user.role_id')
+            ->toArray();
+
+        // syncWithoutDetaching を実行（新規のみ追加）
+        $this->roles()->syncWithoutDetaching($newRoleIds);
+
+        // 呼び出し後の関連ID一覧を取得
+        $after = $this->roles()
+            ->select('role_user.role_id')
+            ->pluck('role_user.role_id')
+            ->toArray();
+
+        // 新しく追加されたIDを検出
+        $added = array_diff($after, $before);
+
+        // ログ記録やイベント発火など
+        foreach ($added as $roleId) {
+            \Log::info("User {$this->id} {$this->name} ({$this->affil}) {$this->email} attached new role {$roleId}");
+        }
+        return $added;
+    }
+    // detach をラップする関数（role_userの追加削除をログに記録するため）
+    public function detachRolesWithLogging(int $roleId)
+    {
+        // info("detachRolesWithLogging: {$roleId} for user {$this->id} {$this->name} {$this->affil} {$this->email}");
+        // 呼び出し前の関連ID一覧を取得
+        $before = $this->roles()
+            ->select('role_user.role_id')
+            ->pluck('role_user.role_id')
+            ->toArray();
+
+        // detach を実行
+        $this->roles()->detach($roleId);
+
+        // 呼び出し後の関連ID一覧を取得
+        $after = $this->roles()
+            ->select('role_user.role_id')
+            ->pluck('role_user.role_id')
+            ->toArray();
+
+        // 削除されたIDを検出
+        $removed = array_diff($before, $after);
+
+        // ログ記録やイベント発火など
+        foreach ($removed as $roleId) {
+            \Log::info("User {$this->id} {$this->name} ({$this->affil}) {$this->email} detached role {$roleId}");
+        }
+        return $removed;
+    }*/
+
     public function contact()
     {
         return $this->belongsTo(Contact::class, "contact_id");
@@ -80,7 +160,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function maxRole()
     {
         $roles = $this->roles;
-        foreach($roles as $role){
+        foreach ($roles as $role) {
             if ($role->name == "pc") return "pc";
             if ($role->name == "metareviewer") return "metareviewer";
             if ($role->name == "reviewer") return "reviewer";

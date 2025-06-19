@@ -67,6 +67,7 @@ class RoleController extends Controller
             $u = User::find($uid);
             if ($u != null) {
                 $u->roles()->syncWithoutDetaching($role);
+                // $u->syncRolesWithLogging([$role]);
             }
             return redirect()->route('role.edit', ["role" => $name]);
         }
@@ -108,6 +109,7 @@ class RoleController extends Controller
                     foreach ($target_roles as $tRole) {
                         if ($tRole->containsUser($uuid)) continue;
                         $u->roles()->syncWithoutDetaching($tRole);
+                        // $u->syncRolesWithLogging([$tRole]);
                     }
                 }
             }
@@ -123,6 +125,7 @@ class RoleController extends Controller
             foreach ($target_users as $uuid) {
                 $u = User::find($uuid);
                 if ($u != null) {
+                    // $u->detachRolesWithLogging($role->id);
                     $u->roles()->detach($role);
                 }
             }
@@ -204,6 +207,7 @@ class RoleController extends Controller
                     // auto_role_member でRoleがつくかもしれないので、チェックする。
                     $role = Role::findByIdOrName($name);
                     if (!$role->containsUser($uu->id)) { // ふくまれていなければ
+                        // $uu->syncRolesWithLogging([$role]);
                         $uu->roles()->syncWithoutDetaching($role);
                     }
                 } else if (count($ary) == 1) {
@@ -211,6 +215,7 @@ class RoleController extends Controller
                     if ($u != null) {
                         $role = Role::findByIdOrName($name);
                         if (!$role->containsUser($u->id)) { // ふくまれていなければ
+                            // $u->syncRolesWithLogging([$role]);
                             $u->roles()->syncWithoutDetaching($role);
                         }
                     }
@@ -226,6 +231,8 @@ class RoleController extends Controller
         if (!auth()->user()->can('role_any', $aboveroles)) abort(403);
 
         $user->roles()->detach($role);
+        // $user->detachRolesWithLogging($role->id);
+
         return redirect()->route('role.edit', ["role" => $role->name]);
     }
 
