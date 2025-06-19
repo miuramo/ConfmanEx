@@ -19,7 +19,7 @@ class GeneralAlert extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(string $subject, string $message)
+    public function __construct(string $subject = '', string $message = '')
     {
         $this->subject = $subject;
         $this->message = $message;
