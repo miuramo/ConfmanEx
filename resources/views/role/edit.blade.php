@@ -45,6 +45,7 @@
                 </x-element.button>
             </div>
 
+            {{-- メンバーリストは別ページ --}}
             <x-role.members :users="$users" :role="$role" chkfor="addusertorole">
             </x-role.members>
         </div>
@@ -61,6 +62,10 @@
             <span class="mx-2"></span>
             <x-element.button class="" id="toggleButton" value="他のRole追加パネルを開く／閉じる" color='cyan'
                 onclick="openclose('otherroles')">
+            </x-element.button>
+            <span class="mx-2"></span>
+            <x-element.button class="" id="toggleButton" value="Role削除パネルを開く／閉じる" color='red'
+                onclick="openclose('leaverole')">
             </x-element.button>
             <span class="mx-2"></span>
             <x-element.button class="" id="toggleButton" value="mailnotify修正パネルを開く／閉じる" color='yellow'
@@ -133,6 +138,17 @@
                         チェックをいれた人に、選択したRoleを追加する
                     </x-element.submitbutton>
                 </div>
+
+
+                <div class="hidden-content mt-2 bg-red-200 dark:bg-red-600 p-2" id="leaverole" style="display:none;">
+
+                    <x-element.submitbutton value="leaverole" color="red">
+                        チェックをいれた人のRole『{{ $role->desc }}』をまとめて削除する
+                    </x-element.submitbutton>
+                    <span class="mx-2"></span> Role『{{ $role->desc }}』からは脱退しますが、ユーザ情報は残ります。
+                </div>
+
+
 
                 <div class="hidden-content mt-2 bg-yellow-200 dark:bg-yellow-600 p-2" id="editnotify"
                     style="display:none;">

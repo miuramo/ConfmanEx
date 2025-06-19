@@ -112,6 +112,21 @@ class RoleController extends Controller
                 }
             }
             return redirect()->route('role.edit', ["role" => $name])->with('feedback.success', "他のRoleを追加しました。");
+        } else if ($req->has("action") && $req->input("action") == "leaverole") { //脱退、削除
+            $target_users = []; // uid (integer) の配列
+            foreach ($req->all() as $k => $v) {
+                if ($v == 'on' && strpos($k, 'u_') === 0) {
+                    $uid = explode("_", $k)[1];
+                    if (is_numeric($uid)) $target_users[] = $uid;
+                }
+            }
+            foreach ($target_users as $uuid) {
+                $u = User::find($uuid);
+                if ($u != null) {
+                    $u->roles()->detach($role);
+                }
+            }
+            return redirect()->route('role.edit', ["role" => $name])->with('feedback.success', "選択したユーザのRoleを削除しました。");
         } else if ($req->has("action") && $req->input("action") == "addtemplate") {
             // valueがonの要素をあつめる。u_{uid}になっているので、とりだす。
             $target_users = [];

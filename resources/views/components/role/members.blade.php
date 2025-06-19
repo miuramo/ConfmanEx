@@ -33,15 +33,15 @@
                 <td>
                     {{ $u->pivot->mailnotify ? '受信する' : '受信しない' }}
                 </td>
-                <td>
+                <td class="text-sm">
                     {{ $u->last_access() }}
                 </td>
-                <td>
+                <td class="text-sm">
                     {{ $u->created_at }}
                 </td>
                 <td>
                     <x-element.deletebutton action="{{ route('role.leave', ['role' => $role, 'user' => $u]) }}"
-                        confirm="脱退させる？">脱退
+                        confirm="Roleを削除する？（ユーザは消えません）" size="sm">Role削除
                     </x-element.deletebutton>
                 </td>
                 <td class="text-center text-gray-600">
