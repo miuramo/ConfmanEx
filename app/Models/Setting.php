@@ -49,7 +49,7 @@ class Setting extends Model
     public static function getval($setting_name)
     {
         $setting = Setting::where('name', $setting_name)->first();
-        if ($setting) {
+        if ($setting && $setting->valid) {
             return $setting->value;
         }
         return null;

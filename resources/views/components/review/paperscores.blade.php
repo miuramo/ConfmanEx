@@ -27,7 +27,7 @@
         <thead>
             <tr>
                 <th class="p-1 bg-slate-300"> Reviewer</th>
-                <th class="p-1 bg-slate-300"> RevID</th>
+                <th class="p-1 bg-slate-300" title="Note: PAPERSCORES__REVIEW_LINK_ENABLE"> RevID</th>
                 @foreach ($descs as $vp => $desc)
                     <th class="p-1 bg-slate-300">{{ $desc }}</th>
                 @endforeach
@@ -54,7 +54,15 @@
                         @endif
                     </td>
                     <td class="p-1 text-center">
+                        {{-- 全体設定：RevIDから査読報告にリンクするならtrue --}}
+                        @php
+                            $review_link_enable = App\Models\Setting::getval('PAPERSCORES__REVIEW_LINK_ENABLE');
+                        @endphp
+                        @if(@$review_link_enable)
                         <x-review.pubshow_link :rev_id="$revid"></x-review.pubshow_link>
+                        @else
+                        {{ $revid }}
+                        @endif
                     </td>
                     @isset($scores[$revid])
                     {{-- 表のヘッダの項目と対応させる --}}
