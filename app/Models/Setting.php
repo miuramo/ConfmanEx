@@ -214,6 +214,15 @@ class Setting extends Model
             'isbool' => false,
             'misc' => 'メール雛形の絞り込みキーワード候補。半角スペース区切り',
         ]);
+        Setting::firstOrCreate([
+            'name' => "PAPERSCORES__REVIEW_LINK_ENABLE",
+        ], [
+            'value' => "true",
+            'isnumber' => false,
+            'isbool' => true,
+            'valid' => false,
+            'misc' => '議論掲示板で査読結果を相互に読めるようにする',
+        ]);
 
         Vote::init();
         VoteItem::init();
