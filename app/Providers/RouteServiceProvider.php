@@ -27,7 +27,7 @@ class RouteServiceProvider extends ServiceProvider
     // public const HOME = '/vote';
     public static function home()
     {
-        $redirect = Setting::findByIdOrName("REDIRECT","value");
+        $redirect = Setting::getval("REDIRECT");
         if ($redirect == null) return "/paper";
         return $redirect;
     }

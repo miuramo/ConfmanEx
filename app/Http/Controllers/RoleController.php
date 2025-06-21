@@ -11,6 +11,7 @@ use App\Models\Review;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Queue\NullQueue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -37,7 +38,7 @@ class RoleController extends Controller
             }
         }
         // $role = Role::where("name",$name)->first();
-        $role = Role::findByIdOrName($name);
+        $role = Role::findByIdOrName($name, null);
         return view('role/top', ["role" => 1])->with(["name" => $name, "role" => $role]);
     }
 
@@ -46,7 +47,7 @@ class RoleController extends Controller
      */
     public function edit(string $name)
     {
-        $role = Role::findByIdOrName($name);
+        $role = Role::findByIdOrName($name, null);
         $aboveroles = $role->aboveRoles();
         if (!auth()->user()->can('role_any', $aboveroles)) abort(403);
 
@@ -60,7 +61,7 @@ class RoleController extends Controller
      */
     public function add_to_role(string $name, int $uid)
     {
-        $role = Role::findByIdOrName($name);
+        $role = Role::findByIdOrName($name, null);
         $aboveroles = $role->aboveRoles();
         if (!auth()->user()->can('role_any', $aboveroles)) abort(403);
         if (is_numeric($uid)) {
@@ -78,7 +79,7 @@ class RoleController extends Controller
      */
     public function editpost(Request $req, string $name)
     {
-        $role = Role::findByIdOrName($name);
+        $role = Role::findByIdOrName($name, null);
         $aboveroles = $role->aboveRoles();
         if (!auth()->user()->can('role_any', $aboveroles)) abort(403);
 
@@ -205,7 +206,7 @@ class RoleController extends Controller
                         ]);
                     }
                     // auto_role_member でRoleがつくかもしれないので、チェックする。
-                    $role = Role::findByIdOrName($name);
+                    $role = Role::findByIdOrName($name, null);
                     if (!$role->containsUser($uu->id)) { // ふくまれていなければ
                         // $uu->syncRolesWithLogging([$role]);
                         $uu->roles()->syncWithoutDetaching($role);
@@ -213,7 +214,7 @@ class RoleController extends Controller
                 } else if (count($ary) == 1) {
                     $u = User::where("email", $ary[0])->first();
                     if ($u != null) {
-                        $role = Role::findByIdOrName($name);
+                        $role = Role::findByIdOrName($name, null);
                         if (!$role->containsUser($u->id)) { // ふくまれていなければ
                             // $u->syncRolesWithLogging([$role]);
                             $u->roles()->syncWithoutDetaching($role);

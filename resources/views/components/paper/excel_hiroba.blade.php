@@ -6,7 +6,7 @@
 
 <!-- components.paper.excel_hiroba -->
 @php
-    $year = App\Models\Setting::findByIdOrName('CONFTITLE_YEAR', 'value');
+    $year = App\Models\Setting::getval('CONFTITLE_YEAR');
     if ($year == null) {
         $year = date('Y');
     }

@@ -488,7 +488,7 @@ class SubmitController extends Controller
      */
     public function json_bta(string $key = null, bool $readable = false, bool $use_short_for_affils = false, bool $use_short_for_bibauthors = false)
     {
-        $downloadkey = Setting::findByIdOrName("AWARDJSON_DLKEY", "value");
+        $downloadkey = Setting::getval("AWARDJSON_DLKEY");
         if ($key != $downloadkey) abort(403);
 
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
@@ -544,7 +544,7 @@ class SubmitController extends Controller
      */
     public function json_review(int $catid, string $key = null)
     {
-        $downloadkey = Setting::findByIdOrName("AWARDJSON_DLKEY", "value");
+        $downloadkey = Setting::getval("AWARDJSON_DLKEY");
         if ($key != $downloadkey) abort(403);
 
         // Viewpointで、formeta = 1 and doReturn = 1 のものを取得
@@ -573,7 +573,7 @@ class SubmitController extends Controller
     public function json_fileinfo(string $key = null, bool $readable = false)
     {
         $skip_unlink = true;
-        $downloadkey = Setting::findByIdOrName("AWARDJSON_DLKEY", "value");
+        $downloadkey = Setting::getval("AWARDJSON_DLKEY");
         if ($key != $downloadkey) abort(403);
 
         $out = [];

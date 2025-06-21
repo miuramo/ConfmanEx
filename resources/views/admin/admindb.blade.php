@@ -71,7 +71,7 @@
                     $db_name = config('database.connections.' . str_replace('.', '_', $domain) . '.database');
                     $apf = App\Models\File::apf();
                     $pf = App\Models\File::pf();
-                    $queuework_date = App\Models\Setting::findByIdOrName('LAST_QUEUEWORK_DATE', 'value');
+                    $queuework_date = App\Models\Setting::getval('LAST_QUEUEWORK_DATE');
                 @endphp
                 App::environment(APP_ENV): {{ config('app.env') }} <span class="mx-4"></span>
                 (use "production" for https)<br>

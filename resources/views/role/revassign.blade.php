@@ -17,7 +17,7 @@
             @php
                 $roles = App\Models\Role::where('name', 'like', '%reviewer')->get();
 
-                $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META', 'value');
+                $nameofmeta = App\Models\Setting::getval('NAME_OF_META');
 
                 // 査読プロセスをまわす（査読者を割り当てる）カテゴリ
                 $cat_arrange_review = App\Models\Category::where('status__arrange_review', true)

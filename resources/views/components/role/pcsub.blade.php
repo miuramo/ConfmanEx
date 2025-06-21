@@ -287,7 +287,7 @@
             プレビュー用査読フォーム
             <span class="mx-2"></span>
             @php
-                $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META', 'value');
+                $nameofmeta = App\Models\Setting::getval('NAME_OF_META');
             @endphp
             @foreach ($cats as $catid => $catname)
                 @isset($cat_arrange_review[$catid])

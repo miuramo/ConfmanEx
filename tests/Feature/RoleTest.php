@@ -46,7 +46,7 @@ class RoleTest extends TestCase
         $response = $this->actingAs($u)->get(route('role.top', ['role'=>'admin']));
         $response->assertStatus(403);
 
-        // $u->roles()->syncWithoutDetaching(1); // admin
+        $u->roles()->syncWithoutDetaching(1); // admin
         $u->roles()->syncWithoutDetaching(2); // manager
 
         $response = $this->actingAs($u)->get(route('role.top', ['role'=>'admin']));
@@ -67,7 +67,7 @@ class RoleTest extends TestCase
     public function test_manager_role(): void
     {
         // var_dump(self::$users);
-        $response = $this->actingAs(self::$users['manager'])->get(route('role.top', ['role'=>'admin']));
+        $response = $this->actingAs(self::$users['manager'])->get(route('role.top', ['role'=>'manager']));
         $response->assertStatus(200);
 
         $response = $this->actingAs(self::$users['manager'])

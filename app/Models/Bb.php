@@ -58,7 +58,7 @@ class Bb extends Model
             2 => "ここはメタ査読者と著者の掲示板です。（プログラム委員長も閲覧できます。）",
             3 => "ここは出版担当と著者の掲示板です。",
         ];
-        $nameofmeta = Setting::findByIdOrName('NAME_OF_META')->value;
+        $nameofmeta = Setting::getval('NAME_OF_META');
         if ($nameofmeta != null) {
             $firstmes[2] = "ここは" . $nameofmeta . "と著者の掲示板です。（プログラム委員長も閲覧できます。）";
         }

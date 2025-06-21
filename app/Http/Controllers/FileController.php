@@ -328,7 +328,7 @@ class FileController extends Controller
     {
         $im = imagecreatefrompng(public_path("favicon.png"));
 
-        $year = Setting::findByIdOrName("CONFTITLE_YEAR", "value");
+        $year = Setting::getval("CONFTITLE_YEAR");
         if ($year) {
             $year_02d = $year % 100;
             $fabcolors = Setting::firstOrCreate([

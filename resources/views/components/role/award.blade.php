@@ -15,7 +15,7 @@
     <x-element.h1>
         表彰用JSON →
         @php
-            $dkey = App\Models\Setting::findByIdOrName('AWARDJSON_DLKEY', 'value');
+            $dkey = App\Models\Setting::getval('AWARDJSON_DLKEY');
         @endphp
         <x-element.linkbutton href="{{ route('pub.json_booth_title_author', ['key' => $dkey]) }}" color="cyan"
             target="_blank">

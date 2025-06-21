@@ -122,7 +122,7 @@ class Paper extends Model
             'ekeyword' => '英文Keyword',
             'eauthorlist' => '英文Author(s)'
         ];
-        $skip_bibinfo = Setting::findByIdOrName("SKIP_BIBINFO", "value");
+        $skip_bibinfo = Setting::getval("SKIP_BIBINFO");
         $skip_bibinfo = json_decode($skip_bibinfo);
         foreach ($skip_bibinfo as $key) {
             unset($koumoku[$key]);
@@ -487,7 +487,7 @@ class Paper extends Model
             $maxnum['pptx'] = 1;
         }
         // ['pdf'=>'論文PDF', 'altpdf'=>'ティザー資料', 'img'=>'代表画像', 'video'=>'参考ビデオ', 'pptx'=>'PowerPoint(pptx)']
-        $file_desc = Setting::findByIdOrName("FILE_DESCRIPTIONS", "value");
+        $file_desc = Setting::getval("FILE_DESCRIPTIONS");
         $file_desc = json_decode($file_desc);
 
         foreach ($file_desc as $ft => $ffname) {

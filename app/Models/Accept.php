@@ -102,7 +102,7 @@ class Accept extends Model
     {
         $nodes = [];
         $links = [];
-        $conftitle_base = Setting::findByIdOrName('CONFTITLE_BASE', 'value');
+        $conftitle_base = Setting::getval('CONFTITLE_BASE');
         if ($conftitle_base == 'インタラクション') {
             $links[] = [
                 "source" => 'h1a1',

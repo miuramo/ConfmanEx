@@ -346,7 +346,7 @@ class PaperController extends Controller
 
     public function paper_reviews_json(string $token)
     {
-        $downloadkey = Setting::findByIdOrName("AWARDJSON_DLKEY", "value");
+        $downloadkey = Setting::getval("AWARDJSON_DLKEY");
         if ($token != $downloadkey) abort(403);
 
         $accept_ids = Accept::where('judge', '>', 0)->pluck("id")->toArray();

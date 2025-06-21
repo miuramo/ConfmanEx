@@ -43,7 +43,7 @@ class BbNotify extends Mailable implements ShouldQueue
     public function __construct($_bb, $_bbmes)
     {
         $names = [1 => "査読議論", 2 => "メタと著者の", 3 => "出版担当と著者の"];
-        $nameofmeta = Setting::findByIdOrName('NAME_OF_META')->value;
+        $nameofmeta = Setting::getval('NAME_OF_META');
         if ($nameofmeta != null){
             $names[2] = $nameofmeta."と著者の";
         }
@@ -69,7 +69,7 @@ class BbNotify extends Mailable implements ShouldQueue
             // ループを回しても、なぜか個別に送れない(Mail:to を繰り返すと、toが追加されてしまう。)
             // ので、とりあえずbcc にする。
             $pmail = Mail::bcc($this->mail_to_cc['separate_to']);
-            $pmail->to(Setting::findByIdOrName("MAILFROM","value"));
+            $pmail->to(Setting::getval("MAILFROM"));
             $pmail->queue($this);
             return;
         } else {

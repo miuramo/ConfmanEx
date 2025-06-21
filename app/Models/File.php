@@ -160,7 +160,7 @@ class File extends Model
         // 画像のオリジナルサイズは1241x1754
         $orig_w = 1241;
         $orig_h = 1754;
-        $crop_yhwx_setting = Setting::findByIdOrName("CROP_YHWX", "value");
+        $crop_yhwx_setting = Setting::getval("CROP_YHWX");
         $crop_yhwx = json_decode($crop_yhwx_setting);
         $crop_y = $crop_yhwx[0];
         $crop_h = $crop_yhwx[1];

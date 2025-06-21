@@ -5,7 +5,7 @@
 @php
     $mes->mes = App\Models\Review::urllink(htmlspecialchars($mes->mes, ENT_QUOTES, 'UTF-8'));
     $mes->mes = strip_tags($mes->mes, '<a>');
-    $file_desc = App\Models\Setting::findByIdOrName('FILE_DESCRIPTIONS', 'value');
+    $file_desc = App\Models\Setting::getval('FILE_DESCRIPTIONS');
     $file_desc = json_decode($file_desc);
 
 @endphp

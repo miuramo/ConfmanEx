@@ -29,7 +29,7 @@ class Test9w implements ShouldQueue
      */
     public function handle(): void
     {
-        $last9w = Setting::findByIdOrName("LAST_QUEUEWORK_DATE");
+        $last9w = Setting::findByIdOrName("LAST_QUEUEWORK_DATE", null); // get object
         $last9w->value = date("Y-m-d H:i:s")." Test9w";
         $last9w->save();
     }

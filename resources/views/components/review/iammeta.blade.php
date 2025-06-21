@@ -11,7 +11,7 @@
         } else {
             $metauser = $bb->metauser();
         }
-        $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META')->value;
+        $nameofmeta = App\Models\Setting::getval('NAME_OF_META');
     }
 @endphp
 

@@ -1,7 +1,7 @@
 <x-app-layout>
     @php
         $names = [1 => '査読議論', 2 => 'メタと著者の', 3 => '出版担当と著者の'];
-        $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META')->value;
+        $nameofmeta = App\Models\Setting::getval('NAME_OF_META');
         if ($nameofmeta != null) {
             $names[2] = $nameofmeta . 'と著者の';
         }

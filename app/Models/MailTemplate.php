@@ -65,8 +65,8 @@ class MailTemplate extends Model
             $replacetxt["ABSTRACT"] = $p_or_u->abst;
             $replacetxt["BIBINFO_ERROR"] = $p_or_u->bibinfo_error();
         }
-        $replacetxt["CONFTITLE"] = Setting::findByIdOrName("CONFTITLE", "value");
-        $replacetxt["CONFURL"] = Setting::findByIdOrName("CONF_URL", "value");
+        $replacetxt["CONFTITLE"] = Setting::getval("CONFTITLE");
+        $replacetxt["CONFURL"] = Setting::getval("CONF_URL");
         $replacetxt["APP_URL"] = env('APP_URL');
         $replacetxt["SYSTEM_URL"] = env('APP_URL');
         $replacetxt["URL"] = env('APP_URL');

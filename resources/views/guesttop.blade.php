@@ -19,7 +19,7 @@
     </div>
 
     @php
-        $cfplinktext = App\Models\Setting::findByIdOrName('CFP_LINKTEXT', 'value');
+        $cfplinktext = App\Models\Setting::getval('CFP_LINKTEXT');
     @endphp
     @isset($cfpurl)
         <div class="my-4 mx-8 px-6">

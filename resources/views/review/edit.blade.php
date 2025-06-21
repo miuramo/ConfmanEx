@@ -13,7 +13,7 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
 
             @php
-                $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META', 'value');
+                $nameofmeta = App\Models\Setting::getval('NAME_OF_META');
             @endphp
             @if ($review->ismeta)
                 {{ $nameofmeta }}

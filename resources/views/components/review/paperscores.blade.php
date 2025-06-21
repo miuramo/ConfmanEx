@@ -16,7 +16,7 @@
         $ismeta_myself = $bb->ismeta_myself();
     }
 
-    $nameofmeta = App\Models\Setting::findByIdOrName('NAME_OF_META')->value;
+    $nameofmeta = App\Models\Setting::getval('NAME_OF_META');
 
     $count_formeta = 0;
 @endphp

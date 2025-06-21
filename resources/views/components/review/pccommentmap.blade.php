@@ -9,7 +9,7 @@
     // ユーザが担当しているrevがあれば、ハイライト
     $tantourev = App\Models\Review::where('user_id', auth()->id())->get()->pluck('paper_id', 'id')->toArray();
     // $colors = ['white', 'red', 'yellow', 'gray', 'lime', 'cyan', 'purple', 'gray', 'gray', 'gray']; // TODO: 色の割り当ては会議によって異なるので環境設定でやる。
-    $jsoncolor = App\Models\Setting::findByIdOrName('SCOREMAP_COLORS');
+    $jsoncolor = App\Models\Setting::findByIdOrName('SCOREMAP_COLORS', null);
     if ($jsoncolor != null && $jsoncolor->valid) {
         $scoremap_colors = json_decode($jsoncolor->value, true);
     } else {

@@ -73,7 +73,7 @@
         <div class="hidden-content bg-slate-300 p-2 mt-2 dark:text-gray-600" id="awardjson" style="display:none;">
             書誌情報JSON
             @php
-                $dkey = App\Models\Setting::findByIdOrName('AWARDJSON_DLKEY', 'value');
+                $dkey = App\Models\Setting::getval('AWARDJSON_DLKEY');
             @endphp
             <x-element.linkbutton href="{{ route('pub.json_booth_title_author', ['key' => $dkey]) }}" color="cyan"
                 size="sm" target="_blank">
@@ -115,7 +115,7 @@
 
     <x-element.h1>
         @php
-            $dkey = App\Models\Setting::findByIdOrName('AWARDJSON_DLKEY', 'value');
+            $dkey = App\Models\Setting::getval('AWARDJSON_DLKEY');
         @endphp
         <x-element.linkbutton href="{{ route('pub.json_review', ['cat' => 1, 'key' => $dkey]) }}" color="purple"
             size="md" target="_blank">

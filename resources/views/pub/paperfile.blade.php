@@ -118,7 +118,7 @@ if($file->valid && $file->deleted == 0) {
         </table>
 
         @php
-            $file_desc = App\Models\Setting::findByIdOrName('FILE_DESCRIPTIONS', 'value');
+            $file_desc = App\Models\Setting::getval('FILE_DESCRIPTIONS');
             $file_desc = json_decode($file_desc);
         @endphp
         <form action="{{ route('paper.fileadopt', ['paper' => $paper->id]) }}" method="post" class="inline"
