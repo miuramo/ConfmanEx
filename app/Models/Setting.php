@@ -226,6 +226,24 @@ class Setting extends Model
             'valid' => false,
             'misc' => '議論掲示板で査読結果を相互に読めるようにする',
         ]);
+        Setting::firstOrCreate([
+            'name' => "WARN_PDFTEXT_STARTSWITH",
+        ], [
+            'value' => "情報処理学会研究報告",
+            'isnumber' => false,
+            'isbool' => true,
+            'valid' => false,
+            'misc' => 'ヘッダとフッタを削除していないPDFは警告をだし、受理しない',
+        ]);
+        Setting::firstOrCreate([
+            'name' => "WARN_PDFTEXT_NOTINCLUDING",
+        ], [
+            'value' => "キーワード：",
+            'isnumber' => false,
+            'isbool' => true,
+            'valid' => false,
+            'misc' => '和文キーワードは必須',
+        ]);
 
         Vote::init();
         VoteItem::init();
