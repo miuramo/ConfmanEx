@@ -247,6 +247,27 @@ class MailTemplate extends Model
         return $papers;
     }
     /**
+     * PDFTextの先頭部分が指定文字列で始まる論文
+     * 第2引数以降は、category_idの羅列
+     */
+    public static function mt_pdftext_startswith($startstr, ...$args)
+    {
+        $papers = [];
+        $cols = Paper::whereIn('category_id', $args)->get();
+        foreach ($cols as $paper) {
+            $pdftext = $paper->pdf_file->getPdfText();
+            if ($pdftext == null) continue; // PDFがない場合はスキップ
+            // PDFのテキストが、指定文字列で始まるかどうか
+            // mb_strposは、マルチバイト文字列の位置を取得する
+            // 0番目から始まるので、=== 0 でチェックする
+            $pos = mb_strpos($pdftext, $startstr);
+            if ($pos === 0) {
+                $papers[] = $paper;
+            }
+        }
+        return $papers;
+    }
+    /**
      * UserIDの羅列
      */
     public static function mt_userid(...$args)
