@@ -20,7 +20,7 @@ function other_textchange(event) {
 
 // x-toggle
 function toggle(formid, id123) {
-    console.log("id123: " + id123);
+    // console.log("id123: " + id123);
     var m = id123.match(/^(\w+)__(\d+)__([\w()]+)/);
     crudpost(m[1], m[2], "x", m[3].toLowerCase());
 }
@@ -52,6 +52,7 @@ $(".clicktoedit").click(function (e) {
         $('#' + tdid).html("<input type=\"text\" size=\""+localsizecols+"\" id=\"edit__" + tdid + "\"  value=\"" + txt + "\">");
         inputType = "text";
     } else if (m[3].toLowerCase() == "tinyint") {
+        // ここはx-toggleの処理を入れたので、使わないはず
         if (!toggleNoticeShown) {
             var ok = confirm("Press OK to change the value. \n値を変更する場合はOKを押してください。（一度OKを押すと、次回以降は確認しません。）");
             if (!ok) return;
@@ -59,6 +60,7 @@ $(".clicktoedit").click(function (e) {
         }
         crudpost(m[1], m[2], "x", m[3].toLowerCase());
         return;
+        // ここまではx-toggleの処理を入れたので、使わないはず
     } else {
         $('#' + tdid).html("<input type=\"text\" size=\"5\" id=\"edit__" + tdid + "\"  value=\"" + txt + "\">");
         inputType = "text";
