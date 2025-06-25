@@ -19,6 +19,20 @@
             {{ $title }}
         </h2>
     </x-slot>
+    <style>
+        /* CHECKBOX TOGGLE SWITCH */
+        /* @apply rules for documentation, these do not work as inline style */
+        .toggle-checkbox:checked {
+            @apply: right-0 border-green-400;
+            right: 0;
+            border-color: #68D391;
+        }
+
+        .toggle-checkbox:checked+.toggle-label {
+            @apply: bg-green-400;
+            background-color: #68D391;
+        }
+    </style>
     @section('title', $title)
 
     @if (session('feedback.success'))
@@ -58,42 +72,45 @@
                                 @if ($nam == 'COPY')
                                     <td>
                                         @isset($enq_id)
-                                        <x-element.linkbutton2
-                                            href="{{ route('enq.enqitmsetting', ['copy_id' => $d->id, 'enq_id' => $enq_id, 'enq_name' => $enq_name]) }}"
-                                            color="yellow" size="sm">
-                                            Copy
-                                        </x-element.linkbutton2>
-                                        <div class="my-2"></div>
-                                        <x-element.linkbutton2
-                                            href="{{ route('enq.enqitmsetting', ['del_id' => $d->id, 'enq_id' => $enq_id, 'enq_name' => $enq_name]) }}"
-                                            color="red" size="sm">
-                                            Del
-                                        </x-element.linkbutton2>
+                                            <x-element.linkbutton2
+                                                href="{{ route('enq.enqitmsetting', ['copy_id' => $d->id, 'enq_id' => $enq_id, 'enq_name' => $enq_name]) }}"
+                                                color="yellow" size="sm">
+                                                Copy
+                                            </x-element.linkbutton2>
+                                            <div class="my-2"></div>
+                                            <x-element.linkbutton2
+                                                href="{{ route('enq.enqitmsetting', ['del_id' => $d->id, 'enq_id' => $enq_id, 'enq_name' => $enq_name]) }}"
+                                                color="red" size="sm">
+                                                Del
+                                            </x-element.linkbutton2>
                                         @else
-                                        <x-element.linkbutton2
-                                            href="{{ route('viewpoint.itmsetting', ['copy_id' => $d->id, 'cat_id' => $cat_id, 'cat_name' => $cat_name]) }}"
-                                            color="yellow" size="sm">
-                                            Copy
-                                        </x-element.linkbutton2>
-                                        <div class="my-2"></div>
-                                        <x-element.linkbutton2
-                                            href="{{ route('viewpoint.itmsetting', ['del_id' => $d->id, 'cat_id' => $cat_id, 'cat_name' => $cat_name]) }}"
-                                            color="red" size="sm">
-                                            Del
-                                        </x-element.linkbutton2>
-
+                                            <x-element.linkbutton2
+                                                href="{{ route('viewpoint.itmsetting', ['copy_id' => $d->id, 'cat_id' => $cat_id, 'cat_name' => $cat_name]) }}"
+                                                color="yellow" size="sm">
+                                                Copy
+                                            </x-element.linkbutton2>
+                                            <div class="my-2"></div>
+                                            <x-element.linkbutton2
+                                                href="{{ route('viewpoint.itmsetting', ['del_id' => $d->id, 'cat_id' => $cat_id, 'cat_name' => $cat_name]) }}"
+                                                color="red" size="sm">
+                                                Del
+                                            </x-element.linkbutton2>
                                         @endisset
                                     </td>
                                 @else
-                                    <td class="p-2 hover:text-blue-600 hover:bg-slate-200 clicktoedit  dark:hover:bg-slate-700 dark:hover:text-blue-500"
-                                        id="{{ $nam }}__{{ $d->id }}__{{ $typ }}">
-                                        {{ $d->$nam }}
+                                    @if ($typ == 'tinyint')
+                                        <td class="p-2 hover:text-blue-600 hover:bg-slate-200 dark:hover:bg-slate-700 dark:hover:text-blue-500 text-center"
+                                            id="td__{{ $nam }}__{{ $d->id }}__{{ $typ }}">
+                                            <x-toggle formid="admincrudpost" name="name_{{ $nam }}__{{ $d->id }}__{{ $typ }}" id="{{ $nam }}__{{ $d->id }}__{{ $typ }}"
+                                                :checked="$d->$nam"></x-toggle>
+                                        @else
+                                        <td class="p-2 hover:text-blue-600 hover:bg-slate-200 clicktoedit  dark:hover:bg-slate-700 dark:hover:text-blue-500"
+                                            id="{{ $nam }}__{{ $d->id }}__{{ $typ }}">
+                                            {{ $d->$nam }}
+                                    @endif
                                     </td>
                                 @endif
                             @endforeach
-                            {{-- <td>
-                                <a href="{{ route('admin.crud') }}?table={{ $table->name }}"> {{ $table->name }}</a>
-                            </td> --}}
                         </tr>
                     @endforeach
                 </tbody>

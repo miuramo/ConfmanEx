@@ -268,6 +268,25 @@ class MailTemplate extends Model
         return $papers;
     }
     /**
+     * PDFText（1ページ目の内容）に指定文字列が含まれない論文
+     * 第2引数以降は、category_idの羅列
+     */
+    public static function mt_pdftext_notincluding($str, ...$args)
+    {
+        $papers = [];
+        $cols = Paper::whereIn('category_id', $args)->get();
+        foreach ($cols as $paper) {
+            $pdftext = $paper->pdf_file->getPdfText();
+            if ($pdftext == null) continue; // PDFがない場合はスキップ
+            $pos = mb_strpos($pdftext, $str);
+            if ($pos === false) {
+                $papers[] = $paper;
+            }
+        }
+        return $papers;
+    }
+
+    /**
      * UserIDの羅列
      */
     public static function mt_userid(...$args)

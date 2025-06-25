@@ -18,6 +18,13 @@ function other_textchange(event) {
     }
 }
 
+// x-toggle
+function toggle(formid, id123) {
+    console.log("id123: " + id123);
+    var m = id123.match(/^(\w+)__(\d+)__([\w()]+)/);
+    crudpost(m[1], m[2], "x", m[3].toLowerCase());
+}
+
 $(".clicktoedit").click(function (e) {
     var tdid = e.currentTarget.id;
     if (origData[tdid] != null) return;
@@ -27,7 +34,7 @@ $(".clicktoedit").click(function (e) {
     var localsizecols = (typeof sizecols !=='undefined') ? sizecols : 50;
     var txt = $('#' + tdid).text().trim();
     txt = txt.replaceAll('"', '&quot;');
-    console.log(txt);
+//    console.log(txt);
     var inputType = "";
     if (/text$/.test(m[3].toLowerCase())) { // text, longtext, mediumtext...
         var attr = $('#' + tdid).data('orig');
@@ -145,8 +152,7 @@ function crudpost(field, data_id, val, dtype) {
         success: function (result, textStatus, xhr) {
             if (/^TOGGLE/.test(result)) {
                 var m = result.trim().match(/(TOGGLE) (\d+) (.+)$/); // resultを分解する TOGGLE val tdid
-                var elem = $('#' + m[3]);
-                elem.text(m[2]);
+                var elem = $('#td__' + m[3]); // flush td element, which is parent
             } else {
                 var m = result.trim().match(/(OK) (.+)$/);
                 var elem = $('#' + m[2]);
