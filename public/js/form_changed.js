@@ -15,7 +15,7 @@ function changed(formName, name) {
             var elem = $("#" + name + "_answer");
             if (ary[name] == null) {
                 if (ary['mandatory'] == 1 || ary['is_mandatory'] == 1) elem.html('<span class="text-red-600 font-extrabold">(未入力)</span>');
-                else elem.html('<span class="text-green-600 font-extrabold">(未入力)</span>');
+                else elem.html('<span class="text-blue-600 font-extrabold">(未入力)</span>');
             } else if (typeof ary[name].replaceAll === 'function') {
                 elem.html(ary[name].replaceAll("&", "&amp;").replaceAll("<", "&lt;")
                     .replaceAll(">", "&gt;").replaceAll("\r\n", "<br>"));
