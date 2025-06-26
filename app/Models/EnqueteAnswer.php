@@ -43,8 +43,7 @@ class EnqueteAnswer extends Model
             ->orderBy("paper_id")->orderBy("enquete_id")->orderBy("enquete_item_id")->get();
         $ret = [];
         foreach ($all as $ea) {
-            // if (isset($ea->item))
-            $ret[$ea->paper_id][$ea->enquete_id][$ea->item->name] = $ea->valuestr;
+            if (isset($ea->item)) $ret[$ea->paper_id][$ea->enquete_id][$ea->item->name] = $ea->valuestr;
         }
         return $ret;
     }
