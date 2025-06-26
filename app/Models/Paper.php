@@ -122,10 +122,23 @@ class Paper extends Model
             'ekeyword' => '英文Keyword',
             'eauthorlist' => '英文Author(s)'
         ];
-        $skip_bibinfo = Setting::getval("SKIP_BIBINFO");
-        $skip_bibinfo = json_decode($skip_bibinfo);
-        foreach ($skip_bibinfo as $key) {
-            unset($koumoku[$key]);
+        $catspecific = Setting::getval("SKIP_BIBINFO_CAT{$catid}");
+        if ($catspecific != null) {
+            $catspecific = json_decode($catspecific);
+            if (is_array($catspecific)) {
+                foreach ($catspecific as $key) {
+                    unset($koumoku[$key]);
+                }
+            }
+        } else {
+            $skip_bibinfo = Setting::getval("SKIP_BIBINFO");
+            $skip_bibinfo = json_decode($skip_bibinfo);
+            if (is_array($skip_bibinfo)) {
+                // もし、SKIP_BIBINFOが設定されていれば、そこから除外する。 
+                foreach ($skip_bibinfo as $key) {
+                    unset($koumoku[$key]);
+                }
+            }
         }
         return $koumoku;
     }
