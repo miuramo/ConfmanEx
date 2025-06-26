@@ -14,26 +14,27 @@ function changed(formName, name) {
             // console.log(ary);
             var elem = $("#" + name + "_answer");
             if (ary[name] == null) {
-                if (ary['mandatory']==1 || ary['is_mandatory']==1) elem.html('<span class="text-red-600 font-extrabold">(未入力)</span>');
-                else elem.html('<span class="text-blue-600 font-extrabold">(未入力)</span>');
+                if (ary['mandatory'] == 1 || ary['is_mandatory'] == 1) elem.html('<span class="text-red-600 font-extrabold">(未入力)</span>');
+                else elem.html('<span class="text-green-600 font-extrabold">(未入力)</span>');
             } else if (typeof ary[name].replaceAll === 'function') {
                 elem.html(ary[name].replaceAll("&", "&amp;").replaceAll("<", "&lt;")
                     .replaceAll(">", "&gt;").replaceAll("\r\n", "<br>"));
             }
             elem.addClass('flash');
+            if (ary['reload_on_change'] == 1 ||
+                ary['reload_on_firstinput'] == 1 && ary['firstinput'] == true) {
+                    console.log("will reload");
+            }
             setTimeout(function () {
                 elem.removeClass('flash');
+                if (ary['reload_on_change'] == 1 ||
+                    ary['reload_on_firstinput'] == 1 && ary['firstinput'] == true) {
+                    location.reload();
+                    // window.location.href = "/paper/" + ary['paper_id'] + "/edit";
+                }
             }, 1000); // フラッシュの時間
         },
         error: function (xhr, textStatus, error) {
-            // if (xhr.status == 404) {
-            //     if (!reduce_404_error_for_dummyform) {
-            //         if (confirm("プレビュー用フォームでは送信できません。そのため、なにか入力しても「未入力」のままになります。\nこのメッセージを短期的に表示しないようにするには、OKをおしてください")) {
-            //             reduce_404_error_for_dummyform = true;
-            //         }
-            //     }
-            //     return; // ダミーフォーム、プレビュー用フォームのとき
-            // }
             alert("error form submit (form changed, but not saved.)");
             console.log(textStatus);
         }

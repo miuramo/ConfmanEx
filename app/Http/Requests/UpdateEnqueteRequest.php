@@ -56,6 +56,12 @@ class UpdateEnqueteRequest extends FormRequest
                         'paper_id' => $paper_id,
                         'enquete_item_id' => $ei->id,
                     ]);
+                    // 最初の入力かどうか（以前がnullで、今回のvalueがnullでない）
+                    if ($enq->value === null && $value !== null) {
+                        $data['firstinput'] = true;
+                    } else {
+                        $data['firstinput'] = false;
+                    }
                     if (is_numeric($value)) {
                         if ($value <= 2 ** 31 - 1 && $value >= -2 ** 31) $enq->value = $value; // 整数の範囲を越えなければ数値として
                         else $enq->value = null;
@@ -69,6 +75,12 @@ class UpdateEnqueteRequest extends FormRequest
                     }
                     $enq->save();
                 });
+                // is_mandatory かどうかを返す（未入力の文字の色をJS側に知らせるため）
+                $data['is_mandatory'] = $ei->is_mandatory;
+                // TODO: 複数あったら（しかも、mandatoryが混在していたら）どうする？あまり考えなくてもよい？
+                $data['reload_on_change'] = $ei->reload_on_change;
+                $data['reload_on_firstinput'] = $ei->reload_on_firstinput;
+                $data['enq_id'] = $enq_id;
             }
         }
         return json_encode($data);
