@@ -49,7 +49,7 @@ class UpdateEnqueteRequest extends FormRequest
             $ei = EnqueteItem::where("enquete_id", $enq_id)->where("name", $key)->first();
             if ($value != null && !$ei->validate_rule($value)) $data[$key] = $ei->pregerrmes;
             else {
-                DB::transaction(function () use ($enq_id, $paper_id, $ei, $value) {
+                DB::transaction(function () use ($enq_id, $paper_id, $ei, $value, &$data) {
                     $enq = EnqueteAnswer::firstOrCreate([
                         'enquete_id' => $enq_id,
                         'user_id' => Auth::id(),
@@ -57,10 +57,10 @@ class UpdateEnqueteRequest extends FormRequest
                         'enquete_item_id' => $ei->id,
                     ]);
                     // 最初の入力かどうか（以前がnullで、今回のvalueがnullでない）
-                    if ($enq->value === null && $value !== null) {
-                        $data['firstinput'] = true;
+                    if ($enq->valuestr == null && $value != null) {
+                        $data['firstinput'] = 1;
                     } else {
-                        $data['firstinput'] = false;
+                        $data['firstinput'] = 0;
                     }
                     if (is_numeric($value)) {
                         if ($value <= 2 ** 31 - 1 && $value >= -2 ** 31) $enq->value = $value; // 整数の範囲を越えなければ数値として
