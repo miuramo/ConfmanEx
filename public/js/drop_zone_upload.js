@@ -99,6 +99,7 @@ $(function () {
 
         // AJAXでindexを呼び、#filelist にさしかえる
         reloadFileList();
+        location.reload();
     }
     function reloadFileList() {
         var xhr = new XMLHttpRequest();

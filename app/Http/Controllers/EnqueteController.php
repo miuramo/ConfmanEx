@@ -202,7 +202,7 @@ class EnqueteController extends Controller
         }
         $coldetails = AdminController::column_details($tableName);
         $coldetails['COPY'] = 'COPY';
-        $ary = ['COPY', 'orderint', 'name', 'desc', 'content', 'contentafter', 'is_mandatory', 'pregrule', 'pregerrmes'];
+        $ary = ['COPY', 'orderint', 'name', 'desc', 'content', 'contentafter', 'is_mandatory', 'reload_on_change', 'reload_on_firstinput', 'pregrule', 'pregerrmes'];
         $cold2 = [];
         foreach ($ary as $f) {
             if (isset($coldetails[$f])) $cold2[$f] = $coldetails[$f];
