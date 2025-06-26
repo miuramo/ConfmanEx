@@ -300,7 +300,7 @@ class PaperController extends Controller
             $paper->accepted = (count($fileerrors) == 0 && count($enqerrors) == 0);
             $paper->save();
 
-            $koumoku = Paper::mandatory_bibs(); //必須書誌情報            
+            $koumoku = Paper::mandatory_bibs($cat->id); //必須書誌情報            
 
             return view("paper.edit", ["paper" => $id])->with(compact("id", "id_03d", "all", "paper", "enqs", "enqans", "fileerrors", "enqerrors", "biberrors", "cat", "koumoku"));
         } catch (ModelNotFoundException $ex) {
@@ -398,7 +398,7 @@ class PaperController extends Controller
 
         $pdftext = $paper->pdf_file->getPdfText();
         // 書誌情報の設定項目
-        $koumoku = Paper::mandatory_bibs();
+        $koumoku = Paper::mandatory_bibs($paper->category_id);
         $koumokucolor = ['title' => 'teal', 'abst' => 'teal', 'keyword' => 'teal', 'authorlist' => 'teal', 'etitle' => 'lime', 'eabst' => 'lime', 'ekeyword' => 'lime', 'eauthorlist' => 'lime'];
         // $pdftext = mb_ereg_replace('\n+',"\n",$pdftext);
         $reps = ["ﬁ" => "fi", "ﬀ" => "ff", "ﬃ" => "ffi"];

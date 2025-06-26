@@ -110,7 +110,7 @@ class Paper extends Model
         'deleted_at'
     ];
 
-    public static function mandatory_bibs()
+    public static function mandatory_bibs($catid = 1)
     {
         $koumoku = [
             'title' => '和文タイトル',
@@ -539,7 +539,7 @@ class Paper extends Model
         // 何が必須か？は、全部から、SKIP_BIBINFOを引く。
         // $manda = ["title", "etitle", "authorlist", "eauthorlist", "abst", "eabst", "keyword", "ekeyword"];
         // 書誌情報の設定項目
-        $koumoku = Paper::mandatory_bibs();
+        $koumoku = Paper::mandatory_bibs($this->category_id);
         // 設定されていないものがあれば、error配列として返す。
         $errors = [];
         foreach ($koumoku as $key => $expr) {
