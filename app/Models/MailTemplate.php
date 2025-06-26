@@ -456,18 +456,20 @@ class MailTemplate extends Model
         })->get()->pluck("paper_id")->toArray();
 
         $papers = [];
-        // $cols = Paper::whereIn('category_id', $args)->whereNull("abst")->orWhereNull("keyword")->orWhereNull("etitle")->get();
-        $koumoku = Paper::mandatory_bibs(); // 必要項目は、SKIP_BIBINFOにないもの
-        $cols = Paper::whereIn('id', $accPIDs)
-            ->where(function ($query) use ($koumoku) {
-                foreach ($koumoku as $k => $v) {
-                    $query->orWhereNull($k);
-                }
-            })->get();
         $error_ids = [];
-        foreach ($cols as $paper) {
-            $papers[] = $paper;
-            $error_ids[] = $paper->id;
+        // $cols = Paper::whereIn('category_id', $args)->whereNull("abst")->orWhereNull("keyword")->orWhereNull("etitle")->get();
+        foreach ($args as $catid) {
+            $koumoku = Paper::mandatory_bibs($catid); // 必要項目は、SKIP_BIBINFOにないもの
+            $cols = Paper::whereIn('id', $accPIDs)->where('category_id', $catid)
+                ->where(function ($query) use ($koumoku) {
+                    foreach ($koumoku as $k => $v) {
+                        $query->orWhereNull($k);
+                    }
+                })->get();
+            foreach ($cols as $paper) {
+                $papers[] = $paper;
+                $error_ids[] = $paper->id;
+            }
         }
         //エラーについても追加する
         $cols = Paper::whereIn('id', $accPIDs)->whereNotIn('id', $error_ids)->get();

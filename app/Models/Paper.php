@@ -110,7 +110,7 @@ class Paper extends Model
         'deleted_at'
     ];
 
-    public static function mandatory_bibs()
+    public static function mandatory_bibs($catid = 1)
     {
         $koumoku = [
             'title' => '和文タイトル',
@@ -122,10 +122,23 @@ class Paper extends Model
             'ekeyword' => '英文Keyword',
             'eauthorlist' => '英文Author(s)'
         ];
-        $skip_bibinfo = Setting::getval("SKIP_BIBINFO");
-        $skip_bibinfo = json_decode($skip_bibinfo);
-        foreach ($skip_bibinfo as $key) {
-            unset($koumoku[$key]);
+        $catspecific = Setting::getval("SKIP_BIBINFO_CAT{$catid}");
+        if ($catspecific != null) {
+            $catspecific = json_decode($catspecific);
+            if (is_array($catspecific)) {
+                foreach ($catspecific as $key) {
+                    unset($koumoku[$key]);
+                }
+            }
+        } else {
+            $skip_bibinfo = Setting::getval("SKIP_BIBINFO");
+            $skip_bibinfo = json_decode($skip_bibinfo);
+            if (is_array($skip_bibinfo)) {
+                // もし、SKIP_BIBINFOが設定されていれば、そこから除外する。 
+                foreach ($skip_bibinfo as $key) {
+                    unset($koumoku[$key]);
+                }
+            }
         }
         return $koumoku;
     }
@@ -539,7 +552,7 @@ class Paper extends Model
         // 何が必須か？は、全部から、SKIP_BIBINFOを引く。
         // $manda = ["title", "etitle", "authorlist", "eauthorlist", "abst", "eabst", "keyword", "ekeyword"];
         // 書誌情報の設定項目
-        $koumoku = Paper::mandatory_bibs();
+        $koumoku = Paper::mandatory_bibs($this->category_id);
         // 設定されていないものがあれば、error配列として返す。
         $errors = [];
         foreach ($koumoku as $key => $expr) {

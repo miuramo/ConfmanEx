@@ -3,7 +3,7 @@
 ])
 <!-- components.paper.authorlist -->
 @php
-$koumoku = App\Models\Paper::mandatory_bibs(); //必須書誌情報    
+$koumoku = App\Models\Paper::mandatory_bibs($paper->category_id); //必須書誌情報    
 @endphp
 
 <table class="border-cyan-500 border-2">
