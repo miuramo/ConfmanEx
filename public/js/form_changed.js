@@ -11,7 +11,7 @@ function changed(formName, name) {
         complete: function (xhr, textStatus) { },
         success: function (result, textStatus, xhr) {
             var ary = JSON.parse(result);
-            console.log(ary);
+            // console.log(ary);
             var elem = $("#" + name + "_answer");
             if (ary[name] == null) {
                 if (ary['mandatory'] == 1 || ary['is_mandatory'] == 1) elem.html('<span class="text-red-600 font-extrabold">(未入力)</span>');
