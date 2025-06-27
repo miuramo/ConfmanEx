@@ -48,6 +48,26 @@ class Enquete extends Model
         }
         return [];
     }
+
+    public static function needForRegist()
+    {
+        $configs = EnqueteConfig::where('valid', 1)->orderBy('openstart', 'desc')->get();
+        $canedit = [];
+        $readonly = [];
+        $until = []; //enqid=>deadline
+        foreach ($configs as $config) {
+            if ($config->enquete_id < 4 || 6 < $config->enquete_id ) continue; // 3,4,5 のアンケートのみ
+            if (Enquete::checkdayduration($config->openstart, $config->openend)) {
+                $enq = Enquete::with('items')->find($config->enquete_id);
+                $canedit[] = $enq;
+            } else {
+                $enq = Enquete::with('items')->find($config->enquete_id);
+                $readonly[] = $enq;
+            }
+            $until[$enq->id] = Enquete::mm_dd_fancy($config->openend);
+        }
+        return ["canedit" => $canedit, "readonly" => $readonly, "until" => $until];
+    }
     /**
      * 必要なアンケートを返す
      */

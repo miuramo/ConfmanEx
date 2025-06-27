@@ -17,6 +17,8 @@
                 </div>
                 @php
                     $voting = App\Models\Setting::isTrue('VOTING');
+                    $regopen = App\Models\Setting::isTrue('REGOPEN');
+                    $regopen_public = App\Models\Setting::isTrue('REGOPEN_PUBLIC');
                     $annoting = App\Models\Setting::isTrue('ENABLE_ANNOTPAPER');
                 @endphp
 
@@ -24,12 +26,16 @@
                     @php
                         $navs_route = [
                             'Annot Paper' => 'annot.index',
+                            '参加登録' => 'regist.index',
                             '投票' => 'vote.index',
                             '新規投稿' => 'paper.create',
                             '投稿一覧' => 'paper.index',
                         ];
                         if (!$annoting) {
                             unset($navs_route['Annot Paper']);
+                        }
+                        if (!$regopen) {
+                            unset($navs_route['参加登録']);
                         }
                         if (!$voting) {
                             unset($navs_route['投票']);
@@ -127,6 +133,13 @@
                             <div class="hidden space-x-8 sm:-my-px sm:ms-5 sm:flex">
                                 <x-nav-link :href="route('vote.index')" :active="request()->routeIs('vote.index')">
                                     {{ __('投票') }}
+                                </x-nav-link>
+                            </div>
+                        @endif
+                        @if ($regopen_public)
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-5 sm:flex">
+                                <x-nav-link :href="route('regist.entry')" :active="request()->routeIs('regist.entry')">
+                                    {{ __('参加登録') }}
                                 </x-nav-link>
                             </div>
                         @endif

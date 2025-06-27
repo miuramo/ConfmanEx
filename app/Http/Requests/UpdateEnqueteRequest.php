@@ -45,10 +45,12 @@ class UpdateEnqueteRequest extends FormRequest
         unset($data['_method']);
         unset($data['url']);
         unset($data['_url']);
+        // info($data);
         foreach ($data as $key => $value) {
             $ei = EnqueteItem::where("enquete_id", $enq_id)->where("name", $key)->first();
-            if ($value != null && !$ei->validate_rule($value)) $data[$key] = $ei->pregerrmes;
-            else {
+            if ($value != null && !$ei->validate_rule($value)) {
+                $data[$key] = $ei->pregerrmes;
+            } else {
                 DB::transaction(function () use ($enq_id, $paper_id, $ei, $value, &$data) {
                     $enq = EnqueteAnswer::firstOrCreate([
                         'enquete_id' => $enq_id,
@@ -76,8 +78,8 @@ class UpdateEnqueteRequest extends FormRequest
                     $enq->save();
                 });
                 // is_mandatory かどうかを返す（未入力の文字の色をJS側に知らせるため）
-                $data['is_mandatory'] = $ei->is_mandatory;
-                // TODO: 複数あったら（しかも、mandatoryが混在していたら）どうする？あまり考えなくてもよい？
+                $data[$key.'_is_mandatory'] = $ei->is_mandatory;
+                // TODO: 複数あったら（しかも、mandatoryが混在していたら）どうする？あまり考えなくてもよい？ →結局keyをつけた
                 $data['reload_on_change'] = $ei->reload_on_change;
                 $data['reload_on_firstinput'] = $ei->reload_on_firstinput;
                 $data['enq_id'] = $enq_id;

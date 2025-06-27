@@ -244,6 +244,24 @@ class Setting extends Model
             'valid' => false,
             'misc' => '和文キーワードは必須',
         ]);
+        Setting::firstOrCreate([
+            'name' => "REGOPEN",
+        ], [
+            'value' => "true",
+            'isnumber' => false,
+            'isbool' => true,
+            'valid' => false,
+            'misc' => '参加登録を受け付ける',
+        ]);
+        Setting::firstOrCreate([
+            'name' => "REGOPEN_PUBLIC",
+        ], [
+            'value' => "true",
+            'isnumber' => false,
+            'isbool' => true,
+            'valid' => false,
+            'misc' => '参加登録を受け付ける（公開用・ゲスト）',
+        ]);
 
         Vote::init();
         VoteItem::init();

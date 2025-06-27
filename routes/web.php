@@ -294,6 +294,7 @@ Route::middleware('guest')->group(function () {
 });
 
 require __DIR__ . '/web_annotpaper.php';
+require __DIR__ . '/web_register.php';
 
 require __DIR__ . '/auth.php';
 

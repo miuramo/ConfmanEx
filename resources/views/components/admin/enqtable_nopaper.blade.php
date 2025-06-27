@@ -22,8 +22,9 @@
     foreach($enq->items as $itm){
         $heads[] = $itm->name;
     }
+    $OFFSET = 0;
 @endphp
-<!-- components.admin.enqtable -->
+<!-- components.admin.enqtable_nopaper -->
 
 <table class="min-w-full divide-y divide-gray-200 text-sm">
     <thead>
@@ -48,8 +49,8 @@
                 {{-- アンケート --}}
                 @foreach ($enq->items as $itm)
                         <td class="p-1">
-                            @isset($eansary[$paper->id][$itm->id])
-                            {{ $eansary[$paper->id][$itm->id] }}
+                            @isset($eansary[$OFFSET + $paper->id][$itm->id])
+                            {{ $eansary[$OFFSET + $paper->id][$itm->id] }}
                             @else
                             _
                             @endisset
