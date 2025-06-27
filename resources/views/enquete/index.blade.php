@@ -96,6 +96,11 @@
                         size="sm">
                         プレビュー
                     </x-element.linkbutton2>
+                    <span class="mx-1"></span>
+                    <x-element.deletebutton action="{{ route('enq.destroy', ['enq' => $enq->id]) }}" 
+                        size="sm" confirm="アンケートを論理削除してよいですか？" align="right">
+                        削除
+                    </x-element.deletebutton>
 
                 </div>
                 <div class="text-sm ml-0 my-1 text-gray-800">

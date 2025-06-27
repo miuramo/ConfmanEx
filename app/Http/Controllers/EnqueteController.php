@@ -338,11 +338,15 @@ class EnqueteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Enquete $enquete)
+    public function destroy(int $enq_id)
     {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        $aEnq = Enquete::accessibleEnquetes(true);
+        if (count($aEnq) < 1) abort(403);
 
-        //
+        Enquete::find($enq_id)->delete(); // 論理削除
+        // Enquete::destroy($enquete->id); // 物理削除
+
+        return redirect()->route('enq.index')->with('feedback.success', 'アンケートを論理削除しました。');
     }
 
     /**
