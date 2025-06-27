@@ -10,72 +10,62 @@
         </h2>
     </x-slot>
 
-    @php
-        $OFFSET = 0; // paper_idのオフセット値
-        $uid = Auth::user()->id;
-        $enqs = App\Models\Enquete::needForRegist();
-        $ids = array_keys($enqs['until']);
-        // 既存回答
-        $eans = App\Models\EnqueteAnswer::where('user_id', $uid)->whereIn('enquete_id', $ids)->get();
-        $enqans = [];
-        foreach ($eans as $ea) {
-            $enqans[$ea->enquete_id][$ea->enquete_item_id] = $ea;
-        }
+    <div class="py-2 px-4">
+        <div class="py-2 px-6">
+            <x-element.h1>注意事項</x-element.h1>
+            @php
+                $sankakakunin = App\Models\Confirm::where('grp', 2)
+                    ->where('valid', 1)
+                    ->select('name', 'mes')
+                    ->get()
+                    ->pluck('mes', 'name')
+                    ->toArray();
+            @endphp
+            <ul class="m-4">
+                @foreach ($sankakakunin as $name => $mes)
+                    <li class="hover:bg-lime-100 dark:text-slate-400 dark:hover:bg-lime-950">
+                        <input type="checkbox" checked="checked" class="checked:bg-lime-500">
+                        {!! $mes !!}
+                    </li>
+                @endforeach
+            </ul>
 
-    @endphp
-    <div class="py-2 px-6">
-
-        @foreach ($enqs['canedit'] as $enq)
-            <a name="enq_{{ $enq->id }}"></a>
-            <div
-                class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-gray-400 hover:bg-green-300 dark:hover:bg-green-800">
-                {{ $enq->name }}
-                @if (!$enq->showonpaperindex)
-                    &nbsp; → <x-element.linkbutton
-                        href="{{ route('enquete.pageedit', ['paper' => $OFFSET+$uid, 'enq' => $enq]) }}" color="cyan">
-                        ここをクリックして回答
+        </div>
+        <div class="py-2 px-6">
+            @php
+                $reg = App\Models\Regist::where('user_id', Auth::user()->id)->first();
+            @endphp
+            @isset($reg)
+                <x-element.h1>
+                    <x-element.linkbutton href="{{ route('regist.edit', ['regist' => $reg->id]) }}" color="lime">
+                        参加登録を確認・編集する
                     </x-element.linkbutton>
-                @endif
-                <x-element.gendospan>{{ $enqs['until'][$enq->id] }}まで修正可</x-element.gendospan>
-            </div>
-            @if ($enq->showonpaperindex)
-                <form action="{{ route('enquete.update', ['paper' => $OFFSET+$uid, 'enq' => $enq]) }}" method="post"
-                    id="enqform{{ $enq->id }}">
-                    @csrf
-                    @method('put')
-                    <input type="hidden" name="paper_id" value="{{ $OFFSET+$uid }}">
-                    <input type="hidden" name="enq_id" value="{{ $enq->id }}">
-                    <div class="mx-10">
-                        <x-enquete.edit :enq="$enq" :enqans="$enqans">
-                        </x-enquete.edit>
-                    </div>
-                </form>
-            @endif
-        @endforeach
-
-        @foreach ($enqs['readonly'] as $enq)
-            <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
-                {{ $enq->name }}
-                @if (!$enq->showonpaperindex)
-                    &nbsp; → <x-element.linkbutton
-                        href="{{ route('enquete.pageview', ['paper' => $OFFSET+$uid, 'enq' => $enq]) }}" color="cyan">
-                        ここをクリックして回答参照
+                    <span class="mx-2"></span>
+                    <x-element.linkbutton href="{{ route('regist.edit', ['regist' => $reg->id]) }}" color="cyan"
+                        confirm="参加登録内容を確認したうえで、参加登録確認メールを送信します。よろしいですか？">
+                        参加登録確認メールを送信する
                     </x-element.linkbutton>
-                @endif
-                <span class="mx-10"></span>
-                <x-element.linkbutton2 href="{{ route('enq.preview', ['enq' => $enq->id, 'key' => $enq->getkey(7)]) }}"
-                    size="xs" color="cyan" target="_blank">質問項目をみる</x-element.linkbutton2>
 
-            </div>
-            @if ($enq->showonpaperindex)
-                <div class="mx-10">
-                    <x-enquete.view :enq="$enq" :enqans="$enqans">
-                    </x-enquete.view>
-                </div>
-            @endif
-        @endforeach
+                    <x-element.deletebutton action="{{ route('regist.destroy', ['regist' => $reg->id]) }}"
+                        confirm="参加登録を削除します。よろしいですか？" color="red" align="right">
+                        参加登録を削除する
+                    </x-element.deletebutton>
+                </x-element.h1>
+            @else
+                <x-element.h1>
+                    上記について、すべて確認・了承したうえで、参加登録を開始してください。
+                    <br>
+                    <br>
+                    <x-element.linkbutton href="{{ route('regist.create') }}" color="cyan">
+                        参加登録を開始する
+                    </x-element.linkbutton>
+                </x-element.h1>
+            @endisset
+
+        </div>
 
     </div>
+
     <script>
         function CheckAll(formname) {
             for (var i = 0; i < document.forms[formname].elements.length; i++) {
