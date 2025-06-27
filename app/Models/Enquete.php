@@ -75,11 +75,23 @@ class Enquete extends Model
             if (Enquete::checkdayduration($config->openstart, $config->openend)) {
                 $canedit[] = $enq;
             } else {
-                $readonly[] = $enq;
+                // アンケート回答が1つでもある場合、readonlyに追加する。（未回答なら）
+                if ($enq->countAnswers($paper) > 0) {
+                    $readonly[] = $enq;
+                    // 未回答でも、openendから60日以内ならreadonlyにする。（未入力であることを意識させるため！）
+                } else if (Enquete::checkdayduration($config->openstart, Enquete::dayplus($config->openend, 60))) {
+                    $readonly[] = $enq;
+                }
             }
             $until[$enq->id] = Enquete::mm_dd_fancy($config->openend);
         }
         return ["canedit" => $canedit, "readonly" => $readonly, "until" => $until];
+    }
+
+    public function countAnswers(Paper $paper)
+    {
+        // 参加者の回答数をカウントする
+        return EnqueteAnswer::where('enquete_id', $this->id)->where('paper_id', $paper->id)->count();
     }
 
     /**
@@ -169,6 +181,20 @@ class Enquete extends Model
             $end = $tmp;
             return !($begin < $now && $now < $end);
         }
+    }
+
+    public static function dayplus($mmdd, $plusday = 1)
+    {
+        $e = array_map("intval", explode("-", $mmdd));
+        $year = date('Y'); // 仮に今年で扱う（年は不要なら何でも良い）
+        // 日付を作る
+        $date = DateTime::createFromFormat('Y-n-j', "$year-{$e[0]}-{$e[1]}");
+        if (!$date) {
+            throw new InvalidArgumentException("不正な日付です: $mmdd");
+        }
+        // 日数を加算
+        $date->modify("+{$plusday} day");
+        return sprintf('%02d-%02d', (int) $date->format('n'), (int) $date->format('j'));
     }
 
     // 明日の日付を、MM-DD 形式で返す
