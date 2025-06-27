@@ -111,7 +111,7 @@
 
     <div class="m-6">
         @php
-            $koumoku = \App\Models\Paper::mandatory_bibs(); 
+            $koumoku = \App\Models\Paper::mandatory_bibs($paper->category_id); //必須書誌情報
         @endphp
         <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
             書誌情報
