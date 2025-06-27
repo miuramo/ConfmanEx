@@ -51,13 +51,15 @@ class Enquete extends Model
 
     public static function needForRegist()
     {
+        // Enquete.withpaper = false のとき、参加登録関連のアンケートとみなす。
+        $forReg_enqids = Enquete::where('withpaper', false)->pluck('id')->toArray();
         $configs = EnqueteConfig::where('valid', 1)->orderBy('openstart', 'desc')->get();
         $canedit = [];
         $readonly = [];
         $until = []; //enqid=>deadline
         foreach ($configs as $config) {
-            //TODO: EnqueteIDのハードコーディングをやめる
-            if ($config->enquete_id < 4 || 6 < $config->enquete_id ) continue; // 3,4,5 のアンケートのみ
+            // Enquete.withpaper = false のとき、参加登録関連のアンケートとみなす。
+            if ( !in_array($config->enquete_id, $forReg_enqids) ) continue; // 参加登録関連のアンケート以外は除外する
             if (Enquete::checkdayduration($config->openstart, $config->openend)) {
                 $enq = Enquete::with('items')->find($config->enquete_id);
                 $canedit[] = $enq;
