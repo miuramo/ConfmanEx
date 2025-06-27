@@ -56,6 +56,7 @@ class Enquete extends Model
         $readonly = [];
         $until = []; //enqid=>deadline
         foreach ($configs as $config) {
+            //TODO: EnqueteIDのハードコーディングをやめる
             if ($config->enquete_id < 4 || 6 < $config->enquete_id ) continue; // 3,4,5 のアンケートのみ
             if (Enquete::checkdayduration($config->openstart, $config->openend)) {
                 $enq = Enquete::with('items')->find($config->enquete_id);
