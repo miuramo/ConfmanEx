@@ -6,6 +6,9 @@
     'size' => 'md',
 ])
 <!-- components.element.deletebutton -->
+@if(strlen($action) < 2)
+<div class="text-red-500 bg-yellow-200 font-bold">注意: deletebuttonコンポーネントは、href属性を使用しません。代わりに、action属性を使用してください。</div>
+@endif
 <form action="{{ $action }}" method="post" class="float-{{ $align }}">
     @method('DELETE')
     @csrf
