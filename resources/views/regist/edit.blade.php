@@ -10,7 +10,7 @@
         </h2>
     </x-slot>
 
-    
+
     @php
         $OFFSET = 0; // paper_idのオフセット値
         $uid = Auth::user()->id;
@@ -24,7 +24,7 @@
         }
 
     @endphp
-    
+
     <div class="py-2 px-6">
 
         @foreach ($enqs['canedit'] as $enq)
@@ -34,18 +34,18 @@
                 {{ $enq->name }}
                 @if (!$enq->showonpaperindex)
                     &nbsp; → <x-element.linkbutton
-                        href="{{ route('enquete.pageedit', ['paper' => $OFFSET+$uid, 'enq' => $enq]) }}" color="cyan">
+                        href="{{ route('enquete.pageedit', ['paper' => $OFFSET + $uid, 'enq' => $enq]) }}" color="cyan">
                         ここをクリックして回答
                     </x-element.linkbutton>
                 @endif
                 <x-element.gendospan>{{ $enqs['until'][$enq->id] }}まで修正可</x-element.gendospan>
             </div>
             @if ($enq->showonpaperindex)
-                <form action="{{ route('enquete.update', ['paper' => $OFFSET+$uid, 'enq' => $enq]) }}" method="post"
+                <form action="{{ route('enquete.update', ['paper' => $OFFSET + $uid, 'enq' => $enq]) }}" method="post"
                     id="enqform{{ $enq->id }}">
                     @csrf
                     @method('put')
-                    <input type="hidden" name="paper_id" value="{{ $OFFSET+$uid }}">
+                    <input type="hidden" name="paper_id" value="{{ $OFFSET + $uid }}">
                     <input type="hidden" name="enq_id" value="{{ $enq->id }}">
                     <div class="mx-10">
                         <x-enquete.edit :enq="$enq" :enqans="$enqans">
@@ -60,7 +60,8 @@
                 {{ $enq->name }}
                 @if (!$enq->showonpaperindex)
                     &nbsp; → <x-element.linkbutton
-                        href="{{ route('enquete.pageview', ['paper' => $OFFSET+$uid, 'enq' => $enq]) }}" color="cyan">
+                        href="{{ route('enquete.pageview', ['paper' => $OFFSET + $uid, 'enq' => $enq]) }}"
+                        color="cyan">
                         ここをクリックして回答参照
                     </x-element.linkbutton>
                 @endif
@@ -77,6 +78,9 @@
             @endif
         @endforeach
 
+    </div>
+    <div class="py-2 px-6">
+        <livewire:regist-check :regid="$regid" />
     </div>
     <script>
         function CheckAll(formname) {

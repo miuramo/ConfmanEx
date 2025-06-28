@@ -35,9 +35,12 @@ class RegistController extends Controller
 
     public function edit($id)
     {
+        if (!is_numeric($id)){
+            return redirect()->route('regist.index')->with('error', '不正な参加登録IDです。');
+        }
         // 参加登録の編集フォームを表示する
         $reg = Regist::findOrFail($id);
-        return view('regist.edit', ['regist' => $reg]);
+        return view('regist.edit', ['regist' => $reg])->with('regid', $id);
     }
 
     public function destroy($id)
