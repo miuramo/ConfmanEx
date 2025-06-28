@@ -41,16 +41,16 @@ class ParticipantController extends Controller
      */
     public function edit(Participant $part)
     {
-        // 回答可能(canedit)または参照可能(readonly)
-        $enqs = Enquete::needForPart($part);
-        $ids = array_keys($enqs['until']);
-        // 既存回答
-        $eans = EnqueteAnswer::where('paper_id', $part->id)->whereIn('enquete_id', $ids)->get();
-        $enqans = [];
-        foreach ($eans as $ea) {
-            $enqans[$ea->enquete_id][$ea->enquete_item_id] = $ea;
-        }
-        return view('part.edit', ['part' => $part])->with(compact("part", "enqs","enqans"));
+        // // 回答可能(canedit)または参照可能(readonly)
+        // $enqs = Enquete::needForPart($part);
+        // $ids = array_keys($enqs['until']);
+        // // 既存回答
+        // $eans = EnqueteAnswer::where('paper_id', $part->id)->whereIn('enquete_id', $ids)->get();
+        // $enqans = [];
+        // foreach ($eans as $ea) {
+        //     $enqans[$ea->enquete_id][$ea->enquete_item_id] = $ea;
+        // }
+        // return view('part.edit', ['part' => $part])->with(compact("part", "enqs","enqans"));
     }
 
     /**
@@ -75,18 +75,18 @@ class ParticipantController extends Controller
      */
     public function update(Request $req, Participant $part)
     {
-        // 回答可能(canedit)または参照可能(readonly)
-        $enqs = Enquete::needForPart($part);
-        $ids = array_keys($enqs['until']);
-        // 既存回答
-        $eans = EnqueteAnswer::where('paper_id', $part->id)->whereIn('enquete_id', $ids)->get();
-        $enqans = [];
-        foreach ($eans as $ea) {
-            $enqans[$ea->enquete_id][$ea->enquete_item_id] = $ea->valuestr;
-        }
-        // アンケート項目番号=>name
-        $einames = EnqueteItem::pluck('name','id')->toArray();
-        $einame2id = array_flip($einames);
+        // // 回答可能(canedit)または参照可能(readonly)
+        // $enqs = Enquete::needForPart($part);
+        // $ids = array_keys($enqs['until']);
+        // // 既存回答
+        // $eans = EnqueteAnswer::where('paper_id', $part->id)->whereIn('enquete_id', $ids)->get();
+        // $enqans = [];
+        // foreach ($eans as $ea) {
+        //     $enqans[$ea->enquete_id][$ea->enquete_item_id] = $ea->valuestr;
+        // }
+        // // アンケート項目番号=>name
+        // $einames = EnqueteItem::pluck('name','id')->toArray();
+        // $einame2id = array_flip($einames);
 
         // とりあえずNULLでもよいのは、 othergakkai(12) receiptto(16) bikou(17)
         // ただし、othergakkai(12)は gakkai(11)が「その他...」の場合は必要。

@@ -40,7 +40,7 @@ class RegistController extends Controller
         }
         // 参加登録の編集フォームを表示する
         $reg = Regist::findOrFail($id);
-        return view('regist.edit', ['regist' => $reg])->with('regid', $id);
+        return view('regist.edit', ['regist' => $reg])->with('regid', $id)->with('reg', $reg);
     }
 
     public function destroy($id)

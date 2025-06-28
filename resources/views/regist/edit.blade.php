@@ -13,17 +13,16 @@
 
     @php
         $OFFSET = 0; // paper_idのオフセット値
-        $uid = Auth::user()->id;
+        $uid = $reg->user_id; // ユーザID
         $enqs = App\Models\Enquete::needForRegist();
-        $ids = array_keys($enqs['until']);
-        // 既存回答
-        $eans = App\Models\EnqueteAnswer::where('user_id', $uid)->whereIn('enquete_id', $ids)->get();
-        $enqans = [];
-        foreach ($eans as $ea) {
-            $enqans[$ea->enquete_id][$ea->enquete_item_id] = $ea;
-        }
-
+        $enqans = $reg->enqans();
     @endphp
+    @if (session('feedback.success'))
+        <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
+    @endif
+    @if (session('feedback.error'))
+        <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
+    @endif
 
     <div class="py-2 px-6">
 

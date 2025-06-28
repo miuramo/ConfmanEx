@@ -13,7 +13,7 @@
         <button wire:click="doregist" class="bg-green-500 text-white rounded-lg px-5 py-2 mx-1 text-2xl">登録する</button>
     @else
     @foreach($errors as $error)
-        <div class="text-red-500">{{ $error }}</div>
+        <div class="text-red-500 text-lg">{{ $error }}</div>
     @endforeach
     @endif
 

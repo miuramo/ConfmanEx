@@ -10,6 +10,14 @@
         </h2>
     </x-slot>
 
+    @if (session('feedback.success'))
+        <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
+    @endif
+    @if (session('feedback.error'))
+        <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
+    @endif
+
+
     <div class="py-2 px-4">
         <div class="py-2 px-6">
             <x-element.h1>注意事項</x-element.h1>
@@ -51,16 +59,34 @@
                         参加登録を削除する
                     </x-element.deletebutton>
                 </x-element.h1>
-            @else
-                <x-element.h1>
-                    上記について、すべて確認・了承したうえで、参加登録を開始してください。
-                    <br>
-                    <br>
-                    <x-element.linkbutton href="{{ route('regist.create') }}" color="cyan">
-                        参加登録を開始する
-                    </x-element.linkbutton>
-                </x-element.h1>
-            @endisset
+                現在の参加登録内容は以下の通りです。
+                <table class="table-auto">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-2">項目</th>
+                            <th class="px-4 py-2">内容</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2">申込日時</td>
+                            <td class="border px-4 py-2">{{$reg->submitted_at}}</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">早期申込</td>
+                            <td class="border px-4 py-2">{{$reg->isearly}}</td>
+                        </tr>
+                    </tbody>
+                @else
+                    <x-element.h1>
+                        上記について、すべて確認・了承したうえで、参加登録を開始してください。
+                        <br>
+                        <br>
+                        <x-element.linkbutton href="{{ route('regist.create') }}" color="cyan">
+                            参加登録を開始する
+                        </x-element.linkbutton>
+                    </x-element.h1>
+                @endisset
 
         </div>
 

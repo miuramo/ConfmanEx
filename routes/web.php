@@ -264,7 +264,7 @@ Route::middleware('auth')->group(function () {
     Route::post('bb_needreply', [BbController::class, 'needreply'])->name('bb.needreply');
 
     // 参加登録
-    Route::resource('part', ParticipantController::class);
+    // Route::resource('part', ParticipantController::class);
     // Route::get('part/create', [ParticipantController::class, 'create'])->name('part.create');
 
     // 投票結果

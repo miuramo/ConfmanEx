@@ -21,7 +21,7 @@ class Regist extends Model
         'payment_status',
         'confirmed_at',
     ];
-    //
+
 
     public function enqans()
     {
@@ -53,7 +53,7 @@ class Regist extends Model
     public function check()
     {
         $ary = $this->enq_key_value();
-        $res = [];
+        $res = Enquete::validateEnquetes(User::find($this->user_id));
         $res[] = $this->chk_kubun($ary);
         $res[] = $this->chk_othergakkai($ary);
         return $res;

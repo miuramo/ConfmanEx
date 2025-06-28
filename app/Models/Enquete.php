@@ -49,6 +49,9 @@ class Enquete extends Model
         return [];
     }
 
+    /**
+     * 参加登録はこちらを使う。needForPartは未使用。
+     */
     public static function needForRegist()
     {
         // Enquete.withpaper = false のとき、参加登録関連のアンケートとみなす。
@@ -59,7 +62,7 @@ class Enquete extends Model
         $until = []; //enqid=>deadline
         foreach ($configs as $config) {
             // Enquete.withpaper = false のとき、参加登録関連のアンケートとみなす。
-            if ( !in_array($config->enquete_id, $forReg_enqids) ) continue; // 参加登録関連のアンケート以外は除外する
+            if (!in_array($config->enquete_id, $forReg_enqids)) continue; // 参加登録関連のアンケート以外は除外する
             if (Enquete::checkdayduration($config->openstart, $config->openend)) {
                 $enq = Enquete::with('items')->find($config->enquete_id);
                 $canedit[] = $enq;
@@ -122,29 +125,37 @@ class Enquete extends Model
     /**
      * 参加登録に必要なアンケートを返す
      */
-    public static function needForPart(Participant $part)
-    {
-        $configs = EventConfig::where('event_id', $part->event_id)->orderBy('orderint')->get();
-        $canedit = [];
-        $readonly = [];
-        $until = []; //enqid=>deadline
-        // $ids = []; // あつめたEnqueteID
-        foreach ($configs as $config) {
-            $enq = Enquete::with('items')->find($config->enquete_id);
-            if (Enquete::checkdayduration($config->openstart, $config->openend)) {
-                $canedit[] = $enq;
-            } else {
-                $readonly[] = $enq;
-            }
-            $until[$enq->id] = Enquete::mm_dd_fancy($config->openend);
-        }
-        return ["canedit" => $canedit, "readonly" => $readonly, "until" => $until];
-    }
+    // public static function needForPart(Participant $part)
+    // {
+    //     $configs = EventConfig::where('event_id', $part->event_id)->orderBy('orderint')->get();
+    //     $canedit = [];
+    //     $readonly = [];
+    //     $until = []; //enqid=>deadline
+    //     // $ids = []; // あつめたEnqueteID
+    //     foreach ($configs as $config) {
+    //         $enq = Enquete::with('items')->find($config->enquete_id);
+    //         if (Enquete::checkdayduration($config->openstart, $config->openend)) {
+    //             $canedit[] = $enq;
+    //         } else {
+    //             $readonly[] = $enq;
+    //         }
+    //         $until[$enq->id] = Enquete::mm_dd_fancy($config->openend);
+    //     }
+    //     return ["canedit" => $canedit, "readonly" => $readonly, "until" => $until];
+    // }
 
-    public static function validateEnquetes(Paper $paper)
+    /**
+     * 投稿時 (or 参加登録時) のアンケートのチェックを行う。
+     * 元々はPaper、参加登録のときはUserを引数にとる。
+     */
+    public static function validateEnquetes(Paper|User $paper)
     {
         $errorary = [];
-        $needFor = Enquete::needForSubmit($paper)['canedit'];
+        if ($paper instanceof User) {
+            $needFor = Enquete::needForRegist()['canedit'];
+        } else {
+            $needFor = Enquete::needForSubmit($paper)['canedit'];
+        }
         foreach ($needFor as $enq) {
             $res = $enq->validateOneEnq($paper);
             if (count($res) > 0) {
@@ -159,7 +170,7 @@ class Enquete extends Model
     /**
      * 未回答アンケート項目(EnqItem) id=>desc の配列をかえす。[] ならエラーなし。
      */
-    public function validateOneEnq(Paper $paper)
+    public function validateOneEnq(Paper|User $paper)
     {
         $eis = $this->items;
         // exist answers: select enquete_item_id from enquete_answers where paper_id =
