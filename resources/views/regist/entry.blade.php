@@ -6,7 +6,7 @@
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
-            {{ __('参加登録') }} 
+            {{ __('参加登録') }}
         </h2>
     </x-slot>
 
@@ -14,14 +14,19 @@
         <x-element.sankou>
             参加登録の流れは、以下のようになります。
             <ol class="list-decimal px-8 pt-4 leading-relaxed">
-                <li> <x-element.linkbutton href="{{route('entry')}}">参加者／投稿者アカウントの作成</x-element.linkbutton> （参加者のかたにも、先に投稿者アカウントを作成していただきます。）<br>
-                    <b>（すでに著者または委員としてアカウントがある方は不要です。<x-element.linkbutton href="{{route('regist.index')}}" color="green">ログインして参加登録</x-element.linkbutton> (手順 5.) にお進みください。）</b></li>
-                <li> メールで届いた認証URLをクリック</li>
-                <li> パスワードの設定</li>
-                <li> 氏名と所属の登録</li>
-                <li> メニューの「参加登録」から必要事項を入力</li>
-                <li> メニューの「参加登録」から「確認」をクリック</li>
-                <li> 参加登録メールが届くことを確認（迷惑メールフォルダもご確認ください）</li>
+                <li> <x-element.linkbutton href="{{ route('entry') }}">参加者／投稿者アカウントの作成</x-element.linkbutton>
+                    （参加者のかたにも、先に投稿者アカウントを作成していただきます。）<br>
+                    <b>（すでに著者または委員としてアカウントがある方は不要です。<x-element.linkbutton href="{{ route('regist.index') }}"
+                            color="green">ログインして参加登録</x-element.linkbutton> (手順 2.) にお進みください。）</b>
+                </li>
+                <ol class="list-inside list-disc px-8 leading-relaxed">
+                    <li> メールで届いた認証URLをクリック</li>
+                    <li> パスワードの設定</li>
+                    <li> 氏名と所属の登録</li>
+                </ol>
+                <li> メニューの「参加登録」→「参加登録を開始する」</li>
+                <li> 「入力内容のチェック」後、「参加登録を完了」をクリック</li>
+                <li> 「参加登録確認メールを送信する」をクリックし、参加登録メールが届くことを確認（迷惑メールフォルダもご確認ください）</li>
             </ol>
 
         </x-element.sankou>

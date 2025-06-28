@@ -63,19 +63,35 @@
                 <table class="table-auto">
                     <thead>
                         <tr>
-                            <th class="px-4 py-2">項目</th>
-                            <th class="px-4 py-2">内容</th>
+                            <th class="border px-4 py-2 bg-slate-200 dark:bg-slate-500">項目</th>
+                            <th class="border px-4 py-2 bg-slate-200 dark:bg-slate-500">内容</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="border px-4 py-2">申込日時</td>
-                            <td class="border px-4 py-2">{{$reg->submitted_at}}</td>
+                            <td class="border px-4 py-2 dark:text-gray-100">状況</td>
+                            <td class="border px-4 py-2 dark:text-gray-100">
+                                @if($reg->valid)
+                                <span class="text-green-500 font-extrabold">有効</span>
+                                @else
+                                <span class="text-red-500 font-extrabold">無効（まだ申込は完了していません）</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @if($reg->valid)
+                        <tr>
+                            <td class="border px-4 py-2 dark:text-gray-100">参加登録ID</td>
+                            <td class="border px-4 py-2 dark:text-gray-100">{{$reg->id}}</td>
                         </tr>
                         <tr>
-                            <td class="border px-4 py-2">早期申込</td>
-                            <td class="border px-4 py-2">{{$reg->isearly}}</td>
+                            <td class="border px-4 py-2 dark:text-gray-100">申込日時</td>
+                            <td class="border px-4 py-2 dark:text-gray-100">{{$reg->submitted_at}}</td>
                         </tr>
+                        <tr>
+                            <td class="border px-4 py-2 dark:text-gray-100">早期申込</td>
+                            <td class="border px-4 py-2 dark:text-gray-100">{{$reg->isearly}}</td>
+                        </tr>
+                        @endif
                     </tbody>
                 @else
                     <x-element.h1>

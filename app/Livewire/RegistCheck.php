@@ -8,7 +8,7 @@ use Livewire\Component;
 class RegistCheck extends Component
 {
     public $regid;
-    public $errors = ['まだチェックされていません。入力チェックを行ってください。'];
+    public $errors = ['まだチェックされていません。入力内容チェックを行ってください。'];
     public function render()
     {
         return view('livewire.regist-check');

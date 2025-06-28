@@ -81,6 +81,13 @@
     <div class="py-2 px-6">
         <livewire:regist-check :regid="$regid" />
     </div>
+    <div class="my-20"></div>
+    <div class="py-2 px-6">
+        <x-element.linkbutton href="{{ route('regist.index') }}" color="gray">
+            参加登録トップに戻る
+        </x-element.linkbutton>
+    </div>
+
     <script>
         function CheckAll(formname) {
             for (var i = 0; i < document.forms[formname].elements.length; i++) {
