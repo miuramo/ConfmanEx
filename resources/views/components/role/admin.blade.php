@@ -173,7 +173,8 @@
     @if (env('APP_DEBUG') && auth()->id() == 1)
         <div class="text-sm mx-10">
             採択タグごとの、ランダムなPaperIDとその投稿者IDの表示<br>
-            @foreach (\App\Models\Category::where('status__revreturn_on', 1)->get() as $cat)
+            {{-- @foreach (\App\Models\Category::where('status__revreturn_on', 1)->get() as $cat) --}}
+            @foreach (\App\Models\Category::all() as $cat)
                 @php
                     $combined = App\Models\Accept::random_pids_for_each_accept($cat->id);
                     $show = $combined['show'];
@@ -198,6 +199,7 @@
                             color="lime">rev</x-element.linkbutton>
                     @endisset
                 @endforeach
+                <br>
             @endforeach
         </div>
         <div class="text-sm mx-10">

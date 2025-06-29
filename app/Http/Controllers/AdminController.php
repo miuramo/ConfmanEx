@@ -566,7 +566,7 @@ class AdminController extends Controller
                 }
             }
             $title = "査読進行管理";
-            $note = "査読中（revedit_on = 1 && revreturn_on = 0）は「書誌情報の設定ボタン」や「回答可能なアンケート」を著者の編集画面に表示しません。";
+            $note = "査読中（revedit_on = 1 && revreturn_on = 0）は「書誌情報の設定ボタン」や「回答可能なアンケート」を著者の編集画面に表示しません。<br>査読掲示板リンクについても、revbb_on = 1 であっても revreturn_on = 0 のときは表示しません。    ";
         }
 
         $domain = config('database.default');
