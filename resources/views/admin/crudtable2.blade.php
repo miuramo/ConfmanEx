@@ -48,7 +48,7 @@
     <div class="py-4">
         @isset($note)
             <div class="mx-6 px-4 py-2 bg-yellow-200 dark:bg-yellow-800 dark:text-yellow-200 rounded-lg">
-                {{ $note }}
+                {!! $note !!}
             </div>
         @endisset
         <div class="sm:mx-auto mx-6 sm:px-6 lg:px-8">
