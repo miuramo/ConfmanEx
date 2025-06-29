@@ -30,12 +30,21 @@
                         </button>
                     </x-slot>
 
+                    @php
+                        $paper = App\Models\Paper::find($file->paper_id);
+                        $category = App\Models\Category::find($paper->category_id);
+                        $pdfDisableDelete = $category->pdf_disable_delete ?? false;
+                        $isPdf = $file->mime == 'application/pdf';
+                        $isPdfDeleteDisabled = $pdfDisableDelete && $isPdf;
+                    @endphp
                     <x-slot name="content">
+                        @if(!$isPdfDeleteDisabled)
                         <x-dropdown-div>
                             <x-element.deletebutton action="{{ route('file.destroy', ['file' => $file->id]) }}"
                                 color="red" confirm="削除してよいですか？"> Delete File
                             </x-element.deletebutton>
                         </x-dropdown-div>
+                        @endif
                         @if ($file->mime == 'application/pdf')
                         <x-dropdown-link target="_blank" :href="route('file.pdftext', ['file' => $file->id])">
                             (参考) PDF抽出テキスト

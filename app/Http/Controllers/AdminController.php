@@ -530,6 +530,7 @@ class AdminController extends Controller
                 'pdf_accept_start',
                 'pdf_accept_end',
                 'pdf_accept_revise',
+                'pdf_disable_delete', // PDFファイルの削除を禁止する
                 'openstart',
                 'openend',
                 'upperlimit',
