@@ -248,8 +248,8 @@ class FileController extends Controller
 
                                     if ($req->input('extra')) {
                                         // PDFファイルのロック状態を変更する
-                                        $paper->pdf_file->archived = ($req->input('archived'));
-                                        $paper->pdf_file->destroy_prohibited = ($req->input('destroy_prohibited'));
+                                        $paper->pdf_file->archived = ($req->input('archived')==1);
+                                        $paper->pdf_file->destroy_prohibited = ($req->input('destroy_prohibited')==1);
                                     }
                                     $paper->pdf_file->save();
                                 }
