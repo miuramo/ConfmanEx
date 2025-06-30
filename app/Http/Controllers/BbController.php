@@ -71,7 +71,7 @@ class BbController extends Controller
         }
         // 出版担当からの作成のとき 1
         $for_pub = $req->input("for_pub");
-        if ($for_pub){
+        if ($for_pub) {
             return redirect()->route('bb.index_for_pub')->with('feedback.success', "作成しました。");
         }
         return redirect()->route('bb.index')->with('feedback.success', "作成しました。");
@@ -130,7 +130,8 @@ class BbController extends Controller
     /**
      * 種別ごとに削除
      */
-    public function destroy_bytype(Request $req){
+    public function destroy_bytype(Request $req)
+    {
         if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403);
         $type = $req->input("type");
         if (!auth()->user()->can('role_any', 'admin|manager|pc')) {
@@ -140,59 +141,15 @@ class BbController extends Controller
         BbMes::whereIn("bb_id", $target_bbids)->delete();
         Bb::where("type", $type)->delete();
         $for_pub = $req->input("for_pub");
-        if ($for_pub){
+        if ($for_pub) {
             return redirect()->route('bb.index_for_pub')->with('feedback.success', "出版掲示板をすべて削除しました。");
         }
         return redirect()->route('bb.index')->with('feedback.success', "削除しました。");
     }
 
-    public function multisubmit(Request $req)
+    public function multisubmit(Request $req, int $type = 3)
     {
         if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403);
-        if ($req->has('action')) {
-            $lines = explode("\r\n", $req->csv);
-            $out = "";
-            $buf = "";
-            $subject = "";
-            $pid = 0;
-            $count = 0;
-            $bufary = [];
-            foreach ($lines as $n=>$l) {
-                $line = $l;// trim($l);
-                if (preg_match("/={6,30}/", $line)) {
-                    if ($pid == 0) {
-                        continue;
-                    }
-                    $bufary []= ["PID"=>$pid,
-                                      "subject"=>trim($req->subject),
-                                      "body"=>$req->preface ."\n". $buf];
-                    $buf = $subject = "";
-                    $pid = 0;
-                } elseif (preg_match("/^[0-9０-９]+$/", $line)) {
-                    $pid = intval(mb_convert_kana($line, 'n', 'UTF-8'));
-                    $count = 0;
-                } else {
-                    $buf .= $line."\r\n";
-                }
-                $count++;
-            }
-            if ($req->input('action') == "submit") {
-                foreach ($bufary as $n=>$ba) {
-                    Bb::submitplain(
-                        $ba['PID'],
-                        3,
-                        $ba['subject'],
-                        $ba['body']
-                    );
-                }
-                return redirect()->route('bb.multisubmit')->with('feedback.success', "一括送信しました。");
-            } else {
-                $preface = $req->preface;
-                $subject = $req->subject;
-                $csv = $req->csv;
-                return view('bb.multisubmit')->with(compact("out", "bufary", "preface", "subject", "csv"));
-            }
-        }
         $preface = "出版担当から著者の方に、個別の連絡事項があります。
 以下の点についてご対応いただき、修正原稿を 掲示板 からアップロードしてください。";
         $subject = "出版担当からの連絡事項";
@@ -214,7 +171,59 @@ BodyLine1
 BodyLine2
 BodyLine3
 ======="';
-        return view('bb.multisubmit')->with(compact("preface", "subject", "csv"));
+        $typedesc = "出版掲示板"; // への一括書き込み
+        if ($type == 2) {
+            $preface = str_replace("出版担当から著者の方に", "メタ査読者から著者の方に", $preface);
+            $subject = str_replace("出版担当からの連絡事項", "メタ査読者からの連絡事項", $subject);
+            $typedesc = "メタ査読者と著者";
+        }
+        if ($req->has('action')) {
+            $lines = explode("\r\n", $req->csv);
+            $out = "";
+            $buf = "";
+            $subject = "";
+            $pid = 0;
+            $count = 0;
+            $bufary = [];
+            foreach ($lines as $n => $l) {
+                $line = $l; // trim($l);
+                if (preg_match("/={6,30}/", $line)) {
+                    if ($pid == 0) {
+                        continue;
+                    }
+                    $bufary[] = [
+                        "PID" => $pid,
+                        "subject" => trim($req->subject),
+                        "body" => $req->preface . "\n" . $buf
+                    ];
+                    $buf = $subject = "";
+                    $pid = 0;
+                } elseif (preg_match("/^[0-9０-９]+$/", $line)) {
+                    $pid = intval(mb_convert_kana($line, 'n', 'UTF-8'));
+                    $count = 0;
+                } else {
+                    $buf .= $line . "\r\n";
+                }
+                $count++;
+            }
+            if ($req->input('action') == "submit") {
+                foreach ($bufary as $n => $ba) {
+                    Bb::submitplain(
+                        $ba['PID'],
+                        $req->input('type'),
+                        $ba['subject'],
+                        $ba['body']
+                    );
+                }
+                return redirect()->route('bb.multisubmit', ['type' => $type])->with('feedback.success', "一括送信しました。")->with(compact("out", "bufary", "preface", "subject", "csv", "type","typedesc"));
+            } else {
+                $preface = $req->preface;
+                $subject = $req->subject;
+                $csv = $req->csv;
+                return view('bb.multisubmit', ['type' => $type])->with(compact("out", "bufary", "preface", "subject", "csv", "type","typedesc"));
+            }
+        }
+        return view('bb.multisubmit', ['type' => $type])->with(compact("type", "preface", "subject", "csv", "typedesc"));
     }
 
     public function needreply_submit(Request $req)
@@ -235,12 +244,11 @@ BodyLine3
         if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403);
 
         $needreply = $req->input("needreply");
-        foreach($req->input("bbids") as $n=>$bbid){
+        foreach ($req->input("bbids") as $n => $bbid) {
             $bb = Bb::find($bbid);
             $bb->needreply = $needreply;
             $bb->save();
         }
         return redirect()->route('bb.index_for_pub')->with('feedback.success', "フラグを変更しました。");
-
     }
 }

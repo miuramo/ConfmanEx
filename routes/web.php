@@ -259,8 +259,8 @@ Route::middleware('auth')->group(function () {
     Route::get('bb/{bb}/{key}', [BbController::class, 'show'])->name('bb.show')->where('key', '([0-9A-Za-z]+)');
     Route::post('bb/{bb}/{key}', [BbMesController::class, 'store'])->name('bb.store')->where('key', '([0-9A-Za-z]+)');
     Route::post('bb/{bb}/{key}/adopt', [BbMesController::class, 'adopt'])->name('bb.adopt')->where('key', '([0-9A-Za-z]+)');
-    Route::get('bb_multisubmit', [BbController::class, 'multisubmit'])->name('bb.multisubmit');
-    Route::post('bb_multisubmit', [BbController::class, 'multisubmit'])->name('bb.multisubmitpost');
+    Route::get('bb_multisubmit/{type?}', [BbController::class, 'multisubmit'])->name('bb.multisubmit');
+    Route::post('bb_multisubmit/{type?}', [BbController::class, 'multisubmit'])->name('bb.multisubmitpost');
     Route::post('bb_needreply', [BbController::class, 'needreply'])->name('bb.needreply');
 
     // 参加登録

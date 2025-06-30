@@ -102,7 +102,7 @@
     </div>
 
     <div class="m-6">
-        <x-element.linkbutton href="{{ route('bb.multisubmit') }}" color="blue" size="md">
+        <x-element.linkbutton href="{{ route('bb.multisubmit', ['type'=>3]) }}" color="teal" size="md">
             出版掲示板への一括書き込み
         </x-element.linkbutton>
     </div>

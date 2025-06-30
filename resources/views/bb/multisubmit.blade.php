@@ -1,7 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
-            {{ __('出版掲示板への一括書き込み') }}
+            @php
+                if ($typedesc == null){
+                    $typedesc = "unknown";
+                }
+            @endphp
+            {{ $typedesc . __('への一括書き込み') }}
         </h2>
     </x-slot>
     <style>
@@ -53,14 +58,15 @@
 
     <div class="py-2 px-6">
         <div class="p-2 bg-lime-100 dark:bg-lime-600">
-            該当PaperIDの出版掲示板が作成されていない場合は、自動的に作成します。
+            該当PaperIDの掲示板が作成されていない場合は、自動的に作成します。
         </div>
     </div>
     <div class="py-2 px-6">
 
-        <form action="{{ route('bb.multisubmit') }}" method="post" id="bb_mulsub">
+        <form action="{{ route('bb.multisubmit',['type'=>$type]) }}" method="post" id="bb_mulsub">
             @csrf
             @method('post')
+            <input type="hidden" name="type" value="{{ $type }}">
             <table>
                 <tr class="bg-pink-100 dark:bg-pink-300">
                     <td class="px-2 py-1">
@@ -78,7 +84,7 @@
                 </tr>
                 <tr class="bg-pink-100 dark:bg-pink-300">
                     <td class="px-2 py-1"><label
-                            for="csv">======<br>PaperID<br>本文1行目<br>本文2行目<br>本文3行目<br>...<br>======"</label><br><br><br>
+                            for="csv">"======<br>PaperID<br>本文1行目<br>本文2行目<br>本文3行目<br>...<br>======"</label><br><br><br>
                         <span class="bg-yellow-200">
                             PaperIDは<br>0埋めでなくても<br>大丈夫です。<br><br>
                             一行に = が<br>6個以上<br>30個以下<br>連続しているとき<br>区切り線<br>として認識<br>します。
