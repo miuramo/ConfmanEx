@@ -245,6 +245,12 @@ class FileController extends Controller
                                 }
                                 if ($paper->pdf_file_id && $targetmainpdf) {
                                     $paper->pdf_file->locked = ($req->input('action') === 'lock');
+
+                                    if ($req->input('extra')) {
+                                        // PDFファイルのロック状態を変更する
+                                        $paper->pdf_file->archived = ($req->input('archived'));
+                                        $paper->pdf_file->destroy_prohibited = ($req->input('destroy_prohibited'));
+                                    }
                                     $paper->pdf_file->save();
                                 }
                                 // サプリメントファイルを操作する。ただし、PaperPDFは除外する。
@@ -252,6 +258,11 @@ class FileController extends Controller
                                 foreach ($files as $file) {
                                     if ($file->id == $paper->pdf_file_id) continue; // PaperPDFは除外
                                     $file->locked = ($req->input('action') === 'lock');
+                                    if ($req->input('extra')) {
+                                        // PDFファイルのロック状態を変更する
+                                        $file->archived = ($req->input('archived'));
+                                        $file->destroy_prohibited = ($req->input('destroy_prohibited'));
+                                    }
                                     $file->save();
                                 }
                             });
@@ -380,28 +391,28 @@ class FileController extends Controller
                     $file->delete_me();
                 }
                 return redirect()->route('file.cleanup_files')->with('feedback.success', '削除済みファイルを完全に削除しました');
-            }else if ($req->has('action') && $req->input('action') == 'active_video'){
+            } else if ($req->has('action') && $req->input('action') == 'active_video') {
                 $files = File::where('deleted', 0)->where('mime', 'like', 'video%')->get();
                 foreach ($files as $file) {
                     $file->remove_the_file();
                     $file->delete_me();
                 }
                 return redirect()->route('file.cleanup_files')->with('feedback.success', '通常ビデオファイルを完全に削除しました');
-            }else if ($req->has('action') && $req->input('action') == 'active_all'){
+            } else if ($req->has('action') && $req->input('action') == 'active_all') {
                 $files = File::where('deleted', 0)->get();
                 foreach ($files as $file) {
                     $file->remove_the_file();
                     $file->delete_me();
                 }
                 return redirect()->route('file.cleanup_files')->with('feedback.success', '通常ファイルを完全に削除しました');
-            }else if ($req->has('action') && $req->input('action') == 'notindb'){
+            } else if ($req->has('action') && $req->input('action') == 'notindb') {
                 File::delete_notindb();
                 return redirect()->route('file.cleanup_files')->with('feedback.success', 'DBに登録されていないファイルを削除しました');
             }
         }
-        $totalsize = [0=> 0, 1 => 0, 2 => 0, 3 => 0];
-        $totalcount = [0=> 0, 1 => 0, 2 => 0, 3 => 0];
-        foreach([0,1] as $i){
+        $totalsize = [0 => 0, 1 => 0, 2 => 0, 3 => 0];
+        $totalcount = [0 => 0, 1 => 0, 2 => 0, 3 => 0];
+        foreach ([0, 1] as $i) {
             $files = File::where('deleted', $i)->get();
             foreach ($files as $file) {
                 $totalsize[$i] += $file->getFileSize();
@@ -409,11 +420,11 @@ class FileController extends Controller
             }
             $files = File::where('deleted', $i)->where('mime', 'like', 'video%')->get();
             foreach ($files as $file) {
-                $totalsize[$i+2] += $file->getFileSize();
-                $totalcount[$i+2] += 1;
+                $totalsize[$i + 2] += $file->getFileSize();
+                $totalcount[$i + 2] += 1;
             }
         }
-        
-        return view('file.cleanup_files')->with(compact("files","totalsize","totalcount"));
+
+        return view('file.cleanup_files')->with(compact("files", "totalsize", "totalcount"));
     }
 }

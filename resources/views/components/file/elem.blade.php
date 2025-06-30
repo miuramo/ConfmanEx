@@ -35,7 +35,7 @@
                         $category = App\Models\Category::find($paper->category_id);
                         $pdfDisableDelete = $category->pdf_disable_delete ?? false;
                         $isPdf = $file->mime == 'application/pdf';
-                        $isPdfDeleteDisabled = $pdfDisableDelete && $isPdf;
+                        $isPdfDeleteDisabled = $pdfDisableDelete && $isPdf || $file->archived || $file->destroy_prohibited;;
                     @endphp
                     <x-slot name="content">
                         @if(!$isPdfDeleteDisabled)

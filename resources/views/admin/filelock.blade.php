@@ -62,10 +62,10 @@
                                         target="_blank">
                                         @if ($col->locked)
                                             <span
-                                                class="bg-green-200 px-1 hover:bg-yellow-100" >{{ $pid }}</span>
+                                                class="bg-green-200 px-1 hover:bg-yellow-100">{{ $pid }}</span>
                                         @else
-                                            <span
-                                                class="bg-orange-200 px-1 hover:bg-yellow-100" title="{{$timestamps[$pid]}}">{{ $pid }}</span>
+                                            <span class="bg-orange-200 px-1 hover:bg-yellow-100"
+                                                title="{{ $timestamps[$pid] }}">{{ $pid }}</span>
                                         @endif
                                     </a>
                                 @endforeach
@@ -117,22 +117,42 @@
                 @endforeach
 
             </div>
-            <div class="my-2">
-
-                @foreach (['すべて' => 'all', '採択のみ' => 'accepted', '不採択のみ' => 'rejected'] as $lbl => $val)
-                    <input type="radio" name="targetaccept" id="id_{{ $val }}" value="{{ $val }}"
-                        @if ($val == 'all') checked="checked" @endif>
-                    <label for="id_{{ $val }}" class="dark:text-gray-400">{{ $lbl }}</label>
+            <div class="my-2 border-slate-400 border-2 bg-slate-200 p-2 dark:bg-gray-500">
+                <input type="checkbox" name="extra" value="1" id="labelextra">
+                <label for="labelextra" class="dark:text-gray-300">右のフラグの変更をするときだけ、チェックする</label><span
+                    class="mx-1"></span>
+                @php
+                    $flags = [
+                        'archived' => 'archived',
+                        'destroy_prohibited' => 'destroy_prohibited',
+                    ];
+                @endphp
+                @foreach ($flags as $flag => $label)
+                    <input type="checkbox" name="{{ $flag }}" value="1"
+                        id="labelflag{{ $flag }}">
+                    <label for="labelflag{{ $flag }}"
+                        class="dark:text-gray-300">{{ $label }}</label><span class="mx-2"></span>
                 @endforeach
-                <span class="mx-2"></span>
-                <x-element.submitbutton value="lock" color="green">ロックする
-                </x-element.submitbutton>
-                <span class="mx-1"></span>
-                <x-element.submitbutton value="unlock" color="orange">アンロックする
-                </x-element.submitbutton>
-                <x-element.gendospan>操作対象は、deleted=0 かつ pending=0 のみです。</x-element.gendospan>
+                <br>
+                <b>注意：フラグ変更にチェックしたときは、各フラグのOnだけでなく、Offについても反映されます。</b>
             </div>
-        </form>
+    </div>
+    <div class="my-2">
+
+        @foreach (['すべて' => 'all', '採択のみ' => 'accepted', '不採択のみ' => 'rejected'] as $lbl => $val)
+            <input type="radio" name="targetaccept" id="id_{{ $val }}" value="{{ $val }}"
+                @if ($val == 'all') checked="checked" @endif>
+            <label for="id_{{ $val }}" class="dark:text-gray-400">{{ $lbl }}</label>
+        @endforeach
+        <span class="mx-2"></span>
+        <x-element.submitbutton value="lock" color="green">ロックする
+        </x-element.submitbutton>
+        <span class="mx-1"></span>
+        <x-element.submitbutton value="unlock" color="orange">アンロックする
+        </x-element.submitbutton>
+        <x-element.gendospan>操作対象は、deleted=0 かつ pending=0 のみです。</x-element.gendospan>
+    </div>
+    </form>
     </div>
     @if (session('feedback.success'))
         <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
