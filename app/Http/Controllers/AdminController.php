@@ -20,6 +20,7 @@ use App\Models\LogForbidden;
 use App\Models\LogModify;
 use App\Models\MailTemplate;
 use App\Models\Paper;
+use App\Models\Regist;
 use App\Models\RevConflict;
 use App\Models\Review;
 use App\Models\Role;
@@ -651,6 +652,19 @@ class AdminController extends Controller
 
         return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.success', '投稿をすべてリセットしました');
     }
+
+    /**
+     * 参加登録をすべてリセットする。registsテーブルをtruncateする。
+     */
+    public function resetregist()
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        Regist::truncate();
+        return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.success', '参加登録(regists)をすべてリセットしました');
+    }
+    /**
+     * アクセスログをすべてリセットする。log_accessテーブルをtruncateする。
+     */
     public function resetaccesslog()
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
