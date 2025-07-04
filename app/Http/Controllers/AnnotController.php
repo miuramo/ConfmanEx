@@ -103,25 +103,9 @@ class AnnotController extends Controller
     }
 
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Annot $annot)
-    {
-        //
-    }
-    public function update(Request $req, Annot $annot)
-    {
-        return "UPDATE";
-        //
-    }
+    
+    
 
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Annot $annot)
-    {
-        //
-    }
+    
 }

@@ -107,51 +107,15 @@ class VoteController extends Controller
         VoteItem::init();
         return redirect()->route('role.top', ['role' => 'award']);
     }
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorevotesRequest $request)
-    {
-        //
-    }
+    
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(votes $votes)
-    {
-        //
-    }
+    
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(votes $votes)
-    {
-        //
-    }
+    
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatevotesRequest $request, votes $votes)
-    {
-        //
-    }
+    
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(votes $votes)
-    {
-        //
-    }
+    
 }

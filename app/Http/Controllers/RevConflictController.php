@@ -121,8 +121,8 @@ class RevConflictController extends Controller
         return view('revcon.revname')->with(compact("cat"));
     }
 
-    public function notdownloaded() {}
-    public function norev() {}
+    
+    
 
     /**
      * Biddingを忘れた査読者に、代理でBiddingを作成する
@@ -141,37 +141,13 @@ class RevConflictController extends Controller
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreRevConflictRequest $request)
-    {
-        //
-    }
+    
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(RevConflict $revConflict)
-    {
-        //
-    }
+    
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(RevConflict $revConflict)
-    {
-        //
-    }
+    
 
     /**
      * Update the specified resource in storage.
@@ -181,11 +157,5 @@ class RevConflictController extends Controller
         return $request->shori();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(RevConflict $revConflict)
-    {
-        //
-    }
+    
 }

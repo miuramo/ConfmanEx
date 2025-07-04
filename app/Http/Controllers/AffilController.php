@@ -43,29 +43,11 @@ class AffilController extends Controller
         return redirect()->route('affil.index')->with('feedback.success', '所属の修正ルールを再構成しました');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreAffilRequest $request)
-    {
-        //
-    }
+    
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Affil $affil)
-    {
-        //
-    }
+    
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Affil $affil)
-    {
-        //
-    }
+    
 
     /**
      * Update the specified resource in storage.
@@ -103,11 +85,5 @@ class AffilController extends Controller
         return redirect()->route('affil.index')->with('feedback.success', '修正ルールを更新しました');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Affil $affil)
-    {
-        //
-    }
+    
 }

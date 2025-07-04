@@ -237,25 +237,9 @@ class EnqueteController extends Controller
         ));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+    
 
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreEnqueteRequest $request)
-    {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
-
-        //
-    }
+    
 
     /**
      * 単一・独立ページでの表示

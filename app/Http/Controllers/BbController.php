@@ -42,13 +42,7 @@ class BbController extends Controller
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -100,21 +94,9 @@ class BbController extends Controller
         return view("bb.show")->with(compact("bb", "revid"));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Bb $bb)
-    {
-        //
-    }
+    
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateBbRequest $request, Bb $bb)
-    {
-        //
-    }
+    
 
     /**
      * Remove the specified resource from storage.
@@ -226,15 +208,7 @@ BodyLine3
         return view('bb.multisubmit', ['type' => $type])->with(compact("type", "preface", "subject", "csv", "typedesc"));
     }
 
-    public function needreply_submit(Request $req)
-    {
-        if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403);
-        $bbid = $req->input("bbid");
-        $bb = Bb::find($bbid);
-        $bb->status = 2;
-        $bb->save();
-        return redirect()->route('bb.needreply')->with('feedback.success', "返信済にしました。");
-    }
+    
 
     /**
      * 未対応の掲示板フラグを変更
