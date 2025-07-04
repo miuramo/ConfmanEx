@@ -167,6 +167,10 @@
         <x-element.linkbutton href="{{ route('add_invited_paper') }}" color="blue">
             招待論文の作成
         </x-element.linkbutton>
+        <span class="px-5"></span>
+        <x-element.linkbutton href="{{ route('regist.index') }}" color="lime">
+            参加登録
+        </x-element.linkbutton>
 
     </x-element.h1>
 
