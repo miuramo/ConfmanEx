@@ -51,7 +51,7 @@
                     <span class="mx-2"></span>
                     <x-element.linkbutton href="{{ route('regist.edit', ['regist' => $reg->id]) }}" color="cyan"
                         confirm="参加登録内容を確認したうえで、参加登録確認メールを送信します。よろしいですか？">
-                        参加登録確認メールを送信する
+                        参加登録確認メールを送信する (工事中🚧)
                     </x-element.linkbutton>
 
                     <x-element.deletebutton action="{{ route('regist.destroy', ['regist' => $reg->id]) }}"

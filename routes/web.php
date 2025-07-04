@@ -203,6 +203,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_crudajax', [AdminController::class, 'crudajax'])->name('admin.crudajax');
 
     Route::get('/admin_resetpaper', [AdminController::class, 'resetpaper'])->name('admin.resetpaper');             // Danger Zone
+    Route::get('/admin_resetregist', [AdminController::class, 'resetregist'])->name('admin.resetregist');             // Danger Zone
     Route::get('/admin_resetaccesslog', [AdminController::class, 'resetaccesslog'])->name('admin.resetaccesslog'); // Danger Zone
     Route::get('/admin_resetbidding', [AdminController::class, 'resetbidding'])->name('admin.resetbidding');       // Danger Zone
     Route::get('/admin_forcedelete', [AdminController::class, 'forcedelete'])->name('admin.forcedelete');      // Danger Zone
