@@ -5,11 +5,8 @@ namespace App\Exports;
 use App\Models\EnqueteAnswer;
 use App\Models\Paper;
 use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class PapersExportFromView implements FromView, ShouldAutoSize, WithHeadings
+class PapersExportFromView extends AbstractExportFromView
 {
     protected array $targets;
     public function __construct($tgt)
@@ -25,17 +22,5 @@ class PapersExportFromView implements FromView, ShouldAutoSize, WithHeadings
         return view('components.admin.papertable')->with(compact("all", "roles", "enqans"));
     }
 
-    public function headings(): array
-    {
-        return [
-            'cat',
-            'id',
-            'id03d',
-            'title',
-            'owner',
-            'owneraffil',
-            'owneremail',
-            'contactemails',
-        ];
-    }
+    
 }
