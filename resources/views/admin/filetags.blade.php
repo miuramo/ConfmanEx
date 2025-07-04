@@ -11,11 +11,12 @@
             </x-element.linkbutton>
         </div>
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('File Status') }}
+            {{ __('File Tags') }}
             <span class="mx-8"></span>
-            <x-element.linkbutton href="{{ route('file.admintags') }}" color="cyan" size="sm">
-                タグの確認と管理 (archived, destroy_prohibited)
+            <x-element.linkbutton href="{{ route('file.adminlock') }}" color="lime" size="sm">
+                ロックの確認と管理 
             </x-element.linkbutton>
+
         </h2>
     </x-slot>
 
@@ -25,7 +26,8 @@
             'valid' => 'valid',
             'deleted' => 'deleted',
             'pending' => 'pending',
-            'locked' => 'locked',
+            'archived' => 'archived',
+            'destroy_prohibited' => 'destroy_prohibited',
             'cnt' => 'cnt',
         ];
         // サプリメントファイルのmimeタイプを集める
@@ -33,10 +35,8 @@
     @endphp
     <div class="px-4 py-4">
         <div class="py-2 dark:text-gray-400">
-            凡例： <span class="bg-orange-200 px-1 hover:bg-yellow-100">アンロック状態 PaperID (FileId)</span>
-            <span class="bg-green-200 px-1 hover:bg-yellow-100">ロック状態 PaperID (FileId)</span>
+            凡例： <span class="bg-orange-200 px-1 hover:bg-yellow-100">PaperID (FileId)</span>
             <span class="mx-3">cntは件数(count)</span>
-            <span class="mx-3">ファイルをロックすると、著者があたらしいファイルをアップロードしたときにPendingの状態となり、差替えができなくなります。</span>
         </div>
         <table class="divide-y divide-gray-200">
             <thead>
@@ -60,17 +60,13 @@
                             @endif
                         @endforeach
                         <td>
-                            @if (isset($pids[$col->category_id][$col->valid][$col->deleted][$col->pending][$col->locked]))
-                                @foreach ($pids[$col->category_id][$col->valid][$col->deleted][$col->pending][$col->locked] as $pid)
+                            @if (isset(
+                                    $pids[$col->category_id][$col->valid][$col->deleted][$col->pending][$col->archived][$col->destroy_prohibited]))
+                                @foreach ($pids[$col->category_id][$col->valid][$col->deleted][$col->pending][$col->archived][$col->destroy_prohibited] as $pid)
                                     <a href="{{ route('file.showhash', ['file' => $fileids[$pid], 'hash' => substr($filekeys[$pid], 0, 8)]) }}"
                                         target="_blank">
-                                        @if ($col->locked)
-                                            <span
-                                                class="bg-green-200 px-1 hover:bg-yellow-100">{{ $pid }}</span>
-                                        @else
-                                            <span class="bg-orange-200 px-1 hover:bg-yellow-100"
-                                                title="{{ $timestamps[$pid] }}">{{ $pid }}</span>
-                                        @endif
+                                        <span class="bg-orange-200 px-1 hover:bg-yellow-100"
+                                            title="{{ $timestamps[$pid] }}">{{ $pid }}</span>
                                     </a>
                                 @endforeach
                             @endif
@@ -79,19 +75,10 @@
                 @endforeach
             </tbody>
         </table>
-        {{-- <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @foreach ($roles as $role)
-                <span>
-                    <x-element.linkbutton href="{{ route('role.top', ['role' => $role->name]) }}" color="cyan">
-                        {{ $role->desc }}
-                    </x-element.linkbutton>
-                </span>
-            @endforeach
-        </div> --}}
     </div>
     <div class="px-6 py-2">
-        <!-- FileController.adminlock filelock.blade.php -->
-        <form action="{{ route('file.adminlock') }}" method="post" id="file_adminlock">
+        <!-- FileController.admintags filetags.blade.php -->
+        <form action="{{ route('file.admintags') }}" method="post" id="file_admintags">
             @csrf
             @method('post')
             <div class="my-2">
@@ -107,12 +94,12 @@
             </div>
             <div class="my-2 border-slate-400 border-2 bg-slate-200 p-2 dark:bg-gray-500">
                 <input type="checkbox" name="targetmainpdf" value="1" checked="checked" id="labelmain">
-                <label for="labelmain" class="dark:text-gray-300">メインの論文PDFファイルをロック／アンロック対象とする</label><span
+                <label for="labelmain" class="dark:text-gray-300">メインの論文PDFファイルを対象とする</label><span
                     class="mx-1"></span>
             </div>
 
             <div class="mx-8 my-2 border-slate-400 border-2 bg-slate-200 p-2 dark:bg-gray-500">
-                サプリメントファイルをロック／アンロック対象に含めるときは、以下にチェックをいれてください。<br>
+                サプリメントファイルを対象に含めるときは、以下にチェックをいれてください。<br>
                 @foreach ($mimes as $nn => $mime)
                     <input type="checkbox" name="targetmime{{ $nn }}" value="{{ $mime['mime'] }}"
                         id="labelmime{{ $nn }}">
@@ -122,7 +109,6 @@
 
             </div>
             <div class="my-2 border-slate-400 border-2 bg-slate-200 p-2 dark:bg-gray-500">
-                
                 @php
                     $flags = [
                         'archived' => 'archived',
@@ -149,10 +135,7 @@
             <label for="id_{{ $val }}" class="dark:text-gray-400">{{ $lbl }}</label>
         @endforeach
         <span class="mx-2"></span>
-        <x-element.submitbutton value="lock" color="green">ロックする
-        </x-element.submitbutton>
-        <span class="mx-1"></span>
-        <x-element.submitbutton value="unlock" color="orange">アンロックする
+        <x-element.submitbutton value="update" color="blue">更新する
         </x-element.submitbutton>
         <x-element.gendospan>操作対象は、deleted=0 かつ pending=0 のみです。</x-element.gendospan>
     </div>
