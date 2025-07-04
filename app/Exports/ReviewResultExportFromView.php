@@ -7,11 +7,8 @@ use App\Models\EnqueteAnswer;
 use App\Models\Paper;
 use App\Models\Submit;
 use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class ReviewResultExportFromView implements FromView, ShouldAutoSize, WithHeadings
+class ReviewResultExportFromView extends AbstractExportFromView
 {
     protected Category $target;
     public function __construct($tgt)
@@ -25,17 +22,5 @@ class ReviewResultExportFromView implements FromView, ShouldAutoSize, WithHeadin
         return view('components.review.resultmap')->with(compact("subs", "cat"));
     }
 
-    public function headings(): array
-    {
-        return [
-            'cat',
-            'id',
-            'id03d',
-            'title',
-            'owner',
-            'owneraffil',
-            'owneremail',
-            'contactemails',
-        ];
-    }
+    
 }

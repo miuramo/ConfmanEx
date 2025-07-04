@@ -6,11 +6,8 @@ use App\Models\Enquete;
 use App\Models\EnqueteAnswer;
 use App\Models\Paper;
 use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class EnqExportFromView implements FromView, ShouldAutoSize, WithHeadings
+class EnqExportFromView extends AbstractExportFromView
 {
     protected Enquete $enq;
     public function __construct($e)
@@ -30,17 +27,5 @@ class EnqExportFromView implements FromView, ShouldAutoSize, WithHeadings
         }
     }
 
-    public function headings(): array
-    {
-        return [
-            'cat',
-            'id',
-            'id03d',
-            'title',
-            'owner',
-            'owneraffil',
-            'owneremail',
-            'contactemails',
-        ];
-    }
+    
 }
