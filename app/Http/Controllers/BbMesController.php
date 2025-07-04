@@ -13,21 +13,9 @@ use Illuminate\Http\Request;
 
 class BbMesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+    
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -151,35 +139,11 @@ class BbMesController extends Controller
     }
 
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(BbMes $bbMes)
-    {
-        //
-    }
+    
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(BbMes $bbMes)
-    {
-        //
-    }
+    
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateBbMesRequest $request, BbMes $bbMes)
-    {
-        //
-    }
+    
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(BbMes $bbMes)
-    {
-        //
-    }
+    
 }

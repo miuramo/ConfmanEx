@@ -97,59 +97,17 @@ class ViewpointController extends Controller
     }
 
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+    
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreViewpointRequest $request)
-    {
-        //
-    }
+    
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Viewpoint $viewpoint)
-    {
-        //
-    }
+    
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Viewpoint $viewpoint)
-    {
-        //
-    }
+    
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateViewpointRequest $request, Viewpoint $viewpoint)
-    {
-        //
-    }
+    
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Viewpoint $viewpoint)
-    {
-        //
-    }
+    
 }

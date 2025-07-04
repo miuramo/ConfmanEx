@@ -34,51 +34,15 @@ class LogAccessController extends Controller
         return view('log_access.index', compact('logs', 'user', 'users', 'recentusers'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreLogAccessRequest $request)
-    {
-        //
-    }
+    
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(LogAccess $logAccess)
-    {
-        //
-    }
+    
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(LogAccess $logAccess)
-    {
-        //
-    }
+    
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateLogAccessRequest $request, LogAccess $logAccess)
-    {
-        //
-    }
+    
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(LogAccess $logAccess)
-    {
-        //
-    }
+    
 }

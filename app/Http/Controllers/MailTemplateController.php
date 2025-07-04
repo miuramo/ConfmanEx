@@ -52,13 +52,7 @@ class MailTemplateController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    
 
     /**
      * Display the specified resource.
@@ -126,21 +120,9 @@ class MailTemplateController extends Controller
     }
 
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateMailTemplateRequest $request, MailTemplate $mailTemplate)
-    {
-        //
-    }
+    
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(MailTemplate $mailTemplate)
-    {
-        //
-    }
+    
     /**
      * まとめてコピー、または削除、またはExcelExport
      */

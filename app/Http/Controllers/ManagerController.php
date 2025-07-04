@@ -97,20 +97,7 @@ class ManagerController extends Controller
     }
 
 
-    // public function mailtest()
-    // {
-    //     if (!auth()->user()->can('role_any', 'pc')) abort(403);
-    //     if (!auth()->user()->id == 1) abort(403);
-    //     $papers = Paper::all();
-    //     $mts = MailTemplate::all();
-    //     foreach ($mts as $mt) {
-    //         foreach ($papers as $paper) {
-    //             (new ForAuthor($paper, $mt))->process_send();
-    //             // Mail::send(new ForAuthor($paper, $mt));
-    //         }
-    //     }
-    //     return redirect()->route('admin.admindb');
-    // }
+    
 
     public function test9w()
     {
@@ -121,13 +108,7 @@ class ManagerController extends Controller
         return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', 'テストQueueを実行しました。再読み込みして各種設定→LAST_QUEUEWORK_DATEが更新されていることを確認してください。');
     }
 
-    public function ocr9w()
-    {
-        if (!auth()->user()->can('role_any', 'pc')) abort(403);
-        File::rebuildOcrTsv();
-        // OcrJob::dispatch();
-        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', 'OCR Queueを実行しました。');
-    }
+    
 
     public function paperauthorhead(Request $req)
     {
