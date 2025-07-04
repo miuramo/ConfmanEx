@@ -214,76 +214,51 @@ class FileController extends Controller
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         if ($req->method() === 'POST') {
-
             if ($req->has('action')) { // action is lock or unlock
-                // targetmime の value をあつめる
-                $targetmimes = [];
-                foreach ($req->all() as $k => $v) {
-                    if (strpos($k, "targetmime") === 0) { // == 0 だと、false がふくまれてしまう。
-                        $targetmimes[$v] = 1;
-                    }
+                $updateAttributes = [];
+                if ($req->has('enable_archived')) {
+                    $updateAttributes['archived'] = ($req->input('archived') == 1);
                 }
-                // targetmainpdf 
-                $targetmainpdf = $req->has("targetmainpdf");
-                foreach ($req->all() as $k => $v) {
-                    if (strpos($k, "targetcat") === 0) { // == 0 だと、false がふくまれてしまう。
-
-                        // 採択状態を調査
-                        $acc = MailTemplate::mt_accept(intval($v));
-                        $rej = MailTemplate::mt_reject(intval($v));
-                        $papers = Paper::with("pdf_file")->where("category_id", $v)->get();
-                        $ta = $req->input("targetaccept");
-                        if ($ta == "accepted") {
-                            $papers = $acc;
-                        } else if ($ta == "rejected") {
-                            $papers = $rej;
-                        }
-                        foreach ($papers as $paper) {
-                            DB::transaction(function () use ($paper, $req, $targetmimes, $targetmainpdf) {
-                                if (is_numeric($paper)) {
-                                    $paper = Paper::with("pdf_file")->find($paper);
-                                }
-                                if ($paper->pdf_file_id && $targetmainpdf) {
-                                    $paper->pdf_file->locked = ($req->input('action') === 'lock');
-
-                                    if ($req->input('extra')) {
-                                        // PDFファイルのロック状態を変更する
-                                        $paper->pdf_file->archived = ($req->input('archived')==1);
-                                        $paper->pdf_file->destroy_prohibited = ($req->input('destroy_prohibited')==1);
-                                    }
-                                    $paper->pdf_file->save();
-                                }
-                                // サプリメントファイルを操作する。ただし、PaperPDFは除外する。
-                                $files = File::where("paper_id", $paper->id)->whereNot("id", $paper->pdf_file_id)->whereIn("mime", array_keys($targetmimes))->get();
-                                foreach ($files as $file) {
-                                    if ($file->id == $paper->pdf_file_id) continue; // PaperPDFは除外
-                                    $file->locked = ($req->input('action') === 'lock');
-                                    if ($req->input('extra')) {
-                                        // PDFファイルのロック状態を変更する
-                                        $file->archived = ($req->input('archived'));
-                                        $file->destroy_prohibited = ($req->input('destroy_prohibited'));
-                                    }
-                                    $file->save();
-                                }
-                            });
-                        }
-                    }
+                if ($req->has('enable_destroy_prohibited')) {
+                    $updateAttributes['destroy_prohibited'] = ($req->input('destroy_prohibited') == 1);
                 }
+                $this->batchUpdateFiles($req, $updateAttributes, 'lock_unlock');
             }
             return redirect()->route('file.adminlock')->with('feedback.success', "選択カテゴリの投稿ファイルを{$req->input('action')}にしました。（ただし、deleted=0, pending=0が対象）");
         }
 
         // 集約でカウント→cnt 
         $fs = ["files.valid", "files.deleted", "files.pending", "files.locked"];
-        $sql1 = "select count(files.id) as cnt, " . implode(",", $fs);
-        $sql1 .= " ,category_id from files left join papers on files.paper_id = papers.id group by " . implode(",", $fs);
-        $sql1 .= " ,category_id order by deleted, category_id, " . implode(",", $fs);
-        $cols = DB::select($sql1);
+        $groupByFields = array_merge($fs, ['papers.category_id']);
+
+        $cols = File::query()
+            ->selectRaw('count(files.id) as cnt')
+            ->select($fs)
+            ->addSelect('papers.category_id')
+            ->leftJoin('papers', 'files.paper_id', '=', 'papers.id')
+            ->groupBy($groupByFields)
+            ->orderBy('files.deleted')
+            ->orderBy('papers.category_id')
+            ->orderBy('files.valid')
+            ->orderBy('files.deleted')
+            ->orderBy('files.pending')
+            ->orderBy('files.locked')
+            ->get();
 
         // 個別項目
-        $sql2 = "select paper_id, files.id, mime, pagenum, files.key, files.created_at, " . implode(",", $fs);
-        $sql2 .= " ,category_id from files left join papers on files.paper_id = papers.id order by category_id, paper_id, " . implode(",", $fs);
-        $res2 = DB::select($sql2);
+        $res2 = File::query()
+            ->select('files.paper_id', 'files.id', 'files.mime', 'files.pagenum', 'files.key', 'files.created_at')
+            ->addSelect($fs)
+            ->addSelect('papers.category_id')
+            ->leftJoin('papers', 'files.paper_id', '=', 'papers.id')
+            ->orderBy('papers.category_id')
+            ->orderBy('files.paper_id')
+            ->orderBy('files.valid')
+            ->orderBy('files.deleted')
+            ->orderBy('files.pending')
+            ->orderBy('files.locked')
+            ->get();
+
         $pids = [];
         $fileids = [];
         $filekeys = [];
@@ -306,6 +281,139 @@ class FileController extends Controller
         }
 
         return view('admin.filelock')->with(compact("cols", "pids", "fileids", "filekeys", "timestamps"));
+    }
+
+    public function admintags(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if ($req->method() === 'POST') {
+            if ($req->has('action')) { // action is update
+                $updateAttributes = [];
+                if ($req->has('enable_archived')) {
+                    $updateAttributes['archived'] = ($req->input('archived') == 1);
+                }
+                if ($req->has('enable_destroy_prohibited')) {
+                    $updateAttributes['destroy_prohibited'] = ($req->input('destroy_prohibited') == 1);
+                }
+                $this->batchUpdateFiles($req, $updateAttributes, 'tags_only');
+            }
+            return redirect()->route('file.admintags')->with('feedback.success', "選択カテゴリの投稿ファイルのタグを更新しました。（ただし、deleted=0, pending=0が対象）");
+        }
+
+        // 集約でカウント→cnt 
+        $fs = ["files.valid", "files.deleted", "files.pending", "files.archived", "files.destroy_prohibited"];
+        $groupByFields = array_merge($fs, ['papers.category_id']);
+
+        $cols = File::query()
+            ->selectRaw('count(files.id) as cnt')
+            ->select($fs)
+            ->addSelect('papers.category_id')
+            ->leftJoin('papers', 'files.paper_id', '=', 'papers.id')
+            ->groupBy($groupByFields)
+            ->orderBy('files.deleted')
+            ->orderBy('papers.category_id')
+            ->orderBy('files.valid')
+            ->orderBy('files.deleted')
+            ->orderBy('files.pending')
+            ->orderBy('files.archived')
+            ->orderBy('files.destroy_prohibited')
+            ->get();
+
+        // 個別項目
+        $res2 = File::query()
+            ->select('files.paper_id', 'files.id', 'files.mime', 'files.pagenum', 'files.key', 'files.created_at')
+            ->addSelect($fs)
+            ->addSelect('papers.category_id')
+            ->leftJoin('papers', 'files.paper_id', '=', 'papers.id')
+            ->orderBy('papers.category_id')
+            ->orderBy('files.paper_id')
+            ->orderBy('files.valid')
+            ->orderBy('files.deleted')
+            ->orderBy('files.pending')
+            ->orderBy('files.archived')
+            ->orderBy('files.destroy_prohibited')
+            ->get();
+
+        $pids = [];
+        $fileids = [];
+        $filekeys = [];
+        $timestamps = [];
+        foreach ($res2 as $res) {
+            $shortmime = explode("/", $res->mime)[1];
+            if (!is_array(@$pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->archived][$res->destroy_prohibited])) {
+                $pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->archived][$res->destroy_prohibited] = [];
+            }
+            $label = sprintf("%03d", $res->paper_id) . " (f{$res->id} {$shortmime}";
+            if ($res->mime === 'application/pdf') {
+                $label .= $res->pagenum . "p";
+            }
+            $label .= ")";
+            $pids[$res->category_id][$res->valid][$res->deleted][$res->pending][$res->archived][$res->destroy_prohibited][] = $label;
+
+            $fileids[$label] = $res->id;
+            $filekeys[$label] = $res->key;
+            $timestamps[$label] = $res->created_at;
+        }
+
+        return view('admin.filetags')->with(compact("cols", "pids", "fileids", "filekeys", "timestamps"));
+    }
+
+    private function batchUpdateFiles(Request $req, array $updateAttributes, string $actionType)
+    {
+        // targetmime の value をあつめる
+        $targetmimes = [];
+        foreach ($req->all() as $k => $v) {
+            if (strpos($k, "targetmime") === 0) {
+                $targetmimes[$v] = 1;
+            }
+        }
+        // targetmainpdf 
+        $targetmainpdf = $req->has("targetmainpdf");
+
+        foreach ($req->all() as $k => $v) {
+            if (strpos($k, "targetcat") === 0) {
+                // 採択状態を調査
+                $acc = MailTemplate::mt_accept(intval($v));
+                $rej = MailTemplate::mt_reject(intval($v));
+                $papers = Paper::with("pdf_file")->where("category_id", $v)->get();
+                $ta = $req->input("targetaccept");
+                if ($ta == "accepted") {
+                    $papers = $acc;
+                } else if ($ta == "rejected") {
+                    $papers = $rej;
+                }
+                foreach ($papers as $paper) {
+                    DB::transaction(function () use ($paper, $req, $targetmimes, $targetmainpdf, $updateAttributes, $actionType) {
+                        if (is_numeric($paper)) {
+                            $paper = Paper::with("pdf_file")->find($paper);
+                        }
+                        if ($paper->pdf_file_id && $targetmainpdf) {
+                            foreach ($updateAttributes as $attr => $value) {
+                                $paper->pdf_file->{$attr} = $value;
+                            }
+                            // Special handling for 'locked' based on actionType
+                            if ($actionType === 'lock_unlock') {
+                                $paper->pdf_file->locked = ($req->input('action') === 'lock');
+                            }
+                            $paper->pdf_file->save();
+                        }
+                        // サプリメントファイルを操作する。ただし、PaperPDFは除外する。
+                        $files = File::where("paper_id", $paper->id)->whereNot("id", $paper->pdf_file_id)->whereIn("mime", array_keys($targetmimes))->get();
+                        foreach ($files as $file) {
+                            if ($file->id == $paper->pdf_file_id) continue; // PaperPDFは除外
+                            foreach ($updateAttributes as $attr => $value) {
+                                $file->{$attr} = $value;
+                            }
+                            // Special handling for 'locked' based on actionType
+                            if ($actionType === 'lock_unlock') {
+                                $file->locked = ($req->input('action') === 'lock');
+                            }
+                            $file->save();
+                        }
+                    });
+                }
+            }
+        }
     }
 
     /**

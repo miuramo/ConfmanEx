@@ -63,6 +63,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/file/delall', [FileController::class, 'delall'])->name('file.delall');
     Route::get('/file/adminlock', [FileController::class, 'adminlock'])->name('file.adminlock'); //ロック状態の変更(file)
     Route::post('/file/adminlock', [FileController::class, 'adminlock'])->name('file.adminlock'); //ロック状態の変更(file)
+    Route::get('/file/admintags', [FileController::class, 'admintags'])->name('file.admintags'); //タグ状態の変更(file)
+    Route::post('/file/admintags', [FileController::class, 'admintags'])->name('file.admintags'); //タグ状態の変更(file)
     Route::get('/file/altimgshow/{file}/{hash?}', [FileController::class, 'altimgshow'])->name('file.altimgshow');
     Route::get('/file/pdftext/{file}', [FileController::class, 'pdftext'])->name('file.pdftext')->where('file', '([0-9]+|)');
     Route::resource('file', FileController::class);
