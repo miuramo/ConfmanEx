@@ -186,6 +186,10 @@ class Paper extends Model
     {
         return $this->hasMany(File::class, 'paper_id')->where('valid', 1)->where('deleted', 0);
     }
+    public function files_with_deleted()
+    {
+        return $this->hasMany(File::class, 'paper_id')->where('valid', 1)->orderBy('created_at', 'desc');
+    }
 
     public function contacts()
     {

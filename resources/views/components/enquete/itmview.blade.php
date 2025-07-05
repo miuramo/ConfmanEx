@@ -2,6 +2,7 @@
     'itm' => [],
     'current' => [],
     'loop' => 0,
+    'size' => 'md',
 ])
 <!-- components.enquete.itmview -->
 @php
@@ -22,7 +23,7 @@
     class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200' : 'bg-white-50 dark:bg-slate-400' }}">
     <td nowrap class="p-2">
         {{ $itm->desc }} →</td>
-    <td id="{{ $itm->name }}_answer" class="text-lg p-2">
+    <td id="{{ $itm->name }}_answer" class="text-{{$size}} p-2">
         @if (isset($current) && !is_array($current))
             {!! $current !!}
         @else

@@ -1,5 +1,6 @@
 @props([
     'rev' => null,
+    'size' => 'md',
 ])
 <!-- components.enquete.Rev_enqview (呼び出し元は review.index) -->
 @php
@@ -17,6 +18,6 @@
     }
 @endphp
 @foreach ($showonrevindexenq as $enq)
-    <x-enquete.Paper_enqview :paper_id="$rev->paper->id" :enq_id="$enq->id">
+    <x-enquete.Paper_enqview :paper_id="$rev->paper->id" :enq_id="$enq->id" size="{{$size}}">
     </x-enquete.Paper_enqview>
 @endforeach
