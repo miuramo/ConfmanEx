@@ -22,6 +22,20 @@ class Regist extends Model
         'confirmed_at',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function toArray()
+    {
+        $ary = [];
+        $ary['状況'] = $this->valid ? '有効' : '無効';
+        $ary['参加登録ID'] = $this->id;
+        $ary['申込日時'] = $this->submitted_at;
+        $ary['申込種別'] = $this->isearly ? '早期申込' : '通常申込';
+        return $ary;
+    }
 
     public function enqans()
     {
@@ -48,6 +62,22 @@ class Regist extends Model
             }
         }
         return $res;
+    }
+    public function enq_enqitmid_value(){
+        $enqans = $this->enqans();
+        $res = [];
+        foreach ($enqans as $enqid => $items) {
+            foreach ($items as $itemid => $ans) {
+                $res[$itemid] = $ans->valuestr;
+            }
+        }
+        return $res;
+    }
+    public function enq_enqitmid_desc()
+    {
+        // TODO: 他のアンケートと、name の重複がないようにする必要あり。name=>idにするのも一つの方法。
+        $enqitm_id_desc = EnqueteItem::pluck('desc', 'id')->toArray();
+        return $enqitm_id_desc;
     }
 
     public function check()

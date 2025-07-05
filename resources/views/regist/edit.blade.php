@@ -31,13 +31,13 @@
             <div
                 class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-gray-400 hover:bg-green-300 dark:hover:bg-green-800">
                 {{ $enq->name }}
-                @if (!$enq->showonpaperindex)
+                {{-- @if (!$enq->showonpaperindex)
                     &nbsp; → <x-element.linkbutton
                         href="{{ route('enquete.pageedit', ['paper' => $OFFSET + $uid, 'enq' => $enq]) }}" color="cyan">
                         ここをクリックして回答
                     </x-element.linkbutton>
-                @endif
-                <x-element.gendospan>{{ $enqs['until'][$enq->id] }}まで修正可</x-element.gendospan>
+                @endif --}}
+                {{-- <x-element.gendospan>{{ $enqs['until'][$enq->id] }}まで修正可</x-element.gendospan> --}}
             </div>
             @if ($enq->showonpaperindex)
                 <form action="{{ route('enquete.update', ['paper' => $OFFSET + $uid, 'enq' => $enq]) }}" method="post"
@@ -47,8 +47,13 @@
                     <input type="hidden" name="paper_id" value="{{ $OFFSET + $uid }}">
                     <input type="hidden" name="enq_id" value="{{ $enq->id }}">
                     <div class="mx-10">
-                        <x-enquete.edit :enq="$enq" :enqans="$enqans">
-                        </x-enquete.edit>
+                        @if ($reg->valid)
+                            <x-enquete.view :enq="$enq" :enqans="$enqans">
+                            </x-enquete.view>
+                        @else
+                            <x-enquete.edit :enq="$enq" :enqans="$enqans">
+                            </x-enquete.edit>
+                        @endif
                     </div>
                 </form>
             @endif
@@ -78,9 +83,11 @@
         @endforeach
 
     </div>
-    <div class="py-2 px-6">
-        <livewire:regist-check :regid="$regid" />
-    </div>
+    @if (!$reg->valid)
+        <div class="py-2 px-6">
+            <livewire:regist-check :regid="$regid" />
+        </div>
+    @endif
     <div class="my-20"></div>
     <div class="py-2 px-6">
         <x-element.linkbutton href="{{ route('regist.index') }}" color="gray">

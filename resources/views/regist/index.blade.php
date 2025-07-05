@@ -46,12 +46,11 @@
             @isset($reg)
                 <x-element.h1>
                     <x-element.linkbutton href="{{ route('regist.edit', ['regist' => $reg->id]) }}" color="lime">
-                        参加登録を確認・編集する
-                    </x-element.linkbutton>
-                    <span class="mx-2"></span>
-                    <x-element.linkbutton href="{{ route('regist.edit', ['regist' => $reg->id]) }}" color="cyan"
-                        confirm="参加登録内容を確認したうえで、参加登録確認メールを送信します。よろしいですか？">
-                        参加登録確認メールを送信する (工事中🚧)
+                        @if ($reg->valid)
+                            参加登録内容を確認する
+                        @else
+                            参加登録を継続する
+                        @endif
                     </x-element.linkbutton>
 
                     <x-element.deletebutton action="{{ route('regist.destroy', ['regist' => $reg->id]) }}"
@@ -59,50 +58,67 @@
                         参加登録を削除する
                     </x-element.deletebutton>
                 </x-element.h1>
-                現在の参加登録内容は以下の通りです。
-                <table class="table-auto">
-                    <thead>
-                        <tr>
-                            <th class="border px-4 py-2 bg-slate-200 dark:bg-slate-500">項目</th>
-                            <th class="border px-4 py-2 bg-slate-200 dark:bg-slate-500">内容</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="border px-4 py-2 dark:text-gray-100">状況</td>
-                            <td class="border px-4 py-2 dark:text-gray-100">
-                                @if($reg->valid)
-                                <span class="text-green-500 font-extrabold">有効</span>
-                                @else
-                                <span class="text-red-500 font-extrabold">無効（まだ申込は完了していません）</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @if($reg->valid)
-                        <tr>
-                            <td class="border px-4 py-2 dark:text-gray-100">参加登録ID</td>
-                            <td class="border px-4 py-2 dark:text-gray-100">{{$reg->id}}</td>
-                        </tr>
-                        <tr>
-                            <td class="border px-4 py-2 dark:text-gray-100">申込日時</td>
-                            <td class="border px-4 py-2 dark:text-gray-100">{{$reg->submitted_at}}</td>
-                        </tr>
-                        <tr>
-                            <td class="border px-4 py-2 dark:text-gray-100">早期申込</td>
-                            <td class="border px-4 py-2 dark:text-gray-100">{{$reg->isearly}}</td>
-                        </tr>
-                        @endif
-                    </tbody>
-                @else
-                    <x-element.h1>
-                        上記について、すべて確認・了承したうえで、参加登録を開始してください。
-                        <br>
-                        <br>
-                        <x-element.linkbutton href="{{ route('regist.create') }}" color="cyan">
-                            参加登録を開始する
-                        </x-element.linkbutton>
-                    </x-element.h1>
-                @endisset
+                <div class="mx-6">
+                    現在の参加登録内容は以下の通りです。
+                    <table class="table-auto">
+                        <thead>
+                            <tr>
+                                <th class="border px-4 py-2 bg-slate-200 dark:bg-slate-500">項目</th>
+                                <th class="border px-4 py-2 bg-slate-200 dark:bg-slate-500">内容</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border px-4 py-2 dark:text-gray-100">状況</td>
+                                <td class="border px-4 py-2 dark:text-gray-100">
+                                    @if ($reg->valid)
+                                        <span class="text-green-500 font-extrabold">有効</span>
+                                    @else
+                                        <span class="text-red-500 font-extrabold">無効（まだ申込は完了していません）</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @if ($reg->valid)
+                                <tr>
+                                    <td class="border px-4 py-2 dark:text-gray-100">参加登録ID</td>
+                                    <td class="border px-4 py-2 dark:text-gray-100">{{ $reg->id }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="border px-4 py-2 dark:text-gray-100">申込日時</td>
+                                    <td class="border px-4 py-2 dark:text-gray-100">{{ $reg->submitted_at }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="border px-4 py-2 dark:text-gray-100">申込種別</td>
+                                    <td class="border px-4 py-2 dark:text-gray-100">
+                                        @if ($reg->isearly)
+                                            早期申込
+                                        @else
+                                            通常申込
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <x-element.h1>
+                    上記について、すべて確認・了承したうえで、参加登録を開始してください。
+                    <br>
+                    <br>
+                    <x-element.linkbutton href="{{ route('regist.create') }}" color="cyan">
+                        参加登録を開始する
+                    </x-element.linkbutton>
+                </x-element.h1>
+            @endisset
+            @if ($reg && $reg->valid)
+                <div class="py-2 px-6">
+                    <x-element.linkbutton href="{{ route('regist.email', ['regist' => $reg->id]) }}" color="cyan"
+                        confirm="参加登録内容メールを送信します。よろしいですか？">
+                        参加登録内容を自分にメール送信する
+                    </x-element.linkbutton>
+                </div>
+            @endif
 
         </div>
 

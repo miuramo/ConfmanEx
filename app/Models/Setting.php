@@ -262,6 +262,15 @@ class Setting extends Model
             'valid' => false,
             'misc' => '参加登録を受け付ける（公開用・ゲスト）',
         ]);
+        Setting::firstOrCreate([
+            'name' => "REG_EARLY_LIMIT",
+        ], [
+            'value' => "2025-11-11",
+            'isnumber' => false,
+            'isbool' => false,
+            'valid' => true,
+            'misc' => 'EarlyRegistの最終日',
+        ]);
 
         Vote::init();
         VoteItem::init();

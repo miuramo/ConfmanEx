@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\RegistrationConfirmation;
 use App\Models\Regist;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class RegistController extends Controller
 {
@@ -24,7 +26,7 @@ class RegistController extends Controller
             return redirect()->route('regist.edit', ['regist' => $reg->id]);
         }
         // 参加登録のフォームを表示する
-        return back()->with('error', '参加登録エラー');
+        return back()->with('feedback.error', '参加登録エラー');
     }
 
     public function entry()
@@ -36,11 +38,32 @@ class RegistController extends Controller
     public function edit($id)
     {
         if (!is_numeric($id)){
-            return redirect()->route('regist.index')->with('error', '不正な参加登録IDです。');
+            return redirect()->route('regist.index')->with('feedback.error', '不正な参加登録IDです。');
         }
         // 参加登録の編集フォームを表示する
         $reg = Regist::findOrFail($id);
+        if ($reg->user_id !== auth()->id()) {
+            return redirect()->route('regist.index')->with('feedback.error', '他のユーザーの参加登録を編集することはできません。');
+        }
         return view('regist.edit', ['regist' => $reg])->with('regid', $id)->with('reg', $reg);
+    }
+    public function email($id)
+    {
+        if (!is_numeric($id)){
+            return redirect()->route('regist.index')->with('feedback.error', '不正な参加登録IDです。');
+        }
+        // 参加登録の編集フォームを表示する
+        $reg = Regist::findOrFail($id);
+        if ($reg->user_id !== auth()->id()) {
+            return redirect()->route('regist.index')->with('feedback.error', '他のユーザーの参加登録を編集することはできません。');
+        }
+        if ($reg->valid) {
+            // メール送信処理を実行
+            Mail::to($reg->user)->send(new RegistrationConfirmation($reg));
+            return redirect()->route('regist.index')->with('feedback.success', '参加登録内容をメールで送信しました。');
+        } else {
+            return redirect()->route('regist.edit', ['regist' => $id])->with('feedback.error', '参加登録内容が無効です。');
+        }
     }
 
     public function destroy($id)
@@ -48,6 +71,6 @@ class RegistController extends Controller
         // 参加登録を削除する
         $reg = Regist::findOrFail($id);
         $reg->delete();
-        return redirect()->route('regist.index')->with('success', '参加登録を削除しました。');
+        return redirect()->route('regist.index')->with('feedback.success', '参加登録を削除しました。');
     }
 }
