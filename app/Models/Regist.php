@@ -32,6 +32,7 @@ class Regist extends Model
         $ary = [];
         $ary['状況'] = $this->valid ? '有効' : '無効';
         $ary['参加登録ID'] = $this->id;
+        $ary['参加者氏名・所属'] = $this->user->name. " （" . $this->user->affil . "）";
         $ary['申込日時'] = $this->submitted_at;
         $ary['申込種別'] = $this->isearly ? '早期申込' : '通常申込';
         return $ary;
