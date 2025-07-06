@@ -102,10 +102,7 @@
         </div>
         <div id="filelist"
             class="grid xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            <x-file.viewelem :all="$paper->files" />
-            {{-- @foreach ($paper->files as $file)
-
-            @endforeach --}}
+            <x-file.on_paper :all="$paper->files_with_deleted" imgsize=300 size="sm"/>
         </div>
     </div>
 

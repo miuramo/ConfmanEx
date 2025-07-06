@@ -1,11 +1,11 @@
 @props([
-    'paper' => [],
+    'all' => [],
     'imgsize' => 200,
     'size' => 'xs',
 ])
 
-<!-- components.file.viewelem -->
-@foreach ($paper->files_with_deleted as $file)
+<!-- components.file.on_paper -->
+@foreach ($all as $file)
     <div @if ($file->deleted) class="bg-red-300 dark:bg-red-500
     @elseif ($file->locked)
      class="bg-green-200 dark:bg-green-800

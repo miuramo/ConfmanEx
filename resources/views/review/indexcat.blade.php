@@ -124,7 +124,7 @@
                     </div>
 
                     <div class="mt-2 ml-2 grid xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
-                        <x-file.on_paper :paper="$rev->paper">
+                        <x-file.on_paper :all="$rev->paper->files_with_deleted" :imgsize="120" size="xs">
                         </x-file.on_paper>
                     </div>
         </div>

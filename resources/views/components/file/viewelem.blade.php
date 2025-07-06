@@ -1,5 +1,6 @@
 @props([
-    'all' => [],
+    // 未使用。今後はon_paper.blade.php を使う。
+    // 'all' => [],
 ])
 
 <!-- components.file.viewelem -->
@@ -13,7 +14,6 @@
     class="bg-slate-200 dark:bg-slate-600 @endif
         overflow-hidden shadow-sm sm:rounded-lg dark:text-slate-400 motion-safe:hover:scale-[1.01] transition-all
         duration-250">
-        {{-- <div class="p-4 text-gray-900 xs:text-sm sm:text-sm md:text-md lg:text-lg xl:text-2xl"> --}}
         <div class="p-4 text-gray-900 text-sm">
             <x-file.adoption :file="$file" />
             <div class="my-2"></div>
