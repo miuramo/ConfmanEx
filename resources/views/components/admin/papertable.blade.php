@@ -6,7 +6,7 @@
 
 <!-- components.admin.papertable -->
 
-<table class="min-w-full divide-y divide-gray-200">
+<table class="min-w-full divide-y divide-gray-200 sortable" id="sortable-table">
     <thead>
         <tr>
             @foreach ($heads as $h)

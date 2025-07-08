@@ -65,5 +65,8 @@
         <x-admin.papertable :all="$all" :enqans="$enqans">
         </x-admin.papertable>
     </div>
+    @push('localjs')
+        <script src="/js/sortable.js"></script>
+    @endpush
 
 </x-app-layout>
