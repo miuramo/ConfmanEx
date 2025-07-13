@@ -10,6 +10,7 @@ use App\Models\Vote;
 use App\Models\VoteAnswer;
 use App\Models\VoteItem;
 use App\Models\VoteTicket;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Unique;
 
 class VoteController extends Controller
 {
@@ -161,13 +163,19 @@ class VoteController extends Controller
             return filter_var($email, FILTER_VALIDATE_EMAIL);
         });
         // VoteTicket::truncate();
+        // 重複していたら作成しない。
         foreach ($emails as $em) {
             $token = Str::random(30);
-            $ticket = VoteTicket::create([
-                'email' => $em,
-                'token' => $token,
-                'token_hash' => hash('sha256', $token),
-            ]);
+            try {
+                $ticket = VoteTicket::create([
+                    'email' => $em,
+                    'token' => $token,
+                    'token_hash' => hash('sha256', $token),
+                ]);
+            } catch (UniqueConstraintViolationException $e) {
+                // 既に存在する場合はスキップ
+                continue;
+            }
         }
         return redirect()->route('role.top', ['role' => 'award'])->with('feedback.success', '投票チケットを作成しました');
     }
