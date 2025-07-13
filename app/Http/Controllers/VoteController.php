@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
 
@@ -174,7 +175,7 @@ class VoteController extends Controller
     public function send_tickets()
     {
         if (!auth()->user()->can('role_any', 'award')) abort(403);
-        $tickets = VoteTicket::where('activated', false)->where('valid', true)->get();
+        $tickets = VoteTicket::where('activated', true)->where('valid', true)->get();
         if ($tickets->isEmpty()) {
             return redirect()->route('role.top', ['role' => 'award'])->with('feedback.error', '有効な投票チケットがありません。');
         }
