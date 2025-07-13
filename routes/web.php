@@ -270,6 +270,9 @@ Route::middleware('auth')->group(function () {
     // Route::resource('part', ParticipantController::class);
     // Route::get('part/create', [ParticipantController::class, 'create'])->name('part.create');
 
+    // 投票チケット作成
+    Route::get('vote_create_tickets', [VoteController::class, 'create_tickets'])->name('vote.create_tickets');
+    Route::get('vote_send_tickets', [VoteController::class, 'send_tickets'])->name('vote.send_tickets');
     // 投票結果
     Route::get('down_voteanswers', [VoteController::class, 'download_answers'])->name('vote.download_answers');
     Route::get('resetall_voteanswers/{isclose}', [VoteController::class, 'resetall'])->name('vote.resetall'); // すべて削除
@@ -283,6 +286,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // 投票
+Route::get('vote_activate/{token}', [VoteController::class, 'activate'])->name('vote.activate');
 Route::get('vote', [VoteController::class, 'index'])->name('vote.index');
 Route::post('vote', [VoteController::class, 'index'])->name('vote.index');
 Route::get('vote/{vote}/vote', [VoteController::class, 'vote'])->name('vote.vote');

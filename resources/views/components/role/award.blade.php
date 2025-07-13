@@ -9,6 +9,14 @@
         <x-element.linkbutton href="{{ route('vote.index') }}" color="cyan" target="_blank">
             投票ページ
         </x-element.linkbutton>
+        <span class="mx-2"></span>
+        <x-element.linkbutton href="{{ route('vote.create_tickets') }}" color="lime" confirm="本当に投票チケットを作成しますか？">
+            メールアドレスから投票チケットを作成
+        </x-element.linkbutton>
+        <span class="mx-2"></span>
+        <x-element.linkbutton href="{{ route('vote.send_tickets') }}" color="pink" confirm="本当に投票チケットを送信しますか？">
+            投票チケットをメール送信
+        </x-element.linkbutton>
     </x-element.h1>
 
 
@@ -23,8 +31,7 @@
         </x-element.linkbutton>
 
         <span class="mx-4"></span>
-        <x-element.linkbutton href="https://git.istlab.info/miura250/SSSAward" color="green"
-            target="_blank">
+        <x-element.linkbutton href="https://git.istlab.info/miura250/SSSAward" color="green" target="_blank">
             表彰状生成スクリプト
         </x-element.linkbutton>
     </x-element.h1>
@@ -66,11 +73,13 @@
     <x-element.h1>
         Danger Zone
         <span class="mx-2"></span>
-        <x-element.linkbutton href="{{ route('vote.resetall',['isclose'=>0]) }}" color="orange" confirm="本当に投票関係データをすべてリセットして、本番投票を開始する？">
+        <x-element.linkbutton href="{{ route('vote.resetall', ['isclose' => 0]) }}" color="orange"
+            confirm="本当に投票関係データをすべてリセットして、本番投票を開始する？">
             投票関係データをすべてリセット（本番投票を開始）
         </x-element.linkbutton>
         <span class="mx-2"></span>
-        <x-element.linkbutton href="{{ route('vote.resetall',['isclose'=>1]) }}" color="purple" confirm="本当に投票関係データをすべてリセットする？（投票開始にはしません）">
+        <x-element.linkbutton href="{{ route('vote.resetall', ['isclose' => 1]) }}" color="purple"
+            confirm="本当に投票関係データをすべてリセットする？（投票開始にはしません）">
             投票関係データをすべてリセット（本番投票締め切り後）
         </x-element.linkbutton>
         <br>
