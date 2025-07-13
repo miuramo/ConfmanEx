@@ -16,4 +16,9 @@ class VoteTicket extends Model
         'submitted_at',
     ];
     //
+
+    public function url()
+    {
+        return route('vote.activate', ['token' => $this->token]);
+    }
 }

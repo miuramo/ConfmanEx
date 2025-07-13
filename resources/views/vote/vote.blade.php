@@ -51,9 +51,7 @@
         </x-element.h1>
     </div>
     @php
-        $voteitems = App\Models\VoteItem::where('vote_id', $vote->id)
-            ->orderBy('orderint')
-            ->get();
+        $voteitems = App\Models\VoteItem::where('vote_id', $vote->id)->orderBy('orderint')->get();
         $papers = App\Models\Paper::select('title', 'id')->pluck('title', 'id')->toArray();
         $authors = App\Models\Paper::select('authorlist', 'id')->pluck('authorlist', 'id')->toArray();
     @endphp
@@ -66,8 +64,8 @@
             <input type="hidden" name="user_id" value="{{ $uid }}">
             <input type="hidden" name="comment" value="{{ auth()->user()->name }} {{ auth()->user()->affil }}">
         @else
-            <input type="hidden" name="token" value="{{ $formData['_token'] }}">
-            <input type="hidden" name="comment" value="{{ $formData['sssname'] }} {{ $formData['sssaffil'] }}">
+            <input type="hidden" name="token" value="{{ $ticket->token }}">
+            <input type="hidden" name="comment" value="{{ $ticket->email }}">
         @endauth
 
         <div class="py-4 px-6  dark:text-gray-400">
