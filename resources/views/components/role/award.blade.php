@@ -10,12 +10,8 @@
             投票ページ
         </x-element.linkbutton>
         <span class="mx-2"></span>
-        <x-element.linkbutton href="{{ route('vote.create_tickets') }}" color="lime" confirm="本当に投票チケットを作成しますか？">
-            メールアドレスから投票チケットを作成
-        </x-element.linkbutton>
-        <span class="mx-2"></span>
-        <x-element.linkbutton href="{{ route('vote.send_tickets') }}" color="pink" confirm="本当に投票チケットを送信しますか？">
-            投票チケットをメール送信
+        <x-element.linkbutton href="{{ route('vote.create_tickets') }}" color="lime">
+            投票チケットを作成・送信・管理
         </x-element.linkbutton>
     </x-element.h1>
 
