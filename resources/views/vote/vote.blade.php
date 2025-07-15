@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="mb-4">
             <x-element.linkbutton href="{{ route('vote.index') }}" color="green" size="sm">
-                &larr; 投票一覧に戻る
+                &larr; 投票Topに戻る
             </x-element.linkbutton>
             @php
                 $votes = App\Models\Vote::where('isopen', true)->where('isclose', false)->get();
@@ -12,7 +12,7 @@
                 @if ($vvv->isopen && !$vvv->isclose)
                     <x-element.linkbutton href="{{ route('vote.vote', ['vote' => $vvv->id]) }}" color="lime"
                         size="md">
-                        {{ $vvv->name }}
+                        {{ $vvv->name }}に対する投票
                     </x-element.linkbutton>
                 @endif
                 <span class="mx-2"></span>
@@ -22,7 +22,7 @@
 
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
 
-            {{ $vote->name }}
+            {{ $vote->name }}に対する投票
 
         </h2>
     </x-slot>

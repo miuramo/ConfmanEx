@@ -24,7 +24,7 @@ class Vote extends Model
     {
         Vote::firstOrCreate(
             [
-                'name' => '優れた口頭発表に対する投票',
+                'name' => '口頭発表',
             ],
             [
                 'isclose' => $isclose,
@@ -32,7 +32,7 @@ class Vote extends Model
         );
         Vote::firstOrCreate(
             [
-                'name' => '優れたデモ・ポスター発表に対する投票',
+                'name' => 'デモ・ポスター発表',
             ],
             [
                 'isclose' => $isclose,

@@ -11,7 +11,7 @@
         @if ($vote->isopen && !$vote->isclose)
             <x-element.linkbutton href="{{ route('vote.vote', ['vote' => $vote->id]) }}" color="lime"
                 size="xl">
-                {{ $vote->name }}
+                {{ $vote->name }} に対する投票
             </x-element.linkbutton>
         @else
         <span class="rounded-lg py-2 px-3 bg-slate-400 text-lg text-slate-500">{{ $vote->name }}</span>
