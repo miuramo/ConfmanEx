@@ -28,6 +28,9 @@ class VoteItem extends Model
         return $this->hasMany(VoteAnswer::class);
     }
 
+    /**
+     * boothが決まらないと、投票アイテムは表示されないことに注意。
+     */
     public static function init()
     {
         // 各カテゴリで、学生発表とそれ以外（一般発表）に分ける。
