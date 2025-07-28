@@ -13,6 +13,13 @@
         <x-element.linkbutton href="{{ route('vote.create_tickets') }}" color="lime">
             投票チケットを作成・送信・管理
         </x-element.linkbutton>
+        @php
+            $tickets = App\Models\VoteTicket::orderBy('created_at', 'desc')->get();
+            $count = $tickets->count();
+        @endphp
+        <span class="mx-2"></span>
+        <span class="text-sm">発行済み投票チケット数：{{ $count }}件</span>
+
     </x-element.h1>
 
 

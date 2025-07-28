@@ -206,13 +206,10 @@ class VoteController extends Controller
             'emails' => '',
         ]);
     }
-    public function destroy_tickets(Request $req)
-    {
-        if (!auth()->user()->can('role_any', 'award')) abort(403);
-        VoteTicket::truncate();
-        return redirect()->route('vote.create_tickets')->with('feedback.success', '既存の投票チケットを削除しました');
-    }
 
+    /**
+     * 有効なチケットをメール送信する
+     */
     public function send_tickets()
     {
         if (!auth()->user()->can('role_any', 'award')) abort(403);
@@ -225,4 +222,48 @@ class VoteController extends Controller
         }
         return back()->with('feedback.success', '投票チケットをメール送信しました。');
     }
+
+    /**
+     * チェックされたチケットをメール送信する
+     */
+    public function send_tickets_checked(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'award')) abort(403);
+        if ($req->method() !== 'POST') {
+            return $this->destroy_tickets_checked($req);
+        }
+        info($req->all());
+        $ticket_ids = $req->input('ticket_ids', []);
+        // info($ticket_ids);
+        if (empty($ticket_ids)) {
+            return redirect()->route('vote.create_tickets')->with('feedback.error', '送信するチケットを選択してください。');
+        }
+        $tickets = VoteTicket::whereIn('id', $ticket_ids)->where('valid', true)->get();
+        if ($tickets->isEmpty()) {
+            return redirect()->route('vote.create_tickets')->with('feedback.error', '選択されたチケットは有効ではありません。');
+        }
+        foreach ($tickets as $ticket) {
+            info($ticket->email);
+            // (new VoteTicketEmail($ticket))->process_send();
+        }
+        return back()->with('feedback.success', '選択されたチケットをメール送信しました。');
+    }
+
+    public function destroy_tickets(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'award')) abort(403);
+        VoteTicket::truncate();
+        return redirect()->route('vote.create_tickets')->with('feedback.success', '既存の投票チケットを削除しました');
+    }
+    public function destroy_tickets_checked(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'award')) abort(403);
+        $ticket_ids = $req->input('ticket_ids', []);
+        if (empty($ticket_ids)) {
+            return redirect()->route('vote.create_tickets')->with('feedback.error', '削除するチケットを選択してください。');
+        }
+        // VoteTicket::whereIn('id', $ticket_ids)->delete();
+        return redirect()->route('vote.create_tickets')->with('feedback.success', '選択された投票チケットを削除しました');
+    }
+
 }
