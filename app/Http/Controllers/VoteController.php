@@ -229,12 +229,10 @@ class VoteController extends Controller
     public function send_tickets_checked(Request $req)
     {
         if (!auth()->user()->can('role_any', 'award')) abort(403);
-        if ($req->method() !== 'POST') {
+        if ($req->input('action') === 'chkdestroy') { // chksend なら 送信
             return $this->destroy_tickets_checked($req);
         }
-        info($req->all());
         $ticket_ids = $req->input('ticket_ids', []);
-        // info($ticket_ids);
         if (empty($ticket_ids)) {
             return redirect()->route('vote.create_tickets')->with('feedback.error', '送信するチケットを選択してください。');
         }
@@ -243,8 +241,7 @@ class VoteController extends Controller
             return redirect()->route('vote.create_tickets')->with('feedback.error', '選択されたチケットは有効ではありません。');
         }
         foreach ($tickets as $ticket) {
-            info($ticket->email);
-            // (new VoteTicketEmail($ticket))->process_send();
+            (new VoteTicketEmail($ticket))->process_send();
         }
         return back()->with('feedback.success', '選択されたチケットをメール送信しました。');
     }
@@ -262,7 +259,7 @@ class VoteController extends Controller
         if (empty($ticket_ids)) {
             return redirect()->route('vote.create_tickets')->with('feedback.error', '削除するチケットを選択してください。');
         }
-        // VoteTicket::whereIn('id', $ticket_ids)->delete();
+        VoteTicket::whereIn('id', $ticket_ids)->delete();
         return redirect()->route('vote.create_tickets')->with('feedback.success', '選択された投票チケットを削除しました');
     }
 

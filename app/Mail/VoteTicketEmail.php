@@ -54,6 +54,8 @@ class VoteTicketEmail extends Mailable implements ShouldQueue
             $pmail->cc($this->mail_to_cc['cc']);
         }
         $pmail->queue($this);
+        $this->voteTicket->sentnum++;
+        $this->voteTicket->save();
     }
 
     /**

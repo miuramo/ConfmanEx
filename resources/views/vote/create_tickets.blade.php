@@ -68,8 +68,8 @@
                 <x-element.button onclick="checkAllByClass('notactivated')" color="purple" size="sm"
                     value="未開封にチェック">
                 </x-element.button>
-                <x-element.button value="全チェック" onclick="CheckAll('sendordestroy')" color="gray" size="sm" />
-                <x-element.button value="全チェックを外す" onclick="UnCheckAll('sendordestroy')" color="slate" size="sm" />
+                <x-element.button value="全てチェック" onclick="CheckAll('sendordestroy')" color="gray" size="sm" />
+                <x-element.button value="全てチェックを外す" onclick="UnCheckAll('sendordestroy')" color="slate" size="sm" />
 
             </div>
 
@@ -97,7 +97,7 @@
                             <td class="border px-2 py-1">{{ $ticket->activated }}</td>
                             <td class="border px-2 py-1">
                                 @if ($ticket->user_id > 0)
-                                    連携済み
+                                    連携済
                                 @else
                                     未連携
                                 @endif
@@ -112,13 +112,13 @@
     <div class="px-6 py-4">
         <form id="sendordestroy" method="POST" action="{{ route('vote.send_tickets_checked') }}">
             @csrf
-            <x-element.submitbutton color="pink" size="sm" confirm="選択した投票チケットをメール送信しますか？">
+            <x-element.submitbutton value="chksend" color="pink" size="sm" confirm="選択した投票チケットをメール送信しますか？">
                 選択した投票チケットをメール送信
             </x-element.submitbutton>
             <span class="mx-4"></span>
             <!-- メソッドを切り替える hidden input -->
             <input type="hidden" name="_method" id="methodField" value="POST">
-            <x-element.submitbutton color="red" size="sm" confirm="選択した投票チケットを削除しますか？"
+            <x-element.submitbutton value="chkdestroy" color="red" size="sm" confirm="選択した投票チケットを削除しますか？"
                 onclick="document.getElementById('methodField').value = 'DELETE';">
                 選択した投票チケットを削除
             </x-element.submitbutton>
