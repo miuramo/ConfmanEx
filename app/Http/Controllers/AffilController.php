@@ -43,12 +43,6 @@ class AffilController extends Controller
         return redirect()->route('affil.index')->with('feedback.success', '所属の修正ルールを再構成しました');
     }
 
-    
-
-    
-
-    
-
     /**
      * Update the specified resource in storage.
      */
