@@ -68,6 +68,7 @@
                                     class=" border-gray-300 dark:border-gray-700 rounded-md shadow-sm py-1 px-2" size="64">
                             </td>
                             <td class="px-2 py-2">
+                                <input type="hidden" name="pre[{{$affil->id}}]" value="off">
                                 <input type="checkbox" name="pre[{{$affil->id}}]" @if ($affil->pre) checked @endif
                                     class=" border-green-500  text-green-600">
                             </td>
@@ -76,6 +77,7 @@
                             </td>
                             <td class="px-2 py-2">
                                 @if($affil->skip) <span class="text-pink-600 text-xs">skip</span> @endif
+                                <input type="hidden" name="skip[{{$affil->id}}]" value="off">
                                 <input type="checkbox" name="skip[{{$affil->id}}]" @if ($affil->skip) checked @endif
                                     class=" border-red-500 text-pink-500">
                                 @if(!$affil->skip && $affil->before == $affil->after) <br><span class="text-pink-600 text-xs">SKIP候補</span> @endif
