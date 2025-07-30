@@ -714,7 +714,7 @@ class Paper extends Model
             $ary = explode("\t", trim($line));
             $ary = array_map("trim", $ary);
             // ここまでで、ary[0]には氏名、ary[1]には所属がはいる
-            if ($use_short) $ary[1] = $this->apply_affil_fix($ary[1]);
+            $ary[1] = $this->apply_affil_fix($ary[1], true, $use_short);
             $ret[] = $ary;
         }
         return $ret;
@@ -744,21 +744,26 @@ class Paper extends Model
             else
                 $fixed_affil = $uu[1];
 
-            if ($use_short) $fixed_affil = $this->apply_affil_fix($fixed_affil);
+            $fixed_affil = $this->apply_affil_fix($fixed_affil, true, $use_short);
 
             $ret['affils'][] = $fixed_affil;
         }
         return $ret;
     }
-    public function apply_affil_fix($affil)
+    /**
+     * 基本ルール(pre)は適用する。
+     */
+    public function apply_affil_fix($affil, bool $pre_apply = true, bool $use_short = false)
     {
         // $affil = str_replace("、", "/", $affil);
         // $affil = str_replace(",", "/", $affil);
         // $affil = str_replace("，", "/", $affil);
         // 事前適用ルールを取得
-        $pre_rules = Affil::where('pre', true)->where('skip', false)->get();
-        foreach ($pre_rules as $rule) {
-            $affil = str_replace($rule->before, $rule->after, $affil);
+        if ($pre_apply){
+            $pre_rules = Affil::where('pre', true)->where('skip', false)->get();
+            foreach ($pre_rules as $rule) {
+                $affil = str_replace($rule->before, $rule->after, $affil);
+            }
         }
 
         $afary = explode("/", $affil);
@@ -767,7 +772,7 @@ class Paper extends Model
         $ret = [];
         foreach ($afary as $af) {
             $obj = Affil::where('before', $af)->where('skip', false)->first();
-            if ($obj != null) {
+            if ($obj != null && $use_short) {
                 $ret[] = $obj->after;
             } else {
                 $ret[] = $af;

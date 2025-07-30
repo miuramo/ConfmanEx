@@ -93,7 +93,10 @@
                                 <br>
                                 <span class="text-xs">{{ $affil->origtxt }}</span>
                             </td>
-                            <td class="p-2 text-xs">{{ $affil->after }}
+                            <td class="p-2 text-xs
+                            @if($affil->skip) text-pink-100 @endif
+                            ">
+                                {{ $affil->after }}
                             </td>
                         </tr>
                     @endforeach

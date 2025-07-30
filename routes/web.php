@@ -179,7 +179,7 @@ Route::middleware('auth')->group(function () {
     Route::get('pub/{cat}/bibinfochk', [SubmitController::class, 'bibinfochk'])->name('pub.bibinfochk'); //書誌情報の確認と修正
     Route::get('paper/{paper}/bibinfochk', [SubmitController::class, 'bibinfochk_paper'])->name('pub.bibinfochk_paper'); //書誌情報の確認と修正
     Route::post('pub/update_maydirty', [SubmitController::class, 'update_maydirty'])->name('pub.update_maydirty'); // MayDirtyをリセット
-    Route::get('pub/{cat}/bibinfo/{abbr?}/{filechk?}', [SubmitController::class, 'bibinfo'])->name('pub.bibinfo'); //書誌情報の表示 (abbrをtrueにすると同一所属を省略)
+    Route::get('pub/{cat}/bibinfo/{abbr?}/{useshort?}/{filechk?}', [SubmitController::class, 'bibinfo'])->name('pub.bibinfo'); //書誌情報の表示 (abbrをtrueにすると同一所属を省略)
     Route::get('pub/{cat}/fileinfochk', [SubmitController::class, 'fileinfochk'])->name('pub.fileinfochk'); // カメラレディのタイムスタンプ確認
     Route::get('pub/{paper}/paperfile', [SubmitController::class, 'paperfile'])->name('pub.paperfile'); // 論文ごとに、どのファイルを採用しているか？を表示する
 

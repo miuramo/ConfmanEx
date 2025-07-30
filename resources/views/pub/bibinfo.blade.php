@@ -18,7 +18,7 @@
             <span class="bg-gray-100 p-4 rounded-lg">
                 表示を切り替える：
                 @foreach ($cats as $cid => $catname)
-                    <a href="{{ route('pub.bibinfo', ['cat' => $cid, 'abbr' => ($abbr?1:0), 'filechk' => $filechk]) }}">
+                    <a href="{{ route('pub.bibinfo', ['cat' => $cid, 'abbr' => ($abbr?1:0), 'useshort' => $useshort, 'filechk' => $filechk]) }}">
                         <x-element.category :cat="$cid" size="sm">
                         </x-element.category>
                     </a>
@@ -34,15 +34,25 @@
     </x-slot>
     <div class="px-4 py-4">
         @foreach ([0 => 'しない', 1 => 'する'] as $ab => $abtxt)
-            <x-element.linkbutton2 href="{{ route('pub.bibinfo', ['cat' => $catid, 'abbr' => $ab, 'filechk' => $filechk]) }}" color="lime"
+            <x-element.linkbutton2 href="{{ route('pub.bibinfo', ['cat' => $catid, 'abbr' => $ab, 'useshort' => $useshort, 'filechk' => $filechk]) }}" color="lime"
                 size="sm">
+                @if($ab == $abbr) ★@endif
                 連続する同一所属を省略{{ $abtxt }}
             </x-element.linkbutton2>
         @endforeach
         <span class="mx-2"></span>
-        @foreach ([0 => 'しない', 1 => 'する'] as $fc => $fctxt)
-            <x-element.linkbutton2 href="{{ route('pub.bibinfo', ['cat' => $catid, 'abbr' => ($abbr?1:0), 'filechk' => $fc]) }}" color="teal"
+        @foreach ([0 => 'しない', 1 => 'する'] as $us => $ustxt)
+            <x-element.linkbutton2 href="{{ route('pub.bibinfo', ['cat' => $catid, 'abbr' => ($abbr?1:0), 'useshort' => $us, 'filechk' => $filechk]) }}" color="purple"
                 size="sm">
+                @if($us == $useshort) ★@endif
+                所属短縮{{ $ustxt }}
+            </x-element.linkbutton2>
+        @endforeach
+        <span class="mx-2"></span>
+        @foreach ([0 => 'しない', 1 => 'する'] as $fc => $fctxt)
+            <x-element.linkbutton2 href="{{ route('pub.bibinfo', ['cat' => $catid, 'abbr' => ($abbr?1:0), 'useshort' => $useshort, 'filechk' => $fc]) }}" color="teal"
+                size="sm">
+                @if($fc == $filechk) ★@endif
                 ファイルへのリンクを表示{{ $fctxt }}
             </x-element.linkbutton2>
         @endforeach
@@ -58,7 +68,7 @@
                 <div class="mt-4 mb-2">セッション{{ $sub->psession_id }}：</div>
             @endif
             <div>({{ $sub->booth }}) {{ $sub->paper->title }}</div>
-            <div class="mx-7"> {{ $sub->paper->bibauthors($abbr) }}
+            <div class="mx-7"> {{ $sub->paper->bibauthors($abbr, $useshort) }}
                 @if ($filechk == 1)
                     {{-- ファイルチェック --}}
                     @if ($sub->paper->pdf_file)
