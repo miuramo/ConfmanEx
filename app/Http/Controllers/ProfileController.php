@@ -52,6 +52,9 @@ class ProfileController extends Controller
 
         Auth::logout();
 
+        // 関連する投稿も、論理削除する。
+        Paper::where('owner', $user->id)->delete();
+        // その後、ユーザを論理削除する。
         $user->delete();
 
         $request->session()->invalidate();
