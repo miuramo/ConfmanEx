@@ -26,17 +26,25 @@
                 </td>
                 <td class="p-1">{{ $paper->title }}
                 </td>
-                <td class="p-1">{{ $paper->paperowner->name }}
-                </td>
-                <td class="p-1">{{ $paper->paperowner->affil }}
-                </td>
-                <td class="p-1">{{ $paper->paperowner->email }}
-                </td>
+                @if ($paper->paperowner)
+                    <td class="p-1">
+                        {{ $paper->paperowner->name }}
+                    </td>
+                    <td class="p-1">{{ $paper->paperowner->affil }}
+                    </td>
+                    <td class="p-1">{{ $paper->paperowner->email }}
+                    </td>
+                @else
+                    <td class="p-1 text-red-500 font-bold">No Owner {{$paper->owner}}</td>
+                    <td class="p-1 text-red-500 font-bold">No Affiliation</td>
+                    <td class="p-1 text-red-500 font-bold">No Email</td>
+                @endif
                 <td class="p-1">{!! nl2br($paper->contactemails) !!}
                 </td>
                 <td class="p-1">
                     @if ($paper->pdf_file_id != 0)
-                        <a class="underline text-blue-600 hover:bg-lime-200" href="{{ route('file.showhash', ['file' => $paper->pdf_file_id, 'hash' => substr($paper->pdf_file->key, 0, 8)]) }}"
+                        <a class="underline text-blue-600 hover:bg-lime-200"
+                            href="{{ route('file.showhash', ['file' => $paper->pdf_file_id, 'hash' => substr($paper->pdf_file->key, 0, 8)]) }}"
                             target="_blank">
                             {{ $paper->pdf_file->pagenum }}page
                         </a>
