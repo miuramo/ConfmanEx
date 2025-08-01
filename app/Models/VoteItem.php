@@ -83,10 +83,10 @@ class VoteItem extends Model
             );
         }
 
-        // 論文賞
+        // 論文賞 平均スコア2.3以上のものを対象とする。
         $subs = Submit::where("category_id", 1)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
-        })->orderBy("orderint")->select("paper_id", "booth")->pluck("paper_id", "booth")->toArray();
+        })->where("score", ">=", 2.3)->orderBy("orderint")->select("paper_id", "booth")->pluck("paper_id", "booth")->toArray();
         VoteItem::firstOrCreate(
             [
                 'vote_id' => 3,

@@ -44,6 +44,7 @@ class Vote extends Model
             ],
             [
                 'isclose' => $isclose,
+                'for_pc' => 1, // 論文賞はPC投票用フラグを立てる
             ]
         );
     }
