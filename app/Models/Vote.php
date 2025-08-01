@@ -38,5 +38,13 @@ class Vote extends Model
                 'isclose' => $isclose,
             ]
         );
+        Vote::firstOrCreate(
+            [
+                'name' => '論文賞',
+            ],
+            [
+                'isclose' => $isclose,
+            ]
+        );
     }
 }

@@ -89,4 +89,9 @@
         どちらも、投票関係データをすべてリセットしますが、本番投票締め切り後では新規投票受付はしません(Vote→isclose=1)。
     </x-element.h1>
 
+    @push('localjs')
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/sortable.js"></script>
+    @endpush
+
 </div>

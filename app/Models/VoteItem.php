@@ -82,6 +82,21 @@ class VoteItem extends Model
                 ]
             );
         }
+
+        // 論文賞
+        $subs = Submit::where("category_id", 1)->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->orderBy("orderint")->select("paper_id", "booth")->pluck("paper_id", "booth")->toArray();
+        VoteItem::firstOrCreate(
+            [
+                'vote_id' => 3,
+                'name' => "【論文賞】",
+            ],
+            [
+                'orderint' => 1,
+                'submits' => json_encode($subs),
+            ]
+        );
     }
 
     // 学生発表のブースを取得

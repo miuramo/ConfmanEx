@@ -28,18 +28,18 @@ class VoteAnswer extends Model
     public static function vote_result()
     {
         $ret = [];
-        $tmp = VoteAnswer::select(DB::raw("count(id) as count, booth, vote_id, valid"))
+        $tmp = VoteAnswer::select(DB::raw("count(id) as count, booth, vote_id"))
             ->where("valid", ">", 0)
             ->groupBy("vote_id")
-            ->groupBy("valid")
+            // ->groupBy("valid")
             ->groupBy("booth")
             ->orderBy("vote_id")
-            ->orderBy("valid")
+            // ->orderBy("valid")
             ->orderByDesc("count")
             ->orderBy("booth")
             ->get();
         foreach ($tmp as $t) {
-            $ret[$t->vote_id][$t->valid][$t->booth] = $t->count;
+            $ret[$t->vote_id][$t->booth] = $t->count;
         }
         return $ret;
     }

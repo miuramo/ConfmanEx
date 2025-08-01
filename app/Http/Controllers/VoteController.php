@@ -129,14 +129,14 @@ class VoteController extends Controller
             });
             $subbooth2id = Submit::select("id", "booth")->get()->pluck("id", "booth")->toArray();
 
-            $student_boothes = VoteItem::student_boothes();
+            // $student_boothes = VoteItem::student_boothes();
             foreach ($req->all() as $booth => $val) {
                 if ($val == 'on') {
                     VoteAnswer::firstOrCreate([
                         'user_id' => $uid,
                         'token' => $ticket->token,
                         'submit_id' => $subbooth2id[$booth],
-                        'valid' => (isset($student_boothes[$booth]) ? 2 : 1),
+                        'valid' => 1,// (isset($student_boothes[$booth]) ? 2 : 1),
                     ], [
                         'comment' => $req->input('comment'),
                         'vote_id' => $vote->id,
