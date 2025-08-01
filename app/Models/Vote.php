@@ -12,6 +12,7 @@ class Vote extends Model
     protected $fillable = [
         'name',
         'isclose',
+        'for_pc',
     ];
 
     public function items()

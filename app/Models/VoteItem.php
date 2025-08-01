@@ -90,7 +90,7 @@ class VoteItem extends Model
         // 論文賞 平均スコア2.3以上のものを対象とする。
         $subs = Submit::where("category_id", 1)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
-        })->where("score", ">=", 2.3)->orderBy("orderint")->select("paper_id", "booth")->pluck("paper_id", "booth")->toArray();
+        })->where("score", ">=", 2.9)->orderBy("orderint")->select("paper_id", "booth")->pluck("paper_id", "booth")->toArray();
         VoteItem::firstOrCreate(
             [
                 'vote_id' => 3,
@@ -100,7 +100,7 @@ class VoteItem extends Model
                 'desc' => "論文賞に相応しい優れた論文",
                 'orderint' => 1,
                 'submits' => json_encode($subs),
-                'upperlimit' => 5, // 上限5
+                'upperlimit' => 1, // 上限1
                 'show_pdf_link' => true, // 論文賞はPDFリンクを表示する
             ]
         );

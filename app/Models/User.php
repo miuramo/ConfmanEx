@@ -168,6 +168,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return "author";
     }
 
+    public function is_pc_member()
+    {
+        return $this->maxRole() !== "author";
+    }
 
     /**
      * 初回のみ、パスワード再設定メールを変更している。see User.php

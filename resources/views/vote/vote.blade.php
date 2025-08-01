@@ -9,8 +9,14 @@
             @endphp
             <span class="mx-4"></span>
             @foreach ($votes as $vvv)
+                @if ($vote->for_pc && !auth()->user()->is_pc_member())
+                    @continue
+                @endif
+                @php
+                    $col = $vvv->for_pc ? 'orange' : 'lime';
+                @endphp
                 @if ($vvv->isopen && !$vvv->isclose)
-                    <x-element.linkbutton href="{{ route('vote.vote', ['vote' => $vvv->id]) }}" color="lime"
+                    <x-element.linkbutton href="{{ route('vote.vote', ['vote' => $vvv->id]) }}" color="{{$col}}"
                         size="md">
                         {{ $vvv->name }}に対する投票
                     </x-element.linkbutton>
@@ -72,11 +78,11 @@
             @foreach ($voteitems as $vi)
                 <x-element.h1>
                     {{ $vi->name }} {{ $vi->desc }} を<b>
-                    @if ($vi->upperlimit > 0)
-                        {{ $vi->upperlimit }}件以内で
-                    @else
-                        すべて
-                    @endif
+                        @if ($vi->upperlimit > 0)
+                            {{ $vi->upperlimit }}件以内で
+                        @else
+                            すべて
+                        @endif
                     </b> 選択してください。
                 </x-element.h1>
                 <div class="mx-4">
@@ -92,6 +98,15 @@
                                 class="absolute hidden border-2 border-lime-300 p-1 ml-64 mt-4 text-black bg-lime-100 bg-opacity-85 tooltip text-sm transition-all duration-150">
                                 {{ str_replace("\n", ' ', trim($authors[$pid])) }}
                             </div>
+                            @if($vi->show_pdf_link)
+                                @php
+                                    $paper = App\Models\Paper::where('id', $pid)->first();
+                                @endphp
+                                <span class="ml-2">
+                                    <x-file.link_anyfile :fileid="$paper->pdf_file_id" label="PDF" linktype='link' />
+                                    {{-- <x-file.link_pdffile :fileid="$paper->pdf_file_id"></x-file.link_pdffile> --}}
+                                </span>
+                            @endif
                         </div>
                     @endforeach
                 </div>
