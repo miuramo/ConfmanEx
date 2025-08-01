@@ -12,6 +12,8 @@ class VoteItem extends Model
     protected $fillable = [
         'vote_id',
         'name',
+        'desc',
+        'show_pdf_link',
         'orderint',
         'submits',
         'upperlimit',
@@ -77,8 +79,10 @@ class VoteItem extends Model
                     'name' => "【{$catname}】",
                 ],
                 [
+                    'desc' => "素晴らしいとお感じになった発表",
                     'orderint' => 1,
                     'submits' => json_encode($subs),
+                    'upperlimit' => 0, // 上限なし
                 ]
             );
         }
@@ -93,8 +97,11 @@ class VoteItem extends Model
                 'name' => "【論文賞】",
             ],
             [
+                'desc' => "論文賞に相応しい優れた論文",
                 'orderint' => 1,
                 'submits' => json_encode($subs),
+                'upperlimit' => 5, // 上限5
+                'show_pdf_link' => true, // 論文賞はPDFリンクを表示する
             ]
         );
     }

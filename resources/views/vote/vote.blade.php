@@ -71,9 +71,13 @@
         <div class="py-4 px-6  dark:text-gray-400">
             @foreach ($voteitems as $vi)
                 <x-element.h1>
-                    {{ $vi->name }}素晴らしいとお感じになった発表を
-                    {{-- {{ $vi->upperlimit }}件以内で --}}
-                    すべて選択してください。
+                    {{ $vi->name }} {{ $vi->desc }} を<b>
+                    @if ($vi->upperlimit > 0)
+                        {{ $vi->upperlimit }}件以内で
+                    @else
+                        すべて
+                    @endif
+                    </b> 選択してください。
                 </x-element.h1>
                 <div class="mx-4">
 
