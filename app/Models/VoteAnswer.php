@@ -13,6 +13,7 @@ class VoteAnswer extends Model
     protected $fillable = [
         'user_id',
         'vote_id',
+        'vote_item_id',
         'submit_id',
         'booth',
         'valid',

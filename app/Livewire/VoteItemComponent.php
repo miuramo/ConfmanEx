@@ -38,23 +38,28 @@ class VoteItemComponent extends Component
         sort($this->selectedPapers);
 
         DB::transaction(function () {
-            VoteAnswer::where("vote_id", $this->vote->id)->where(function ($query) {
+            VoteAnswer::where("vote_id", $this->vote->id)->where("vote_item_id", $this->voteItem->id)->where(function ($query) {
                 $query->where("user_id", $this->uid)->orWhere("token", $this->ticket->token);
-            })->delete();
+            })->update([
+                'valid' => 0, // 既存の回答を無効化
+            ]);
         });
         $subbooth2id = Submit::select("id", "booth")->get()->pluck("id", "booth")->toArray();
         DB::transaction(function () use ($subbooth2id) {
             foreach ($this->selectedPapers as $n => $booth) {
-                VoteAnswer::firstOrCreate([
-                    'user_id' => $this->uid,
+                $target = VoteAnswer::firstOrCreate([
                     'token' => $this->ticket->token,
                     'submit_id' => $subbooth2id[$booth],
-                    'valid' => 1, // (isset($student_boothes[$booth]) ? 2 : 1),
-                ], [
-                    'comment' => $this->comment,
-                    'vote_id' => $this->vote->id,
                     'booth' => $booth,
+                    'vote_id' => $this->vote->id,
+                    'vote_item_id' => $this->voteItem->id,
+                ], [
+                    'user_id' => $this->uid,
+                    'comment' => $this->comment,
+                    'valid' => 1, // (isset($student_boothes[$booth]) ? 2 : 1),
                 ]);
+                $target->valid = 1; // 有効にする
+                $target->save();
             }
         });
     }
@@ -80,7 +85,7 @@ class VoteItemComponent extends Component
             }
             $this->comment = $this->ticket->email;
         }
-        $this->selectedPapers = VoteAnswer::where('token', $this->ticket->token)->where('vote_id', $this->vote->id)->pluck('booth')->toArray();
+        $this->selectedPapers = VoteAnswer::where('valid', 1)->where('vote_id', $this->vote->id)->where('vote_item_id', $this->voteItem->id)->where('token', $this->ticket->token)->pluck('booth')->toArray();
     }
 
     public function render()
