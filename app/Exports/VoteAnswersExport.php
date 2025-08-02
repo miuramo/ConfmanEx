@@ -15,7 +15,7 @@ class VoteAnswersExport implements FromCollection, WithMapping, ShouldAutoSize, 
      */
     public function collection()
     {
-        return VoteAnswer::all();
+        return VoteAnswer::where('valid', 1)->get();
     }
 
     public function headings(): array
@@ -24,6 +24,7 @@ class VoteAnswersExport implements FromCollection, WithMapping, ShouldAutoSize, 
             'id',
             'user_id',
             'vote_id',
+            'vote_item_id',
             'submit_id',
             'booth',
             'valid',
@@ -40,6 +41,7 @@ class VoteAnswersExport implements FromCollection, WithMapping, ShouldAutoSize, 
             $vans->id,
             $vans->user_id,
             $vans->vote_id,
+            $vans->vote_item_id,
             $vans->submit_id,
             $vans->booth,
             $vans->valid,
