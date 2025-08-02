@@ -38,7 +38,7 @@ class VoteItemComponent extends Component
         sort($this->selectedPapers);
 
         DB::transaction(function () {
-            VoteAnswer::where("vote_id", $this->vote->id)->where("vote_item_id", $this->voteItem->id)->where(function ($query) {
+            VoteAnswer::where("valid", 1)->where("vote_id", $this->vote->id)->where("vote_item_id", $this->voteItem->id)->where(function ($query) {
                 $query->where("user_id", $this->uid)->orWhere("token", $this->ticket->token);
             })->update([
                 'valid' => 0, // 既存の回答を無効化
@@ -58,8 +58,11 @@ class VoteItemComponent extends Component
                     'comment' => $this->comment,
                     'valid' => 1, // (isset($student_boothes[$booth]) ? 2 : 1),
                 ]);
-                $target->valid = 1; // 有効にする
-                $target->save();
+                if ($target->valid == 0) {
+                    // 既存の回答が無効化されていた場合、有効にする
+                    $target->valid = 1;
+                    $target->save();
+                }
             }
         });
     }
