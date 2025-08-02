@@ -1,4 +1,12 @@
 <div>
+    @if(!$vote->isopen || $vote->isclose)
+        <x-alert.error>投票は終了しました。</x-alert.error>
+        <x-element.linkbutton href="{{ route('vote.index') }}" color="green" size="sm">
+            &larr; 投票Topに戻る
+        </x-element.linkbutton>
+        @return
+    @endif
+    
     <x-element.h1>
         {{ $vi->name }} {{ $vi->desc }} を<b>
             @if ($vi->upperlimit > 1)
