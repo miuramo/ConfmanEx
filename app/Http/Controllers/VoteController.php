@@ -120,7 +120,18 @@ class VoteController extends Controller
             if (!$vote->isopen || $vote->isclose) {
                 return redirect('/vote')->with('feedback.error', '期間外の投票はできません。');
             }
-            // info($req->all());
+            info($req->all());
+            // 件数チェック
+            $cnt = 0;
+            foreach($req->all() as $booth=>$val){
+                if ($val == 'on') {
+                    $cnt++;
+                }
+            }
+            if ($cnt < 1) {
+                return redirect()->route('vote.vote', ['vote' => $vote])->with('feedback.error', '1件以上の投票を選択してください。');
+            }
+
             // 一旦、これまでのデータをすべて消す。
             DB::transaction(function () use ($vote, $uid, $ticket) {
                 VoteAnswer::where("vote_id", $vote->id)->where(function ($query) use ($uid, $ticket) {

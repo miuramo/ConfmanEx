@@ -82,7 +82,7 @@ class VoteItem extends Model
                     'desc' => "素晴らしいとお感じになった発表",
                     'orderint' => 1,
                     'submits' => json_encode($subs),
-                    'upperlimit' => 0, // 上限なし
+                    'upperlimit' => 10, // 上限10
                 ]
             );
         }
