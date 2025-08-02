@@ -90,6 +90,14 @@
         どちらも、投票関係データをすべてリセットしますが、本番投票締め切り後では新規投票受付はしません(Vote→isclose=1)。
     </x-element.h1>
 
+    (VoteItem) 投稿先発表・論文の編集 ：
+    @foreach(App\Models\VoteItem::all() as $voteitem)
+        <x-element.linkbutton href="{{ route('vote.edit_voteitem', ['voteitem' => $voteitem->id]) }}" color="cyan" size="sm"
+            target="_blank">
+            {{ str_replace(['【', '】'], '', $voteitem->name) }}
+        </x-element.linkbutton>
+    @endforeach
+
     @push('localjs')
         <script src="/js/jquery.min.js"></script>
         <script src="/js/sortable.js"></script>

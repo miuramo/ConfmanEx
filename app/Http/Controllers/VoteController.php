@@ -28,16 +28,6 @@ class VoteController extends Controller
      */
     public function index(Request $req)
     {
-        // if ($req->method() === 'POST') {
-        //     // info($req->all());
-        //     if (strlen($req->input("sssname")) < 3 ||   strlen($req->input("sssaffil")) < 2) {
-        //         return redirect('/vote')->with('feedback.error', '氏名と所属の両方を入力してください。');
-        //     }
-        //     $formData = json_encode($req->all());
-        //     $minutes = 60 * 24 * 3; // 3日間有効なクッキー
-        //     Cookie::queue('formData', $formData, $minutes);
-        //     return redirect('/vote')->with('feedback.success', '氏名と所属を一時保存しました。');
-        // }
         if (Auth::check()) {
             $uid = auth()->id();
             $ticket = VoteTicket::where('user_id', $uid)->where('activated', true)->where('valid', true)->first();
@@ -272,6 +262,39 @@ class VoteController extends Controller
         }
         VoteTicket::whereIn('id', $ticket_ids)->delete();
         return redirect()->route('vote.create_tickets')->with('feedback.success', '選択された投票チケットを削除しました');
+    }
+
+
+    public function edit_voteitem(VoteItem $voteitem)
+    {
+        if (!auth()->user()->can('role_any', 'award')) abort(403);
+        return view('vote.edit_voteitem')->with(compact('voteitem'));
+    }
+    public function update_voteitem(Request $req, VoteItem $voteitem)
+    {
+        if (!auth()->user()->can('role_any', 'award')) abort(403);
+        // pid2booth
+        $pid2booth = Submit::where('category_id', $req->input('category_id'))->select('paper_id', 'booth')->get()->pluck('booth', 'paper_id')->toArray();
+        // info($pid2booth);
+        // info($req->all());
+        if ($req->has('pid_str')) {
+            $pid_str = $req->input('pid_str');
+            $pids = array_map('trim', explode(',', $pid_str));
+            $pids = array_filter($pids, function ($pid) {
+                return is_numeric($pid) && (int)$pid > 0;
+            });
+            if (empty($pids)) {
+                return redirect()->route('vote.edit_voteitem', ['voteitem' => $voteitem->id])->with('feedback.error', '有効なPaperIDを入力してください。');
+            }
+            $submits = [];
+            foreach ($pids as $pid) {
+                $submits[ $pid2booth[$pid] ] = (int)$pid;
+            }
+            $voteitem->submits = json_encode($submits);
+            // info($voteitem->submits);
+            $voteitem->save();
+        }
+        return redirect()->route('vote.edit_voteitem', ['voteitem' => $voteitem->id])->with('feedback.success', '投票項目を更新しました。');
     }
 
 }

@@ -280,6 +280,9 @@ Route::middleware('auth')->group(function () {
     // 投票結果
     Route::get('down_voteanswers', [VoteController::class, 'download_answers'])->name('vote.download_answers');
     Route::get('resetall_voteanswers/{isclose}', [VoteController::class, 'resetall'])->name('vote.resetall'); // すべて削除
+    // VoteItemの編集
+    Route::get('voteitem/{voteitem}/edit', [VoteController::class, 'edit_voteitem'])->name('vote.edit_voteitem');
+    Route::post('voteitem/{voteitem}', [VoteController::class, 'update_voteitem'])->name('vote.update_voteitem');
 
     // 所属修正
     // Route::resource('affil', AffilController::class);
