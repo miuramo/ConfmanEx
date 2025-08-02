@@ -21,7 +21,7 @@
     <thead>
         <tr>
             <th class="p-1 bg-slate-300"> i</th>
-            <th class="p-1 bg-slate-300"> id</th>
+            <th class="p-1 bg-slate-300"> pid</th>
             <th class="p-1 bg-slate-300"> title</th>
             <th class="p-1 bg-slate-300"> accept</th>
             <th class="p-1 bg-slate-300"> score</th>

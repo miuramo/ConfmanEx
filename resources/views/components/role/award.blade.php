@@ -49,6 +49,7 @@
         @php
             $shortcuts = [
                 'Vote' => 'votes',
+                'VoteItem' => 'vote_items',
                 'VoteAnswer' => 'vote_answers',
             ];
         @endphp
