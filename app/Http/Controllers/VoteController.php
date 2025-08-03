@@ -288,10 +288,33 @@ class VoteController extends Controller
             }
             $submits = [];
             foreach ($pids as $pid) {
+                $submits[ $pid2booth[intval($pid)] ] = (int)$pid;
+            }
+            ksort($submits);
+            $voteitem->submits = json_encode($submits);
+            $voteitem->save();
+        }
+        return redirect()->route('vote.edit_voteitem', ['voteitem' => $voteitem->id])->with('feedback.success', '投票項目を更新しました。');
+    }
+    public function exclude_voteitem(Request $req, VoteItem $voteitem)
+    {
+        if (!auth()->user()->can('role_any', 'award')) abort(403);
+        // pid2booth
+        $pid2booth = Submit::select('paper_id', 'booth')->get()->pluck('booth', 'paper_id')->toArray();
+        if ($req->has('pids')) {
+            $pids = $req->input('pids');
+            $pids = array_filter($pids, function ($pid) {
+                return is_numeric($pid) && (int)$pid > 0;
+            });
+            if (empty($pids)) {
+                return redirect()->route('vote.edit_voteitem', ['voteitem' => $voteitem->id])->with('feedback.error', '有効なPaperIDを入力してください。');
+            }
+            $submits = [];
+            foreach ($pids as $pid) {
                 $submits[ $pid2booth[$pid] ] = (int)$pid;
             }
+            ksort($submits);
             $voteitem->submits = json_encode($submits);
-            // info($voteitem->submits);
             $voteitem->save();
         }
         return redirect()->route('vote.edit_voteitem', ['voteitem' => $voteitem->id])->with('feedback.success', '投票項目を更新しました。');

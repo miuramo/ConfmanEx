@@ -23,30 +23,43 @@
     </div>
 
     <div class="mx-6">
-        <ul>
-            @foreach (json_decode($voteitem->submits) as $booth => $pid)
-                <li>
-                    <input type="checkbox" name="pids[]" value="{{ $pid }}" id="chk_{{ $pid }}" checked>
-                    <label for="chk_{{ $pid }}">{{ $booth }} : {{ sprintf("%03d", $pid) }}</label>
-                </li>
-            @endforeach
-        </ul>
+        <form id="exclude" method="POST" action="{{ route('vote.exclude_voteitem', ['voteitem' => $voteitem->id]) }}">
+            @csrf
+            <ul>
+                @foreach (json_decode($voteitem->submits) as $booth => $pid)
+                    <li>
+                        <input type="checkbox" name="pids[]" value="{{ $pid }}" id="chk_{{ $pid }}"
+                            checked>
+                        <label for="chk_{{ $pid }}">{{ $booth }} : {{ sprintf('%03d', $pid) }}</label>
+                    </li>
+                @endforeach
+            </ul>
+            <x-element.submitbutton value="exclude" color="orange" size="sm" confirm="チェックを外した投稿先を除外しますか？">
+                チェックを外した投稿先を除外する
+            </x-element.submitbutton>
+        </form>
     </div>
     <div class="pt-4">
         <hr>
     </div>
 
     <div class="m-6">
-        <form id="rebuild" method="POST" action="{{ route('vote.update_voteitem', ['voteitem' => $voteitem->id]) }}">
+        <form id="rebuild" method="POST"
+            action="{{ route('vote.update_voteitem', ['voteitem' => $voteitem->id]) }}">
             @csrf
             <div class="mx-0">カテゴリID</div>
             <input type="number" name="category_id" value="1" size="1" min="1" max="9">
-            <div class="mx-0">PaperIDのカンマ区切り</div>
-            <input type="text" name="pid_str" value="7,25,33,21,39,22" placeholder="001, 002, 003" class="w-full mb-2">
+            <div class="mx-0">PaperIDのカンマ区切り （0埋め数値も可）</div>
+            <input type="text" name="pid_str" value="7,25,33,21,39,22" placeholder="001, 002, 003"
+                class="w-full mb-2">
             <x-element.submitbutton value="rebuild" color="pink" size="sm" confirm="指定したPaperIDで再構築しますか？">
-                指定したPaperIDで投稿先を再構築
+                指定したPaperIDsで投稿先を再構築
             </x-element.submitbutton>
         </form>
+        <div class="p-2">
+            参考：
+        <a href="{{route('pub.accstatus')}}" class="text-blue-500 hover:underline" target="_blank">採択されたPaperIDsを確認する</a>
+        </div>
     </div>
     <div class="py-2"></div>
 

@@ -283,6 +283,7 @@ Route::middleware('auth')->group(function () {
     // VoteItemの編集
     Route::get('voteitem/{voteitem}/edit', [VoteController::class, 'edit_voteitem'])->name('vote.edit_voteitem');
     Route::post('voteitem/{voteitem}', [VoteController::class, 'update_voteitem'])->name('vote.update_voteitem');
+    Route::post('voteitem/{voteitem}/exclude', [VoteController::class, 'exclude_voteitem'])->name('vote.exclude_voteitem');
 
     // 所属修正
     // Route::resource('affil', AffilController::class);
