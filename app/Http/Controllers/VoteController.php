@@ -39,7 +39,7 @@ class VoteController extends Controller
             $cookie_token = Cookie::get('vote_ticket_token');
             $ticket = VoteTicket::where('token', $cookie_token)->where('activated', true)->where('valid', true)->first();
             if (!$ticket) {
-                return view('vote.vote_error')->with('reason', 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。');
+                return view('vote.vote_error')->with('reason', 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。投票トークンをアカウントに紐づけている場合は、ログインしてください。');
                 // abort(403, 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。');
             }
         }
@@ -92,15 +92,13 @@ class VoteController extends Controller
             $ticket = VoteTicket::where('user_id', $uid)->where('activated', true)->where('valid', true)->first();
             if (!$ticket) {
                 return view('vote.vote_error')->with('reason', 'メールで届く投票URLをクリックしてから、こちらの投票ページに遷移してください。');
-                // abort(403, 'メールで届く投票URLをクリックしてから、こちらの投票ページに遷移してください。');
             }
         } else {
             $uid = null;
             $cookie_token = Cookie::get('vote_ticket_token');
             $ticket = VoteTicket::where('token', $cookie_token)->where('activated', true)->where('valid', true)->first();
             if (!$ticket) {
-                return view('vote.vote_error')->with('reason', 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。');
-                // abort(403, 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。');
+                return view('vote.vote_error')->with('reason', 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。投票トークンをアカウントに紐づけている場合は、ログインしてください。');
             }
         }
         if (!$vote->isopen || $vote->isclose) {
