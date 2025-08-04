@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class VoteTicket extends Model
 {
+    use HasFactory;
+    
     protected $fillable = [
         'email',
         'token',
@@ -16,6 +19,10 @@ class VoteTicket extends Model
         'submitted_at',
     ];
     //
+
+    // protected $attributes = [
+    //     'email' => 'test@example.com',
+    // ];
 
     public function url()
     {

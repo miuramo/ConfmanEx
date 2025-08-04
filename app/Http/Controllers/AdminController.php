@@ -8,6 +8,7 @@ use App\Jobs\ExportHintFileJob;
 use App\Jobs\Test9w;
 use App\Mail\DisableEmail;
 use App\Mail\ForAuthor;
+use App\Models\Affil;
 use App\Models\Bb;
 use App\Models\BbMes;
 use App\Models\Confirm;
@@ -640,6 +641,7 @@ class AdminController extends Controller
         RevConflict::truncate();
         Review::truncate();
         Score::truncate();
+        Affil::truncate();
         DB::table('paper_contact')->truncate();
 
         LogModify::truncate();

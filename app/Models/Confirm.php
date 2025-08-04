@@ -15,6 +15,10 @@ class Confirm extends Model
         'valid',
         'mes',
     ];
+    protected $attributes = [
+        'mes' => 'initial message',
+        'grp' => 0,
+    ];
     /**
      * 免責事項
      */
