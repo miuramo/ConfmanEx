@@ -49,6 +49,13 @@ class LogAccess
         ]);
         $accessLog->save();
 
+        if($uid > 0 && $url == '/login' && $request->method() == 'POST') {
+            // ユーザーログイン時の日時を更新
+            $user = Auth::user();
+            $user->last_login_at = now();
+            $user->save();
+        }
+
         return $hozon;
     }
 }
