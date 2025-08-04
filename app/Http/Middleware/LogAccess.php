@@ -52,8 +52,10 @@ class LogAccess
         if($uid > 0 && $url == '/login' && $request->method() == 'POST') {
             // ユーザーログイン時の日時を更新
             $user = Auth::user();
+            $user->timestamps = false;
             $user->last_login_at = now();
             $user->save();
+            $user->timestamps = true;
         }
 
         return $hozon;
