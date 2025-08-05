@@ -171,6 +171,10 @@
         <x-element.linkbutton href="{{ route('regist.index') }}" color="lime">
             参加登録
         </x-element.linkbutton>
+        <span class="px-5"></span>
+        <x-element.linkbutton href="{{ route('admin.users') }}" color="blue">
+            ユーザ管理
+        </x-element.linkbutton>
 
     </x-element.h1>
 

@@ -1,7 +1,7 @@
 @props([
     'users' => [],
     'role' => null,
-    'heads' => ['chk','uid', 'name','affil','email','mailnofity','last_access','created_at','(action)','i'],
+    'heads' => ['chk','uid', 'name','affil','email','mailnofity','last_access','last_login_at','created_at','(action)','i'],
     'chkfor' => null,
 ])
 <!-- components.role.members -->
@@ -35,6 +35,9 @@
                 </td>
                 <td class="text-sm">
                     {{ $u->last_access() }}
+                </td>
+                <td class="text-sm">
+                    {{ $u->last_login_at }}
                 </td>
                 <td class="text-sm">
                     {{ $u->created_at }}

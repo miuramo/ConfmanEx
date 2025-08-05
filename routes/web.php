@@ -137,6 +137,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_hiroba_excel', [AdminController::class, 'hiroba_excel'])->name('admin.hiroba_excel');
     Route::get('/admin_filelist', [AdminController::class, 'filelist'])->name('admin.filelist');
     Route::get('/admin_gen_dlkey', [AdminController::class, 'gen_dlkey'])->name('admin.gen_dlkey');
+    Route::get('/admin_users', [AdminController::class, 'users'])->name('admin.users');
 
     Route::get('/logac/{user?}', [LogAccessController::class, 'index'])->name('logac.index');
     Route::post('/logac/{user?}', [LogAccessController::class, 'index'])->name('logac.index');

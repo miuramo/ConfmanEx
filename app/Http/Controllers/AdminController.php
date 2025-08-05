@@ -675,6 +675,15 @@ class AdminController extends Controller
     }
 
     /**
+     * ユーザ管理
+     */
+    public function users()
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);
+        return view('admin.users');
+    }
+
+    /**
      * 必要なプログラムがインストールされているか？の確認
      */
     public function check_exefiles()
