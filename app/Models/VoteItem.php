@@ -99,10 +99,10 @@ class VoteItem extends Model
             [
                 'vote_id' => 3,
                 'name' => "【論文賞】",
-                'submits' => json_encode($subs2),
                 'desc' => "論文賞に相応しい優れた論文",
             ],
             [
+                'submits' => json_encode($subs2),
                 'orderint' => 1,
                 'upperlimit' => 1, // 上限1
                 'show_pdf_link' => true, // 論文賞はPDFリンクを表示する
