@@ -23,6 +23,7 @@ class VoteTicketEmail extends Mailable implements ShouldQueue
 
     public array $mail_to_cc;
     public VoteTicket $voteTicket;
+    public string $body;
     public string $conftitle;
 
     public $tries = 5;
@@ -37,12 +38,13 @@ class VoteTicketEmail extends Mailable implements ShouldQueue
      * use Illuminate\Support\Facades\Mail; Mail::to("miura@moto.qee.jp")->send(new App\Mail\Submitted("nofile.png"));
      *
      */
-    public function __construct(VoteTicket $vT)
+    public function __construct(VoteTicket $vT, string $subject, string $body)
     {
         $this->voteTicket = $vT;
         $this->mail_to_cc = ['to' => $vT->email];
         $this->conftitle = \App\Models\Setting::getval('CONFTITLE');
-        $this->subject = "【{$this->conftitle}】". ' 投票URLのお知らせ';
+        $this->subject = $subject;
+        $this->body = $body;
     }
     /**
      * メール送信
@@ -83,6 +85,7 @@ class VoteTicketEmail extends Mailable implements ShouldQueue
             with: [
                 'ticket' => $this->voteTicket,
                 'conftitle' => $this->conftitle,
+                'body' => $this->body,
             ],
         );
     }
