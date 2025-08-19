@@ -8,15 +8,20 @@
 
 <div class="py-4 px-10  dark:text-gray-400">
     @foreach ($votes as $vote)
-        @if ($vote->for_pc && !auth()->user()->is_pc_member())
-            @continue
+        @if ($vote->for_pc)
+            @if (!auth()->check())
+                @continue
+            @endif
+            @if (!auth()->user()->is_pc_member())
+                @continue
+            @endif
         @endif
         @php
             $col = $vote->for_pc ? 'orange' : 'lime';
         @endphp
         @if ($vote->isopen && !$vote->isclose)
             <x-element.linkbutton href="{{ route('vote.vote', ['vote' => $vote->id]) }}" size="xl"
-                  color="{{ $col }}">
+                color="{{ $col }}">
                 {{ $vote->name }} に対する投票
             </x-element.linkbutton>
         @else
