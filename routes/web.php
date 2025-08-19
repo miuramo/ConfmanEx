@@ -274,7 +274,7 @@ Route::middleware('auth')->group(function () {
     // 投票チケット作成
     Route::get('vote_create_tickets', [VoteController::class, 'create_tickets'])->name('vote.create_tickets');
     Route::post('vote_create_tickets', [VoteController::class, 'create_tickets'])->name('vote.create_tickets');
-    Route::get('vote_send_tickets', [VoteController::class, 'send_tickets'])->name('vote.send_tickets');
+    // Route::get('vote_send_tickets', [VoteController::class, 'send_tickets'])->name('vote.send_tickets');
     Route::delete('vote_destroy_tickets', [VoteController::class, 'destroy_tickets'])->name('vote.destroy_tickets');
     Route::post('vote_send_tickets_checked', [VoteController::class, 'send_tickets_checked'])->name('vote.send_tickets_checked');
     Route::delete('vote_destroy_tickets_checked', [VoteController::class, 'destroy_tickets_checked'])->name('vote.destroy_tickets_checked');

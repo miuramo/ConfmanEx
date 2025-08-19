@@ -206,20 +206,20 @@ class VoteController extends Controller
     }
 
     /**
-     * 有効なチケットをメール送信する
+     * 有効なチケットをメール送信する （send_tickets_checkedに統合した）
      */
-    public function send_tickets()
-    {
-        if (!auth()->user()->can('role_any', 'award')) abort(403);
-        $tickets = VoteTicket::where('valid', true)->get();
-        if ($tickets->isEmpty()) {
-            return redirect()->route('role.top', ['role' => 'award'])->with('feedback.error', '有効な投票チケットがありません。');
-        }
-        foreach ($tickets as $ticket) {
-            (new VoteTicketEmail($ticket))->process_send();
-        }
-        return back()->with('feedback.success', '投票チケットをメール送信しました。');
-    }
+    // public function send_tickets()
+    // {
+    //     if (!auth()->user()->can('role_any', 'award')) abort(403);
+    //     $tickets = VoteTicket::where('valid', true)->get();
+    //     if ($tickets->isEmpty()) {
+    //         return redirect()->route('role.top', ['role' => 'award'])->with('feedback.error', '有効な投票チケットがありません。');
+    //     }
+    //     foreach ($tickets as $ticket) {
+    //         (new VoteTicketEmail($ticket))->process_send();
+    //     }
+    //     return back()->with('feedback.success', '投票チケットをメール送信しました。');
+    // }
 
     /**
      * チェックされたチケットをメール送信する
