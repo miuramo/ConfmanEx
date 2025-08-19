@@ -10,12 +10,18 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class VoteAnswersExport implements FromCollection, WithMapping, ShouldAutoSize, WithHeadings
 {
+    public int $vote_id;
+    public function __construct(int $vote_id = 0)
+    {
+        $this->vote_id = $vote_id;
+    }
     /**
      * @return \Illuminate\Support\Collection
      */
     public function collection()
     {
-        return VoteAnswer::where('valid', 1)->get();
+        if ($this->vote_id == 0) return VoteAnswer::where('valid', 1)->get();
+        else return VoteAnswer::where('valid', 1)->where('vote_id', $this->vote_id)->get();
     }
 
     public function headings(): array

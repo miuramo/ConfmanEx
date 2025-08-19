@@ -153,11 +153,10 @@ class VoteController extends Controller
         return view("vote.vote")->with(compact("vote", "ticket", "uid", "vas"));
     }
 
-    public function download_answers()
+    public function download_answers(int $vote_id = 0)
     {
         if (!auth()->user()->can('role_any', 'award')) abort(403);
-
-        return Excel::download(new VoteAnswersExport(), "投票結果.xlsx");
+        return Excel::download(new VoteAnswersExport($vote_id), "投票結果_{$vote_id}.xlsx");
     }
 
     /**

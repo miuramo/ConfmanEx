@@ -279,7 +279,7 @@ Route::middleware('auth')->group(function () {
     Route::post('vote_send_tickets_checked', [VoteController::class, 'send_tickets_checked'])->name('vote.send_tickets_checked');
     Route::delete('vote_destroy_tickets_checked', [VoteController::class, 'destroy_tickets_checked'])->name('vote.destroy_tickets_checked');
     // 投票結果
-    Route::get('down_voteanswers', [VoteController::class, 'download_answers'])->name('vote.download_answers');
+    Route::get('down_voteanswers/{vote?}', [VoteController::class, 'download_answers'])->name('vote.download_answers');
     Route::get('resetall_voteanswers/{isclose}', [VoteController::class, 'resetall'])->name('vote.resetall'); // すべて削除
     // VoteItemの編集
     Route::get('voteitem/{voteitem}/edit', [VoteController::class, 'edit_voteitem'])->name('vote.edit_voteitem');
