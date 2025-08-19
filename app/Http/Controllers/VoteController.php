@@ -104,6 +104,11 @@ class VoteController extends Controller
         if (!$vote->isopen || $vote->isclose) {
             return redirect('/vote')->with('feedback.error', '期間外の投票はできません。');
         }
+        if ($vote->for_pc){
+            if (!auth()->check() || !auth()->user()->is_pc_member()) {
+                return redirect('/vote')->with('feedback.error', 'PC会員のみが投票できます。');
+            }
+        }
         if ($req->method() === 'POST') {
             if (!$vote->isopen || $vote->isclose) {
                 return redirect('/vote')->with('feedback.error', '期間外の投票はできません。');
