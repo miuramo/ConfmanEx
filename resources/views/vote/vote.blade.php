@@ -9,8 +9,13 @@
             @endphp
             <span class="mx-4"></span>
             @foreach ($votes as $vvv)
-                @if ($vote->for_pc && !auth()->user()->is_pc_member())
-                    @continue
+                @if ($vvv->for_pc)
+                    @if (!auth()->check())
+                        @continue
+                    @endif
+                    @if (!auth()->user()->is_pc_member())
+                        @continue
+                    @endif
                 @endif
                 @php
                     $col = $vvv->for_pc ? 'orange' : 'lime';
@@ -71,7 +76,6 @@
         <div class="py-4 px-6  dark:text-gray-400">
             @foreach ($voteitems as $vi)
                 <livewire:vote-item-component :voteItem="$vi" :vote="$vote" />
-
             @endforeach
         </div>
     </form>
@@ -86,9 +90,17 @@
             @endphp
             <span class="mx-4"></span>
             @foreach ($votes as $vvv)
-                @if ($vote->for_pc && !auth()->user()->is_pc_member())
-                    @continue
+                @if ($vvv->for_pc)
+                    @if (!auth()->check())
+                        @continue
+                    @endif
+                    @if (!auth()->user()->is_pc_member())
+                        @continue
+                    @endif
                 @endif
+            @endif
+        @endif
+
                 @php
                     $col = $vvv->for_pc ? 'orange' : 'lime';
                 @endphp
