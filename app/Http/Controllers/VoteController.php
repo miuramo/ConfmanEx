@@ -106,7 +106,7 @@ class VoteController extends Controller
         }
         if ($vote->for_pc){
             if (!auth()->check() || !auth()->user()->is_pc_member()) {
-                return redirect('/vote')->with('feedback.error', 'プログラム委員のみが投票できます。プログラム委員の方は、ログインしてから投票してください。');
+                return redirect('/vote')->with('feedback.error', 'あなたが開こうとした投票ページはプログラム委員のみが投票できます。プログラム委員の方は、ログインしてから投票してください。');
             }
         }
         if ($req->method() === 'POST') {
