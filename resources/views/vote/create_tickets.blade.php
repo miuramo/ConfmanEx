@@ -40,17 +40,18 @@
         </form>
     </div>
 
-    <div class="mx-6">
+
+    <div class="mx-6 mt-10">
         @php
             $tickets = App\Models\VoteTicket::orderBy('created_at', 'desc')->get();
             $count = $tickets->count();
         @endphp
         <x-element.h1>作成済みの投票チケット ({{ $count }}件)
             <span class="mx-4"></span>
-            <x-element.linkbutton href="{{ route('vote.send_tickets') }}" color="pink" size="sm"
+            {{-- <x-element.linkbutton href="{{ route('vote.send_tickets') }}" color="pink" size="sm"
                 confirm="本当に全ての投票チケットをメール送信しますか？">
                 投票チケットをメール送信
-            </x-element.linkbutton>
+            </x-element.linkbutton> --}}
 
             <span class="mx-4"></span>
             <x-element.deletebutton_nodiv color="red" size="sm" align="right"
@@ -112,6 +113,26 @@
     <div class="px-6 py-4">
         <form id="sendordestroy" method="POST" action="{{ route('vote.send_tickets_checked') }}">
             @csrf
+            
+            <label for="sub">メールの件名</label>
+            <input type="text" id="sub" name="subject" value="【{{$conf->value}}】投票へのご協力をおねがいします（投票トークン設定URLのおしらせ）" class="w-full mb-2"
+                placeholder="メールの件名を入力してください">
+            <label for="body">メールの本文</label>
+            <textarea id="body" name="body" rows="5" class="w-full mb-2"
+                placeholder="メールの本文を入力してください">{{$conf->value}} の投票へのご協力をおねがいします。
+                
+以下の指示に従って、投票を行ってください。
+
+---                
+本メール末尾には、{{$conf->value}}における、あなた専用の **投票トークン設定URL** （以下、トークンURL）が記載されています。
+
+投稿システムにログインした状態で、以下のトークンURLにアクセスした場合、ログイン中のあなたのユーザアカウントに投票トークンが設定されます。
+
+投稿システムのアカウントを作成していない場合や、ログアウトした状態で以下のトークンURLにアクセスすると、ブラウザのCookieに投票トークンが設定されます。
+
+投票トークンが設定された状態で、[投票URL]({{ env('APP_URL') }}/vote) にアクセスすると、投票が可能になります。
+</textarea>
+
             <x-element.submitbutton value="chksend" color="pink" size="sm" confirm="選択した投票チケットをメール送信しますか？">
                 選択した投票チケットをメール送信
             </x-element.submitbutton>

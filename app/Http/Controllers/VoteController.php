@@ -240,7 +240,7 @@ class VoteController extends Controller
             return redirect()->route('vote.create_tickets')->with('feedback.error', '選択されたチケットは有効ではありません。');
         }
         foreach ($tickets as $ticket) {
-            (new VoteTicketEmail($ticket))->process_send();
+            (new VoteTicketEmail($ticket, $req->input('subject'), $req->input('body')))->process_send();
         }
         return back()->with('feedback.success', '選択されたチケットをメール送信しました。');
     }
