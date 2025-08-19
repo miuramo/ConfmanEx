@@ -99,18 +99,18 @@
                     @endif
                 @endif
             @endif
-        @endif
 
-                @php
-                    $col = $vvv->for_pc ? 'orange' : 'lime';
-                @endphp
-                @if ($vvv->isopen && !$vvv->isclose)
-                    <x-element.linkbutton href="{{ route('vote.vote', ['vote' => $vvv->id]) }}"
-                        color="{{ $col }}" size="md">
-                        {{ $vvv->name }}に対する投票
-                    </x-element.linkbutton>
-                @endif
-                <span class="mx-2"></span>
+
+            @php
+                $col = $vvv->for_pc ? 'orange' : 'lime';
+            @endphp
+            @if ($vvv->isopen && !$vvv->isclose)
+                <x-element.linkbutton href="{{ route('vote.vote', ['vote' => $vvv->id]) }}"
+                    color="{{ $col }}" size="md">
+                    {{ $vvv->name }}に対する投票
+                </x-element.linkbutton>
+            @endif
+            <span class="mx-2"></span>
             @endforeach
 
         </div>
