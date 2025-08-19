@@ -9,6 +9,7 @@ use App\Models\VoteAnswer;
 use App\Models\VoteItem;
 use App\Models\VoteTicket;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
