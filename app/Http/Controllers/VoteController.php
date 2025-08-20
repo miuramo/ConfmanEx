@@ -113,7 +113,7 @@ class VoteController extends Controller
             if (!$vote->isopen || $vote->isclose) {
                 return redirect('/vote')->with('feedback.error', '期間外の投票はできません。');
             }
-            info($req->all());
+            // info($req->all());
             // 件数チェック
             $cnt = 0;
             foreach($req->all() as $booth=>$val){
@@ -126,11 +126,11 @@ class VoteController extends Controller
             }
 
             // 一旦、これまでのデータをすべて消す。
-            DB::transaction(function () use ($vote, $uid, $ticket) {
-                VoteAnswer::where("vote_id", $vote->id)->where(function ($query) use ($uid, $ticket) {
-                    $query->where("user_id", $uid)->orWhere("token", $ticket->token);
-                })->delete();
-            });
+            // DB::transaction(function () use ($vote, $uid, $ticket) {
+            //     VoteAnswer::where("vote_id", $vote->id)->where(function ($query) use ($uid, $ticket) {
+            //         $query->where("user_id", $uid)->orWhere("token", $ticket->token);
+            //     })->delete();
+            // });
             $subbooth2id = Submit::select("id", "booth")->get()->pluck("id", "booth")->toArray();
 
             // $student_boothes = VoteItem::student_boothes();
