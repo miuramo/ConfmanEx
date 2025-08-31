@@ -133,7 +133,7 @@ class ManagerController extends Controller
         }
         if ($req->input('action') == 'setfirstauthor_ifnull') { // ★★第一著者未設定★★ について、第一著者の苗字を設定する
             foreach ($papers as $paper) {
-                if (mb_strlen($paper->authorhead) < 1) {
+                if (mb_strlen($paper->authorhead) < 1 && $paper->category_id != 3) {
                     $myouji = explode(" ", $paper->paperowner->name)[0];
                     $paper->authorhead = $myouji;
                     $paper->save();
