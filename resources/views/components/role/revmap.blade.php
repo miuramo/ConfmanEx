@@ -32,7 +32,6 @@
                 </td>
 
                 @foreach ($reviewers as $rev)
-                    {{ info($rigais[$p->id]) }}
                     @if (isset($rigais[$p->id][auth()->id()]) && $rigais[$p->id][auth()->id()] < 3)
                         <td class="p-1 p text-center text-sm text-gray-400">共著or利害
                         </td>
