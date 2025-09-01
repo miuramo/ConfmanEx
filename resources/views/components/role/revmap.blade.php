@@ -4,9 +4,9 @@
     'papers' => [],
 ])
 @php
-    $bids = App\Models\RevConflict::arr_pu_bname();
+    $bids = App\Models\RevConflict::arr_pu_bname($cat->id);
     $rigais = App\Models\RevConflict::arr_pu_rigai($cat->id);
-    $stars = App\Models\Review::arr_pu_star();
+    $stars = App\Models\Review::arr_pu_star($cat->id);
 @endphp
 <!-- components.role.revmap -->
 <table class="w-full divide-y divide-gray-200">
@@ -32,6 +32,7 @@
                 </td>
 
                 @foreach ($reviewers as $rev)
+                    {{ info($rigais[$p->id]) }}
                     @if (isset($rigais[$p->id][auth()->id()]) && $rigais[$p->id][auth()->id()] < 3)
                         <td class="p-1 p text-center text-sm text-gray-400">共著or利害
                         </td>
@@ -47,7 +48,6 @@
                             @isset($stars[$p->id][$rev->id])
                                 {!! $stars[$p->id][$rev->id] !!}
                             @endisset
-                            {{-- {{ $rev->name }} --}}
                         </td>
                     @endif
                 @endforeach
