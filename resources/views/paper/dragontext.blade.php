@@ -115,7 +115,7 @@
             @endforeach
         </div>
         {{-- <div id="pdftextdiv"> --}}
-        <div class="text-sm  dark:text-gray-400">以下はPDFの1ページ目から抽出したテキストです。全角文字に挟まれた半角スペースは事前に削除しています。</div>
+        <div class="text-sm  dark:text-gray-400">以下はPDFの1ページ目から抽出したテキストです。全角文字と隣接している半角スペースは事前に削除しています。</div>
         <div class="py-2 px-6 bg-cyan-50 font-monaca" id="pdftext">{{ $pdftext }}</div>
 
         {{-- </div> --}}
