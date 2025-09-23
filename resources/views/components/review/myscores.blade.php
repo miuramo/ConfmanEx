@@ -18,6 +18,9 @@
             <tr>
                 <th class="p-1 bg-slate-300"> PaperID</th>
                 <th class="p-1 bg-slate-300"> Title</th>
+                @php
+                    ksort($descs); // 評価軸(vp_id)の昇順にソート
+                @endphp
                 @foreach ($descs as $vp => $desc)
                     <th class="p-1 bg-slate-300">{{ $desc }}</th>
                 @endforeach
@@ -35,6 +38,9 @@
                         {{ $title }}
                     </td>
                     @isset($scores[$pid])
+                        @php
+                            ksort($scores[$pid]); // 評価軸(vp_id)の昇順にソート
+                        @endphp
                         @foreach ($scores[$pid] as $vp => $score)
                             <td class="p-1 text-center">
                                 {{ $score }}
