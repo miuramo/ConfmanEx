@@ -5,8 +5,7 @@
     @endphp
     <x-slot name="header">
         <div class="mb-4">
-            <x-element.linkbutton href="{{ url()->previous() ?? route('review.index') }}"
-                color="gray" size="sm">
+            <x-element.linkbutton href="{{ url()->previous() ?? route('review.index') }}" color="gray" size="sm">
                 &larr; 担当査読一覧に戻る
             </x-element.linkbutton>
         </div>
@@ -31,7 +30,8 @@
     @endpush
 
     <div class="py-2 px-6">
-        <x-element.h1><span class="text-red-600 font-extrabold">【必須】</span>のコメント欄を空にすると <span class="text-red-600 font-extrabold">(未入力)</span>
+        <x-element.h1><span class="text-red-600 font-extrabold">【必須】</span>のコメント欄を空にすると <span
+                class="text-red-600 font-extrabold">(未入力)</span>
             となります。<br><b>未入力が一つでもあると査読未完了として扱われます。未入力を避けるため、一言でもよいのでなにか書いてください。</b><br>
             <span class="text-blue-600 font-extrabold">なお、【任意】のコメント欄は（未入力）でもかまいません。</span><br>
             各項目は、編集後フォーカスを外すと緑色にフラッシュして自動保存されます。本当に保存されたかどうか確認したいときはページを再読み込みしてください。（フォーム全体の保存ボタンはありません。）
@@ -91,8 +91,8 @@
 
 
         <div class="mb-4 my-10">
-            <x-element.linkbutton href="{{ url()->previous() ?? route('review.index') }}"
-                color="gray" size="sm">
+            <x-element.linkbutton href="{{ url()->previous() ?? route('review.index') }}" color="gray"
+                size="sm">
                 &larr; 担当査読一覧に戻る
             </x-element.linkbutton>
         </div>
@@ -104,4 +104,14 @@
         <script src="/js/form_changed.js"></script>
     @endpush
 
+    <script>
+        function resizeTextarea(el) {
+            el.style.height = "auto";
+            el.style.height = el.scrollHeight + "px";
+        }
+        // ページロード時に全てのtextareaを自動リサイズ
+        window.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll("textarea.h-auto-resize").forEach(el => resizeTextarea(el));
+        });
+    </script>
 </x-app-layout>

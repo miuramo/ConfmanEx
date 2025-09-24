@@ -22,7 +22,7 @@
 <a name="{{ $itm->name }}"></a>
 <tr
     class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200' : 'bg-white-50 dark:bg-slate-400' }}">
-    <td nowrap class="p-4">
+    <td class="p-4">
         @php
             if ($itm->mandatory || $itm->is_mandatory) {
                 $noinputcolor = 'red';
@@ -34,7 +34,7 @@
             $noinputmessage = '<span class="text-'.$noinputcolor.'-600 font-extrabold">(未入力)</span>'
         @endphp
         <span class="text-{{ $noinputcolor }}-600 font-extrabold">{{ $descmanda }}</span>
-        <br>
+        
         {{ $itm->desc }} →
     </td>
     @if ($type == 'selection')
@@ -57,7 +57,7 @@
         {{-- 注：checkbox は項目1つのみ対応。  --}}
         <td id="{{ $itm->name }}_answer" class="text-xl p-4">
             {!! $current ?? $noinputmessage !!}</td>
-        <td class="p-2 pl-10">
+        <td class="p-2 pl-10 w-6/12">
             {!! $item_title !!}<br>
             @foreach ($sel as $choice)
                 {{-- 未チェックのときに未入力に戻すためのhidden input  --}}
@@ -101,10 +101,10 @@
     @elseif($type == 'textarea')
         <td id="{{ $itm->name }}_answer" class="text-md p-4">
             {!! $currentbr ?? $noinputmessage !!}</td>
-        <td class="p-2 pl-10">
+        <td class="p-2 pl-10 w-7/12">
             {!! $item_title !!}<br>
             <input type="hidden" name="{{ $itm->name }}" value="">
-            <textarea class="text-left" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
+            <textarea class="text-left w-full h-auto-resize" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
                 onblur="changed('{{ $formid }}','{{ $itm->name }}');" cols="{{ $sel[0] }}"
                 rows="{{ $sel[1] }}" placeholder="{{ $sel[2] }}">{{ $current ?? '' }}</textarea>
             <div class="my-3"></div>
