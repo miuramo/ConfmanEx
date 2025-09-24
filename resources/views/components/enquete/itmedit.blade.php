@@ -106,6 +106,7 @@
             <input type="hidden" name="{{ $itm->name }}" value="">
             <textarea class="text-left w-full h-auto-resize" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
                 onblur="changed('{{ $formid }}','{{ $itm->name }}');" cols="{{ $sel[0] }}"
+                onclick="this.style.height='auto';this.style.height=this.scrollHeight+'px';" 
                 rows="{{ $sel[1] }}" placeholder="{{ $sel[2] }}">{{ $current ?? '' }}</textarea>
             <div class="my-3"></div>
             {!! $after !!}
