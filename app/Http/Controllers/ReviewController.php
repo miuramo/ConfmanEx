@@ -25,7 +25,7 @@ use ZipArchive;
 class ReviewController extends Controller
 {
 
-    public function conflict(int $cat_id)
+    public function conflict(int $cat_id, int $noans_only = 0)
     {
         if (!auth()->user()->can('role_any', 'reviewer|metareviewer')) return abort(403);
         if (!Category::canBid($cat_id)) return abort(403);
@@ -57,7 +57,7 @@ class ReviewController extends Controller
             $revconname[$rv->paper_id] = $rv->bidding->name;
         }
         $revcondiv = Bidding::revcondiv();
-        return view("review.conflict")->with(compact("papers", "cat_id", "revcon", "revconname", "revcondiv"));
+        return view("review.conflict")->with(compact("papers", "cat_id", "revcon", "revconname", "revcondiv","noans_only"));
     }
 
     /**

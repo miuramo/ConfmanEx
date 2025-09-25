@@ -29,6 +29,16 @@ class RevConflict extends Model
     }
 
     /**
+     * カテゴリとユーザで絞り込んだ件数を返す
+     */
+    public static function countByCatAndUser(int $cat_id, int $user_id){
+        return RevConflict::where('user_id', $user_id)
+        ->whereHas('paper', function ($q) use ($cat_id) {
+            $q->where('category_id', $cat_id);
+        })->count();
+    }
+
+    /**
      * ネストした配列で返す
      * arr[paper_id][user_id] = bidding_id
      */

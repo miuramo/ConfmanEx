@@ -106,7 +106,7 @@ Route::middleware('auth')->group(function () {
 
 
     // 利害表明
-    Route::get('/review/conflict/{cat}', [ReviewController::class, 'conflict'])->name('review.conflict');
+    Route::get('/review/conflict/{cat}/{noans_only?}', [ReviewController::class, 'conflict'])->name('review.conflict');
     Route::post('/paper/{paper}/conflictupdate', [RevConflictController::class, 'update'])->name('revconflict.update');
     // 査読フォーム
     Route::get('/review/{review}/edit', [ReviewController::class, 'edit'])->name('review.edit');

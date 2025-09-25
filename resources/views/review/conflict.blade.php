@@ -19,8 +19,24 @@
         {{-- PDFがない投稿については、お手数ですが「利害」を選択してください。 --}}
         <x-element.h1>投稿PDF画像の著者名で、利害がないかをご確認ください。<br>
             タイトル・概要等から、査読希望 / 可能 / 困難 を表明してください。<br>
-            {!! $catspans[$cat_id] !!} は、全部で {{ count($papers) }} 件あります。<br>
-            投稿PDF画像をクリックすると、論文の1ページ目を閲覧できます。</x-element.h1>
+            {!! $catspans[$cat_id] !!} は、全部で {{ count($papers) }} 件あります。
+            @if ($noans_only == 1)
+                <span class="text-red-500 font-bold">現在、未入力のものだけ表示しています。</span>
+                <a href="{{ route('review.conflict', ['cat' => $cat_id]) }}">
+                    <span class="text-blue-600 font-bold border-2 border-blue-600 p-1 bg-cyan-100 dark:bg-cyan-300">
+                        全件表示に戻る
+                    </span>
+                </a>
+            @else
+                <a href="{{ route('review.conflict', ['cat' => $cat_id, 'noans_only' => 1]) }}">
+                    <span class="text-red-600 font-bold border-2 border-red-600 p-1 bg-pink-100 dark:bg-pink-300">
+                        未入力のものだけを表示する
+                    </span>
+                </a>
+            @endif
+            <br>
+            投稿PDF画像をクリックすると、論文の1ページ目を閲覧できます。
+        </x-element.h1>
     </x-slot>
     @push('localcss')
         <link rel="stylesheet" href="{{ asset('/css/localflash.css') }}">
@@ -47,6 +63,9 @@
         <div id="plist" class="grid sm:grid-cols-2 gap-4">
 
             @foreach ($papers as $paper)
+                @if ($noans_only == 1 && isset($revcon[$paper->id]))
+                    @continue
+                @endif
                 <div classs="bg-slate-200 p-2">
                     @if ($paper->pdf_file_id != null)
                         <a href="{{ route('file.altimgshow', ['file' => $paper->pdf_file_id, 'hash' => substr($paper->pdf_file->key, 0, 8)]) }}"
@@ -101,7 +120,7 @@
                         </div>
                     @endif
                     <div class="my-10 mx-5 text-gray-300 text-xl align-bottom">
-                        {{$loop->iteration}} / {{$loop->count}}
+                        {{ $loop->iteration }} / {{ $loop->count }}
                     </div>
                 </div>
             @endforeach
