@@ -67,7 +67,7 @@
                             class="bg-cyan-100 dark:bg-cyan-300 border-2 border-blue-600 p-1 text-blue-600 font-bold">全{{$numpapers_in_cat}}件 入力完了👍</span>
                     @else
                         <a href="{{ route('review.conflict', ['cat'=>$n, 'noans_only'=>1])}}"><span class="text-red-600 font-bold border-2 border-red-600 p-1 bg-pink-100 dark:bg-pink-300">
-                            {{ $numpapers_in_cat }} 件中 {{ $numpapers_in_cat - $count_conflict }} 件が未完了です😰
+                            {{ $numpapers_in_cat }} 件中 {{ $numpapers_in_cat - $count_conflict }} 件が未入力です😰
                         </span></a>
                     @endif
                 @else
