@@ -271,6 +271,24 @@ class Setting extends Model
             'valid' => true,
             'misc' => 'EarlyRegistの最終日',
         ]);
+        Setting::firstOrCreate([
+            'name' => "ENQUETE_ID_FOR_TITLE_FALLBACK",
+        ], [
+            'value' => 8,
+            'isnumber' => true,
+            'isbool' => false,
+            'valid' => true,
+            'misc' => 'アンケートID（タイトルフォールバック用）',
+        ]);
+        Setting::firstOrCreate([
+            'name' => "ENQUETE_ITEM_ID_FOR_TITLE_FALLBACK",
+        ], [
+            'value' => 35,
+            'isnumber' => true,
+            'isbool' => false,
+            'valid' => true,
+            'misc' => 'アンケートアイテムID（タイトルフォールバック用）',
+        ]);
 
         Vote::init();
         VoteItem::init();
