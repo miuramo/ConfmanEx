@@ -154,6 +154,12 @@ BodyLine2
 BodyLine3
 ======="';
         $typedesc = "出版掲示板"; // への一括書き込み
+        if ($type == 1){
+            $preface = str_replace("出版担当から著者の方に", "プログラム委員長から査読者の方に", $preface);
+            $subject = str_replace("出版担当からの連絡事項", "プログラム委員長からの連絡事項", $subject);
+            $preface = str_replace("いただき、修正原稿を 掲示板 からアップロードして", "", $preface);
+            $typedesc = "査読者同士の事前議論掲示板";
+        }
         if ($type == 2) {
             $preface = str_replace("出版担当から著者の方に", "メタ査読者から著者の方に", $preface);
             $subject = str_replace("出版担当からの連絡事項", "メタ査読者からの連絡事項", $subject);

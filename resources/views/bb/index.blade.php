@@ -125,6 +125,10 @@
     </div>
 
     <div class="m-6">
+        <x-element.linkbutton href="{{ route('bb.multisubmit', ['type'=>1]) }}" color="cyan" size="md">
+            査読者同士の事前議論掲示板への一括書き込み
+        </x-element.linkbutton>
+        <span class="mx-2"></span>
         <x-element.linkbutton href="{{ route('bb.multisubmit', ['type'=>2]) }}" color="pink" size="md">
             メタと著者掲示板への一括書き込み
         </x-element.linkbutton>
