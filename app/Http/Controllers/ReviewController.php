@@ -174,8 +174,8 @@ class ReviewController extends Controller
     public function comment_paper(Category $cat, Paper $paper, string $token)
     {
         if (!Category::isShowReview($cat->id)) {
-            if (!auth()->user()->can('role_any', 'metareviewer')) { //メタであれば見せる
-                return abort(403, 'review comment');
+            if (!auth()->user()->can('role_any', 'metareviewer|reviewer')) { //メタまたは査読者であれば見せる
+                return abort(403, 'review comment is not public');
             }
         }
         $am_i_meta = auth()->user()->can('role_any', 'pc|metareviewer');
