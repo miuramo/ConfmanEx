@@ -365,15 +365,19 @@ class PaperController extends Controller
             foreach ($sub->reviews as $rev) {
                 $count++;
                 $rret[$count] = [];
-                $rret[$count]['reviewer'] = '査読者' . $count;
+                $rret[$count]['reviewer'] = '査読者' . $count . ' (RevID: ' . $rev->id . ')';
                 foreach ($rev->scores_and_comments(1, 0, 1) as $vpdesc => $valstr) {
                     $rret[$count][$vpdesc] = nl2br(htmlspecialchars($valstr));
                     if (isset($vpsubdescs[$vpdesc]))
                         $rret[$count][$vpdesc . "_"] = $vpsubdescs[$vpdesc];
                 }
             }
+            if (!$sub->booth){ // is null
+                $sub->booth = sprintf("%03d", $sub->paper->id);
+            }
             $ret[$sub->booth] = $rret;
         }
+        info($ret);
         return json_encode($ret, JSON_THROW_ON_ERROR);
     }
 
