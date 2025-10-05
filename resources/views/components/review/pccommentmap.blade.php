@@ -125,14 +125,14 @@
                             @isset($tantourev[$rev->id])
                                 <td class="bg-red-600 text-gray-200">
                                     <a href="{{ route('review.edit', ['review' => $rev]) }}"
-                                        target="_blank">査{{ $rev->id }}</a>
+                                        target="_blank">RevID: {{ $rev->id }}</a>
                                 @else
                                     @if ($rev->status == 2)
                                 <td class="bg-cyan-50 text-gray-200">
                                 @else
                                 <td class="bg-yellow-50 text-gray-200">
                             @endif
-                            査{{ $rev->id }}
+                            RevID: {{ $rev->id }}
                     @endif
                     </td>
                     @foreach ($rev->scores_and_comments(0, $scoreonly) as $vpdesc => $valstr)

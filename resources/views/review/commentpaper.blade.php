@@ -100,7 +100,7 @@
                 <thead>
                     <tr>
                         <th colspan=2 class="bg-slate-300 border-4 border-slate-300 text-left pl-10">
-                            査{{ $rev->id }}
+                            RevID: {{ $rev->id }}
 
                             @if ($rev->ismeta)
                                 <span class="mx-2 font-bold text-purple-500">({{ $nameofmeta }}) </span>
