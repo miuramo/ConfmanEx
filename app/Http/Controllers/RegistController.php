@@ -15,8 +15,22 @@ class RegistController extends Controller
         // 参加登録の一覧を表示する
         return view('regist.index');
     }
+    /**
+     * 参加登録を開始する
+     */
     public function create()
     {
+        $canRegist = false;
+        if (auth()->user()->can('role_any', 'pc|reviewer|metareviewer')) {
+            $canRegist = true;
+        }
+        if (auth()->user()->can('has_accepted_papers')){
+            $canRegist = true;
+        }
+        if (!$canRegist) {
+            return redirect()->route('regist.index')->with('feedback.error', '参加登録の権限がありません。（現在は採録著者とプログラム委員のみ登録できます。）');
+        }
+
         $reg = Regist::firstOrCreate([
             'user_id' => auth()->id(),
         ]);

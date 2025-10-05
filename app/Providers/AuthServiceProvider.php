@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Models\LogModify;
 use App\Models\Paper;
 use App\Models\Role;
+use App\Models\Submit;
 use App\Policies\FilePolicy;
 use App\Policies\LogAccessPolicy;
 use App\Policies\LogModifyPolicy;
@@ -101,7 +102,7 @@ class AuthServiceProvider extends ServiceProvider
                 if ($role->containsUser($user->id)) return true;
             }
             //catcsv についても調査
-            $catcsv_roles = Role::where('catcsv', 'like', '%'.$category.'%')->get(); // ここではLIKEでざっくりと絞り込む。
+            $catcsv_roles = Role::where('catcsv', 'like', '%' . $category . '%')->get(); // ここではLIKEでざっくりと絞り込む。
             foreach ($catcsv_roles as $role) {
                 $csv = explode(',', $role->catcsv);
                 if (!in_array($category, $csv)) continue;
@@ -123,6 +124,17 @@ class AuthServiceProvider extends ServiceProvider
                 if ($role->containsUser($user->id)) return true;
             }
             return false;
+        });
+
+        Gate::define('has_accepted_papers', function ($user) {
+            // アクセプトされた論文を持っているか
+            $accPIDs = Submit::with('paper')->whereHas('paper', function($query) use ($user){
+                $query->where('owner', $user->id);
+            })->whereHas("accept", function ($query) {
+                $query->where("judge", ">", 0);
+            })->get()->pluck("paper_id")->toArray();
+            // info($accPIDs);
+            return count($accPIDs) > 0;
         });
     }
 }

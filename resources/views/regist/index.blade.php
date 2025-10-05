@@ -105,7 +105,7 @@
                 <x-element.h1>
                     上記について、すべて確認・了承したうえで、参加登録を開始してください。
                     <br>
-                    <br>
+                    （注：現在は採録著者とプログラム委員のみ登録できます。）<br>
                     <x-element.linkbutton href="{{ route('regist.create') }}" color="cyan">
                         参加登録を開始する
                     </x-element.linkbutton>
