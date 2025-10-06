@@ -290,6 +290,16 @@ class Setting extends Model
             'misc' => 'アンケートアイテムID（タイトルフォールバック用）',
         ]);
 
+        Setting::firstOrCreate([
+            'name' => "PAPERSCORES__DISCLOSE_REVIEWER_NAME",
+        ], [
+            'value' => "true",
+            'isnumber' => true,
+            'isbool' => true,
+            'valid' => false,
+            'misc' => '議論用ページ・議論掲示板に査読者名を表示する',
+        ]);
+
         Vote::init();
         VoteItem::init();
 

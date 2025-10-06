@@ -18,6 +18,7 @@
 
     $nameofmeta = App\Models\Setting::getval('NAME_OF_META');
 
+    $disclose_reviewer_name = App\Models\Setting::getval('PAPERSCORES__DISCLOSE_REVIEWER_NAME');
     $count_formeta = 0;
 @endphp
 
@@ -43,13 +44,17 @@
                             {{ $name }}
                         @else
                             @if ($ismeta[$revid])
-                                @if (isset($ismeta_myself))
+                                @if (isset($ismeta_myself) || $disclose_reviewer_name)
                                     {{ $name }}
                                 @else
                                     {{ $nameofmeta }}
                                 @endif
                             @else
+                                @if($disclose_reviewer_name)
+                                {{ $name }}
+                                @else
                                 (hidden)
+                                @endif
                             @endif
                         @endif
                     </td>
