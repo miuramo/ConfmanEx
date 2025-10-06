@@ -6,6 +6,9 @@
         $cats = App\Models\Category::select('name', 'id')->get()->pluck('name', 'id')->toArray();
 
         $nameofmeta = App\Models\Setting::getval('NAME_OF_META');
+
+        $disclose_reviewer_name = App\Models\Setting::getval('PAPERSCORES__DISCLOSE_REVIEWER_NAME');
+
     @endphp
     @section('title', $paper->id_03d() . ' スコア')
     <x-slot name="header">
@@ -23,9 +26,9 @@
             <a class="underline text-blue-600 hover:bg-lime-200 p-2"
                 href="{{ route('file.showhash', ['file' => $paper->pdf_file_id, 'hash' => substr($paper->pdf_file->key, 0, 8)]) }}"
                 target="_blank">
-                PDF ({{ $paper->pdf_file->pagenum }}pages) 
+                PDF ({{ $paper->pdf_file->pagenum }}pages)
             </a>
-            <span class="text-sm text-gray-500">{{substr($paper->pdf_file->created_at,0,16)}}</span>
+            <span class="text-sm text-gray-500">{{ substr($paper->pdf_file->created_at, 0, 16) }}</span>
         @endif
         @if ($paper->video_file_id != 0 && $paper->video_file != null)
             <span class="mx-2"></span>
@@ -34,7 +37,7 @@
                 target="_blank">
                 Video
             </a>
-            <span class="text-sm text-gray-500">{{substr($paper->video_file->created_at,0,16)}}</span>
+            <span class="text-sm text-gray-500">{{ substr($paper->video_file->created_at, 0, 16) }}</span>
         @endif
         @if ($paper->img_file_id != 0 && $paper->img_file != null)
             <span class="mx-2"></span>
@@ -43,7 +46,7 @@
                 target="_blank">
                 Image
             </a>
-            <span class="text-sm text-gray-500">{{substr($paper->img_file->created_at,0,16)}}</span>
+            <span class="text-sm text-gray-500">{{ substr($paper->img_file->created_at, 0, 16) }}</span>
         @endif
         @isset($bb)
             <span class="mx-2"></span>
@@ -62,12 +65,12 @@
             color="orange" target="_blank" size="sm">
             著者がみる査読結果 </x-element.linkbutton>
 
-        @if($bb2 && $bb2->ismeta_myself() )
+        @if ($bb2 && $bb2->ismeta_myself())
             <span class="mx-4"></span>
             @isset($bb2->paper)
                 <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb2->id, 'key' => $bb2->key]) }}" color="pink"
                     target="_blank" size="sm">
-                    {{$nameofmeta}}と著者の掲示板
+                    {{ $nameofmeta }}と著者の掲示板
                     ({{ $bb2->nummessages() }} messages)
                 </x-element.linkbutton>
             @else
@@ -102,8 +105,15 @@
                         <th colspan=2 class="bg-slate-300 border-4 border-slate-300 text-left pl-10">
                             RevID: {{ $rev->id }}
 
-                            @if ($rev->ismeta)
-                                <span class="mx-2 font-bold text-purple-500">({{ $nameofmeta }}) </span>
+                            @if ($disclose_reviewer_name)
+                                {{-- <span class="hover:text-black text-slate-400 bg-slate-400 ml-4 p-1"> --}}
+                                    <span class="mx-4"></span>
+                                    {{ $rev->user->name }} （{{ $rev->user->affil }}）
+                                {{-- </span> --}}
+                            @else
+                                @if ($rev->ismeta)
+                                    <span class="mx-2 font-bold text-purple-500">({{ $nameofmeta }}) </span>
+                                @endif
                             @endif
                         </th>
                         {{-- <th class="bg-slate-300 border-4 border-slate-300">
