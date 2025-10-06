@@ -53,6 +53,9 @@ class Setting extends Model
     {
         $setting = Setting::where('name', $setting_name)->first();
         if ($setting && $setting->valid) {
+            if ($setting->isbool) {
+                return filter_var($setting->value, FILTER_VALIDATE_BOOLEAN);
+            }
             return $setting->value;
         }
         return null;
@@ -293,8 +296,8 @@ class Setting extends Model
         Setting::firstOrCreate([
             'name' => "PAPERSCORES__DISCLOSE_REVIEWER_NAME",
         ], [
-            'value' => "true",
-            'isnumber' => true,
+            'value' => "false",
+            'isnumber' => false,
             'isbool' => true,
             'valid' => false,
             'misc' => '議論用ページ・議論掲示板に査読者名を表示する',
