@@ -14,6 +14,7 @@ Route::middleware('auth')->group(function () {
     // Route::get('/annot/{annot}/comment_json/{page?}', [AnnotController::class, 'comment_json'])->name('annot.comment_json');
 
     // Route::post('/annot/{annot}/setpublic', [AnnotController::class, 'setpublic'])->name('annot.setpublic');
+    Route::get('/regist_entry', [RegistController::class, 'entry'])->name('regist.entry');
 });
 
 Route::middleware('guest')->group(function () {

@@ -10,7 +10,7 @@
     <x-element.h1>
         参加登録
         <span class="px-3"></span>
-        <x-element.linkbutton href="{{ route('part.create') }}" color="teal">
+        <x-element.linkbutton href="{{ route('regist.index') }}" color="teal">
             参加登録
         </x-element.linkbutton>
     </x-element.h1>
@@ -44,10 +44,6 @@
         @endforeach
     </x-element.h1>
 
-    <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
-            情報学広場登録用Excel Download
-        </x-element.linkbutton>
-    </x-element.h1>
 
 
 </div>

@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Mail;
 
 class RegistController extends Controller
 {
+    public function show()
+    {
+        return redirect()->route('regist.index');
+    }
     //
     public function index()
     {
@@ -25,6 +29,9 @@ class RegistController extends Controller
             $canRegist = true;
         }
         if (auth()->user()->can('has_accepted_papers')){
+            $canRegist = true;
+        }
+        if (auth()->user()->can('has_submitted_papers')){
             $canRegist = true;
         }
         if (!$canRegist) {
