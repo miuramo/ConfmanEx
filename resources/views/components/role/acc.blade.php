@@ -13,6 +13,14 @@
         <x-element.linkbutton href="{{ route('regist.index') }}" color="teal">
             参加登録
         </x-element.linkbutton>
+        <span class="px-3"></span>
+    </x-element.h1>
+
+    <x-element.h1>
+        参加登録設定
+        <span class="px-3"></span>
+        <livewire:setting-switch :name="'REGOPEN'" />
+        <span class="px-3"></span>
     </x-element.h1>
 
     <x-element.h1>

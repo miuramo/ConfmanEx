@@ -17,8 +17,8 @@
                 </div>
                 @php
                     $voting = App\Models\Setting::isTrue('VOTING');
-                    $regopen = App\Models\Setting::isTrue('REGOPEN');
-                    $regopen_public = App\Models\Setting::isTrue('REGOPEN_PUBLIC');
+                    $regopen = App\Models\Setting::isTrue('REGOPEN'); // ログイン可能なユーザにメニューを見せる
+                    $regopen_public = App\Models\Setting::isTrue('REGOPEN_PUBLIC'); // 未ログインのユーザにメニューを見せる
                     $annoting = App\Models\Setting::isTrue('ENABLE_ANNOTPAPER');
                 @endphp
 
