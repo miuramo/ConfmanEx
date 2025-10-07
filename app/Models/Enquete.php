@@ -257,9 +257,13 @@ class Enquete extends Model
     /**
      * OrderInt をstep ずつで再設定する
      */
-    public static function reorderint($step = 10)
+    public static function reorderint($step = 10, $target_enq_id = null)
     {
-        $all = Enquete::all();
+        if ($target_enq_id !== null) {
+            $all = Enquete::where('id', $target_enq_id)->get();
+        } else {
+            $all = Enquete::all();
+        }
         foreach ($all as $enq) {
             $num = $step;
             foreach ($enq->items as $enqitm) {

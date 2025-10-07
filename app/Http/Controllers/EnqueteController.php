@@ -29,7 +29,7 @@ class EnqueteController extends Controller
         $aEnq = Enquete::accessibleEnquetes(true);
         if (count($aEnq) < 1) abort(403);
         // if (!auth()->user()->can('role_any', 'pc|demo|acc')) abort(403);
-        Enquete::reorderint(10); // orderint を再割り当てする
+        // Enquete::reorderint(10); // orderint を再割り当てする
         $enqs = Enquete::accessibleEnquetes();
         return view("enquete.index")->with(compact("enqs"));
         //
@@ -194,11 +194,19 @@ class EnqueteController extends Controller
                 $newdatum->orderint++;
                 $newdatum->save();
             });
+            return redirect()->route('enq.enqitmsetting', ["enq_id" => $enq_id, "enq_name" => $req->input('enq_name')])->with('feedback.success', '項目をコピーしました')
+                ->with('altlink', '<a href="' . route('enq.enqitmsetting', ["reorder" => 10, "enq_id" => $enq_id, "enq_name" => $req->input('enq_name')]) . '">orderintを調整</a>');
         }
         // del_id がセットされていたら、行を削除する
         if ($req->has('del_id')) {
             $del_id = $req->input('del_id');
             EnqueteItem::destroy($del_id);
+            return redirect()->route('enq.enqitmsetting', ["enq_id" => $enq_id, "enq_name" => $req->input('enq_name')])->with('feedback.success', '項目を削除しました')
+                ->with('altlink', '<a href="' . route('enq.enqitmsetting', ["reorder" => 10, "enq_id" => $enq_id, "enq_name" => $req->input('enq_name')]) . '">orderintを調整</a>');
+        }
+        if ($req->has('reorder')) {
+            Enquete::reorderint($req->input('reorder') ?? 10, $enq_id); // orderint を再割り当てする
+            return redirect()->route('enq.enqitmsetting', ["enq_id" => $enq_id, "enq_name" => $req->input('enq_name')])->with('feedback.success', 'orderintを調整しました');
         }
         $coldetails = AdminController::column_details($tableName);
         $coldetails['COPY'] = 'COPY';
@@ -237,9 +245,9 @@ class EnqueteController extends Controller
         ));
     }
 
-    
 
-    
+
+
 
     /**
      * 単一・独立ページでの表示

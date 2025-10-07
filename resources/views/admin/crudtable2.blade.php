@@ -36,7 +36,13 @@
     @section('title', $title)
 
     @if (session('feedback.success'))
-        <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
+        <x-alert.success>{{ session('feedback.success') }}
+        @if(session('altlink'))
+            <span class="ml-4 text-xl text-blue-100  bg-blue-700 dark:text-gray-300 hover:bg-blue-500 hover:text-white p-2 rounded-md">
+                {!! session('altlink') !!}
+            </span>
+        @endif
+        </x-alert.success>
     @endif
     @if (session('feedback.error'))
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
