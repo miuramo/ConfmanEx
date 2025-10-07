@@ -29,7 +29,7 @@ class EnqueteController extends Controller
         $aEnq = Enquete::accessibleEnquetes(true);
         if (count($aEnq) < 1) abort(403);
         // if (!auth()->user()->can('role_any', 'pc|demo|acc')) abort(403);
-        // Enquete::reorderint(10); // orderint を再割り当てする
+        Enquete::reorderint(10); // orderint を再割り当てする
         $enqs = Enquete::accessibleEnquetes();
         return view("enquete.index")->with(compact("enqs"));
         //
