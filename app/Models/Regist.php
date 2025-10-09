@@ -99,7 +99,7 @@ class Regist extends Model
             if (strpos($ary['gakkai'], "非会員") !== false) {
                 return "参加区分→「学会会員」を選択した場合は、学会は「非会員以外」を選択してください。";
             }
-            if (empty($ary['kaiinid'])) {
+            if (empty($ary['kaiinid']) ) {
                 return "参加区分→「学会会員」を選択した場合は、上記で入力した学会の会員番号を入力してください。";
             }
         } else if (strpos($ary['kubun'], "非会員") !== false) {
@@ -121,8 +121,8 @@ class Regist extends Model
                 return "学会→「その他」を選択した場合は、「上記で入力した学会の会員番号」を入力してください。";
             }
         } else if (strpos($ary['gakkai'], "非会員") !== false) {
-            if (!empty($ary['kaiinid'])) {
-                return "学会→「非会員」を選択した場合は、「上記で入力した学会の会員番号」は（未入力）のままにしてください。";
+            if (strpos($ary['kaiinid'], "非会員") === false) {
+                return "学会→「非会員」を選択した場合は、「上記で入力した学会の会員番号」は「非会員」と入力してください。";
             }
         } else {
             if (!empty($ary['othergakkai'])) {
