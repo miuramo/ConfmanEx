@@ -13,14 +13,26 @@
         <x-element.linkbutton href="{{ route('regist.index') }}" color="teal">
             参加登録
         </x-element.linkbutton>
+        <br>
         <span class="px-3"></span>
-    </x-element.h1>
-
-    <x-element.h1>
-        参加登録設定
         <span class="px-3"></span>
         <livewire:setting-switch :name="'REGOPEN'" />
         <span class="px-3"></span>
+        <livewire:setting-switch :name="'REGOPEN_PUBLIC'" />
+        <span class="px-3"></span>
+        <livewire:setting-switch :name="'REG_EARLY_LIMIT'" />
+        <span class="px-3"></span>
+        <livewire:setting-switch :name="'REG_START_FOR_PCACC'" />
+        <span class="px-3"></span>
+        <livewire:setting-switch :name="'REG_START_FOR_REVIEWERS'" />
+        <span class="px-3"></span>
+        <livewire:setting-switch :name="'REG_START_FOR_ACCEPTED_AUTHORS'" />
+        <span class="px-3"></span>
+        <livewire:setting-switch :name="'REG_START_FOR_VALID_AUTHORS'" />
+        <span class="px-3"></span>
+        <livewire:setting-switch :name="'REG_START_FOR_ALL'" />
+        <span class="px-3"></span>
+
     </x-element.h1>
 
     <x-element.h1>
@@ -46,7 +58,8 @@
             $user = App\Models\User::find(auth()->id());
         @endphp
         @foreach ($user->roles as $ro)
-            <span class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }}
+            <span
+                class="inline-block bg-slate-300 rounded-md p-1 mb-0.5 dark:bg-slate-500 dark:text-gray-300">{{ $ro->desc }}
                 ({{ $ro->name }})
             </span>
         @endforeach
@@ -59,5 +72,3 @@
     <script src="/js/jquery.min.js"></script>
     <script src="/js/openclose.js"></script>
 @endpush
-
-

@@ -250,20 +250,20 @@ class Setting extends Model
         Setting::firstOrCreate([
             'name' => "REGOPEN",
         ], [
-            'value' => "true",
+            'value' => "false",
             'isnumber' => false,
             'isbool' => true,
             'valid' => false,
-            'misc' => '参加登録を受け付ける',
+            'misc' => '参加登録リンクを表示（投稿者・査読者）',
         ]);
         Setting::firstOrCreate([
             'name' => "REGOPEN_PUBLIC",
         ], [
-            'value' => "true",
+            'value' => "false",
             'isnumber' => false,
             'isbool' => true,
             'valid' => false,
-            'misc' => '参加登録を受け付ける（公開用・ゲスト）',
+            'misc' => '参加登録リンクを表示（公開用・ゲスト）',
         ]);
         Setting::firstOrCreate([
             'name' => "REG_EARLY_LIMIT",
@@ -274,6 +274,53 @@ class Setting extends Model
             'valid' => true,
             'misc' => 'EarlyRegistの最終日',
         ]);
+        Setting::firstOrCreate([
+            'name' => "REG_START_FOR_PCACC",
+        ], [
+            'value' => "true",
+            'isnumber' => false,
+            'isbool' => true,
+            'valid' => false,
+            'misc' => '参加登録を受け付ける（PC長・会計担当）',
+        ]);
+        Setting::firstOrCreate([
+            'name' => "REG_START_FOR_REVIEWERS",
+        ], [
+            'value' => "false",
+            'isnumber' => false,
+            'isbool' => true,
+            'valid' => false,
+            'misc' => '参加登録を受け付ける（査読者）',
+        ]);
+        Setting::firstOrCreate([
+            'name' => "REG_START_FOR_ACCEPTED_AUTHORS",
+        ], [
+            'value' => "false",
+            'isnumber' => false,
+            'isbool' => true,
+            'valid' => false,
+            'misc' => '参加登録を受け付ける（採録著者および共著者）',
+        ]);
+        Setting::firstOrCreate([
+            'name' => "REG_START_FOR_VALID_AUTHORS",
+        ], [
+            'value' => "false",
+            'isnumber' => false,
+            'isbool' => true,
+            'valid' => false,
+            'misc' => '参加登録を受け付ける（投稿完了した著者および共著者）',
+        ]);
+        Setting::firstOrCreate([
+            'name' => "REG_START_FOR_ALL",
+        ], [
+            'value' => "false",
+            'isnumber' => false,
+            'isbool' => true,
+            'valid' => false,
+            'misc' => '参加登録を受け付ける（アカウント保持者全員）',
+        ]);
+
+
         Setting::firstOrCreate([
             'name' => "ENQUETE_ID_FOR_TITLE_FALLBACK",
         ], [

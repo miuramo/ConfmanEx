@@ -28,6 +28,8 @@
                     ->get()
                     ->pluck('mes', 'name')
                     ->toArray();
+
+                $allowed_users = App\Http\Controllers\RegistController::allowed_users_string();
             @endphp
             <ul class="m-4">
                 @foreach ($sankakakunin as $name => $mes)
@@ -105,7 +107,7 @@
                 <x-element.h1>
                     上記について、すべて確認・了承したうえで、参加登録を開始してください。
                     <br>
-                    （注：現在は採録著者とプログラム委員のみ登録できます。）<br>
+                    <b>（注：{{$allowed_users}}）</b><br>
                     <x-element.linkbutton href="{{ route('regist.create') }}" color="cyan">
                         参加登録を開始する
                     </x-element.linkbutton>

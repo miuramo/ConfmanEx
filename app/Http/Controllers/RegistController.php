@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\RegistrationConfirmation;
 use App\Models\Regist;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -24,18 +25,44 @@ class RegistController extends Controller
      */
     public function create()
     {
+        $allowed_users = [];
         $canRegist = false;
-        if (auth()->user()->can('role_any', 'pc|reviewer|metareviewer')) {
-            $canRegist = true;
+        if (Setting::getval('REG_START_FOR_PCACC')) {
+            if (auth()->user()->can('role_any', 'pc|acc')) {
+                $canRegist = true;
+                $allowed_users[] = "PC長・会計担当";
+            }
         }
-        if (auth()->user()->can('has_accepted_papers')){
-            $canRegist = true;
+        if (Setting::getval('REG_START_FOR_REVIEWERS')) {
+            if (auth()->user()->can('role_any', 'reviewer|metareviewer')) {
+                $canRegist = true;
+                $allowed_users[] = "査読者";
+            }
         }
-        if (auth()->user()->can('has_submitted_papers')){
-            $canRegist = true;
+        if (Setting::getval('REG_START_FOR_ACCEPTED_AUTHORS')) {
+            if (auth()->user()->can('has_accepted_papers')) {
+                $canRegist = true;
+                $allowed_users[] = "採録著者";
+            }
         }
+        if (Setting::getval('REG_START_FOR_VALID_AUTHORS')) {
+            if (auth()->user()->can('has_submitted_papers')) {
+                $canRegist = true;
+                $allowed_users[] = "投稿完了済み著者";
+            }
+        }
+        if (Setting::getval('REG_START_FOR_ALL')) {
+            $canRegist = true;
+            $allowed_users[] = "アカウント保持者全員";
+        }
+
         if (!$canRegist) {
-            return redirect()->route('regist.index')->with('feedback.error', '参加登録の権限がありません。（現在は採録著者とプログラム委員のみ登録できます。）');
+            if (count($allowed_users) == 0) {
+                return redirect()->route('regist.index')->with('feedback.error', '参加登録の権限がありません。（現在は誰も登録できません。）');
+            } else {
+                $alu = implode('、', $allowed_users);
+                return redirect()->route('regist.index')->with('feedback.error', '参加登録の権限がありません。（現在は' . $alu . 'が登録できます。）');
+            }
         }
 
         $reg = Regist::firstOrCreate([
@@ -49,6 +76,32 @@ class RegistController extends Controller
         // 参加登録のフォームを表示する
         return back()->with('feedback.error', '参加登録エラー');
     }
+    public static function allowed_users_string()
+    {
+        $allowed_users = [];
+        if (Setting::getval('REG_START_FOR_PCACC')) {
+            $allowed_users[] = "PC長・会計担当";
+        }
+        if (Setting::getval('REG_START_FOR_REVIEWERS')) {
+            $allowed_users[] = "査読者";
+        }
+        if (Setting::getval('REG_START_FOR_ACCEPTED_AUTHORS')) {
+            $allowed_users[] = "採録著者";
+        }
+        if (Setting::getval('REG_START_FOR_VALID_AUTHORS')) {
+            $allowed_users[] = "投稿完了済み著者";
+        }
+        if (Setting::getval('REG_START_FOR_ALL')) {
+            $allowed_users[] = "アカウント保持者全員";
+        }
+        if (count($allowed_users) == 0) {
+            return "現在は誰も登録できません。会計担当者またはPC長に設定を依頼してください。";
+        } else {
+            $alu = implode('、', $allowed_users);
+            return "現在は" . $alu . "が登録できます。";
+        }
+        return $res;
+    }
 
     public function entry()
     {
@@ -58,7 +111,7 @@ class RegistController extends Controller
 
     public function edit($id)
     {
-        if (!is_numeric($id)){
+        if (!is_numeric($id)) {
             return redirect()->route('regist.index')->with('feedback.error', '不正な参加登録IDです。');
         }
         // 参加登録の編集フォームを表示する
@@ -70,7 +123,7 @@ class RegistController extends Controller
     }
     public function email($id)
     {
-        if (!is_numeric($id)){
+        if (!is_numeric($id)) {
             return redirect()->route('regist.index')->with('feedback.error', '不正な参加登録IDです。');
         }
         // 参加登録の編集フォームを表示する

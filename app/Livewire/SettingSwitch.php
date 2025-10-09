@@ -9,12 +9,25 @@ class SettingSwitch extends Component
     public $name;
     public $setting;
     public $message;
+    public $inputtext;
+    public int $textsize = 10;
 
     public function mount($name)
     {
         $this->name = $name;
         $this->message = "testing...";
         $this->setting = \App\Models\Setting::where('name', $name)->first();
+        $this->setting->valid = true;
+        $this->setting->save();
+        if ($this->setting->isbool == false) {
+            $this->inputtext = $this->setting->value;
+        }
+    }
+    public function updatedInputtext()
+    {
+        $this->setting->value = $this->inputtext;
+        $this->setting->save();
+        $this->message = "Input text updated to: " . $this->inputtext;
     }
     
     public function refreshSetting()
@@ -49,5 +62,13 @@ class SettingSwitch extends Component
         
         // フロントエンドでも確認できるようにセッションメッセージを追加
         session()->flash('message', "Setting {$this->name} toggled to {$this->setting->value}");
+    }
+    public function validateSetting()
+    {
+        info("SettingSwitch: {$this->name} validated.");
+        $this->setting->valid = true;
+        $this->setting->save();
+        $this->refreshSetting();
+        session()->flash('message', "Setting {$this->name} validated.");
     }
 }
