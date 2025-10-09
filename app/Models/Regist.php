@@ -121,7 +121,7 @@ class Regist extends Model
                 return "学会→「その他」を選択した場合は、「上記で入力した学会の会員番号」を入力してください。";
             }
         } else if (strpos($ary['gakkai'], "非会員") !== false) {
-            if (strpos($ary['kaiinid'], "非会員") === false) {
+            if ($ary['kaiinid'] !== "非会員") {
                 return "学会→「非会員」を選択した場合は、「上記で入力した学会の会員番号」は「非会員」と入力してください。";
             }
         } else {
