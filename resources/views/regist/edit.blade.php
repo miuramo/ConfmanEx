@@ -24,6 +24,10 @@
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
 
+    <div class="mx-6 mt-6 p-3 bg-cyan-100 rounded-lg dark:bg-cyan-900 dark:text-gray-400 text-lg text-gray-500">
+        入力内容はすぐに保存されます。<br>参加登録を完了するには、一番下の「入力内容をチェックする」ボタンを押した後に表示される「参加登録を完了する」ボタンを押してください。
+    </div>
+
     <div class="py-2 px-6">
 
         @foreach ($enqs['canedit'] as $enq)

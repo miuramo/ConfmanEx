@@ -145,6 +145,14 @@ class RegistController extends Controller
         // 参加登録を削除する
         $reg = Regist::findOrFail($id);
         $reg->delete();
+
+        // アンケート実体も削除
+        // 対象アンケートは、Enquete.withpaper = false 
+        $enqIDs = \App\Models\Enquete::where('withpaper', false)->pluck('id')->toArray();
+        \App\Models\EnqueteAnswer::where('user_id', $reg->user_id)
+            ->whereIn('enquete_id', $enqIDs)
+            ->delete(); 
+
         return redirect()->route('regist.index')->with('feedback.success', '参加登録を削除しました。');
     }
 }
