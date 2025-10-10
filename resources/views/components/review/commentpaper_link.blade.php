@@ -12,6 +12,8 @@
                 ->where('paper_id', $sub->paper->id)
                 ->where('enquete_item_id', App\Models\Setting::getval('ENQUETE_ITEM_ID_FOR_TITLE_FALLBACK') ?? 35)
                 ->first();
+            $sub->paper->title = "(仮) ".$enq_title->valuestr ?? '(タイトルなし)';
+            $sub->paper->save();
         @endphp
         (仮) {{ $enq_title->valuestr ?? '(タイトルなし)' }}
     @elseif(mb_strlen($sub->paper->title) > 80)
