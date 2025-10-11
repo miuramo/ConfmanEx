@@ -22,7 +22,7 @@
         <div class="py-2 px-6">
             <x-element.h1>注意事項</x-element.h1>
             @php
-                $sankakakunin = App\Models\Confirm::where('grp', 2)
+                $sankakakunin = App\Models\Confirm::where('grp', 9)
                     ->where('valid', 1)
                     ->select('name', 'mes')
                     ->get()
