@@ -32,7 +32,7 @@ class Regist extends Model
         $ary = [];
         $ary['状況'] = $this->valid ? '有効' : '無効';
         $ary['参加登録ID'] = $this->id;
-        $ary['参加者氏名・所属'] = $this->user->name. " （" . $this->user->affil . "）";
+        if ($this->user) $ary['参加者氏名・所属'] = $this->user->name. " （" . $this->user->affil . "）";
         $ary['申込日時'] = $this->submitted_at;
         $ary['申込種別'] = $this->isearly ? '早期申込' : '通常申込';
         return $ary;
@@ -129,5 +129,28 @@ class Regist extends Model
                 return "学会→「その他」を選択していない場合は、「その他の学会名」を入力しないでください。";
             }
         }
+    }
+
+    public static function countByItemAndIsearly($enqitm_name = 'kubun')
+    {
+        // $key の回答enquete_item_id を取得
+        $enquete_item_target = EnqueteItem::where('name', $enqitm_name)->first();
+        if (!$enquete_item_target) {
+            return [];
+        }
+        $res = Regist::where('valid', 1)
+            ->leftJoin('enquete_answers', function ($join) use ($enquete_item_target) {
+                $join->on('regists.user_id', '=', 'enquete_answers.user_id')
+                    ->where('enquete_answers.enquete_item_id', $enquete_item_target->id);
+            })
+            ->selectRaw('enquete_answers.valuestr as '.$enqitm_name.', regists.isearly, count(*) as cnt')
+            ->groupBy($enqitm_name, 'isearly')
+            ->orderBy('isearly', 'desc')
+            ->get();
+        $ret = [];
+        foreach ($res as $r) {
+            $ret[$r->$enqitm_name][$r->isearly] = $r->cnt;
+        }
+        return $ret;
     }
 }

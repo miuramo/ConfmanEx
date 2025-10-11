@@ -30,6 +30,10 @@
                     ->toArray();
 
                 $allowed_users = App\Http\Controllers\RegistController::allowed_users_string();
+
+                $finishedCount = \App\Models\Regist::where('valid', 1)->count();
+                $notfinishedCount = \App\Models\Regist::where('valid', 0)->count();
+                $upperlimit = App\Models\Setting::getval('REG_PERSON_UPPERLIMIT');
             @endphp
             <ul class="m-4">
                 @foreach ($sankakakunin as $name => $mes)
@@ -104,14 +108,20 @@
                     </table>
                 </div>
             @else
-                <x-element.h1>
-                    上記について、すべて確認・了承したうえで、参加登録を開始してください。
-                    <br>
-                    <b>（注：{{$allowed_users}}）</b><br>
-                    <x-element.linkbutton href="{{ route('regist.create') }}" color="cyan">
-                        参加登録を開始する
-                    </x-element.linkbutton>
-                </x-element.h1>
+                @if ($finishedCount + $notfinishedCount >= $upperlimit)
+                    <x-element.h1>
+                        <b class="text-emerald-600">参加登録は定員に達しました。申し訳ありませんが、現在の新規参加登録は受け付けていません。</b>
+                    </x-element.h1>
+                @else
+                    <x-element.h1>
+                        上記について、すべて確認・了承したうえで、参加登録を開始してください。
+                        <br>
+                        <b>（注：{{ $allowed_users }}）</b><br>
+                        <x-element.linkbutton href="{{ route('regist.create') }}" color="cyan">
+                            参加登録を開始する
+                        </x-element.linkbutton>
+                    </x-element.h1>
+                @endif
             @endisset
             @if ($reg && $reg->valid)
                 <div class="py-2 px-6">

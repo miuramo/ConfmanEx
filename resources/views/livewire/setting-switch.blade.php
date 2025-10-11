@@ -10,14 +10,25 @@
                 <span title="{{ $this->setting->name }}">{{ $this->setting->misc }}</span>
             @else
                 <span title="{{ $this->setting->name }}">{{ $this->setting->misc }}</span>
-                <input type="text" wire:model.live.debounce.500ms="inputtext" wire:keydown.enter="valset"
-                    wire:keydown.escape="valsetcancel" size="{{ $this->textsize }}" value="{{ $this->setting->value }}"
-                    x-init="$el.focus()" />
-                @if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $this->inputtext))
-                    <b>{{ $this->inputtext }}</b>
-                    <span class="text-blue-500">（設定は自動保存します）</span>
+                <input type="{{ $setting->isnumber ? 'number' : 'text' }}"
+                    wire:model.live.debounce.500ms="inputtext" 
+                    @if($setting->isnumber) min="1" max="999"
+                    @else size="{{ $this->textsize }}" @endif
+                    value="{{ $this->setting->value }}" x-init="$el.focus()" /> 
+                @if ($setting->isnumber)
+                    @if (is_numeric($this->inputtext))
+                        <b>{{ $this->inputtext }}</b>
+                        <span class="text-blue-500">（設定は自動保存します）</span>
+                    @else
+                        <span class="text-red-600">数値を入力してください</span>
+                    @endif
                 @else
-                    <span class="text-red-600">YYYY-MM-DDの形式で入力してください</span>
+                    @if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $this->inputtext))
+                        <b>{{ $this->inputtext }}</b>
+                        <span class="text-blue-500">（設定は自動保存します）</span>
+                    @else
+                        <span class="text-red-600">YYYY-MM-DDの形式で入力してください</span>
+                    @endif
                 @endif
             @endif
         @else

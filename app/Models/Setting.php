@@ -319,6 +319,15 @@ class Setting extends Model
             'valid' => false,
             'misc' => '参加登録を受け付ける（アカウント保持者全員）',
         ]);
+        Setting::firstOrCreate([
+            'name' => "REG_PERSON_UPPERLIMIT",
+        ], [
+            'value' => 150,
+            'isnumber' => true,
+            'isbool' => false,
+            'valid' => false,
+            'misc' => '参加登録の人数上限',
+        ]);
 
 
         Setting::firstOrCreate([
