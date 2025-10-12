@@ -1,11 +1,6 @@
 @props([
     'papers' => [],
-    'heads' => [
-        'uid',
-        'name',
-        'affil',
-        'email',
-    ],
+    'heads' => ['uid', 'name', 'affil', 'email', 'submitted_at', 'isearly'],
     'enqans' => [],
     'enq' => [],
 ])
@@ -19,10 +14,15 @@
     foreach ($enqans as $n => $eee) {
         $eansary[$eee['paper_id']][$eee['enquete_item_id']] = $eee['valuestr'];
     }
-    foreach($enq->items as $itm){
+    foreach ($enq->items as $itm) {
         $heads[] = $itm->name;
     }
     $OFFSET = 0;
+
+    $regists = \App\Models\Regist::where('valid', 1)->get()->keyBy('user_id');
+    info(count($regists));
+    info($regists);
+
 @endphp
 <!-- components.admin.enqtable_nopaper -->
 
@@ -37,7 +37,8 @@
 
     <tbody class="bg-white divide-y divide-gray-200 dark:text-white">
         @foreach ($users as $paper)
-            <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200 dark:bg-slate-700' : 'bg-white dark:bg-slate-600' }}">
+            <tr
+                class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200 dark:bg-slate-700' : 'bg-white dark:bg-slate-600' }}">
                 <td class="p-1">{{ $paper->id }}
                 </td>
                 <td class="p-1">{{ $paper->name }}
@@ -48,18 +49,22 @@
                 </td>
                 <td class="p-1">
                     @isset($regists[$paper->id])
-                    {{ $regists[$paper->id]->submitted_at }}
+                        {{ $regists[$paper->id]->submitted_at }}
+                    @endisset
+                </td>
+                <td class="p-1">
+                    @isset($regists[$paper->id])
+                        {{ $regists[$paper->id]->isearly }}
                     @endisset
                 </td>
                 {{-- アンケート --}}
                 @foreach ($enq->items as $itm)
-                        <td class="p-1">
-                            @isset($eansary[$OFFSET + $paper->id][$itm->id])
+                    <td class="p-1">
+                        @isset($eansary[$OFFSET + $paper->id][$itm->id])
                             {{ $eansary[$OFFSET + $paper->id][$itm->id] }}
-                            @else
-                            _
-                            @endisset
-                        </td>
+                        @else
+                        @endisset
+                    </td>
                 @endforeach
 
             </tr>

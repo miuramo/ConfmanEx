@@ -28,7 +28,7 @@
             <x-admin.enqtable :papers="$papers" :enqans="$enqans" :enq="$enq">
             </x-admin.enqtable>
         @else
-            <x-admin.enqtable_nopaper :enqans="$enqans" :enq="$enq" :regists="$regists">
+            <x-admin.enqtable_nopaper :enqans="$enqans" :enq="$enq">
             </x-admin.enqtable_nopaper>
         @endif
     </div>

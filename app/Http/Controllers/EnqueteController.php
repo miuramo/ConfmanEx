@@ -48,19 +48,11 @@ class EnqueteController extends Controller
 
         // eans にふくまれる paper_id について、Paperをもってくる
         $papers = Paper::with('paperowner')->with('submits')->orderBy('category_id')->orderBy('id')->get();
-        // もしEnquete.withpaper がfalseなら、Registをもってくる
-        if (!$enq->withpaper) {
-            $regists = \App\Models\Regist::where('valid', 1)->get()->keyBy('user_id');
-        } else {
-            $regists = [];
-        }
-        info(count($regists));
-        info($regists);
 
         if ($req->has("action") && $req->input("action") == "excel") {
             return Excel::download(new EnqExportFromView($enq), "enqans_{$enq->name}.xlsx");
         }
-        return view("enquete.answers")->with(compact("enq", "enqans", "papers", "regists"));
+        return view("enquete.answers")->with(compact("enq", "enqans", "papers"));
     }
 
     /**
