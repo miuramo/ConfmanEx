@@ -77,7 +77,7 @@
                             @isset($eansary[$paper->id][$itm->id])
                             {{ $eansary[$paper->id][$itm->id] }}
                             @else
-                            _
+                            
                             @endisset
                         </td>
                 @endforeach
