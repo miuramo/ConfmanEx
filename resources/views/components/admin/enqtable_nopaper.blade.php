@@ -46,6 +46,11 @@
                 </td>
                 <td class="p-1">{{ $paper->email }}
                 </td>
+                <td class="p-1">
+                    @isset($regists[$paper->id])
+                    {{ $regists[$paper->id]->submitted_at }}
+                    @endisset
+                </td>
                 {{-- アンケート --}}
                 @foreach ($enq->items as $itm)
                         <td class="p-1">
