@@ -108,7 +108,7 @@
                     </table>
                 </div>
             @else
-                @if ($finishedCount + $notfinishedCount >= $upperlimit)
+                @if ($upperlimit > 0 && $finishedCount + $notfinishedCount >= $upperlimit)
                     <x-element.h1>
                         <b class="text-emerald-600">参加登録は定員に達しました。申し訳ありませんが、現在の新規参加登録は受け付けていません。</b>
                     </x-element.h1>

@@ -152,7 +152,7 @@ class RegistController extends Controller
         \App\Models\EnqueteAnswer::where('user_id', $reg->user_id)
             ->whereIn('enquete_id', $enqIDs)
             ->delete(); 
-
-        return redirect()->route('regist.index')->with('feedback.success', '参加登録を削除しました。');
+        return back()->with('feedback.success', '参加登録を削除しました。');
+        // return redirect()->route('regist.index')->with('feedback.success', '参加登録を削除しました。');
     }
 }

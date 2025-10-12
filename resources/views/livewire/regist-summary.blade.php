@@ -9,7 +9,7 @@
                 <th class="px-2">{{ $item }}</th>
             </tr>
             @foreach ($summary[$item] as $name => $ary)
-                <tr>
+                <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200 dark:bg-slate-700' : 'bg-slate-50 dark:bg-slate-600' }} hover:bg-lime-50">
                     @foreach ([1, 0] as $isearly)
                         @isset($ary[$isearly])
                             <td class="px-1 text-right">{{ $ary[$isearly] }}</td>

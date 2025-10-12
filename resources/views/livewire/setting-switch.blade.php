@@ -12,20 +12,20 @@
                 <span title="{{ $this->setting->name }}">{{ $this->setting->misc }}</span>
                 <input type="{{ $setting->isnumber ? 'number' : 'text' }}"
                     wire:model.live.debounce.500ms="inputtext" 
-                    @if($setting->isnumber) min="1" max="999"
+                    @if($setting->isnumber) min="0" max="999"
                     @else size="{{ $this->textsize }}" @endif
                     value="{{ $this->setting->value }}" x-init="$el.focus()" /> 
                 @if ($setting->isnumber)
                     @if (is_numeric($this->inputtext))
                         <b>{{ $this->inputtext }}</b>
-                        <span class="text-blue-500">（設定は自動保存します）</span>
+                        <span class="text-blue-500 text-sm">（設定は自動保存します）</span>
                     @else
                         <span class="text-red-600">数値を入力してください</span>
                     @endif
                 @else
                     @if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $this->inputtext))
                         <b>{{ $this->inputtext }}</b>
-                        <span class="text-blue-500">（設定は自動保存します）</span>
+                        <span class="text-blue-500 text-sm">（設定は自動保存します）</span>
                     @else
                         <span class="text-red-600">YYYY-MM-DDの形式で入力してください</span>
                     @endif

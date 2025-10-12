@@ -14,27 +14,34 @@
             参加登録
         </x-element.linkbutton>
         <br>
-        <span class="px-3"></span>
-        <span class="px-3"></span>
-        <livewire:setting-switch :name="'REGOPEN'" />
-        <span class="px-3"></span>
-        <livewire:setting-switch :name="'REGOPEN_PUBLIC'" />
-        <span class="px-3"></span>
-        <livewire:setting-switch :name="'REG_EARLY_LIMIT'" textsize=10 />
-        <span class="px-3"></span>
-        <livewire:setting-switch :name="'REG_START_FOR_PCACC'" />
-        <span class="px-3"></span>
-        <livewire:setting-switch :name="'REG_START_FOR_REVIEWERS'" />
-        <span class="px-3"></span>
-        <livewire:setting-switch :name="'REG_START_FOR_ACCEPTED_AUTHORS'" />
-        <span class="px-3"></span>
-        <livewire:setting-switch :name="'REG_START_FOR_VALID_AUTHORS'" />
-        <span class="px-3"></span>
-        <livewire:setting-switch :name="'REG_START_FOR_ALL'" />
-        <span class="px-3"></span>
-        <livewire:setting-switch :name="'REG_PERSON_UPPERLIMIT'" />
-        <span class="px-3"></span>
-        <livewire:regist-summary />
+        {{-- ここから2段組にしたい。 --}}
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <span class="px-3"></span>
+                <livewire:setting-switch :name="'REGOPEN'" />
+                <span class="px-3"></span>
+                <livewire:setting-switch :name="'REGOPEN_PUBLIC'" />
+                <span class="px-3"></span>
+                <livewire:setting-switch :name="'REG_EARLY_LIMIT'" textsize=10 />
+                <span class="px-3"></span>
+                <livewire:setting-switch :name="'REG_START_FOR_PCACC'" />
+                <span class="px-3"></span>
+                <livewire:setting-switch :name="'REG_START_FOR_REVIEWERS'" />
+                <span class="px-3"></span>
+                <livewire:setting-switch :name="'REG_START_FOR_ACCEPTED_AUTHORS'" />
+                <span class="px-3"></span>
+                <livewire:setting-switch :name="'REG_START_FOR_VALID_AUTHORS'" />
+                <span class="px-3"></span>
+                <livewire:setting-switch :name="'REG_START_FOR_ALL'" />
+                <span class="px-3"></span>
+                <livewire:setting-switch :name="'REG_PERSON_UPPERLIMIT'" />
+                <span class="px-3"></span>
+                <livewire:regist-summary />
+            </div>
+            <div>
+                <livewire:regist-detach-incomplete />
+            </div>
+        </div>
 
     </x-element.h1>
 
