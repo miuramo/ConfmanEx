@@ -131,24 +131,11 @@ class AuthServiceProvider extends ServiceProvider
          */
         Gate::define('has_accepted_papers', function ($user, $isinclude_coauthor = true) {
             // アクセプトされた論文を持っているか
-            $accPIDs = Submit::with('paper')->whereHas('paper', function ($query) use ($user) {
-                $query->where('owner', $user->id);
-            })->whereHas("accept", function ($query) {
-                $query->where("judge", ">", 0);
-            })->get()->pluck("paper_id")->toArray();
-            info("Accepted Paper IDs:"); // あとで消す
-            info($accPIDs); // あとで消す
+            $accPIDs = $user->accepted_papers_as_owner();
             if (count($accPIDs) > 0) return true; // オーナーになっている論文で採録があるならtrue
             if (!$isinclude_coauthor) return false; // 共著者の論文は含めないなら、ここで終了
             // つぎに、共著者の論文についてチェック
-            $coPIDs = $user->coauthor_papers()->pluck("id")->toArray();
-            $accPIDs = Submit::with('paper')->whereHas('paper', function ($query) use ($coPIDs) {
-                $query->whereIn('id', $coPIDs);
-            })->whereHas("accept", function ($query) {
-                $query->where("judge", ">", 0);
-            })->get()->pluck("paper_id")->toArray();
-            info("Accepted Paper IDs (including coauthor):"); // あとで消す
-            info($accPIDs); // あとで消す
+            $accPIDs = $user->accepted_papers_as_coauthor();
             return count($accPIDs) > 0;
         });
 
@@ -158,8 +145,8 @@ class AuthServiceProvider extends ServiceProvider
             $subPIDs = Paper::where('owner', $user->id)
                 ->where('accepted', true)
                 ->get()->pluck("id")->toArray();
-            info("Submitted Paper IDs:"); // あとで消す
-            info($subPIDs); // あとで消す
+            // info("Submitted Paper IDs:"); // あとで消す
+            // info($subPIDs); // あとで消す
             if (count($subPIDs) > 0) return true; // オーナーになっている論文で投稿完了があるならtrue
             if (!$isinclude_coauthor) return false; // 共著者の論文は含めないなら、ここで終了
             // つぎに、共著者の論文についてチェック
@@ -167,8 +154,8 @@ class AuthServiceProvider extends ServiceProvider
             $subPIDs = Paper::whereIn('id', $coPIDs)
                 ->where('accepted', true)
                 ->get()->pluck("id")->toArray();
-            info("Submitted Paper IDs (including coauthor):"); // あとで消す
-            info($subPIDs); // あとで消す
+            // info("Submitted Paper IDs (including coauthor):"); // あとで消す
+            // info($subPIDs); // あとで消す
             return count($subPIDs) > 0; // オーナーになっている論文で投稿完了があるならtrue
         });
     }

@@ -310,4 +310,33 @@ class User extends Authenticatable implements MustVerifyEmail
             }
         }
     }
+
+    public function accepted_papers_as_owner()
+    {
+        $accPIDs = Submit::with('paper')->whereHas('paper', function ($query) {
+            $query->where('owner', $this->id);
+        })->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->get()->pluck("paper_id")->toArray();
+        return $accPIDs;
+    }
+    public function accepted_papers_as_coauthor()
+    {
+        $coPIDs = $this->coauthor_papers()->pluck("id")->toArray();
+        $accPIDs = Submit::with('paper')->whereHas('paper', function ($query) use ($coPIDs) {
+            $query->whereIn('id', $coPIDs);
+        })->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->get()->pluck("paper_id")->toArray();
+        return $accPIDs;
+    }
+    public function accepted_papers_as_any()
+    {
+        $accPIDs = $this->accepted_papers_as_owner();
+        $cooPIDs = $this->accepted_papers_as_coauthor();
+        foreach( $cooPIDs as $p ) {
+            if ( !in_array($p, $accPIDs) ) $accPIDs[] = $p;
+        }
+        return $accPIDs;
+    }
 }

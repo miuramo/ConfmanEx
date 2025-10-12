@@ -40,6 +40,8 @@
             </div>
             <div>
                 <livewire:regist-detach-incomplete />
+                <span class="px-3"></span>
+                <livewire:regist-check-author />
             </div>
         </div>
 
