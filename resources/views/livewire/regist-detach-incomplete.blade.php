@@ -5,7 +5,7 @@
         未完了者一覧（{{ count($notfinished) }}名）
         <table class="text-sm border-collapse border border-slate-400 mb-4">
             <tr class="bg-slate-300">
-                <th class="px-2">ID</th>
+                <th class="px-2">RegID</th>
                 <th class="px-2">User ID</th>
                 <th class="px-2">User Name</th>
                 <th class="px-2">User Affiliation</th>
