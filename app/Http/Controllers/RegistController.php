@@ -140,6 +140,9 @@ class RegistController extends Controller
         }
     }
 
+    /**
+     * 関連アンケートも含めて、参加登録を削除する
+     */
     public function destroy($id)
     {
         // 参加登録を削除する
