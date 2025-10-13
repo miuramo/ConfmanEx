@@ -34,6 +34,10 @@
                 $finishedCount = \App\Models\Regist::where('valid', 1)->count();
                 $notfinishedCount = \App\Models\Regist::where('valid', 0)->count();
                 $upperlimit = App\Models\Setting::getval('REG_PERSON_UPPERLIMIT');
+
+                $reg_early_limit = \App\Models\Setting::getval('REG_EARLY_LIMIT');
+                $is_early = new DateTime() <= new DateTime($reg_early_limit . ' 23:59:59');
+
             @endphp
             <ul class="m-4">
                 @foreach ($sankakakunin as $name => $mes)
@@ -59,10 +63,22 @@
                         @endif
                     </x-element.linkbutton>
 
-                    <x-element.deletebutton action="{{ route('regist.destroy', ['regist' => $reg->id]) }}"
-                        confirm="参加登録を削除します。よろしいですか？" color="red" align="right">
-                        参加登録を削除する
-                    </x-element.deletebutton>
+                    @if ($is_early)
+                        @if ($reg->valid)
+                            <span class="mx-8"></span>
+                            <x-element.linkbutton
+                                href="{{ route('regist.edit', ['regist' => $reg->id]) }}"
+                                color="teal" confirm="編集可能な項目は期日によって制限されることをご了解ください。" >
+                                参加登録内容を編集する
+                            </x-element.linkbutton>
+                        @endif
+                        <span class="mx-8"></span>
+                        <x-element.deletebutton action="{{ route('regist.destroy', ['regist' => $reg->id]) }}"
+                            confirm="参加登録を削除します。よろしいですか？" color="red" align="right">
+                            参加登録を削除する
+                        </x-element.deletebutton>
+                    @else
+                    @endif
                 </x-element.h1>
                 <div class="mx-6">
                     現在の参加登録内容は以下の通りです。
