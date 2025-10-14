@@ -46,6 +46,15 @@ class Regist extends Model
         return sha1($this->id . $this->user_id . $this->created_at);
     }
 
+    /**
+     * スポンサー参加登録用トークンを返す
+     */
+    public static function sponsortoken()
+    {
+        $reg_early_limit = Setting::getval('REG_EARLY_LIMIT');
+        return substr(sha1('sponsor' . $reg_early_limit ), 0, 16);
+    }
+
     public function enqans()
     {
         // EnqueteAnswers を返す
