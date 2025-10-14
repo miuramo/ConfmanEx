@@ -85,7 +85,7 @@
                     @endif
                     <div
                         class="mx-6 mt-2 px-6 py-2 bg-yellow-50 rounded-lg dark:bg-yellow-900 dark:text-yellow-200 text-lg text-orange-600">
-                        参加登録を編集・削除できるのは、早期申込期間中のみです。
+                        参加登録を編集・削除できるのは、早期申込期間中のみです。以降のキャンセルは「参加登録後の問い合わせ先」にご連絡ください。
                     </div>
                 </x-element.h1>
                 <div class="mx-6 mt-4">
