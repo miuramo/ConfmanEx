@@ -10,10 +10,6 @@ use Illuminate\Support\Facades\Mail;
 
 class RegistController extends Controller
 {
-    public function show()
-    {
-        return redirect()->route('regist.index');
-    }
     //
     public function index()
     {
@@ -109,18 +105,43 @@ class RegistController extends Controller
         return view('regist.entry');
     }
 
-    public function edit($id)
+    public function edit($id, $token = null)
     {
         if (!is_numeric($id)) {
             return redirect()->route('regist.index')->with('feedback.error', '不正な参加登録IDです。');
         }
         // 参加登録の編集フォームを表示する
         $reg = Regist::findOrFail($id);
-        if ($reg->user_id !== auth()->id()) {
+        $with_token = false;
+        // tokenが指定されている場合、tokenを確認する。ログインユーザなら誰でもいつでも編集可能。
+        if ($token !== null) {
+            if ($reg->token() !== $token) {
+                return redirect()->route('regist.index')->with('feedback.error', '不正な参加登録編集トークンです。');
+            }
+            $with_token = true;
+        } else if ($reg->user_id !== auth()->id()) {
             return redirect()->route('regist.index')->with('feedback.error', '他のユーザーの参加登録を編集することはできません。');
         }
-        return view('regist.edit', ['regist' => $reg])->with('regid', $id)->with('reg', $reg);
+
+        if ($with_token || auth()->user()->can('is_now_early')) {
+            return view('regist.edit', ['regist' => $reg])->with('regid', $id)->with('reg', $reg);
+        } else {
+            return redirect()->route('regist.index')->with('feedback.error', '現在は参加登録の編集はできません。');
+        }
     }
+    public function show($id)
+    {
+        if (!is_numeric($id)) {
+            return redirect()->route('regist.index')->with('feedback.error', '不正な参加登録IDです。');
+        }
+        // 参加登録の確認画面フォームを表示する
+        $reg = Regist::findOrFail($id);
+        if ($reg->user_id !== auth()->id()) {
+            return redirect()->route('regist.index')->with('feedback.error', '他のユーザーの参加登録を参照することはできません。');
+        }
+        return view('regist.show', ['regist'=>$reg])->with('regid', $id)->with('reg', $reg);
+    }
+
     public function email($id)
     {
         if (!is_numeric($id)) {
@@ -154,7 +175,7 @@ class RegistController extends Controller
         $enqIDs = \App\Models\Enquete::where('withpaper', false)->pluck('id')->toArray();
         \App\Models\EnqueteAnswer::where('user_id', $reg->user_id)
             ->whereIn('enquete_id', $enqIDs)
-            ->delete(); 
+            ->delete();
         return back()->with('feedback.success', '参加登録を削除しました。');
         // return redirect()->route('regist.index')->with('feedback.success', '参加登録を削除しました。');
     }

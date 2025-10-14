@@ -50,7 +50,7 @@ class Enquete extends Model
     }
 
     /**
-     * 参加登録はこちらを使う。needForPartは未使用。
+     * 参加登録はこちらを使う。
      */
     public static function needForRegist()
     {
@@ -60,19 +60,32 @@ class Enquete extends Model
         $canedit = [];
         $readonly = [];
         $until = []; //enqid=>deadline
+        $all = [];
+        $canedit_idx = [];
+        $readonly_idx = [];
         foreach ($configs as $config) {
             // Enquete.withpaper = false のとき、参加登録関連のアンケートとみなす。
             if (!in_array($config->enquete_id, $forReg_enqids)) continue; // 参加登録関連のアンケート以外は除外する
             if (Enquete::checkdayduration($config->openstart, $config->openend)) {
                 $enq = Enquete::with('items')->find($config->enquete_id);
                 $canedit[] = $enq;
+                $canedit_idx[$enq->id] = $enq->id;
             } else {
                 $enq = Enquete::with('items')->find($config->enquete_id);
                 $readonly[] = $enq;
+                $readonly_idx[$enq->id] = $enq->id;
             }
             $until[$enq->id] = Enquete::mm_dd_fancy($config->openend);
+            $all[$enq->id] = $enq;
         }
-        return ["canedit" => $canedit, "readonly" => $readonly, "until" => $until];
+        return [
+            "canedit" => $canedit,
+            "readonly" => $readonly,
+            "until" => $until,
+            "all" => $all,
+            "canedit_idx" => $canedit_idx,
+            "readonly_idx" => $readonly_idx
+        ];
     }
     /**
      * 必要なアンケートを返す
@@ -121,28 +134,6 @@ class Enquete extends Model
         // 参加者の回答数をカウントする
         return EnqueteAnswer::where('enquete_id', $this->id)->where('paper_id', $paper->id)->count();
     }
-
-    /**
-     * 参加登録に必要なアンケートを返す
-     */
-    // public static function needForPart(Participant $part)
-    // {
-    //     $configs = EventConfig::where('event_id', $part->event_id)->orderBy('orderint')->get();
-    //     $canedit = [];
-    //     $readonly = [];
-    //     $until = []; //enqid=>deadline
-    //     // $ids = []; // あつめたEnqueteID
-    //     foreach ($configs as $config) {
-    //         $enq = Enquete::with('items')->find($config->enquete_id);
-    //         if (Enquete::checkdayduration($config->openstart, $config->openend)) {
-    //             $canedit[] = $enq;
-    //         } else {
-    //             $readonly[] = $enq;
-    //         }
-    //         $until[$enq->id] = Enquete::mm_dd_fancy($config->openend);
-    //     }
-    //     return ["canedit" => $canedit, "readonly" => $readonly, "until" => $until];
-    // }
 
     /**
      * 投稿時 (or 参加登録時) のアンケートのチェックを行う。

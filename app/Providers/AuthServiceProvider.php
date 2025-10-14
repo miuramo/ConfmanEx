@@ -12,6 +12,7 @@ use App\Policies\FilePolicy;
 use App\Policies\LogAccessPolicy;
 use App\Policies\LogModifyPolicy;
 use App\Policies\PaperPolicy;
+use DateTime;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -157,6 +158,16 @@ class AuthServiceProvider extends ServiceProvider
             // info("Submitted Paper IDs (including coauthor):"); // あとで消す
             // info($subPIDs); // あとで消す
             return count($subPIDs) > 0; // オーナーになっている論文で投稿完了があるならtrue
+        });
+
+        // 現在が早期申込期間内か
+        Gate::define('is_now_early', function () {
+            $early_end = \App\Models\Setting::getval('REG_EARLY_LIMIT');
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $early_end) !== 1) {
+                Log::warning("REG_EARLY_LIMIT is not set correctly. value={$early_end}");
+                return false;
+            }
+            return new DateTime() <= new DateTime($early_end." 23:59:59");
         });
     }
 }

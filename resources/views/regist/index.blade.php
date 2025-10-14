@@ -35,8 +35,7 @@
                 $notfinishedCount = \App\Models\Regist::where('valid', 0)->count();
                 $upperlimit = App\Models\Setting::getval('REG_PERSON_UPPERLIMIT');
 
-                $reg_early_limit = \App\Models\Setting::getval('REG_EARLY_LIMIT');
-                $is_early = new DateTime() <= new DateTime($reg_early_limit . ' 23:59:59');
+                $is_early = auth()->user()->can('is_now_early');
 
             @endphp
             <ul class="m-4">
@@ -55,20 +54,21 @@
             @endphp
             @isset($reg)
                 <x-element.h1>
-                    <x-element.linkbutton href="{{ route('regist.edit', ['regist' => $reg->id]) }}" color="lime">
-                        @if ($reg->valid)
+                    @if ($reg->valid)
+                        <x-element.linkbutton href="{{ route('regist.show', ['regist' => $reg->id]) }}" color="lime">
                             参加登録内容を確認する
-                        @else
+                        </x-element.linkbutton>
+                    @else
+                        <x-element.linkbutton href="{{ route('regist.edit', ['regist' => $reg->id]) }}" color="teal">
                             参加登録を継続する
-                        @endif
-                    </x-element.linkbutton>
+                        </x-element.linkbutton>
+                    @endif
 
                     @if ($is_early)
                         @if ($reg->valid)
                             <span class="mx-8"></span>
-                            <x-element.linkbutton
-                                href="{{ route('regist.edit', ['regist' => $reg->id]) }}"
-                                color="teal" confirm="編集可能な項目は期日によって制限されることをご了解ください。" >
+                            <x-element.linkbutton href="{{ route('regist.edit', ['regist' => $reg->id]) }}" color="teal"
+                                confirm="編集可能な項目は期日によって制限されることをご了解ください。修正後は、かならず「入力内容をチェックする」ボタンを押して、問題がないことを確認してください。修正後に問題がある場合は、参加登録は無効になります。">
                                 参加登録内容を編集する
                             </x-element.linkbutton>
                         @endif
@@ -78,9 +78,17 @@
                             参加登録を削除する
                         </x-element.deletebutton>
                     @else
+                        <span class="mx-8"></span>
+                        <x-element.linkbutton_disabled size="sm">
+                            参加登録内容を編集する（現在は編集不可）
+                        </x-element.linkbutton_disabled>
                     @endif
+                    <div
+                        class="mx-6 mt-2 px-6 py-2 bg-yellow-50 rounded-lg dark:bg-yellow-900 dark:text-yellow-200 text-lg text-orange-600">
+                        参加登録を編集・削除できるのは、早期申込期間中のみです。
+                    </div>
                 </x-element.h1>
-                <div class="mx-6">
+                <div class="mx-6 mt-4">
                     現在の参加登録内容は以下の通りです。
                     <table class="table-auto">
                         <thead>
@@ -91,27 +99,37 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="border px-4 py-2 dark:text-gray-100">状況</td>
-                                <td class="border px-4 py-2 dark:text-gray-100">
+                                <td class="border px-4 py-2 dark:text-gray-100 text-center">状況</td>
+                                <td class="border px-4 py-2 dark:text-gray-100 text-center">
                                     @if ($reg->valid)
-                                        <span class="text-green-500 font-extrabold">有効</span>
+                                        <span class="text-green-500 font-extrabold text-center">有効</span>
                                     @else
-                                        <span class="text-red-500 font-extrabold">無効（まだ申込は完了していません）</span>
+                                        @if ($reg->submitted_at == null)
+                                            <span class="text-red-500 font-extrabold text-center">無効（まだ申込は完了していません）</span>
+                                        @else
+                                            <span class="text-red-500 font-extrabold text-center">無効（修正後の入力内容に問題があります。「継続する」で問題を修正してください。）</span>
+                                        @endif
                                     @endif
                                 </td>
                             </tr>
                             @if ($reg->valid)
                                 <tr>
-                                    <td class="border px-4 py-2 dark:text-gray-100">参加登録ID</td>
-                                    <td class="border px-4 py-2 dark:text-gray-100">{{ $reg->id }}</td>
+                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">参加登録ID</td>
+                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">{{ $reg->id }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="border px-4 py-2 dark:text-gray-100">申込日時</td>
-                                    <td class="border px-4 py-2 dark:text-gray-100">{{ $reg->submitted_at }}</td>
+                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">申込日時</td>
+                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">{{ $reg->submitted_at }}</td>
                                 </tr>
+                                @if($reg->submitted_at != $reg->updated_at)
                                 <tr>
-                                    <td class="border px-4 py-2 dark:text-gray-100">申込種別</td>
-                                    <td class="border px-4 py-2 dark:text-gray-100">
+                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">申込更新日時</td>
+                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">{{ $reg->updated_at }}</td>
+                                </tr>
+                                @endif
+                                <tr>
+                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">申込種別</td>
+                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">
                                         @if ($reg->isearly)
                                             早期申込
                                         @else

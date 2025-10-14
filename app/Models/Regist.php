@@ -32,10 +32,18 @@ class Regist extends Model
         $ary = [];
         $ary['状況'] = $this->valid ? '有効' : '無効';
         $ary['参加登録ID'] = $this->id;
-        if ($this->user) $ary['参加者氏名・所属'] = $this->user->name. " （" . $this->user->affil . "）";
+        if ($this->user) $ary['参加者氏名・所属'] = $this->user->name . " （" . $this->user->affil . "）";
         $ary['申込日時'] = $this->submitted_at;
         $ary['申込種別'] = $this->isearly ? '早期申込' : '通常申込';
         return $ary;
+    }
+
+    /**
+     * 編集用トークンを返す
+     */
+    public function token()
+    {
+        return sha1($this->id . $this->user_id . $this->created_at);
     }
 
     public function enqans()
@@ -64,7 +72,8 @@ class Regist extends Model
         }
         return $res;
     }
-    public function enq_enqitmid_value(){
+    public function enq_enqitmid_value()
+    {
         $enqans = $this->enqans();
         $res = [];
         foreach ($enqans as $enqid => $items) {
@@ -87,6 +96,7 @@ class Regist extends Model
         $res = Enquete::validateEnquetes(User::find($this->user_id));
         $res[] = $this->chk_kubun($ary);
         $res[] = $this->chk_othergakkai($ary);
+        $res[] = $this->chk_student($ary);
         return $res;
     }
 
@@ -95,11 +105,14 @@ class Regist extends Model
         if (empty($ary['kubun'])) {
             return "参加区分を選択してください。";
         }
+        if (empty($ary['gakkai'])) {
+            return "学会を選択してください。";
+        }
         if (strpos($ary['kubun'], "学会会員") !== false) {
             if (strpos($ary['gakkai'], "非会員") !== false) {
                 return "参加区分→「学会会員」を選択した場合は、学会は「非会員以外」を選択してください。";
             }
-            if (empty($ary['kaiinid']) ) {
+            if (empty($ary['kaiinid'])) {
                 return "参加区分→「学会会員」を選択した場合は、上記で入力した学会の会員番号を入力してください。";
             }
         } else if (strpos($ary['kubun'], "非会員") !== false) {
@@ -130,6 +143,21 @@ class Regist extends Model
             }
         }
     }
+    public function chk_student($ary)
+    {
+        info($ary);
+        if (empty($ary['isstudent'])) {
+            return "種別（一般 / 学生）を選択してください。";
+        }
+        if (empty($ary['kubun'])) {
+            return "参加区分を選択してください。";
+        }
+        if ($ary['isstudent'] == "一般") { // 一般で回答していて
+            if (preg_match("/発表のある学生/", $ary['kubun']) || preg_match("/学生ボランティア/", $ary['kubun'])) {
+                return "参加区分で「学生・・・」を選択した場合は、種別（一般 / 学生）でも学生を選択してください。";
+            }
+        }
+    }
 
     public static function countByItemAndIsearly($enqitm_name = 'kubun')
     {
@@ -143,7 +171,7 @@ class Regist extends Model
                 $join->on('regists.user_id', '=', 'enquete_answers.user_id')
                     ->where('enquete_answers.enquete_item_id', $enquete_item_target->id);
             })
-            ->selectRaw('enquete_answers.valuestr as '.$enqitm_name.', regists.isearly, count(*) as cnt')
+            ->selectRaw('enquete_answers.valuestr as ' . $enqitm_name . ', regists.isearly, count(*) as cnt')
             ->groupBy($enqitm_name, 'isearly')
             ->orderBy('isearly', 'desc')
             ->get();

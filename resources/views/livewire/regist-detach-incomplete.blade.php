@@ -7,8 +7,8 @@
             <tr class="bg-slate-300">
                 <th class="px-2">RegID</th>
                 <th class="px-2">User ID</th>
-                <th class="px-2">User Name</th>
-                <th class="px-2">User Affiliation</th>
+                <th class="px-2">氏名</th>
+                <th class="px-2">所属</th>
                 <th class="px-2">Created At</th>
                 <th class="px-2">Action</th>
             </tr>

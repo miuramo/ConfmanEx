@@ -1,7 +1,5 @@
 <x-app-layout>
     <!-- regist.index -->
-    @php
-    @endphp
     @section('title', '参加登録')
 
     <x-slot name="header">
@@ -24,24 +22,32 @@
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
 
-    <div class="mx-6 mt-6 p-3 bg-cyan-100 rounded-lg dark:bg-cyan-900 dark:text-gray-400 text-lg text-gray-500">
-        入力内容はすぐに保存されます。<br>参加登録を完了するには、一番下の「入力内容をチェックする」ボタンを押した後に表示される「参加登録を完了する」ボタンを押してください。
+    <div class="mx-6 mt-2 p-3 bg-cyan-100 rounded-lg dark:bg-cyan-900 dark:text-blue-200 text-lg text-blue-500">
+        入力内容はフォーカスを外すと、すぐに保存されます。<br>参加登録を完了するには、一番下の「入力内容をチェックする」ボタンを押した後に表示される「参加登録を完了する」ボタンを押してください。<br>
+
+    </div>
+    <div class="pt-4 px-6">
+        <x-element.linkbutton href="{{ route('regist.index') }}" color="orange">
+            参加登録を中断する（参加登録トップに戻る）
+        </x-element.linkbutton>
     </div>
 
-    <div class="py-2 px-6">
-
-        @foreach ($enqs['canedit'] as $enq)
+    <div class="pt-0 px-6">
+        @foreach ($enqs['all'] as $enq)
             <a name="enq_{{ $enq->id }}"></a>
             <div
-                class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-gray-400 hover:bg-green-300 dark:hover:bg-green-800">
+                class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-gray-400
+                @isset($enqs['canedit_idx'][$enq->id])
+                    hover:bg-green-300 dark:hover:bg-green-800
+                @endisset                 
+                 ">
                 {{ $enq->name }}
-                {{-- @if (!$enq->showonpaperindex)
-                    &nbsp; → <x-element.linkbutton
-                        href="{{ route('enquete.pageedit', ['paper' => $OFFSET + $uid, 'enq' => $enq]) }}" color="cyan">
-                        ここをクリックして回答
-                    </x-element.linkbutton>
-                @endif --}}
-                {{-- <x-element.gendospan>{{ $enqs['until'][$enq->id] }}まで修正可</x-element.gendospan> --}}
+                @isset($enqs['readonly_idx'][$enq->id])
+                    <span class="mx-10"></span>
+                    <span class="text-red-500 px-4">修正期限を過ぎています</span>
+                    <x-element.linkbutton2 href="{{ route('enq.preview', ['enq' => $enq->id, 'key' => $enq->getkey(7)]) }}"
+                        size="sm" color="cyan" target="_blank">質問項目をみる</x-element.linkbutton2>
+                @endisset
             </div>
             @if ($enq->showonpaperindex)
                 <form action="{{ route('enquete.update', ['paper' => $OFFSET + $uid, 'enq' => $enq]) }}" method="post"
@@ -51,51 +57,25 @@
                     <input type="hidden" name="paper_id" value="{{ $OFFSET + $uid }}">
                     <input type="hidden" name="enq_id" value="{{ $enq->id }}">
                     <div class="mx-10">
-                        @if ($reg->valid)
-                            <x-enquete.view :enq="$enq" :enqans="$enqans">
-                            </x-enquete.view>
-                        @else
+                        @isset($enqs['canedit_idx'][$enq->id])
                             <x-enquete.edit :enq="$enq" :enqans="$enqans">
                             </x-enquete.edit>
-                        @endif
+                            @else
+                            <x-enquete.view :enq="$enq" :enqans="$enqans">
+                            </x-enquete.view>
+                        @endisset
                     </div>
                 </form>
             @endif
         @endforeach
 
-        @foreach ($enqs['readonly'] as $enq)
-            <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-slate-400">
-                {{ $enq->name }}
-                @if (!$enq->showonpaperindex)
-                    &nbsp; → <x-element.linkbutton
-                        href="{{ route('enquete.pageview', ['paper' => $OFFSET + $uid, 'enq' => $enq]) }}"
-                        color="cyan">
-                        ここをクリックして回答参照
-                    </x-element.linkbutton>
-                @endif
-                <span class="mx-10"></span>
-                <x-element.linkbutton2 href="{{ route('enq.preview', ['enq' => $enq->id, 'key' => $enq->getkey(7)]) }}"
-                    size="xs" color="cyan" target="_blank">質問項目をみる</x-element.linkbutton2>
-
-            </div>
-            @if ($enq->showonpaperindex)
-                <div class="mx-10">
-                    <x-enquete.view :enq="$enq" :enqans="$enqans">
-                    </x-enquete.view>
-                </div>
-            @endif
-        @endforeach
-
     </div>
-    @if (!$reg->valid)
-        <div class="py-2 px-6">
-            <livewire:regist-check :regid="$regid" />
-        </div>
-    @endif
-    <div class="my-20"></div>
     <div class="py-2 px-6">
-        <x-element.linkbutton href="{{ route('regist.index') }}" color="gray">
-            参加登録トップに戻る
+        <livewire:regist-check :regid="$regid" />
+    </div>
+    <div class="pt-8 px-6 pb-6">
+        <x-element.linkbutton href="{{ route('regist.index') }}" color="orange">
+            参加登録を中断する（参加登録トップに戻る）
         </x-element.linkbutton>
     </div>
 
