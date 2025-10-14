@@ -124,6 +124,8 @@ class RegistController extends Controller
         }
 
         if ($with_token || auth()->user()->can('is_now_early')) {
+            $reg->valid = false; // 編集開始時点で無効にする
+            $reg->save();
             return view('regist.edit', ['regist' => $reg])->with('regid', $id)->with('reg', $reg);
         } else {
             return redirect()->route('regist.index')->with('feedback.error', '現在は参加登録の編集はできません。');

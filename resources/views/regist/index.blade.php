@@ -68,7 +68,7 @@
                         @if ($reg->valid)
                             <span class="mx-8"></span>
                             <x-element.linkbutton href="{{ route('regist.edit', ['regist' => $reg->id]) }}" color="teal"
-                                confirm="編集可能な項目は期日によって制限されることをご了解ください。修正後は、かならず「入力内容をチェックする」ボタンを押して、問題がないことを確認してください。修正後に問題がある場合は、参加登録は無効になります。">
+                                confirm="編集画面では修正の有無にかかわらず、最後にかならず「入力内容をチェック」し「参加登録を完了する」ボタンを押してください。「中断する」で戻った場合、登録は無効状態に戻ります。">
                                 参加登録内容を編集する
                             </x-element.linkbutton>
                         @endif
@@ -107,7 +107,7 @@
                                         @if ($reg->submitted_at == null)
                                             <span class="text-red-500 font-extrabold text-center">無効（まだ申込は完了していません）</span>
                                         @else
-                                            <span class="text-red-500 font-extrabold text-center">無効（修正後の入力内容に問題があります。「継続する」で問題を修正してください。）</span>
+                                            <span class="text-red-500 font-extrabold text-center">無効（修正後の入力内容に問題があるか、編集画面で完了ボタンを押していません。「継続する」画面で参加登録を再度完了させてください。）</span>
                                         @endif
                                     @endif
                                 </td>
