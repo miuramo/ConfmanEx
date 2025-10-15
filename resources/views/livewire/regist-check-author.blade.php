@@ -1,5 +1,5 @@
 <div>
-    <b class="text-emerald-600">発表者がまだ参加登録していない採択発表一覧</b>
+    <b class="text-emerald-600">発表者がまだ参加登録完了していない採択発表一覧</b>
 
     <table class="text-sm border-collapse border border-slate-400 mb-4">
         <tr class="bg-slate-300">

@@ -27,7 +27,7 @@
 
     </div>
     <div class="pt-4 px-6">
-        <x-element.linkbutton href="{{ route('regist.index') }}" color="orange">
+        <x-element.linkbutton href="{{ route('regist.index') }}" color="orange" confirm="中断した場合、入力内容は保存されますが、登録は未完了となります。中断してよろしいですか？">
             参加登録を中断する（参加登録トップに戻る）
         </x-element.linkbutton>
     </div>
@@ -74,7 +74,7 @@
         <livewire:regist-check :regid="$regid" />
     </div>
     <div class="pt-8 px-6 pb-6">
-        <x-element.linkbutton href="{{ route('regist.index') }}" color="orange">
+        <x-element.linkbutton href="{{ route('regist.index') }}" color="orange" confirm="中断した場合、入力内容は保存されますが、登録は未完了となります。中断してよろしいですか？">
             参加登録を中断する（参加登録トップに戻る）
         </x-element.linkbutton>
     </div>

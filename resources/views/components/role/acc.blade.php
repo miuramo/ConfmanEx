@@ -13,6 +13,8 @@
         <x-element.linkbutton href="{{ route('regist.index') }}" color="teal">
             参加登録
         </x-element.linkbutton>
+        <span class="px-3"></span>
+        <x-element.resist_sponsorlink /> {{-- スポンサー向けの特殊な参加登録URLをクリップボードにコピー --}}
         <br>
         {{-- ここから2段組にしたい。 --}}
         <div class="grid grid-cols-2 gap-4">
@@ -38,7 +40,6 @@
                 <span class="px-3"></span>
                 <livewire:regist-summary />
                 <span class="px-3"></span>
-                <x-element.resist_sponsorlink label="スポンサー向け参加登録" color="purple" size="sm"/>
             </div>
             <div>
                 <livewire:regist-detach-incomplete />
@@ -83,6 +84,18 @@
 
 
 </div>
+
+<script>
+    function copyToClipboard(text) {
+        // const text = document.getElementById("copyText").innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert("コピーしました！");
+        }).catch(err => {
+            console.error("コピーに失敗しました:", err);
+        });
+    }
+</script>
+
 @push('localjs')
     <script src="/js/jquery.min.js"></script>
     <script src="/js/openclose.js"></script>

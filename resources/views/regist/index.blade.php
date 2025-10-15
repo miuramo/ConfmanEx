@@ -31,8 +31,8 @@
 
                 $allowed_users = App\Http\Controllers\RegistController::allowed_users_string();
 
-                $finishedCount = \App\Models\Regist::where('valid', 1)->count();
-                $notfinishedCount = \App\Models\Regist::where('valid', 0)->count();
+                $finishedCount = \App\Models\Regist::whereNotNull('submitted_at')->count(); // 編集中の人も含め、一度は完了した人
+                $notfinishedCount = \App\Models\Regist::whereNull('submitted_at')->count(); // まだ一度も完了していない人
                 $upperlimit = App\Models\Setting::getval('REG_PERSON_UPPERLIMIT');
 
                 $is_early = auth()->user()->can('is_now_early');
@@ -68,7 +68,7 @@
                         @if ($reg->valid)
                             <span class="mx-8"></span>
                             <x-element.linkbutton href="{{ route('regist.edit', ['regist' => $reg->id]) }}" color="teal"
-                                confirm="編集画面では修正の有無にかかわらず、最後にかならず「入力内容をチェック」し「参加登録を完了する」ボタンを押してください。「中断する」で戻った場合、登録は無効状態に戻ります。">
+                                confirm="編集画面に遷移すると、登録状況が無効になります。編集画面では修正の有無にかかわらず、最後にかならず「参加登録を完了する」ボタンを押してください。">
                                 参加登録内容を編集する
                             </x-element.linkbutton>
                         @endif
