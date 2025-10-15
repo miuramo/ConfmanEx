@@ -714,7 +714,9 @@ class Paper extends Model
             $ary = explode("\t", trim($line));
             $ary = array_map("trim", $ary);
             // ここまでで、ary[0]には氏名、ary[1]には所属がはいる
-            $ary[1] = $this->apply_affil_fix($ary[1], true, $use_short);
+            if (isset($ary[1])) {
+                $ary[1] = $this->apply_affil_fix($ary[1], true, $use_short);
+            }
             $ret[] = $ary;
         }
         return $ret;
@@ -759,7 +761,7 @@ class Paper extends Model
         // $affil = str_replace(",", "/", $affil);
         // $affil = str_replace("，", "/", $affil);
         // 事前適用ルールを取得
-        if ($pre_apply){
+        if ($pre_apply) {
             $pre_rules = Affil::where('pre', true)->where('skip', false)->get();
             foreach ($pre_rules as $rule) {
                 $affil = str_replace($rule->before, $rule->after, $affil);
