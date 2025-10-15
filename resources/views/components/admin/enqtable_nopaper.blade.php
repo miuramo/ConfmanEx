@@ -20,8 +20,6 @@
     $OFFSET = 0;
 
     $regists = \App\Models\Regist::where('valid', 1)->get()->keyBy('user_id');
-    info(count($regists));
-    info($regists);
 
 @endphp
 <!-- components.admin.enqtable_nopaper -->
