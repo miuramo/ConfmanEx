@@ -76,7 +76,7 @@
                         <tr>
                             @foreach ($coldetails as $nam => $typ)
                                 @if ($nam == 'COPY')
-                                    <td>
+                                    <td class="hover:bg-slate-200">ID= {{$d->id}}
                                         @isset($enq_id)
                                             <x-element.linkbutton2
                                                 href="{{ route('enq.enqitmsetting', ['copy_id' => $d->id, 'enq_id' => $enq_id, 'enq_name' => $enq_name]) }}"
