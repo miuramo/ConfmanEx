@@ -16,8 +16,8 @@
         </tr>
         @foreach ($users as $u)
             <tr
-                class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200 dark:bg-slate-700' : 'bg-slate-50 dark:bg-slate-600' }}  hover:bg-yellow-50">
-                <td class="px-2 bg-slate-200">{{ $u->id }}</td>
+                class="hover:bg-yellow-50 {{ $loop->iteration % 2 === 0 ? 'bg-slate-200 dark:bg-slate-700' : 'bg-slate-50 dark:bg-slate-600' }} ">
+                <td class="px-2 bg-slate-200 text-right">{{ $u->id }}</td>
                 <td class="px-2 bg-slate-200">{{ $u->name }}</td>
                 <td class="px-2 bg-slate-200">{{ $u->affil }}</td>
                 @isset($regD[$u->id])
@@ -52,9 +52,7 @@
                         </x-element.deletebutton>
                     @endisset
                 </td>
-
             </tr>
         @endforeach
-
     </table>
 </div>

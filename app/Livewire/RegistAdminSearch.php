@@ -19,7 +19,7 @@ class RegistAdminSearch extends Component
                 ->orWhere('affil', 'like', "%{$this->search}%")
                 ->limit(10)
                 ->get()->keyBy('id');
-            $this->regD = \App\Models\Regist::whereIn('user_id', $this->users->keys())->get()->keyBy('user_id');
+            $this->regD = \App\Models\Regist::whereIn('user_id', collect($this->users)->keys())->get()->keyBy('user_id');
         }
     }
     public function resetSearch()
