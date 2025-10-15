@@ -30,8 +30,8 @@
                     <td class="px-2 bg-slate-200">
                         <a href="{{ route('regist.show', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
                             class="text-green-600 hover:underline" target="_blank">参照</a>
-                        <a href="{{ route('regist.edit', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
-                            class="text-blue-600 hover:underline" target="_blank">編集</a>
+                        {{-- <a href="{{ route('regist.edit', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
+                            class="text-blue-600 hover:underline" target="_blank">編集</a> --}}
 
                     </td>
                 @else
