@@ -8,6 +8,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('regist', RegistController::class);
     // override edit
     Route::get('/regist/{regist}/edit/{token?}', [RegistController::class, 'edit'])->name('regist.edit');
+    Route::get('/regist/{regist}/show/{token?}', [RegistController::class, 'show'])->name('regist.show');
 
     Route::get('/regist_email/{regist}', [RegistController::class, 'email'])->name('regist.email');
 

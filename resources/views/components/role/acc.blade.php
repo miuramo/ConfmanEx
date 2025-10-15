@@ -39,15 +39,14 @@
                 <livewire:setting-switch :name="'REG_PERSON_UPPERLIMIT'" />
                 <span class="px-3"></span>
                 <livewire:regist-summary />
-                <span class="px-3"></span>
             </div>
             <div>
                 <livewire:regist-detach-incomplete />
                 <span class="px-3"></span>
                 <livewire:regist-check-author />
-                <span class="px-3"></span>
             </div>
         </div>
+        <livewire:regist-admin-search />
 
     </x-element.h1>
 

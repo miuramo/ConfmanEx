@@ -73,8 +73,9 @@ class RegistController extends Controller
         return back()->with('feedback.error', '参加登録エラー');
     }
 
-    public function create_for_sponsors($token = null){
-        if($token !== Regist::sponsortoken()){
+    public function create_for_sponsors($token = null)
+    {
+        if ($token !== Regist::sponsortoken()) {
             return redirect()->route('regist.index')->with('feedback.error', '不正なスポンサー参加登録トークンです。');
         }
         $reg = Regist::firstOrCreate([
@@ -82,7 +83,7 @@ class RegistController extends Controller
         ]);
         if ($reg) {
             // 参加登録が既に存在する場合は、編集画面にリダイレクト
-            return redirect()->route('regist.edit', ['regist' => $reg->id, 'token' => $reg->token() ]);
+            return redirect()->route('regist.edit', ['regist' => $reg->id, 'token' => $reg->token()]);
         }
         // 参加登録のフォームを表示する
         return redirect()->route('regist.index')->with('feedback.error', '参加登録エラー');
@@ -146,17 +147,24 @@ class RegistController extends Controller
             return redirect()->route('regist.index')->with('feedback.error', '現在は参加登録の編集はできません。');
         }
     }
-    public function show($id)
+    public function show($id, $token = null)
     {
         if (!is_numeric($id)) {
             return redirect()->route('regist.index')->with('feedback.error', '不正な参加登録IDです。');
         }
         // 参加登録の確認画面フォームを表示する
         $reg = Regist::findOrFail($id);
-        if ($reg->user_id !== auth()->id()) {
+        $with_token = false;
+        // tokenが指定されている場合、tokenを確認する。ログインユーザなら誰でもいつでも編集可能。
+        if ($token !== null) {
+            if ($reg->token() !== $token) {
+                return redirect()->route('regist.index')->with('feedback.error', '不正な参加登録参照トークンです。');
+            }
+            $with_token = true;
+        } else if ($reg->user_id !== auth()->id()) {
             return redirect()->route('regist.index')->with('feedback.error', '他のユーザーの参加登録を参照することはできません。');
         }
-        return view('regist.show', ['regist'=>$reg])->with('regid', $id)->with('reg', $reg);
+        return view('regist.show', ['regist' => $reg])->with('regid', $id)->with('reg', $reg);
     }
 
     public function email($id)
@@ -183,8 +191,26 @@ class RegistController extends Controller
      */
     public function destroy($id)
     {
+        if (!is_numeric($id)) {
+            return redirect()->route('regist.index')->with('feedback.error', '不正な参加登録IDです。');
+        }
+        $pcacc = auth()->user()->can('role_any', 'pc|acc');
+        $is_owner = false;
+        $is_early = auth()->user()->can('is_now_early');
+        $reg = Regist::find($id);
+        if ($reg && $reg->user_id === auth()->id()) {
+            $is_owner = true;
+        }
+        if (!$pcacc && !$is_owner) {
+            return redirect()->route('regist.index')->with('feedback.error', '他のユーザの参加登録を削除することはできません。');
+        }
+        // 管理者(pcacc)はいつでも削除可能
+        // ユーザ本人は、現在が早期登録期間中であれば削除可能
+        if (!$pcacc && !$is_early) {
+            return redirect()->route('regist.index')->with('feedback.error', '現在は参加登録の削除はできません。');
+        }
+
         // 参加登録を削除する
-        $reg = Regist::findOrFail($id);
         $reg->delete();
 
         // アンケート実体も削除
@@ -194,6 +220,5 @@ class RegistController extends Controller
             ->whereIn('enquete_id', $enqIDs)
             ->delete();
         return back()->with('feedback.success', '参加登録を削除しました。');
-        // return redirect()->route('regist.index')->with('feedback.success', '参加登録を削除しました。');
     }
 }

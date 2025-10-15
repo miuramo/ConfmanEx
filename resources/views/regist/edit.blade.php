@@ -2,19 +2,24 @@
     <!-- regist.index -->
     @section('title', '参加登録')
 
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
-            {{ __('参加登録') }}
-        </h2>
-    </x-slot>
-
-
     @php
         $OFFSET = 0; // paper_idのオフセット値
         $uid = $reg->user_id; // ユーザID
         $enqs = App\Models\Enquete::needForRegist();
         $enqans = $reg->enqans();
     @endphp
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
+            {{-- {{ __('参加登録') }} --}}
+            @php
+                $user = \App\Models\User::find($reg->user_id);
+            @endphp
+            <span class="mx-4"></span>
+            {{ $user->name }} さん（{{ $user->affil}}）の参加登録
+        </h2>
+    </x-slot>
+
+
     @if (session('feedback.success'))
         <x-alert.success>{{ session('feedback.success') }}</x-alert.success>
     @endif
