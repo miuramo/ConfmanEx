@@ -45,7 +45,7 @@ class UpdateEnqueteRequest extends FormRequest
         unset($data['_method']);
         unset($data['url']);
         unset($data['_url']);
-        // info($data);
+
         foreach ($data as $key => $value) {
             $ei = EnqueteItem::where("enquete_id", $enq_id)->where("name", $key)->first();
             if ($value != null && !$ei->validate_rule($value)) {
@@ -54,7 +54,7 @@ class UpdateEnqueteRequest extends FormRequest
                 DB::transaction(function () use ($enq_id, $paper_id, $ei, $value, &$data) {
                     $enq = EnqueteAnswer::firstOrCreate([
                         'enquete_id' => $enq_id,
-                        'user_id' => Auth::id(),
+                        'user_id' => Auth::id(), // TODO:　参加登録を代理で行う場合どうするか？先に作っておいても意味がない
                         'paper_id' => $paper_id,
                         'enquete_item_id' => $ei->id,
                     ]);
