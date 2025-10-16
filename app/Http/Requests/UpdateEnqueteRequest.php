@@ -39,6 +39,13 @@ class UpdateEnqueteRequest extends FormRequest
         $data = $this->all();
         $enq_id = $data['enq_id'];
         $paper_id = $data['paper_id']; // 参加登録だとPartIdになる
+        if ($this->has('user_id')) {
+            // 参加登録を代理で行う場合
+            $user_id = $data['user_id'];
+            unset($data['user_id']);
+        } else {
+            $user_id = Auth::id();
+        }
         unset($data['paper_id']);
         unset($data['enq_id']);
         unset($data['_token']);
@@ -51,10 +58,10 @@ class UpdateEnqueteRequest extends FormRequest
             if ($value != null && !$ei->validate_rule($value)) {
                 $data[$key] = $ei->pregerrmes;
             } else {
-                DB::transaction(function () use ($enq_id, $paper_id, $ei, $value, &$data) {
+                DB::transaction(function () use ($enq_id, $paper_id, $user_id, $ei, $value, &$data) {
                     $enq = EnqueteAnswer::firstOrCreate([
                         'enquete_id' => $enq_id,
-                        'user_id' => Auth::id(), // TODO:　参加登録を代理で行う場合どうするか？先に作っておいても意味がない
+                        'user_id' => $user_id,
                         'paper_id' => $paper_id,
                         'enquete_item_id' => $ei->id,
                     ]);

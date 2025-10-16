@@ -13,6 +13,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/regist_email/{regist}', [RegistController::class, 'email'])->name('regist.email');
 
     Route::get('/regist_sponsor/{token}', [RegistController::class, 'create_for_sponsors'])->name('regist.sponsor');
+    Route::get('/regist_admin/{user_id}', [RegistController::class, 'create_for_admin'])->name('regist.admin');
 });
 
 // Route::middleware('guest')->group(function () {});

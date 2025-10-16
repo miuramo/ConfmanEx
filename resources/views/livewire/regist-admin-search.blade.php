@@ -26,21 +26,28 @@
                     @else
                         <td class="px-2 bg-slate-200 text-red-600">無効（未完了）</td>
                     @endif
-                    <td class="px-2 bg-slate-200">{{ $regD[$u->id]->submitted_at }}</td>
+                    <td class="px-2 bg-slate-200">{{ substr($regD[$u->id]->submitted_at,5,11) }}</td>
                     <td class="px-2 bg-slate-200">
-                        <a href="{{ route('regist.show', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
-                            class="text-green-600 hover:underline" target="_blank">参照</a>
-                        {{-- <a href="{{ route('regist.edit', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
-                            class="text-blue-600 hover:underline" target="_blank">編集</a> --}}
-
+                        <x-element.linkbutton2
+                            href="{{ route('regist.edit', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
+                            color="blue" target="_blank" size="xs" confirm="{{ $u->name }} (UserID: {{$u->id}}) さんの参加登録を代理で編集します。よろしいですか？">編集</x-element.linkbutton2>
+                        <x-element.linkbutton2
+                            href="{{ route('regist.show', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
+                            color="green" target="_blank" size="xs">参照</x-element.linkbutton2>
                     </td>
                 @else
                     <td class="px-2 bg-slate-200 text-orange-500 text-center">未登録</td>
-                    <td class="px-2 bg-slate-200" colspan="2"></td>
+                    {{-- 初回完了を飛ばす --}}
+                    <td class="px-2 bg-slate-200"></td>
+                    <td class="px-2 bg-slate-200">
+                        <x-element.linkbutton2
+                            href="{{ route('regist.admin', ['user_id' => $u->id]) }}" color="gray" target="_blank" confirm="{{ $u->name }} (UserID: {{$u->id}}) さんの参加登録を代理で作成します。よろしいですか？"
+                            size="xs">代理作成</x-element.linkbutton2>
+                    </td>
                 @endisset
                 <td class="px-2 bg-slate-200">
                     @isset($regD[$u->id])
-                        {{ $regD[$u->id]->updated_at }}
+                        {{ substr($regD[$u->id]->updated_at,5,11) }}
                     @endisset
                 </td>
                 <td class="px-2 bg-slate-200">{{ $u->email }}</td>

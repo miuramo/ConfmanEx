@@ -31,8 +31,8 @@
 
                 $allowed_users = App\Http\Controllers\RegistController::allowed_users_string();
 
-                $finishedCount = \App\Models\Regist::whereNotNull('submitted_at')->count(); // 編集中の人も含め、一度は完了した人
-                $notfinishedCount = \App\Models\Regist::whereNull('submitted_at')->count(); // まだ一度も完了していない人
+                $finishedCount = \App\Models\Regist::whereNotNull('submitted_at')->where('canceled', false)->count(); // 編集中の人も含め、一度は完了した人
+                $notfinishedCount = \App\Models\Regist::whereNull('submitted_at')->where('canceled', false)->count(); // まだ一度も完了していない人
                 $upperlimit = App\Models\Setting::getval('REG_PERSON_UPPERLIMIT');
 
                 $is_early = auth()->user()->can('is_now_early');

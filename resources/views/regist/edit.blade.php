@@ -56,22 +56,23 @@
                 @endisset
             </div>
             @if ($enq->showonpaperindex)
-                <form action="{{ route('enquete.update', ['paper' => $OFFSET + $uid, 'enq' => $enq]) }}" method="post"
-                    id="enqform{{ $enq->id }}">
-                    @csrf
-                    @method('put')
-                    <input type="hidden" name="paper_id" value="{{ $OFFSET + $uid }}">
-                    <input type="hidden" name="enq_id" value="{{ $enq->id }}">
-                    <div class="mx-10">
-                        @isset($enqs['canedit_idx'][$enq->id])
+                <div class="mx-10">
+                    @isset($enqs['canedit_idx'][$enq->id])
+                        <form action="{{ route('enquete.update', ['paper' => $OFFSET + $uid, 'enq' => $enq]) }}"
+                            method="post" id="enqform{{ $enq->id }}">
+                            @csrf
+                            @method('put')
+                            <input type="hidden" name="paper_id" value="{{ $OFFSET + $uid }}">
+                            <input type="hidden" name="enq_id" value="{{ $enq->id }}">
+                            <input type="hidden" name="user_id" value="{{ $OFFSET + $uid }}"> {{-- ここで、参加登録について、実際のユーザではなく、代理捜査の場合の対象ユーザIDを入れる --}}
                             <x-enquete.edit :enq="$enq" :enqans="$enqans">
                             </x-enquete.edit>
-                        @else
-                            <x-enquete.view :enq="$enq" :enqans="$enqans">
-                            </x-enquete.view>
-                        @endisset
-                    </div>
-                </form>
+                        </form>
+                    @else
+                        <x-enquete.view :enq="$enq" :enqans="$enqans">
+                        </x-enquete.view>
+                    @endisset
+                </div>
             @endif
         @endforeach
 

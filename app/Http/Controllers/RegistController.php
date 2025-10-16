@@ -88,6 +88,24 @@ class RegistController extends Controller
         // 参加登録のフォームを表示する
         return redirect()->route('regist.index')->with('feedback.error', '参加登録エラー');
     }
+    public function create_for_admin($user_id)
+    {
+        if (!auth()->user()->can('role_any', 'pc|acc')) {
+            return redirect()->route('regist.index')->with('feedback.error', '参加登録の代理入力の権限がありません。');
+        }
+        if (!is_numeric($user_id)) {
+            return redirect()->route('regist.index')->with('feedback.error', '不正なユーザIDです。');
+        }
+        $reg = Regist::firstOrCreate([
+            'user_id' => $user_id,
+        ]);
+        if ($reg) {
+            // 参加登録が既に存在する場合は、編集画面にリダイレクト
+            return redirect()->route('regist.edit', ['regist' => $reg->id, 'token' => $reg->token()]);
+        }
+        // 参加登録のフォームを表示する
+        return redirect()->route('regist.index')->with('feedback.error', '参加登録エラー');
+    }
     public static function allowed_users_string()
     {
         $allowed_users = [];
