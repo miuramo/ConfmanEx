@@ -203,6 +203,37 @@ class RegistController extends Controller
             return redirect()->route('regist.edit', ['regist' => $id])->with('feedback.error', '参加登録内容が無効です。');
         }
     }
+    /**
+     * 参加登録をキャンセルにする（PC、会計担当のみ）
+     * valid = false
+     * canceled = true
+     * canceled_at = now()
+     */
+    public function cancel($id, $iscancel = true)
+    {
+        if (!auth()->user()->can('role_any', 'pc|acc')) {
+            return redirect()->route('regist.index')->with('feedback.error', '参加キャンセルの権限がありません。');
+        }
+        if (!is_numeric($id)) {
+            return redirect()->route('role.top', ['role' => 'acc'])->with('feedback.error', '不正な参加登録IDです。');
+        }
+        // 参加登録の編集フォームを表示する
+        $reg = Regist::findOrFail($id);
+        if ($iscancel) {
+            $reg->valid = false;
+            $reg->canceled = true;
+            $reg->canceled_at = now();
+            $reg->save();
+            return redirect()->route('role.top', ['role' => 'acc'])->with('feedback.success', $reg->user->name . 'さんの登録をキャンセルしました。');
+        } else {
+            // キャンセルを元に戻す
+            $reg->valid = true;
+            $reg->canceled = false;
+            $reg->canceled_at = null;
+            $reg->save();
+            return redirect()->route('role.top', ['role' => 'acc'])->with('feedback.success', $reg->user->name . 'さんのキャンセルを解除しました。');
+        }
+    }
 
     /**
      * 関連アンケートも含めて、参加登録を削除する

@@ -22,7 +22,9 @@
                     <td class="px-1">{{ $reg->user->affil }}</td>
                     <td class="px-1 text-center">{{ substr($reg->created_at, 5, 11) }}</td>
                     <td class="px-1 text-center text-xs">
-                        @if ($reg->submitted_at)
+                        @if($reg->canceled_at)
+                            キャンセル済
+                        @elseif ($reg->submitted_at)
                             再編集中 （一度は完了済）
                         @else
                             未完了

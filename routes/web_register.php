@@ -14,6 +14,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/regist_sponsor/{token}', [RegistController::class, 'create_for_sponsors'])->name('regist.sponsor');
     Route::get('/regist_admin/{user_id}', [RegistController::class, 'create_for_admin'])->name('regist.admin');
+    Route::get('/regist_cancel/{regist}/{iscancel?}', [RegistController::class, 'cancel'])->name('regist.cancel');
 });
 
 // Route::middleware('guest')->group(function () {});

@@ -24,35 +24,54 @@
                     @if ($regD[$u->id]->valid)
                         <td class="px-2 bg-slate-200 text-green-600">有効（完了）</td>
                     @else
-                        <td class="px-2 bg-slate-200 text-red-600">無効（未完了）</td>
+                        <td class="px-2 bg-slate-200 text-red-600">
+                            @if ($regD[$u->id]->canceled_at)
+                                <span class="text-black bg-yellow-200 font-extrabold p-1">キャンセル済</span>
+                            @else
+                                無効（未完了）
+                            @endif
+                        </td>
                     @endif
-                    <td class="px-2 bg-slate-200">{{ substr($regD[$u->id]->submitted_at,5,11) }}</td>
+                    <td class="px-2 bg-slate-200">{{ substr($regD[$u->id]->submitted_at, 5, 11) }}</td>
                     <td class="px-2 bg-slate-200">
-                        <x-element.linkbutton2
-                            href="{{ route('regist.edit', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
-                            color="blue" target="_blank" size="xs" confirm="{{ $u->name }} (UserID: {{$u->id}}) さんの参加登録を代理で編集します。よろしいですか？">編集</x-element.linkbutton2>
                         <x-element.linkbutton2
                             href="{{ route('regist.show', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
                             color="green" target="_blank" size="xs">参照</x-element.linkbutton2>
+                        <x-element.linkbutton2
+                            href="{{ route('regist.edit', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
+                            color="blue" target="_blank" size="xs"
+                            confirm="{{ $u->name }} (UserID: {{ $u->id }}) さんの参加登録を代理で編集します。よろしいですか？">編集</x-element.linkbutton2>
                     </td>
                 @else
                     <td class="px-2 bg-slate-200 text-orange-500 text-center">未登録</td>
                     {{-- 初回完了を飛ばす --}}
                     <td class="px-2 bg-slate-200"></td>
                     <td class="px-2 bg-slate-200">
-                        <x-element.linkbutton2
-                            href="{{ route('regist.admin', ['user_id' => $u->id]) }}" color="gray" target="_blank" confirm="{{ $u->name }} (UserID: {{$u->id}}) さんの参加登録を代理で作成します。よろしいですか？"
+                        <x-element.linkbutton2 href="{{ route('regist.admin', ['user_id' => $u->id]) }}" color="gray"
+                            target="_blank"
+                            confirm="{{ $u->name }} (UserID: {{ $u->id }}) さんの参加登録を代理で作成します。よろしいですか？"
                             size="xs">代理作成</x-element.linkbutton2>
                     </td>
                 @endisset
                 <td class="px-2 bg-slate-200">
                     @isset($regD[$u->id])
-                        {{ substr($regD[$u->id]->updated_at,5,11) }}
+                        {{ substr($regD[$u->id]->updated_at, 5, 11) }}
                     @endisset
                 </td>
                 <td class="px-2 bg-slate-200">{{ $u->email }}</td>
                 <td class="px-2 bg-slate-200">
                     @isset($regD[$u->id])
+                        @if (!$regD[$u->id]->canceled_at)
+                            <x-element.linkbutton2 href="{{ route('regist.cancel', ['regist' => $regD[$u->id]->id]) }}"
+                                confirm="{{ $u->name }}さんの参加登録をキャンセルします。よろしいですか？" color="yellow" size="xs">
+                                キャンセル
+                            </x-element.linkbutton2>
+                        @else
+                            <x-element.linkbutton2 href="{{ route('regist.cancel', ['regist' => $regD[$u->id]->id, 'iscancel' => 0]) }}"
+                                confirm="{{ $u->name }}さんのキャンセルを解除します。よろしいですか？" color="yellow" size="xs">
+                                キャンセルを解除
+                            </x-element.linkbutton2>
+                        @endif
                         <x-element.deletebutton action="{{ route('regist.destroy', ['regist' => $regD[$u->id]->id]) }}"
                             confirm="{{ $u->name }}さんの参加登録を削除します。よろしいですか？" color="red" size="xs">
                             削除
