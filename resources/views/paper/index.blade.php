@@ -34,6 +34,19 @@
                             新規投稿 </x-element.linkbutton>
                     </div>
                 </div>
+
+                <div></div>
+            
+                @if(auth()->user()->can('role_any','reviewer|metareviewer'))
+                <div
+                    class="xs:text-sm sm:text-xl text-blue-700 bg-cyan-200 dark:bg-cyan-800 dark:text-blue-700 p-4 rounded-md text-center">
+                    【査読者のかたへ】依頼された査読・Biddingをはじめるには、以下の「査読一覧」ボタン（または、トップメニューの「査読」）をクリックしてください。
+                    <div class="mt-5 mb-2">
+                        <x-element.linkbutton href="{{ route('role.top', ['role' => 'rev']) }}" color="cyan">
+                            査読一覧 </x-element.linkbutton>
+                    </div>
+                </div>
+                @endif
             @else
                 @foreach ($all as $paper)
                     @if ($paper->accepted)
