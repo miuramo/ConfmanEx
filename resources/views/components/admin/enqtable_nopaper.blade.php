@@ -1,6 +1,6 @@
 @props([
     'papers' => [],
-    'heads' => ['uid', 'name', 'affil', 'email', 'submitted_at', 'isearly'],
+    'heads' => ['uid', 'name', 'affil', 'email', 'submitted_at', 'isearly', 'canceled_at'],
     'enqans' => [],
     'enq' => [],
 ])
@@ -53,6 +53,11 @@
                 <td class="p-1">
                     @isset($regists[$paper->id])
                         {{ $regists[$paper->id]->isearly }}
+                    @endisset
+                </td>
+                <td class="p-1">
+                    @isset($regists[$paper->id])
+                        {{ $regists[$paper->id]->canceled_at }}
                     @endisset
                 </td>
                 {{-- アンケート --}}
