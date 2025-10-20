@@ -895,7 +895,7 @@ class Paper extends Model
                 return $cat->is_accept_altpdf(); // カメラレディ投稿期間が過ぎて、ロックされているならアップロード不可。ただしAltPDFは設定による。
             } else {
                 if ($this->is_accepted_in_any_category()) return true; // カメラレディ投稿期間のあいだ、採択者はアップロードできる
-                else return false; // 採択者以外はアップロード不可
+                else return $cat->can_upload_not_accepted; // 採択者以外はアップロード不可かどうかは、投稿受付管理で設定する（デフォルトは不可）
             }
         }
         return false; // ここは使わない
