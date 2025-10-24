@@ -166,7 +166,9 @@ class MailTemplate extends Model
         foreach ($cats as $cat) {
             $accept_ids = Accept::where('judge', '>', 0)->pluck("id")->toArray();
             $subs = Submit::where('category_id', $cat)->whereIn('accept_id', $accept_ids)->orderBy('paper_id')->get();
-            foreach ($subs as $sub) $papers[] = $sub->paper;
+            foreach ($subs as $sub) {
+                if ($sub->paper) $papers[] = $sub->paper;
+            }
         }
         return $papers;
     }
@@ -176,7 +178,9 @@ class MailTemplate extends Model
         foreach ($cats as $cat) {
             $accept_ids = Accept::where('judge', '<', 0)->pluck("id")->toArray();
             $subs = Submit::where('category_id', $cat)->whereIn('accept_id', $accept_ids)->orderBy('paper_id')->get();
-            foreach ($subs as $sub) $papers[] = $sub->paper;
+            foreach ($subs as $sub) {
+                if ($sub->paper) $papers[] = $sub->paper;
+            }
         }
         return $papers;
     }
@@ -192,7 +196,9 @@ class MailTemplate extends Model
     {
         $papers = [];
         $subs = Submit::whereIn('accept_id', $accept_ids)->orderBy('paper_id')->get();
-        foreach ($subs as $sub) $papers[] = $sub->paper;
+        foreach ($subs as $sub) {
+            if ($sub->paper) $papers[] = $sub->paper;
+        }
         return $papers;
     }
     /**
@@ -203,7 +209,9 @@ class MailTemplate extends Model
         $papers = [];
         $accept_ids = Accept::whereIn('judge', $accept_judges)->pluck("id")->toArray();
         $subs = Submit::whereIn('accept_id', $accept_ids)->orderBy('paper_id')->get();
-        foreach ($subs as $sub) $papers[] = $sub->paper;
+        foreach ($subs as $sub) {
+            if ($sub->paper) $papers[] = $sub->paper;
+        }
         return $papers;
     }
     /**
@@ -215,7 +223,7 @@ class MailTemplate extends Model
         $subs = Submit::whereIn('accept_id', $accept_ids)->orderBy('paper_id')->get();
         foreach ($subs as $sub) {
             // 当初のcat_idは、submitのcat_idではなく、paperのcat_id
-            if ($sub->paper->category_id == $catid) $papers[] = $sub->paper;
+            if ($sub->paper && $sub->paper->category_id == $catid) $papers[] = $sub->paper;
         }
         return $papers;
     }
