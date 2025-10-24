@@ -172,6 +172,9 @@ class MailTemplate extends Model
         }
         return $papers;
     }
+    /**
+     * 不採択（未判定は含まない）
+     */
     public static function mt_reject(int ...$cats)
     {
         $papers = [];
