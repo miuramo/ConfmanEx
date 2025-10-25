@@ -103,7 +103,8 @@ class AdminController extends Controller
         foreach ($req->all() as $k => $v) {
             if (strpos($k, "targetcat") === 0) $targets[] = $v;
         }
-        if (count($targets) == 0) $targets =  [1, 2, 3];
+        // if (count($targets) == 0) $targets =  [1, 2, 3];
+        // if (count($targets) == 0) $targets =  [1, 2, 3];
 
         $all = Paper::whereIn('category_id', $targets)->get();
         $roles = auth()->user()->roles;
@@ -131,7 +132,7 @@ class AdminController extends Controller
         foreach ($req->all() as $k => $v) {
             if (strpos($k, "targetcat") === 0) $targets[] = $v;
         }
-        if (count($targets) == 0) $targets =  [1, 2, 3];
+        // if (count($targets) == 0) $targets =  [1, 2, 3];
         $target_str = implode("", $targets);
         return Excel::download(new PapersExportFromView($targets), "paperlist_{$target_str}.xlsx");
     }
