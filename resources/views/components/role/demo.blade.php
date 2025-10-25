@@ -120,14 +120,26 @@
                     <th>採択ラベル</th>
                     <th>PaperIDリスト</th>
                     <th class="px-2">件数</th>
+                    <th class="px-2">PDF Download</th>
                 </tr>
                 @foreach ($dPP['ary'] as $cat => $cat_ary)
                     @foreach ($cat_ary as $acc => $papers)
-                        <tr>
+                        <tr class="odd:bg-white even:bg-gray-100 hover:bg-lime-100">
                             <td class="text-center px-2">{{ $dPP['cat'][$cat] }}</td>
                             <td class="text-center px-2">{{ $dPP['acc'][$acc] }}</td>
                             <td class="text-center px-2">{{ implode(', ', $papers) }}</td>
                             <td class="text-center px-2">{{ count($papers) }}</td>
+                            <td class="text-center px-2">
+                                <form action="{{ route('admin.zipstream_paperids') }}" method="post"
+                                    id="admin_zipdownload_paperids_{{ $cat }}_{{ $acc }}">
+                                    @csrf
+                                    @method('post')
+                                    <input type="hidden" name="pid_csv" value="{{ implode(',', $papers) }}">
+                                    <x-element.submitbutton value="downzip" color="yellow" size="xs">
+                                        一括Download
+                                    </x-element.submitbutton>
+                                </form>
+                            </td>
                         </tr>
                     @endforeach
                 @endforeach
@@ -222,7 +234,7 @@
     </div>
 
     <x-element.h1>
-        <x-element.linkbutton href="{{route('file.enq_file_status')}}" color="lime">概要説明スライド(altpdf) 提出状況
+        <x-element.linkbutton href="{{ route('file.enq_file_status') }}" color="lime">概要説明スライド(altpdf) 提出状況
         </x-element.linkbutton>
     </x-element.h1>
 

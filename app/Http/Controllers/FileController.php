@@ -413,6 +413,10 @@ class FileController extends Controller
         // アンケート回答と、PDF提出を、それぞれ取得する。
         // まず、アンケート回答を取得
         $enqitm = EnqueteItem::where("name", $enqname)->first();
+        if (!$enqitm) {
+            return redirect()->route('role.top', ['role'=> "demo"])->with('feedback.error', "アンケート項目で『{$enqname}』が見つかりませんでした。");
+            // abort(404, "Enquete Item not found: {$enqname}");
+        }
         $enqanswers_pid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->get()->pluck('valuestr', 'paper_id')->toArray();
 
         //AltPDF提出

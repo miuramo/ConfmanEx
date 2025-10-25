@@ -131,8 +131,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin_deletepaper/{cat}', [AdminController::class, 'deletepaper'])->name('admin.deletepaper');          // PC Top
     Route::get('/admin_timestamp/{cat}', [AdminController::class, 'timestamp'])->name('admin.timestamp');          // PC Top
     Route::post('/admin_timestamp/{cat}', [AdminController::class, 'timestamp'])->name('admin.timestamp');          // PC Top
-    Route::post('/admin_zipf', [AdminController::class, 'zipdownload'])->name('admin.zipdownload');
+    Route::post('/admin_zipf', [AdminController::class, 'zipdownload'])->name('admin.zipdownload'); // 将来的に、streamに統合していく
     Route::post('/admin_zipds', [AdminController::class, 'zipdownloadstream'])->name('admin.zipstream');
+    Route::post('/admin_zipds_paperids', [AdminController::class, 'zipdownloadstream_paperids'])->name('admin.zipstream_paperids');
     Route::get('/admin_paperlist_excel', [AdminController::class, 'paperlist_excel'])->name('admin.paperlist_excel');
     Route::get('/admin_hiroba_excel', [AdminController::class, 'hiroba_excel'])->name('admin.hiroba_excel');
     Route::get('/admin_filelist', [AdminController::class, 'filelist'])->name('admin.filelist');

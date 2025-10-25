@@ -275,6 +275,31 @@ class AdminController extends Controller
         // return view('admin.zipdownload')->with(compact("targets","filetypes"));
     }
 
+    /**
+     * ZIP file download for PC by paper ids （登壇不採択→デモ投稿をデモ担当者が確認するため）
+     */
+    public function zipdownloadstream_paperids(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc')) {
+            if (!auth()->user()->can('manage_cat_any')) abort(403);
+        }
+        $pid_csv = $req->input("pid_csv");
+        $pid_array = explode(",", $pid_csv);
+        $filetypes = ['pdf'];
+        if (count($pid_array) > 0) {
+            // find Target Papers
+            $papers = Paper::whereIn('id', $pid_array)->get();
+            $zipFN = 'files.zip';
+            $zipstream = Zip::create($zipFN);
+            foreach ($papers as $paper) {
+                $paper->addFilesToZipStream($zipstream, $filetypes);
+            }
+            // Zipアーカイブをストリーミングでダウンロード
+            return $zipstream;
+        }
+        return response()->json(['message' => 'ここは実行されない。'], 500);
+    }
+
 
 
     /**
