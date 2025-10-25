@@ -35,9 +35,10 @@ class EnqueteAnswer extends Model
     // アンケート showonpaperindex
     // [paperid][enqid][name1] = value1
     // [paperid][enqid][name2] = value2
+    // 参加登録は含めない(withpaper = true のもののみ) 含めると、関係のない機微情報が入ってしまうため
     public static function getAnswers()
     {
-        $showonEnq = Enquete::where("showonpaperindex", true)->get()->pluck('id')->toArray();
+        $showonEnq = Enquete::where("showonpaperindex", true)->where("withpaper", true)->get()->pluck('id')->toArray();
 
         $all = EnqueteAnswer::with('item')->whereIn('enquete_id', $showonEnq)
             ->orderBy("paper_id")->orderBy("enquete_id")->orderBy("enquete_item_id")->get();
