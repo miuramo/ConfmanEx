@@ -6,6 +6,7 @@
             <th class="px-2">Cat</th>
             <th class="px-2">PID</th>
             <th class="px-2">Title</th>
+            <th class="px-2">Owner status</th>
         </tr>
         @foreach ($papers_without_presenters as $pid)
             @php
@@ -16,6 +17,24 @@
                 <td class="px-1 text-center">{{ $paper->category_id }}</td>
                 <td class="px-1 text-center">{{ $paper->id }}</td>
                 <td class="px-1 ">{{ $paper->title }}</td>
+                <td class="px-1 ">
+                    @isset($pending_name[$paper->owner])
+                    <span class="text-blue-400">
+                    {{ $pending_name[$paper->owner] }} ({{$paper->owner}}) 未完了
+                    </span>
+                    @else
+                    <span class="text-pink-400">
+                    @php
+                        $user = \App\Models\User::find($paper->owner);
+                    @endphp
+                    @if( $user )
+                        {{ $user->name }} ({{ $paper->owner }}) 未開始
+                    @else
+                        (未登録ユーザ)
+                    @endif 
+                    </span>
+                    @endisset
+                </td>
             </tr>
         @endforeach
     </table>
