@@ -3,6 +3,8 @@
     @php
         $mikaishi = [];
         $mikanryo = [];
+        $paper_mikaishi = [];
+        $paper_mikanryo = [];
     @endphp
     <table class="text-sm border-collapse border border-slate-400 mb-4">
         <tr class="bg-slate-300">
@@ -27,6 +29,7 @@
                         </span>
                         @php
                             $mikanryo[] = $paper->owner;
+                            $paper_mikanryo[] = $paper->id;
                         @endphp
                     @else
                         <span class="text-pink-400">
@@ -37,6 +40,7 @@
                                 {{ $user->name }} ({{ $paper->owner }}) 未開始
                                 @php
                                     $mikaishi[] = $paper->owner;
+                                    $paper_mikaishi[] = $paper->id;
                                 @endphp
                             @else
                                 (未登録ユーザ)
@@ -47,7 +51,11 @@
             </tr>
         @endforeach
     </table>
-    <div class="mb-4 text-sm"> User IDs: 
+    <div class="mb-2 text-sm"> User IDs: 
         <b class="text-blue-400 text-sm">{{ implode(', ', array_unique($mikanryo)) }}</b> <span class="mx-2"></span>
         <b class="text-pink-400 text-sm">{{ implode(', ', array_unique($mikaishi)) }}</b>
+    </div>
+    <div class="mb-2 text-sm"> Paper IDs: 
+        <b class="text-blue-400 text-sm">{{ implode(', ', array_unique($paper_mikanryo)) }}</b> <span class="mx-2"></span>
+        <b class="text-pink-400 text-sm">{{ implode(', ', array_unique($paper_mikaishi)) }}</b>
     </div>
