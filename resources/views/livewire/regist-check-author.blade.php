@@ -59,3 +59,4 @@
         <b class="text-blue-400 text-sm">{{ implode(', ', array_unique($paper_mikanryo)) }}</b> <span class="mx-2"></span>
         <b class="text-pink-400 text-sm">{{ implode(', ', array_unique($paper_mikaishi)) }}</b>
     </div>
+</div>
