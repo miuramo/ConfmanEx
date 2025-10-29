@@ -45,6 +45,9 @@ class Affil extends Model
             foreach ($papers as $paper) {
                 $authorlist_ary = $paper->authorlist_ary();
                 foreach ($authorlist_ary as $uu) {
+                    if (count($uu) < 2) {
+                        continue;
+                    }
                     $affil = $uu[1];
                     if ($affil) {
                         // ・、，/で区切る
