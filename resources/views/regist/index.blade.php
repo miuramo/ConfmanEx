@@ -114,7 +114,11 @@
                             </tr>
                             @if ($reg->valid)
                                 <tr>
-                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">参加登録ID</td>
+                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">参加者ID</td>
+                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">{{ $reg->user_id }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">参加登録ID </td>
                                     <td class="border px-4 py-2 dark:text-gray-100 text-center">{{ $reg->id }}</td>
                                 </tr>
                                 <tr>

@@ -1,6 +1,6 @@
 @props([
     'papers' => [],
-    'heads' => ['uid', 'name', 'affil', 'email', 'submitted_at', 'isearly', 'canceled_at'],
+    'heads' => ['uid', 'name', 'affil', 'email', 'submitted_at', 'updated_at', 'isearly', 'canceled_at'],
     'enqans' => [],
     'enq' => [],
 ])
@@ -48,6 +48,13 @@
                 <td class="p-1">
                     @isset($regists[$paper->id])
                         {{ $regists[$paper->id]->submitted_at }}
+                    @endisset
+                </td>
+                <td class="p-1">
+                    @isset($regists[$paper->id])
+                        @if($regists[$paper->id]->submitted_at != $regists[$paper->id]->updated_at)
+                            {{ $regists[$paper->id]->updated_at }}
+                        @endif
                     @endisset
                 </td>
                 <td class="p-1">
