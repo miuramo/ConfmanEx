@@ -57,11 +57,11 @@
         著者名（所属）のカッコは、全角・半角どちらでも大丈夫です。また、著者名と所属の間のスペースの有無も問いません。<br>
         複数所属は、半角スラッシュ / で区切ってください。<br>
         著者名と所属に関しては、出力例を適宜確認しながら、修正されることをおすすめします。
-        <x-element.linkbutton href="{{ route('pub.bibinfo', ['cat' => $catid, 'abbr' => 'true']) }}" target="_blank"
+        <x-element.linkbutton href="{{ route('pub.bibinfo', ['cat' => $cat, 'abbr' => 'true']) }}" target="_blank"
             color="cyan" size="sm">
             出力例（所属をまとめる）
         </x-element.linkbutton>
-        <x-element.linkbutton href="{{ route('pub.bibinfo', ['cat' => $catid]) }}" target="_blank" color="teal"
+        <x-element.linkbutton href="{{ route('pub.bibinfo', ['cat' => $cat]) }}" target="_blank" color="teal"
             size="sm">
             出力例（所属をまとめない）
         </x-element.linkbutton>
