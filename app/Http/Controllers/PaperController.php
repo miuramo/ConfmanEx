@@ -597,6 +597,7 @@ class PaperController extends Controller
             $paper->pptx_file_id = $file->id;
 
         $paper->save();
+        $file->valid = 1;
         $file->pending = 0;
         $file->deleted = 0;
         $file->locked = 1;

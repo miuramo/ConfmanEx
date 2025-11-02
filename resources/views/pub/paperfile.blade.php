@@ -138,7 +138,7 @@ if($file->valid && $file->deleted == 0) {
                 confirm="Invalid & Deletedにすることで、よろしければ、OKを押してください。">Invalid & Deletedにする</x-element.submitbutton2>
         </form>
         <div class="p-2 m-1 bg-slate-50">
-        ここで採用すると、Pending属性、削除済み属性は解除され、Lock属性がつきます。<br>
+        ここで採用すると、Pending属性、削除済み属性は解除され、Lock属性、Valid属性がつきます。<br>
         Invalid & Deletedにすると、Pending属性、Lock属性は解除されます。<br>
         掲示板には通知しません。必要があれば、個別に通知してください。<br>
         論文（Paper）から、参照・採用できるファイルは、種別(pdf,img,video,altpdf,etc...)ごとに一つのみです。
