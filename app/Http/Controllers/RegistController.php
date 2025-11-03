@@ -162,7 +162,10 @@ class RegistController extends Controller
             $reg->save();
             return view('regist.edit', ['regist' => $reg])->with('regid', $id)->with('reg', $reg);
         } else {
-            return redirect()->route('regist.index')->with('feedback.error', '現在は参加登録の編集はできません。');
+            if ($reg->valid) {
+                return redirect()->route('regist.index')->with('feedback.error', '現在は参加登録の編集はできません。');
+            }
+            return view('regist.edit', ['regist' => $reg])->with('regid', $id)->with('reg', $reg);
         }
     }
     public function show($id, $token = null)

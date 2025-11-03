@@ -175,7 +175,7 @@ class Regist extends Model
         if (!$enquete_item_target) {
             return [];
         }
-        $res = Regist::where('valid', 1)->whereNotNull('submitted_at')
+        $res = Regist::where('valid', 1)
             ->leftJoin('enquete_answers', function ($join) use ($enquete_item_target) {
                 $join->on('regists.user_id', '=', 'enquete_answers.user_id')
                     ->where('enquete_answers.enquete_item_id', $enquete_item_target->id);
