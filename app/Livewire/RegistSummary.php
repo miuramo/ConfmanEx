@@ -9,7 +9,7 @@ class RegistSummary extends Component
     public $finishedCount = 0;
     public $notfinishedCount = 0;
     public $summary = [];
-    public $items = ["kubun", "volunteer", "zenpaku", "roomshare", "bus1","bus2"];
+    public $items = ["kubun", "volunteer", "zenpaku", "roomshare", "bus1", "bus2"];
 
     public function mount()
     {
