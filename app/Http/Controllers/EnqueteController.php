@@ -310,7 +310,7 @@ class EnqueteController extends Controller
         $paper = new Paper();
         $paper->id = 0;
         $paper->category_id = 1;
-        return view("enquete.pageedit")->with(compact("enq", "enqs", "enqans", "paper", "key"));
+        return view("enquete.pageedit_dummy")->with(compact("enq", "enqs", "enqans", "paper", "key"));
     }
 
 

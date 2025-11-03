@@ -179,7 +179,7 @@ class Regist extends Model
             ->leftJoin('enquete_answers', function ($join) use ($enquete_item_target) {
                 $join->on('regists.user_id', '=', 'enquete_answers.user_id')
                     ->where('enquete_answers.enquete_item_id', $enquete_item_target->id);
-                $join->where('enquete_answers.paper_id','>',0);
+                $join->where('enquete_answers.paper_id','>',0); // ここで、アンケートプレビューからの重複回答を排除
             })
             ->selectRaw('enquete_answers.valuestr as ' . $enqitm_name . ', regists.isearly, count(*) as cnt')
             ->groupBy($enqitm_name, 'isearly')
