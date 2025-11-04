@@ -39,7 +39,7 @@ class RoleController extends Controller
         }
         // $role = Role::where("name",$name)->first();
         $role = Role::findByIdOrName($name, null);
-        return view('role/top', ["role" => 1])->with(["name" => $name, "role" => $role]);
+        return view('role.top', ["role" => 1])->with(["name" => $name, "role" => $role]);
     }
 
     /**
@@ -53,7 +53,7 @@ class RoleController extends Controller
 
         $users = $role->users;
         $roles = Role::orderBy("id")->get();
-        return view('role/edit', ["role" => $name])->with(compact("users", "role", "roles"));
+        return view('role.edit', ["role" => $name])->with(compact("users", "role", "roles"));
     }
 
     /**
@@ -235,6 +235,17 @@ class RoleController extends Controller
         // $user->detachRolesWithLogging($role->id);
 
         return redirect()->route('role.edit', ["role" => $role->name]);
+    }
+
+    /**
+     * 自分が参加しているRoleに参加している人を見る
+     */
+    public function myroles()
+    {
+        $user = auth()->user();
+        $roles = $user->roles;
+
+        return view('role.myroles', compact('roles'));
     }
 
     /**

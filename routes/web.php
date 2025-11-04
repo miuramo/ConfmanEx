@@ -145,11 +145,11 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/role/{role}/top', [RoleController::class, 'top'])->name('role.top');
-    // Route::get('/role/{role}/pc', [RoleController::class, 'top'])->name('role.pc'); //本当はrole.topがあればよいのだが、navigationをactiveにするため...
-    // Route::get('/role/{role}/pub', [RoleController::class, 'top'])->name('role.pub'); //本当はrole.topがあればよいのだが、navigationをactiveにするため...
     Route::get('/role/{role}/edit', [RoleController::class, 'edit'])->name('role.edit');
     Route::post('/role/{role}/edit', [RoleController::class, 'editpost'])->name('role.editpost');
     Route::delete('/role/{role}/leave/{user}', [RoleController::class, 'leave'])->name('role.leave');
+    // 自分が参加しているRoleに参加している人を見る
+    Route::get('/myroles/', [RoleController::class, 'myroles'])->name('role.myroles');
     // 査読割り当て
     Route::get('/role/{role}/revassign/{cat}', [RoleController::class, 'revassign'])->name('role.revassign');
     Route::post('/role/{role}/revassign/{cat}', [RoleController::class, 'revassignpost'])->name('role.revassignpost');

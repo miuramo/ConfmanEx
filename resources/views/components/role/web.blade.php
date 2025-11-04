@@ -80,7 +80,8 @@
                 JSON
             </x-element.linkbutton>
             <span class="mx-2"></span>
-            <x-element.linkbutton href="{{ route('pub.json_booth_title_author', ['key' => $dkey, 'readable' => true]) }}" color="teal"
+            <x-element.linkbutton
+                href="{{ route('pub.json_booth_title_author', ['key' => $dkey, 'readable' => true]) }}" color="teal"
                 size="sm" target="_blank">
                 Web確認用
             </x-element.linkbutton>
@@ -214,6 +215,9 @@
                 ({{ $ro->name }})
             </span>
         @endforeach
+        <x-element.linkbutton href="{{ route('role.myroles') }}" color="cyan">
+            自分が参加しているRoleに他の登録済みユーザを招待する
+        </x-element.linkbutton>
     </div>
 
     {{-- <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">

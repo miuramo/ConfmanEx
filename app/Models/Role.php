@@ -78,7 +78,7 @@ class Role extends Model
         $roles = Role::orderBy("id")->get();
         $ary = [];
         foreach($roles as $role){
-            if ($this->id >= $role->id) break;
+            if ($this->id >= $role->id) break; // 自分自身も含めない
             $ary []= $role->name;
         }
         if (count($ary)==0) $ary[] = "admin";
