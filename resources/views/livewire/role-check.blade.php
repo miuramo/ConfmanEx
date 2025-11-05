@@ -38,7 +38,7 @@
                             <td class="px-2 bg-slate-200">...{{ '@' . Str::after($u->email, '@') }}</td>
                             <td class="px-2 bg-slate-200">
                                 @if ($role->containsUser($u->id))
-                                    <div class="text-gray-400 bg-gray-100 font-bold px-2 py-1 rounded">追加済</div>
+                                    <div class="text-gray-400 bg-gray-100 font-bold px-2 py-1 rounded select-none">追加済</div>
                                 @else
                                     <button x-data
                                         x-on:click.prevent="if (confirm('【{{ $role->desc }}】に{{ $u->name }}さんを追加しますか？')) { $wire.addUser({{ $u->id }}) }"
