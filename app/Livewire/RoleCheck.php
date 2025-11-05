@@ -51,7 +51,9 @@ class RoleCheck extends Component
     }
     public function addUser($user_id)
     {
-        $this->role->users()->attach($user_id);
-        $this->resetSearch();
+        if (!$this->role->containsUser($user_id)) {
+            $this->role->users()->attach($user_id);
+            // $this->resetSearch();
+        }
     }
 }
