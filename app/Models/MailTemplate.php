@@ -634,4 +634,13 @@ class MailTemplate extends Model
         }
         return $array_papers;
     }
+
+    /**
+     * 登録ユーザ全員 引数を省略すると有効ユーザ、0を指定すると無効ユーザ
+     */
+    public static function mt_reg_user_valid($valid = 1)
+    {
+        $uids = Regist::where('valid', $valid)->pluck('user_id')->toArray();
+        return User::whereIn('id', $uids)->get();
+    }
 }

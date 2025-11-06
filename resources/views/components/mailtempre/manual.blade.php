@@ -86,6 +86,7 @@
                 'notdownloaded(catid)' => '未ダウンロード',
                 'primary_of_acc(accid1,accid2,...)' => '採択IDのPrimary査読者',
                 'primary_of_paper(pid1,pid2,...)' => 'PaperIDのPrimary査読者',
+                'reg_user_valid( valid=1 )' => '登録ユーザ全員 (引数を「0」にすると無効ユーザのみ)',
             ];
         @endphp
         <table class="border-cyan-200 border-2">
