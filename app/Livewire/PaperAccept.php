@@ -3,7 +3,10 @@
 namespace App\Livewire;
 
 use App\Models\Paper;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
+
+use function Laravel\Prompts\info;
 
 class PaperAccept extends Component
 {
@@ -21,20 +24,28 @@ class PaperAccept extends Component
     public function mount()
     {
         if (self::$cats === null) {
-            self::$cats = \App\Models\Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+            self::$cats = Cache::rememberForever('cats', function () {
+                return \App\Models\Category::pluck('name', 'id')->toArray();
+            });
         }
         if (self::$accepts === null) {
-            self::$accepts = \App\Models\Accept::select('id', 'name')->get()->pluck('name', 'id')->toArray();
+            self::$accepts = Cache::rememberForever('accepts', function () {
+                return \App\Models\Accept::pluck('name', 'id')->toArray();
+            });
         }
         if (self::$judges === null) {
-            self::$judges = \App\Models\Accept::select('id', 'judge')->get()->pluck('judge', 'id')->toArray();
+            self::$judges = Cache::rememberForever('judges', function () {
+                return \App\Models\Accept::pluck('judge', 'id')->toArray();
+            });
         }
         if (self::$catcolors === null) {
-            self::$catcolors = \App\Models\Category::select('id', 'bgcolor')->get()->pluck('bgcolor', 'id')->toArray();
+            self::$catcolors = Cache::rememberForever('catcolors', function () {
+                return \App\Models\Category::pluck('bgcolor', 'id')->toArray();
+            });
         }
         // Load paper and submits logic here
         $this->paper = Paper::find($this->paper_id);
-        foreach($this->paper->submits as $submit) {
+        foreach ($this->paper->submits as $submit) {
             $this->submits[$submit->category_id] = $submit;
         }
     }
@@ -44,16 +55,18 @@ class PaperAccept extends Component
     }
     public function editAccept($category_id)
     {
+        if (isset($this->submits[$category_id])) {
+            $this->edit_category_id = $category_id;
+        }
         $this->mount();
         $this->render();
-        // if (isset($this->submits[$category_id])) {
-        //     $this->edit_category_id = $category_id;
-        // }
-        // $this->render();
     }
-    public function updated()
+    // public function updatedSubmits($value, string $key)
+    // {
+    //     info("updatedSubmits: key=$key, value=$value");
+    // }
+    public function updated($property, $value): void
     {
-        $this->mount();
-        $this->render();
+        Log::debug('[updated] ' . $property, ['value' => $value]);
     }
 }
