@@ -15,8 +15,6 @@ class PaperAccept extends Component
     public $paper = null;
     public $submits = []; // key=category_id, value=submit
     static public $cats = null;
-    static public $accepts = null;
-    static public $judges = null;
     static public $catcolors = null;
 
     public $edit_category_id = 0;
@@ -26,16 +24,6 @@ class PaperAccept extends Component
         if (self::$cats === null) {
             self::$cats = Cache::rememberForever('cats', function () {
                 return \App\Models\Category::pluck('name', 'id')->toArray();
-            });
-        }
-        if (self::$accepts === null) {
-            self::$accepts = Cache::rememberForever('accepts', function () {
-                return \App\Models\Accept::pluck('name', 'id')->toArray();
-            });
-        }
-        if (self::$judges === null) {
-            self::$judges = Cache::rememberForever('judges', function () {
-                return \App\Models\Accept::pluck('judge', 'id')->toArray();
             });
         }
         if (self::$catcolors === null) {
