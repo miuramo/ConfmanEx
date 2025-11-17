@@ -171,6 +171,7 @@ Route::middleware('auth')->group(function () {
 
     // 出版担当
     Route::get('pub_accstatus', [SubmitController::class, 'accstatus'])->name('pub.accstatus');
+    Route::get('pub_accstatus_edit', [SubmitController::class, 'accstatus_edit'])->name('pub.accstatus_edit');
     Route::get('pub_accstatusgraph', [SubmitController::class, 'accstatusgraph'])->name('pub.accstatusgraph');
     Route::get('pub/{cat}/booth', [SubmitController::class, 'booth'])->name('pub.booth');
     Route::post('pub/{cat}/booth', [SubmitController::class, 'booth'])->name('pub.booth');

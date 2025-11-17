@@ -24,6 +24,10 @@
         <x-element.linkbutton href="{{ route('pub.addsubmit') }}" color="cyan" target="_blank">
             別カテゴリでの採否を追加する
         </x-element.linkbutton>
+        <span class="mx-4"></span>
+        <x-element.linkbutton href="{{ route('pub.accstatus_edit') }}" color="blue" target="_blank">
+            論文ごとの採否状況の確認と編集
+        </x-element.linkbutton>
     </x-element.h1>
 
     <x-element.h1>
