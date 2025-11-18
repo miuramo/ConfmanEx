@@ -12,6 +12,16 @@
         </h2>
     </x-slot>
 
+    <div class="m-4">
+        <div class="px-4 rounded-md bg-yellow-100 border-yellow-400 border-2 p-2 text-sm">
+            <p class="font-bold">編集の方法と注意点</p>
+            <ul class="list-disc list-inside">
+                <li>採否判定やブースをダブルクリックすると編集できます。ESCキーで編集をキャンセルできます。</li>
+                <li>採否判定が無い場合も、ダブルクリックすると採否を追加できます。ただし、追加した採否に対応するブースを編集するには、一度再読み込みが必要です。</li>
+                <li>採否判定を消すには、一旦判定を「---」にしたうえで、再度ダブルクリックしたときに表示される「削除」ボタンを押してください。</li>
+                <li>ただし、査読が行われている（スコアがある）場合は、採否判定の削除はできません。</li>
+            </ul>
+    </div>
     @php
         $catspans = App\Models\Category::spans();
         $paperids = App\Models\Paper::select('id', 'title')->get()->pluck('title', 'id')->toArray();
