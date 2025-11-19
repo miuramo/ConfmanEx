@@ -5,7 +5,8 @@
     @endphp
     <x-slot name="header">
         <div class="mb-4">
-            <x-element.linkbutton href="{{ url()->previous() ?? route('review.index') }}" color="gray" size="sm">
+            <x-element.linkbutton href="{{ url()->previous() ?? route('review.index') }}" color="gray"
+                confirm="本当に編集を終了して担当査読一覧に戻りますか？ 保存されていない変更がある場合、それらは失われます。" size="sm">
                 &larr; 担当査読一覧に戻る
             </x-element.linkbutton>
         </div>
@@ -92,7 +93,7 @@
 
         <div class="mb-4 my-10">
             <x-element.linkbutton href="{{ url()->previous() ?? route('review.index') }}" color="gray"
-                size="sm">
+                confirm="本当に編集を終了して担当査読一覧に戻りますか？ 保存されていない変更がある場合、それらは失われます。" size="sm">
                 &larr; 担当査読一覧に戻る
             </x-element.linkbutton>
         </div>
