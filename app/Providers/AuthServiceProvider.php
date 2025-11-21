@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Models\LogModify;
 use App\Models\Paper;
+use App\Models\Review;
 use App\Models\Role;
 use App\Models\Submit;
 use App\Policies\FilePolicy;
@@ -90,6 +91,18 @@ class AuthServiceProvider extends ServiceProvider
             return $paper->isCoAuthorEmail($user->email);
         });
 
+        Gate::define('am_i_meta', function ($user, $paper) {
+            $am_i_meta = $user->can('role_any', 'pc|metareviewer');
+            // もし、自分がこの論文の査読者なら、metareviewerRoleがあったとしてもam_i_meta = false にする
+            $rev = Review::where('paper_id', $paper->id)
+                ->where('user_id', $user->id)
+                ->first();
+            if ($rev) {
+                $am_i_meta = false;
+            }
+            return $am_i_meta;
+        });
+
         /**
          * カテゴリの管理権限
          */
@@ -167,7 +180,7 @@ class AuthServiceProvider extends ServiceProvider
                 Log::warning("REG_EARLY_LIMIT is not set correctly. value={$early_end}");
                 return false;
             }
-            return new DateTime() <= new DateTime($early_end." 23:59:59");
+            return new DateTime() <= new DateTime($early_end . " 23:59:59");
         });
     }
 }

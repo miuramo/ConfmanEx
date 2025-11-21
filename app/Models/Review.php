@@ -257,6 +257,7 @@ class Review extends Model
      * 未回答があると $rev->scores は抜けてしまうので、viewpoints をつかってKey->value として確実に配列で返す。
      * @param $only_score が 1のとき、number が含まれるものだけに限定する（通常はしないので0）
      * @param $accepted が 0のとき、doReturnAcceptOnly が 1のものは表示しない
+     * @param $am_i_meta が 1のとき、meta査読者として見ているとみなす（hidefromrev の処理のため）
      */
     public function scores_and_comments($only_doreturn = 1, $only_score = 0, $accepted = 1, $am_i_meta = 0)
     {

@@ -178,7 +178,7 @@ class ReviewController extends Controller
                 return abort(403, 'review comment is not public');
             }
         }
-        $am_i_meta = auth()->user()->can('role_any', 'pc|metareviewer');
+        $am_i_meta = auth()->user()->can('am_i_meta', $paper);
 
         $rigais = RevConflict::arr_pu_rigai($cat->id);
         if (!isset($rigais[$paper->id][auth()->id()]) || $rigais[$paper->id][auth()->id()] < 3) {
@@ -219,7 +219,7 @@ class ReviewController extends Controller
         foreach ($scoreobj as $ea) {
             $scores[$ea->viewpoint_id] = $ea;
         }
-        $am_i_meta = auth()->user()->can('role_any', 'pc|metareviewer');
+        $am_i_meta = auth()->user()->can('am_i_meta', $review->paper);
 
         return view("review.show")->with(compact("review", "viewpoints", "scores", "am_i_meta"));
         //
@@ -233,7 +233,7 @@ class ReviewController extends Controller
         if (!auth()->user()->can('role_any', 'pc|reviewer|metareviewer',)) return abort(403);
         if ($review->token() != $token) return abort(403, "Review Browse TOKEN ERROR");
 
-        $am_i_meta = auth()->user()->can('role_any', 'pc|metareviewer');
+        $am_i_meta = auth()->user()->can('am_i_meta', $review->paper);
 
         if ($review->ismeta) {
             $viewpoints = Viewpoint::where("category_id", $review->category_id)->where("formeta", 1)->orderBy("orderint")->get();

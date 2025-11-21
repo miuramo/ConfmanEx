@@ -8,7 +8,6 @@
         $nameofmeta = App\Models\Setting::getval('NAME_OF_META');
 
         $disclose_reviewer_name = App\Models\Setting::getval('PAPERSCORES__DISCLOSE_REVIEWER_NAME');
-        info($disclose_reviewer_name);
 
     @endphp
     @section('title', $paper->id_03d() . ' スコア')
