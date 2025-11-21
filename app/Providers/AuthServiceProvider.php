@@ -93,9 +93,10 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('am_i_meta', function ($user, $paper) {
             $am_i_meta = $user->can('role_any', 'pc|metareviewer');
-            // もし、自分がこの論文の査読者なら、metareviewerRoleがあったとしてもam_i_meta = false にする
+            // もし、自分がこの論文の一般査読者なら、metareviewerRoleがあったとしてもam_i_meta = false にする
             $rev = Review::where('paper_id', $paper->id)
                 ->where('user_id', $user->id)
+                ->where('ismeta', false)
                 ->first();
             if ($rev) {
                 $am_i_meta = false;
