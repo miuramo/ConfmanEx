@@ -114,6 +114,12 @@
                     @csrf
                     @method('post')
                     <input type="hidden" name="table" value="{{ $tableName }}">
+                    <x-element.submitbutton type="submit" value="bcopy" color="lime" size="sm"
+                        confirm="本当にまとめてコピーする？">
+                        選択した行をコピー
+                    </x-element.submitbutton>
+                    <span class="mx-4"></span>
+
                     <x-element.submitbutton type="submit" color="purple" size="sm" confirm="本当にまとめて削除する？">
                         選択した行を削除
                     </x-element.submitbutton>

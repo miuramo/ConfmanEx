@@ -532,6 +532,7 @@ class AdminController extends Controller
         }
     }
 
+    /** チェックした行を削除またはコピー */
     public function crudchkdelete(Request $req)
     {
         if (!auth()->user()->can('role_any', 'admin|manager|ec')) abort(403);
@@ -539,7 +540,23 @@ class AdminController extends Controller
         $eloModelName = 'App\\Models\\' . Str::studly(Str::singular($tableName)); //　studly でUpperCamelCaseにする
         if (class_exists($eloModelName)) {
             $dids = $req->input('did');
-            $eloModelName::whereIn('id', $dids)->forceDelete();
+            if (!$dids || count($dids) == 0) {
+                return redirect()->route('admin.crud', ['table' => $tableName])->with('feedback.error', '削除またはコピーする行を選択してください。');
+            }
+            if ($req->input('action') == 'bdelete') {
+                $eloModelName::whereIn('id', $dids)->forceDelete();
+            }
+            if ($req->input('action') == 'bcopy') {
+                foreach ($dids as $did) {
+                    $datum = $eloModelName::find($did);
+                    if (isset($datum)) {
+                        $newdatum = $datum->replicate(); // copy data
+                        $newdatum->save();
+                    }
+                }
+            }
+        } else {
+            info("crudchkdelete: {$eloModelName} is not found.");
         }
         return redirect()->route('admin.crud', ['table' => $tableName]);
     }

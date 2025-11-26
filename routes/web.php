@@ -195,11 +195,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_crud', [AdminController::class, 'crud'])->name('admin.crud');
     Route::get('/admin_crudcopy', [AdminController::class, 'crudcopy'])->name('admin.crudcopy');
     Route::get('/admin_cruddelete', [AdminController::class, 'cruddelete'])->name('admin.cruddelete');
-    Route::post('/admin_crudchkdelete', [AdminController::class, 'crudchkdelete'])->name('admin.crudchkdelete'); // チェックしたものを削除
+    Route::post('/admin_crudchkdelete', [AdminController::class, 'crudchkdelete'])->name('admin.crudchkdelete'); // チェックしたものを削除またはコピー
     Route::get('/admin_crudnew', [AdminController::class, 'crudnew'])->name('admin.crudnew');
     Route::get('/admin_crudtruncate', [AdminController::class, 'crudtruncate'])->name('admin.crudtruncate');
     Route::post('/admin_crud', [AdminController::class, 'crud'])->name('admin.crudpost');
-    Route::post('/admin_crudpost', [AdminController::class, 'crudpost'])->name('admin.crudpost');
+    // Route::post('/admin_crudpost', [AdminController::class, 'crudpost'])->name('admin.crudpost');
     Route::get('/admin_catsetting', [AdminController::class, 'catsetting'])->name('admin.catsetting');
     Route::get('/admin_chkexefiles', [AdminController::class, 'check_exefiles'])->name('admin.chkexefiles');
 
