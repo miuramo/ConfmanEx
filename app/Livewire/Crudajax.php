@@ -35,7 +35,7 @@ class Crudajax extends Component
         if ($this->search == '') {
             $this->data = $this->model::limit(3)->get();
         } else {
-            $this->data = $this->model::where('name', 'like', "%{$this->search}%")
+            $this->data = $this->model::where('id', "{$this->search}")
                 ->get();
         }
     }
