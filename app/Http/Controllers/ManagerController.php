@@ -212,4 +212,38 @@ class ManagerController extends Controller
         }
         return view('admin.upsearch'); //->with(compact("out"));
     }
+
+    public function user_yomi_post(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
+
+        $roleid = $req->input('roleid');
+        $input = $req->input('yomiinput');
+        $lines = explode("\n", $input);
+        $lines = array_map("trim", $lines);
+        $count = 0;
+        foreach ($lines as $line) {
+            // $lineにふくまれる全角スペースを半角スペースに変換し、タブも半角スペースに変換する
+            $line = str_replace("　", " ", $line);
+            $line = str_replace("\t", " ", $line);
+            // 連続する半角スペースを;;に変換する
+            $line = preg_replace('/[ ]+/', ';;', $line);
+            $ary = explode(";;", $line);
+            $ary = array_map("trim", $ary);
+            if (count($ary) >= 2) {
+                $user = User::where("name", $ary[0]." ".$ary[1])->whereIn("id", function($query) use ($roleid) {
+                    $query->select('user_id')
+                        ->from('role_user')
+                        ->where('role_id', $roleid);
+                })->first();
+                if ($user) {
+                    $user->yomi = $ary[2]." ".$ary[3];
+                    $user->save();
+                    $count++;
+                }
+            }
+        }
+
+        return redirect()->route('role.edit', ['role' => $req->input('rolename')])->with('feedback.success', 'ユーザーの読み仮名を ' . $count . ' 件登録しました。');
+    }
 }

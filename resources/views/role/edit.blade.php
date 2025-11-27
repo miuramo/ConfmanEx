@@ -115,9 +115,10 @@
                             チェックをいれた人をTo:に指定した雛形を、新規作成
                         </x-element.submitbutton>
                         <div>
-                        （注：上の「新規作成」を押しても、メールは送信しません。
-                        <x-element.linkbutton href="{{route('mt.index')}}" color="pink" size="sm">メール雛形一覧</x-element.linkbutton>
-                        から送信してください。）
+                            （注：上の「新規作成」を押しても、メールは送信しません。
+                            <x-element.linkbutton href="{{ route('mt.index') }}" color="pink"
+                                size="sm">メール雛形一覧</x-element.linkbutton>
+                            から送信してください。）
                         </div>
                     </div>
                 </div>
@@ -142,7 +143,8 @@
 
                 <div class="hidden-content mt-2 bg-red-200 dark:bg-red-600 p-2" id="leaverole" style="display:none;">
 
-                    <x-element.submitbutton value="leaverole" color="red" confirm="チェックした人のRole『{{ $role->desc }}』をまとめて削除してよいですか？（ユーザは消えません）">
+                    <x-element.submitbutton value="leaverole" color="red"
+                        confirm="チェックした人のRole『{{ $role->desc }}』をまとめて削除してよいですか？（ユーザは消えません）">
                         チェックをいれた人のRole『{{ $role->desc }}』をまとめて削除する
                     </x-element.submitbutton>
                     <span class="mx-2"></span> Role『{{ $role->desc }}』からは脱退しますが、ユーザ情報は残ります。
@@ -166,10 +168,10 @@
 
         <div class="mx-6 my-2">
             <div class="text-lg mt-6 my-2 p-3 bg-slate-300 rounded-lg dark:bg-slate-800 dark:text-slate-400">
-            <input id="search-box" placeholder="ユーザを検索" type="text"
-                    name="query" value="" class="text-sm px-2 py-1 text-teal-700 bg-teal-100" size=20>
-            <ul id="results" class="list-disc list-inside">
-            </ul>
+                <input id="search-box" placeholder="ユーザを検索" type="text" name="query" value=""
+                    class="text-sm px-2 py-1 text-teal-700 bg-teal-100" size=20>
+                <ul id="results" class="list-disc list-inside">
+                </ul>
             </div>
         </div>
 
@@ -215,6 +217,26 @@
             </x-element.submitbutton>
         </div>
 
+    </form>
+
+    <form action="{{ route('admin.user_yomi_post') }}" method="post" id="yomiform">
+        @csrf
+        @method('post')
+        <input type="hidden" name="roleid" value="{{ $role->id }}">
+        <input type="hidden" name="rolename" value="{{ $role->name }}">
+        <div class="mx-6 my-2 p-4 bg-slate-200 rounded-lg dark:bg-slate-700">
+            ユーザーの読み仮名 一括登録
+            <div class="my-2">
+                <label for="yomiinput"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">以下の形式（半角or全角スペース、タブ区切り）で、ユーザーの読み仮名を一括登録します。既存の読み仮名がある場合は上書きされます。</label>
+                <textarea id="yomiinput" name="yomiinput" rows="5"
+                    class="mx-1 block p-2.5 text-lg w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-900 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="昆布 太郎 こんぶ たろう&#10;和布蕪 二郎 めかぶ じろう&#10;山田 花子 やまだ はなこ"></textarea>
+            </div>
+            <x-element.submitbutton value="yomipost" color="purple">
+                ユーザーの読み仮名 一括登録
+            </x-element.submitbutton>
+        </div>
     </form>
     @php
         // REVIEWER_MEMBER をチェックして、まだアカウントがない人を表示する

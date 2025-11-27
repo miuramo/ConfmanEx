@@ -1,7 +1,7 @@
 @props([
     'users' => [],
     'role' => null,
-    'heads' => ['chk','uid', 'name','affil','email','mailnofity','last_access','last_login_at','created_at','(action)','i'],
+    'heads' => ['chk','uid', 'name','yomi','affil','email','mailnotify','last_access','last_login_at','created_at','(action)','i'],
     'chkfor' => null,
 ])
 <!-- components.role.members -->
@@ -24,6 +24,9 @@
                 </td>
                 <td class="p-1">
                     <x-element.login_as :user="$u"></x-element.login_as>
+                </td>
+                <td class="p-1">
+                    {{ $u->yomi }}
                 </td>
                 <td class="p-1">{{ $u->affil }}
                 </td>

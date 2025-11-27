@@ -140,6 +140,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_gen_dlkey', [AdminController::class, 'gen_dlkey'])->name('admin.gen_dlkey');
     Route::get('/admin_users', [AdminController::class, 'users'])->name('admin.users');
 
+    Route::post('/admin_user_yomi', [ManagerController::class, 'user_yomi_post'])->name('admin.user_yomi_post');// ユーザーの読み仮名一括登録
+
     Route::get('/logac/{user?}', [LogAccessController::class, 'index'])->name('logac.index');
     Route::post('/logac/{user?}', [LogAccessController::class, 'index'])->name('logac.index');
 
