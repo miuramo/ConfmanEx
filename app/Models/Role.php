@@ -52,7 +52,7 @@ class Role extends Model
     public function users()
     {
         $tbl = 'role_user';
-        return $this->belongsToMany(User::class, $tbl)->withPivot('mailnotify')->orderBy('affil');//->using(RolesUser::class);
+        return $this->belongsToMany(User::class, $tbl)->withPivot('mailnotify')->orderBy('yomi');//->using(RolesUser::class);
     }
 
     public function containsUser(int $user_id): bool
