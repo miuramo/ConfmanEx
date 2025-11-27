@@ -10,6 +10,9 @@
     // Userが存在しないContactを参照していたら、直す
     App\Models\User::fix_broken_contact_all();
 
+    // 氏名が全角スペース区切りだったり、半角スペース複数区切りだったりするのを修正
+    App\Models\User::fix_username_space_all();
+
 @endphp
 <div class="px-4 py-4">
     <x-element.h1>あなたのRole</x-element.h1>

@@ -312,6 +312,23 @@ class User extends Authenticatable implements MustVerifyEmail
         }
     }
 
+    /**
+     * 氏名が全角スペース区切りだったり、半角スペース複数区切りだったりするのを修正
+     */
+    public static function fix_username_space_all()
+    {
+        $uary = User::all();
+        foreach ($uary as $u) {
+            $name = preg_replace('/\s+/', ' ', trim($u->name));
+            $name = preg_replace('/　+/', ' ', trim($name));
+            if ($name != $u->name) {
+                info("Fix username for uid {$u->id}: '{$u->name}' => '{$name}'");
+                $u->name = $name;
+                $u->save();
+            }
+        }
+    }
+
     public function accepted_papers_as_owner()
     {
         $accPIDs = Submit::with('paper')->whereHas('paper', function ($query) {
@@ -335,8 +352,8 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $accPIDs = $this->accepted_papers_as_owner();
         $cooPIDs = $this->accepted_papers_as_coauthor();
-        foreach( $cooPIDs as $p ) {
-            if ( !in_array($p, $accPIDs) ) $accPIDs[] = $p;
+        foreach ($cooPIDs as $p) {
+            if (!in_array($p, $accPIDs)) $accPIDs[] = $p;
         }
         return $accPIDs;
     }
