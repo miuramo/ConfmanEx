@@ -45,7 +45,7 @@ class ManagerController extends Controller
     {
         if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);
         File::rebuildPDFThumb();
-        return redirect()->route('role.top', ['role'=>'admin']);
+        return redirect()->route('role.top', ['role' => 'admin']);
     }
 
 
@@ -90,14 +90,14 @@ class ManagerController extends Controller
             $submit->accept_id = $req->input("accid");
             $submit->save();
 
-            return redirect()->route('add_invited_paper')->with('feedback.success', '招待論文を追加しました (pid=' . $paper->id . ', subid=' . $submit->id.')');
+            return redirect()->route('add_invited_paper')->with('feedback.success', '招待論文を追加しました (pid=' . $paper->id . ', subid=' . $submit->id . ')');
         }
 
         return view('admin.add_invited_paper');
     }
 
 
-    
+
 
     public function test9w()
     {
@@ -105,10 +105,10 @@ class ManagerController extends Controller
         Test9w::dispatch();
         // $this->ocr9w();
         ExportHintFileJob::dispatch();
-        return redirect()->route('role.top', ['role'=>'admin'])->with('feedback.success', 'テストQueueを実行しました。再読み込みして各種設定→LAST_QUEUEWORK_DATEが更新されていることを確認してください。');
+        return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.success', 'テストQueueを実行しました。再読み込みして各種設定→LAST_QUEUEWORK_DATEが更新されていることを確認してください。');
     }
 
-    
+
 
     public function paperauthorhead(Request $req)
     {
@@ -228,18 +228,32 @@ class ManagerController extends Controller
             $line = str_replace("\t", " ", $line);
             // 連続する半角スペースを;;に変換する
             $line = preg_replace('/[ ]+/', ';;', $line);
+
             $ary = explode(";;", $line);
             $ary = array_map("trim", $ary);
             if (count($ary) >= 2) {
-                $user = User::where("name", $ary[0]." ".$ary[1])->whereIn("id", function($query) use ($roleid) {
+                $user = User::where("name", $ary[0] . " " . $ary[1])->whereIn("id", function ($query) use ($roleid) {
                     $query->select('user_id')
                         ->from('role_user')
                         ->where('role_id', $roleid);
                 })->first();
                 if ($user) {
-                    $user->yomi = $ary[2]." ".$ary[3];
+                    $user->yomi = $ary[2] . " " . $ary[3];
                     $user->save();
                     $count++;
+                } else {
+                    $u2 = User::where("name", "like", "%" . $ary[0] . "%")->where("name", "like", "%" . $ary[1] . "%")->whereIn("id", function ($query) use ($roleid) {
+                        $query->select('user_id')
+                            ->from('role_user')
+                            ->where('role_id', $roleid);
+                    })->first();
+                    if ($u2) {
+                        $u2->yomi = $ary[2] . " " . $ary[3];
+                        $u2->save();
+                        $count++;
+                    } else {
+                        info("ユーザー " . $ary[0] . " " . $ary[1] . " が見つかりません。");
+                    }
                 }
             }
         }
