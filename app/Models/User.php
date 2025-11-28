@@ -326,6 +326,13 @@ class User extends Authenticatable implements MustVerifyEmail
                 $u->name = $name;
                 $u->save();
             }
+            $yomi = preg_replace('/\s+/', ' ', trim($u->yomi));
+            $yomi = preg_replace('/　+/', ' ', trim($yomi));
+            if ($yomi != $u->yomi) {
+                info("Fix useryomi for uid {$u->id}: '{$u->yomi}' => '{$yomi}'");
+                $u->yomi = $yomi;
+                $u->save();
+            }
         }
     }
 
