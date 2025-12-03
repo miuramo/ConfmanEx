@@ -145,6 +145,8 @@ class MailTemplate extends Model
     {
         $mt = MailTemplate::find($mtid);
         $newmt = $mt->replicate(); // copy data
+        // reset lastsent
+        $newmt->lastsent = null;
         $newmt->save();
         return $newmt;
     }
