@@ -560,6 +560,33 @@ class MailTemplate extends Model
         }
         return $array_papers;
     }
+    /**
+     * 【採択のみ】査読評価項目がN以上の論文
+     * 論文誌への推薦 metasuisenjournal >= 2 の場合、
+     * review_score(1, 'metasuisenjournal', '>=', 2) とする。
+     * 注：現在は、1つでも条件にあうスコアがあれば、含まれる。平均値で絞り込む場合は、別途実装が必要。その場合は、$revid_scoreval と$revid_paperidを使って,paper毎の平均スコアを計算する。
+     */
+    public static function mt_review_score_accept($catid, $name, $cop, $score)
+    {
+        $accepted_pids = Submit::with('paper')->where("category_id", $catid)->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->get()->pluck("paper_id")->toArray();
+        // catidは、reviewを絞り込むため。
+
+        $vp = Viewpoint::where("name", $name/*"metasuisenjournal"*/)->first();
+        $revid_scoreval = Score::where('viewpoint_id', $vp->id)->where('value', $cop, $score)->pluck('value', 'review_id')->toArray();
+
+        // まず、scoresから、該当するreview_idを取得する。
+        $revid_paperid = Review::whereIn('id', array_keys($revid_scoreval))->where('category_id', $catid)->pluck('paper_id', 'id')->toArray();
+
+        // そのpaper_idから、paperを取得する。
+        $papers = Paper::whereIn('id', array_values($revid_paperid))->whereIn('id', $accepted_pids)->get();
+        $array_papers = [];
+        foreach ($papers as $paper) {
+            $array_papers[] = $paper;
+        }
+        return $array_papers;
+    }
 
     /**
      * catids のいずれかでアクセプトされ、まだnameのアンケートに回答していないPaper
