@@ -152,6 +152,7 @@ function crudpost(field, data_id, val, dtype) {
         beforeSend: function (xhr, settings) { },
         complete: function (xhr, textStatus) { },
         success: function (result, textStatus, xhr) {
+            console.log("result: " + result);
             if (/^TOGGLE/.test(result)) {
                 var m = result.trim().match(/(TOGGLE) (\d+) (.+)$/); // resultを分解する TOGGLE val tdid
                 var elem = $('#td__' + m[3]); // flush td element, which is parent
