@@ -453,7 +453,6 @@ class AdminController extends Controller
     public function crudpost(Request $req)
     {
         if (!auth()->user()->can('role_any', 'admin|manager|pc|pub|demo|web')) abort(403); // Note: 出版担当もbibinfochkから修正できる。
-        info($req->all());
         if ($req->input("table") && $req->input("whereBy__id")) { // フィールド検索・絞り込みがある
             return $this->crud($req);
         }
