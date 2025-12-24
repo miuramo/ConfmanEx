@@ -196,7 +196,8 @@ class File extends Model
 
         shell_exec("pdftoppm -png {$newpath} {$dirpath}/t");
 
-        unlink($newpath);
+        // if file exists, unlink
+        @unlink($newpath);
 
         // ファイル名を調整する。ゼロを埋める
         chdir($dirpath);
