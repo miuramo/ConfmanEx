@@ -69,64 +69,74 @@
                         @else
                             <div class="bg-yellow-50 px-3 pt-4">
                     @endif
-                    <x-element.paperid size=1 :paper_id="$rev->paper->id">
-                    </x-element.paperid>
-                    <span class="mx-2"></span>
 
-                    @if (!$revoff[$rev->category_id])
-                        @if ($rev->ismeta)
-                            <x-element.linkbutton2 href="{{ route('review.edit', ['review' => $rev]) }}" color="red">
-                                Edit ({{ $nameofmeta }})
-                            </x-element.linkbutton2>
+                    @if ($rev->paper)
+                        <x-element.paperid size=1 :paper_id="$rev->paper->id">
+                        </x-element.paperid>
+                        <span class="mx-2"></span>
+
+                        @if (!$revoff[$rev->category_id])
+                            @if ($rev->ismeta)
+                                <x-element.linkbutton2 href="{{ route('review.edit', ['review' => $rev]) }}"
+                                    color="red">
+                                    Edit ({{ $nameofmeta }})
+                                </x-element.linkbutton2>
+                            @else
+                                <x-element.linkbutton href="{{ route('review.edit', ['review' => $rev]) }}"
+                                    color="blue">
+                                    Edit
+                                </x-element.linkbutton>
+                            @endif
                         @else
-                            <x-element.linkbutton href="{{ route('review.edit', ['review' => $rev]) }}" color="blue">
-                                Edit
+                            <x-element.linkbutton href="{{ route('review.show', ['review' => $rev]) }}" color="green">
+                                View
                             </x-element.linkbutton>
                         @endif
-                    @else
-                        <x-element.linkbutton href="{{ route('review.show', ['review' => $rev]) }}" color="green">
-                            View
-                        </x-element.linkbutton>
-                    @endif
-                    <span class="mx-2"></span>
-
-                    @if ($revbbon[$rev->paper->category_id])
-                        <x-element.bblink :rev="$rev" label="議論掲示板">
-                        </x-element.bblink>
                         <span class="mx-2"></span>
-                    @endif
 
-                    @if ($rev->status == 2)
-                        <span class="inline-block border-2 border-blue-600 p-0.5 text-blue-600 font-bold text-sm">
-                            査読完了
-                        </span>
-                    @endif
-
-                    @if ($rev->paper->pdf_file_id != null)
-                        @if (!$revoff[$rev->category_id])
-                            <a href="{{ route('review.edit', ['review' => $rev]) }}">
-                            @else
-                                <a href="{{ route('review.show', ['review' => $rev]) }}">
+                        @if ($revbbon[$rev->paper->category_id])
+                            <x-element.bblink :rev="$rev" label="議論掲示板">
+                            </x-element.bblink>
+                            <span class="mx-2"></span>
                         @endif
-                        {{-- <a href="{{ route('file.altimgshow', ['file' => $rev->paper->pdf_file_id, 'hash' => substr($rev->paper->pdf_file->key, 0, 8)]) }}"
+
+                        @if ($rev->status == 2)
+                            <span class="inline-block border-2 border-blue-600 p-0.5 text-blue-600 font-bold text-sm">
+                                査読完了
+                            </span>
+                        @endif
+
+                        @if ($rev->paper->pdf_file_id != null)
+                            @if (!$revoff[$rev->category_id])
+                                <a href="{{ route('review.edit', ['review' => $rev]) }}">
+                                @else
+                                    <a href="{{ route('review.show', ['review' => $rev]) }}">
+                            @endif
+                            {{-- <a href="{{ route('file.altimgshow', ['file' => $rev->paper->pdf_file_id, 'hash' => substr($rev->paper->pdf_file->key, 0, 8)]) }}"
                                 target="_blank"> --}}
-                    @endif
-                    <x-file.paperheadimg :paper="$rev->paper">
-                    </x-file.paperheadimg>
-                    @if ($rev->paper->pdf_file_id != null)
-                        </a>
+                        @endif
+                        <x-file.paperheadimg :paper="$rev->paper">
+                        </x-file.paperheadimg>
+                        @if ($rev->paper->pdf_file_id != null)
+                            </a>
+                        @endif
+
+                        <div class="mt-2 ml-2">
+                            {{-- まず、showonreviewerindex アンケートをあつめる。 --}}
+                            <x-enquete.Rev_enqview :rev="$rev" size="sm">
+                            </x-enquete.Rev_enqview>
+                        </div>
+
+                        <div
+                            class="mt-2 ml-2 grid xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
+                            <x-file.on_paper :all="$rev->paper->files_with_deleted" :imgsize="120" size="xs">
+                            </x-file.on_paper>
+                        </div>
+                    @else
+                        <x-element.paperid size=1 :paper_id="$rev->paper_id">
+                        </x-element.paperid>
                     @endif
 
-                    <div class="mt-2 ml-2">
-                        {{-- まず、showonreviewerindex アンケートをあつめる。 --}}
-                        <x-enquete.Rev_enqview :rev="$rev" size="sm">
-                        </x-enquete.Rev_enqview>
-                    </div>
-
-                    <div class="mt-2 ml-2 grid xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
-                        <x-file.on_paper :all="$rev->paper->files_with_deleted" :imgsize="120" size="xs">
-                        </x-file.on_paper>
-                    </div>
         </div>
         @endif
         @endforeach
@@ -145,7 +155,7 @@
     @can('role', 'metareviewer')
         <div class="mb-4 my-10">
             <x-element.h1>
-                自分が{{$nameofmeta}}を担当している、査読結果を見る
+                自分が{{ $nameofmeta }}を担当している、査読結果を見る
             </x-element.h1>
             <div class="px-2">
                 <table class="min-w-full divide-y divide-gray-200 mb-2">

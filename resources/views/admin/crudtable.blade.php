@@ -120,7 +120,7 @@
                     </x-element.submitbutton>
                     <span class="mx-4"></span>
 
-                    <x-element.submitbutton type="submit" color="purple" size="sm" confirm="本当にまとめて削除する？">
+                    <x-element.submitbutton type="submit" value="bdelete" color="purple" size="sm" confirm="本当にまとめて削除する？">
                         選択した行を削除
                     </x-element.submitbutton>
                 </form>
