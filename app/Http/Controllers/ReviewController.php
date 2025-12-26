@@ -334,6 +334,7 @@ class ReviewController extends Controller
             $count = 0;
             foreach ($reviews as $rev) {
                 $paper = $rev->paper;
+                if (!$paper) continue; // 安全装置：割り当て後に論文が削除されました。
                 $count += $paper->addFilesToZip($zip, ["pdf", "video", "img", "altpdf"]);
             }
             $zip->close();

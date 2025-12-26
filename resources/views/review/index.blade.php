@@ -70,6 +70,7 @@
                         @else
                             <div class="bg-yellow-50 px-3 pt-4">
                     @endif
+                    @if($rev->paper)
                     <x-element.paperid size=1 :paper_id="$rev->paper->id">
                     </x-element.paperid>
 
@@ -115,6 +116,13 @@
                         </a>
                     @endif
 
+                    @else
+                    {{-- 安全装置：割り当て後に論文が削除されました。 --}}
+                    <x-element.paperid size=1 :paper_id="$rev->paper_id">
+                    </x-element.paperid>
+                    <span class="mx-2"></span>
+                    <span class="text-red-600 font-bold">注：割り当て後に論文が削除されました。こちらは査読していただかなくても大丈夫です。</span>
+                    @endif  
                     {{-- <div class="text-sm mt-2 ml-2">
                         {{-- まず、showonreviewerindex アンケートをあつめる。 --}}
                         {{-- <x-enquete.Rev_enqview :rev="$rev">
