@@ -33,6 +33,10 @@ function changed(formName, name) {
                     // window.location.href = "/paper/" + ary['paper_id'] + "/edit";
                 }
             }, 1000); // フラッシュの時間
+            // もし、unsavedTextareas が定義されており、name がその中に含まれている場合は、nameを削除する
+            if (typeof unsavedTextareas !== 'undefined' && unsavedTextareas.has(name)) {
+                unsavedTextareas.delete(name);
+            }
         },
         error: function (xhr, textStatus, error) {
             alert("error form submit (form changed, but not saved.)");

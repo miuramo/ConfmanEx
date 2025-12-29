@@ -5,10 +5,10 @@
     @endphp
     <x-slot name="header">
         <div class="mb-4">
-            <x-element.linkbutton href="{{ url()->previous() ?? route('review.index') }}" color="gray"
-                confirm="本当に編集を終了して担当査読一覧に戻りますか？ 保存されていない変更がある場合、それらは失われます。" size="sm">
+            <x-element.linkbutton_customconfirm href="{{ url()->previous() ?? route('review.index') }}" color="gray"
+                custom_confirm="checkUnsavedTextareas" size="sm">
                 &larr; 担当査読一覧に戻る
-            </x-element.linkbutton>
+            </x-element.linkbutton_customconfirm>
         </div>
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
 
@@ -92,10 +92,10 @@
 
 
         <div class="mb-4 my-10">
-            <x-element.linkbutton href="{{ url()->previous() ?? route('review.index') }}" color="gray"
-                confirm="本当に編集を終了して担当査読一覧に戻りますか？ 保存されていない変更がある場合、それらは失われます。" size="sm">
+            <x-element.linkbutton_customconfirm href="{{ url()->previous() ?? route('review.index') }}" color="gray"
+                custom_confirm="checkUnsavedTextareas" size="sm">
                 &larr; 担当査読一覧に戻る
-            </x-element.linkbutton>
+            </x-element.linkbutton_customconfirm>
         </div>
 
     </div>
@@ -114,5 +114,31 @@
         window.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll("textarea.h-auto-resize").forEach(el => resizeTextarea(el));
         });
+
+        // 未保存のテキストフォームがあれば、nameを記録するHashSet
+        let unsavedTextareas = new Set();
+        // テキストエリアの変更イベントを監視
+        document.querySelectorAll("textarea.h-auto-resize").forEach(el => {
+            el.addEventListener("input", (event) => {
+                resizeTextarea(event.target);
+                // 変更があったらSetに追加
+                unsavedTextareas.add(event.target.name);
+            });
+        });
+
+        // ページ離脱時に未保存の変更があるか確認
+        function checkUnsavedTextareas() {
+            if (unsavedTextareas.size > 0) {
+                return false;
+            }
+            return true;
+        }
+        window.addEventListener("beforeunload", (event) => {
+            if (!checkUnsavedTextareas()) {
+                event.preventDefault();
+                event.returnValue = '';
+            }
+        });
+                
     </script>
 </x-app-layout>
