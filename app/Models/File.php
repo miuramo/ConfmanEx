@@ -200,6 +200,11 @@ class File extends Model
         @unlink($newpath);
 
         // ファイル名を調整する。ゼロを埋める
+        if (!file_exists($dirpath)) {
+            // pdftoppmが失敗している
+            info("File.php:205 makePdfThumbs: no dirpath {$dirpath} (pdfoppm failed?)");
+            return;
+        }
         chdir($dirpath);
         foreach (glob($dirpath . "/*.png") as $fullpathfn) {
             // 数字部分をとりだす

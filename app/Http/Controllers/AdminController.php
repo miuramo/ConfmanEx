@@ -562,6 +562,16 @@ class AdminController extends Controller
                     $datum = $eloModelName::find($did);
                     if (isset($datum)) {
                         $newdatum = $datum->replicate(); // copy data
+                        // もし、モデルにtimestamp=falseで、かつ、created_at, updated_at フィールドがある場合は、コピー時に更新されてしまう。
+                        // それを防ぐために、元の値をセットしなおす。
+                        if (!$datum->timestamps) {
+                            if (Schema::hasColumn($datum->getTable(), 'created_at')) {
+                                $newdatum->created_at = $datum->created_at;
+                            }
+                            if (Schema::hasColumn($datum->getTable(), 'updated_at')) {
+                                $newdatum->updated_at = $datum->updated_at;
+                            }
+                        }
                         $newdatum->save();
                     }
                 }
