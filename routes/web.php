@@ -295,6 +295,9 @@ Route::middleware('auth')->group(function () {
     Route::post('affil/update', [AffilController::class, 'update'])->name('affil.update');
     Route::get('affil/create', [AffilController::class, 'create'])->name('affil.create');
     Route::get('affil/rebuild', [AffilController::class, 'rebuild'])->name('affil.rebuild');
+
+    // MayDirtyの一覧をExcelで出力
+    Route::get('export_maydirty', [AdminController::class, 'export_maydirty'])->name('admin.export_maydirty');
 });
 
 // 投票

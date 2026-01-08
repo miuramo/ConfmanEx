@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\MaydirtyExport;
 use App\Exports\PapersExport4Hiroba;
 use App\Exports\PapersExportFromView;
 use App\Jobs\ExportHintFileJob;
@@ -206,6 +207,15 @@ class AdminController extends Controller
         // Formからのカテゴリ選択を配列にいれる
         $targets =  [1, 2, 3];
         return Excel::download(new PapersExport4Hiroba(), "hiroba.xlsx");
+    }
+
+    /**
+     * MayDirtyの一覧をExcelで出力
+     */
+    public function export_maydirty()
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);
+        return Excel::download(new MaydirtyExport(), "maydirty.xlsx");
     }
 
 

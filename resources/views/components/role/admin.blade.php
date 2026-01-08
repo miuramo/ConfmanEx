@@ -167,6 +167,10 @@
             検索
         </x-element.linkbutton>
         <span class="px-5"></span>
+        <x-element.linkbutton href="{{ route('admin.export_maydirty') }}" color="gray">
+            MayDirty一覧のExcel出力
+        </x-element.linkbutton>
+        <span class="px-5"></span>
         <x-element.linkbutton href="{{ route('add_invited_paper') }}" color="blue">
             招待論文の作成
         </x-element.linkbutton>
