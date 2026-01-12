@@ -54,6 +54,20 @@ class EnqueteController extends Controller
         }
         return view("enquete.answers")->with(compact("enq", "enqans", "papers"));
     }
+    public function answers_multienq(Request $req)
+    {
+        $enq_ids = array_slice($req->segments(), 1); // 最初のsegmentは multi_enq_answers
+        info($enq_ids);
+        $aEnq = Enquete::accessibleEnquetes(true);
+        foreach ($enq_ids as $enq_id) {
+            if (!isset($aEnq[$enq_id])) abort(403);
+        }
+
+        if ($req->has("action") && $req->input("action") == "excel") {
+            return Excel::download(new MultiEnqExportFromView($enq_ids), "enqans_multi.xlsx");
+        }
+        return view("enquete.answers_multienq")->with(compact("enq_ids"));
+    }
 
     /**
      * アンケート回答の概要表示

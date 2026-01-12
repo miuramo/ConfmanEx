@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\MaydirtyExport;
 use App\Exports\PapersExport4Hiroba;
 use App\Exports\PapersExportFromView;
+use App\Exports\RawSqlExport;
 use App\Jobs\ExportHintFileJob;
 use App\Jobs\Test9w;
 use App\Mail\DisableEmail;
@@ -216,6 +217,27 @@ class AdminController extends Controller
     {
         if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);
         return Excel::download(new MaydirtyExport(), "maydirty.xlsx");
+    }
+
+    /**
+     * インタラクティブブース配置用のExcelを出力
+     */
+    public function export_interactivebooth()
+    {
+        if (!auth()->user()->can('role_any', 'pc|admin|manager|demo')) {
+            if (!auth()->user()->can('manage_cat_any')) abort(403);
+        }
+        $sql = <<<SQL
+        SELECT
+            *
+        FROM accepts
+    SQL;
+        $bindings = [];
+        return Excel::download(
+            new RawSqlExport($sql, $bindings, null),
+            'accepts.xlsx'
+        );
+        // return Excel::download(new \App\Exports\InteractiveBoothExport(), "interactivebooth.xlsx");
     }
 
 

@@ -13,14 +13,23 @@
         'accept',
         'pdf',
     ],
-    'enqans' => [],
-    'enq' => [],
+    'enq_ids' => [],
+    // 'enqans' => [],
+    // 'enqs' => [],
 ])
 @php
     $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
 
+    $enqs = [];
+    $enqans = [];
+    foreach ($enq_ids as $enq_id) {
+        $enqs[$enq_id] = App\Models\Enquete::find($enq_id);
+        $enqans[$enq_id] = App\Models\EnqueteAnswer::where('enquete_id', $enq_id)->orderBy('paper_id')->get();
+    }
+    // eans にふくまれる paper_id について、Paperをもってくる
+    $papers = App\Models\Paper::with('paperowner')->with('submits')->orderBy('category_id')->orderBy('id')->get();
     $eansary = [];
-    foreach ($enqids as $enqid) {
+    foreach ($enq_ids as $enqid) {
         foreach ($enqans[$enqid] as $n => $eee) {
             $eansary[$enqid][$eee['paper_id']][$eee['enquete_item_id']] = $eee['valuestr'];
         }
@@ -75,7 +84,7 @@
                     @endif
                 </td>
                 {{-- アンケート --}}
-                @foreach ($enqids as $enqid)
+                @foreach ($enq_ids as $enqid)
                     @foreach ($enqs[$enqid]->items as $itm)
                         <td class="p-1">
                             @isset($eansary[$enqid][$paper->id][$itm->id])

@@ -84,6 +84,7 @@ Route::middleware('auth')->group(function () {
     //アンケート回答
     Route::resource('enq', EnqueteController::class); // ここはenq.index, enq.store 等。
     Route::get('/enq/{enq}/answers', [EnqueteController::class, 'answers'])->name('enq.answers');
+    Route::get('/multi_enq_answers/{enq_ids}', [EnqueteController::class, 'answers_multienq'])->where('enq_ids', '.*')->name('enq.answers_multienq');
     Route::get('/enq/{enq}/anssummary', [EnqueteController::class, 'anssummary'])->name('enq.anssummary'); // アンケートの集計結果まとめ
     Route::get('/enq_enqitmsetting', [EnqueteController::class, 'enqitmsetting'])->name('enq.enqitmsetting');
     Route::get('/enq_maptoroles', [EnqueteController::class, 'map_to_roles'])->name('enq.maptoroles');
@@ -91,8 +92,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/enq_manualset', [EnqueteAnswerController::class, 'manualset'])->name('enq.manualset'); // マニュアル設定
     Route::get('/enq/{enq}/preview/{key?}', [EnqueteController::class, 'edit_dummy'])->name('enq.preview');
     Route::get('/enq/{enq}/config', [EnqueteController::class, 'config'])->name('enq.config'); // 受付設定
-    Route::post('/enq/{enq}/config', [EnqueteController::class, 'config'])->name('enq.config');// 受付設定
-    Route::delete('/enqconfig/{enqconfig}/delete', [EnqueteConfigController::class, 'destroy'])->name('enqconfig.delete');// 受付設定
+    Route::post('/enq/{enq}/config', [EnqueteController::class, 'config'])->name('enq.config'); // 受付設定
+    Route::delete('/enqconfig/{enqconfig}/delete', [EnqueteConfigController::class, 'destroy'])->name('enqconfig.delete'); // 受付設定
 
     Route::get('/paper/{paper}/enq/{enq}/edit', [EnqueteController::class, 'edit'])->name('enquete.pageedit'); //インラインではなく個別のpageで表示
     Route::get('/paper/{paper}/enq/{enq}', [EnqueteController::class, 'show'])->name('enquete.pageview');
@@ -140,7 +141,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_gen_dlkey', [AdminController::class, 'gen_dlkey'])->name('admin.gen_dlkey');
     Route::get('/admin_users', [AdminController::class, 'users'])->name('admin.users');
 
-    Route::post('/admin_user_yomi', [ManagerController::class, 'user_yomi_post'])->name('admin.user_yomi_post');// ユーザーの読み仮名一括登録
+    Route::post('/admin_user_yomi', [ManagerController::class, 'user_yomi_post'])->name('admin.user_yomi_post'); // ユーザーの読み仮名一括登録
 
     Route::get('/logac/{user?}', [LogAccessController::class, 'index'])->name('logac.index');
     Route::post('/logac/{user?}', [LogAccessController::class, 'index'])->name('logac.index');
@@ -298,6 +299,8 @@ Route::middleware('auth')->group(function () {
 
     // MayDirtyの一覧をExcelで出力
     Route::get('export_maydirty', [AdminController::class, 'export_maydirty'])->name('admin.export_maydirty');
+    // インタラクティブブース検討用のExcel出力
+    Route::get('export_interactivebooth', [AdminController::class, 'export_interactivebooth'])->name('admin.export_interactivebooth');
 });
 
 // 投票
