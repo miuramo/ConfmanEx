@@ -113,11 +113,13 @@ class Enquete extends Model
             if (!$pass && Enquete::in_csv($config->catcsv, $cat_id)) $pass = true;
             if (!$pass) continue;
             $enq = Enquete::with('items')->find($config->enquete_id);
+            info($config->enquete_id);
+            if (!$enq) continue;
             if (Enquete::checkdayduration($config->openstart, $config->openend)) {
                 $canedit[] = $enq;
             } else {
                 // アンケート回答が1つでもある場合、readonlyに追加する。（未回答なら）
-                if ($enq->countAnswers($paper) > 0) {
+                if ($enq && $enq->countAnswers($paper) > 0) {
                     $readonly[] = $enq;
                     // 未回答でも、openendから60日以内ならreadonlyにする。（未入力であることを意識させるため！）
                 } else if (Enquete::checkdayduration($config->openstart, Enquete::dayplus($config->openend, 60))) {
