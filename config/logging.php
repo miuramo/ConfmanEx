@@ -61,7 +61,7 @@ return [
         'db' => [
             'driver' => 'custom',
             'via'    => App\Logging\DatabaseLogger::class,
-            'level'  => 'error', // error以上のみDBへ
+            // 'level'  => 'error', // error以上のみDBへ
         ],
 
         'single' => [

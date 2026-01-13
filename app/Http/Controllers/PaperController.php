@@ -372,7 +372,7 @@ class PaperController extends Controller
                         $rret[$count][$vpdesc . "_"] = $vpsubdescs[$vpdesc];
                 }
             }
-            if (!$sub->booth){ // is null
+            if (!$sub->booth) { // is null
                 $sub->booth = sprintf("%03d", $sub->paper->id);
             }
             $ret[$sub->booth] = $rret;

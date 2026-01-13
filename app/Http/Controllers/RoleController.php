@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Queue\NullQueue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
