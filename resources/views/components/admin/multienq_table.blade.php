@@ -1,6 +1,7 @@
 @props([
     'papers' => [],
     'heads' => [
+        'catid',
         'cat',
         'id',
         'id03d',
@@ -18,6 +19,7 @@
     // 'enqs' => [],
 ])
 @php
+    $cats = App\Models\Category::select('name', 'id')->get()->pluck('name', 'id')->toArray();
     $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
 
     $enqs = [];
@@ -54,6 +56,8 @@
             <tr
                 class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200 dark:bg-slate-700' : 'bg-white dark:bg-slate-600' }}">
                 <td class="p-1">{{ $paper->category_id }}
+                </td>
+                <td class="p-1">{{ $cats[$paper->category_id] ?? '' }}
                 </td>
                 <td class="p-1">{{ $paper->id }}
                 </td>
