@@ -171,10 +171,6 @@
             MayDirty一覧のExcel出力
         </x-element.linkbutton>
         <span class="px-5"></span>
-        <x-element.linkbutton href="{{ route('enq.answers_multienq', ['enq_ids' => '2/3']) }}" color="gray">
-            インタラクティブブース検討用のExcel出力
-        </x-element.linkbutton>
-        <span class="px-5"></span>
         <x-element.linkbutton href="{{ route('add_invited_paper') }}" color="blue">
             招待論文の作成
         </x-element.linkbutton>

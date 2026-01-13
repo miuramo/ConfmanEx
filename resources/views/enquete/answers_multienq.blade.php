@@ -9,7 +9,7 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
 
             {{ __('アンケート回答（複合）') }}
-
+            <span class="ml-2 text-gray-400">(enqIDs: {{ implode(' & ', $enq_ids) }})</span>
         </h2>
     </x-slot>
     @push('localcss')

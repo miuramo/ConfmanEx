@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\EnqExportFromView;
+use App\Exports\MultiEnqExportFromView;
 use App\Http\Requests\StoreEnqueteRequest;
 use App\Http\Requests\UpdateEnqueteRequest;
 use App\Models\Accept;
@@ -56,17 +57,30 @@ class EnqueteController extends Controller
         }
         return view("enquete.answers")->with(compact("enq", "enqans", "papers"));
     }
-    public function answers_multienq(Request $req)
+    // public function answers_multienq(Request $req)
+    // {
+    //     $enq_ids = array_slice($req->segments(), 1); // 最初のsegmentは multi_enq_answers
+    //     $aEnq = Enquete::accessibleEnquetes(true);
+    //     foreach ($enq_ids as $enq_id) {
+    //         if (!isset($aEnq[$enq_id])) abort(403);
+    //     }
+    //     if ($req->has("action") && $req->input("action") == "excel") {
+    //         return Excel::download(new MultiEnqExportFromView($enq_ids), "enqans_multi.xlsx");
+    //     }
+    //     return view("enquete.answers_multienq")->with(compact("enq_ids"));
+    // }
+    /**
+     * 複数アンケートからの回答表示またはダウンロード
+     */
+    public function answers_multienq_post(Request $req)
     {
-        $enq_ids = array_slice($req->segments(), 1); // 最初のsegmentは multi_enq_answers
-        info($enq_ids);
+        $enq_ids = $req->input("enq_ids");
         $aEnq = Enquete::accessibleEnquetes(true);
         foreach ($enq_ids as $enq_id) {
             if (!isset($aEnq[$enq_id])) abort(403);
         }
-
-        if ($req->has("action") && $req->input("action") == "excel") {
-            return Excel::download(new MultiEnqExportFromView($enq_ids), "enqans_multi.xlsx");
+        if ($req->has("excel") && strpos($req->input("excel"), "Excel") !== false) {
+            return Excel::download(new MultiEnqExportFromView($enq_ids), "enqans_multi_".implode('_', $enq_ids).".xlsx");
         }
         return view("enquete.answers_multienq")->with(compact("enq_ids"));
     }

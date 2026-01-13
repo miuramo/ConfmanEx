@@ -173,7 +173,6 @@
         <x-element.linkbutton href="{{ route('enq.index') }}" color="green">
             （デモRoleおよび自分のRoleで参照可能な）アンケート一覧
         </x-element.linkbutton>
-
     </x-element.h1>
 
     <x-element.h1>

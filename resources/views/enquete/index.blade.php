@@ -36,9 +36,11 @@
     <div class="py-4 px-6  dark:text-gray-400">
         @foreach ($enqs as $enq)
             @if ($enq->withpaper)
-                <div class="bg-white mx-2 my-4 px-4 py-2 inline-block shadow-md motion-safe:hover:scale-[1.05] transition-all duration-250">
+                <div
+                    class="bg-white mx-2 my-4 px-4 py-2 inline-block shadow-md motion-safe:hover:scale-[1.05] transition-all duration-250">
                 @else
-                    <div class="bg-yellow-50 dark:bg-slate-700 mx-2 my-4 px-4 py-2 inline-block shadow-md motion-safe:hover:scale-[1.05] transition-all duration-250">
+                    <div
+                        class="bg-yellow-50 dark:bg-slate-700 mx-2 my-4 px-4 py-2 inline-block shadow-md motion-safe:hover:scale-[1.05] transition-all duration-250">
             @endif
             {{-- {{$enq->id}} --}}
             {{ $enq->name }} <span class="ml-2 text-gray-400">(enqID:{{ $enq->id }})</span>
@@ -52,7 +54,8 @@
                                     <span class="text-sm bg-blue-200 text-blue-800 rounded-md px-2 py-1">受付期間外
                             @endif
                             [{{ $config->catcsv }}] {{ $config->openstart }} 〜 {{ $config->openend }}
-                            (id:{{ $config->id }})</span>
+                            (id:{{ $config->id }})
+                            </span>
                         @else
                             <span class="text-sm bg-red-100 text-red-800 rounded-md px-2 py-1">無効 (not valid)
                                 [{{ $config->catcsv }}] (id:{{ $config->id }})
@@ -118,6 +121,28 @@
 
     </div>
     @endforeach
+    </div>
+
+    <div class="py-2 px-6">
+        <x-element.h1>複数のアンケート結果をひとつの表にまとめて表示・Excelダウンロードする <span class="mx-2"></span></x-element.h1>
+
+        <div class="px-12">
+            <form action="{{ route('enq.answers_multienq_post') }}" method="POST">
+                @csrf
+                @foreach ($enqs as $enq)
+                    @if ($enq->withpaper)
+                        <input type="checkbox" name="enq_ids[]" value="{{ $enq->id }}" class="enq_checkbox mx-1">
+                        {{ $enq->name }} (enqID:{{ $enq->id }})
+                        <br>
+                    @endif
+                @endforeach
+                <input type="submit" name="view" value="チェックをつけたアンケートをまとめて表示"
+                    class="mt-4 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm">
+                    <span class="mx-2"></span>
+                <input type="submit" name="excel" value="チェックをつけたアンケートをまとめてExcelダウンロード"
+                    class="mt-4 px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600 text-sm">
+            </form>
+        </div>
     </div>
 
     <div class="py-2 px-6">

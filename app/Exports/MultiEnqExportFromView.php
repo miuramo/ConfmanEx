@@ -9,17 +9,15 @@ use Illuminate\Contracts\View\View;
 
 class MultiEnqExportFromView extends AbstractExportFromView
 {
-    protected array $enqids;
+    protected array $enq_ids;
     public function __construct($e)
     {
-        $this->enqids = $e;
+        $this->enq_ids = $e;
     }
     public function view(): View
     {
-        $papers = Paper::with('paperowner')->with('submits')->orderBy('category_id')->orderBy('id')->get();
-        $enqids = $this->enqids;
-        return view("enquete.answers_multienq")->with(compact("enqs", "enqans", "papers", "enq_ids"));
-        return view('components.admin.multienq_table')->with(compact("enq","enqans","papers"));    
+        $enq_ids = $this->enq_ids;
+        return view('components.admin.multienq_table')->with(compact("enq_ids"));    
     }
 
     

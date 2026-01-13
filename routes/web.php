@@ -84,7 +84,8 @@ Route::middleware('auth')->group(function () {
     //アンケート回答
     Route::resource('enq', EnqueteController::class); // ここはenq.index, enq.store 等。
     Route::get('/enq/{enq}/answers', [EnqueteController::class, 'answers'])->name('enq.answers');
-    Route::get('/multi_enq_answers/{enq_ids}', [EnqueteController::class, 'answers_multienq'])->where('enq_ids', '.*')->name('enq.answers_multienq');
+    // Route::get('/multi_enq_answers/{enq_ids}', [EnqueteController::class, 'answers_multienq'])->where('enq_ids', '.*')->name('enq.answers_multienq');
+    Route::post('/multi_enq_answers_post', [EnqueteController::class, 'answers_multienq_post'])->name('enq.answers_multienq_post');
     Route::get('/enq/{enq}/anssummary', [EnqueteController::class, 'anssummary'])->name('enq.anssummary'); // アンケートの集計結果まとめ
     Route::get('/enq_enqitmsetting', [EnqueteController::class, 'enqitmsetting'])->name('enq.enqitmsetting');
     Route::get('/enq_maptoroles', [EnqueteController::class, 'map_to_roles'])->name('enq.maptoroles');
