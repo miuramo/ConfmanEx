@@ -113,7 +113,6 @@ class Enquete extends Model
             if (!$pass && Enquete::in_csv($config->catcsv, $cat_id)) $pass = true;
             if (!$pass) continue;
             $enq = Enquete::with('items')->find($config->enquete_id);
-            info($config->enquete_id);
             if (!$enq) continue;
             if (Enquete::checkdayduration($config->openstart, $config->openend)) {
                 $canedit[] = $enq;
