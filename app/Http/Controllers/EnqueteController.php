@@ -50,7 +50,9 @@ class EnqueteController extends Controller
         $papers = Paper::with('paperowner')->with('submits')->orderBy('category_id')->orderBy('id')->get();
 
         if ($req->has("action") && $req->input("action") == "excel") {
-            return Excel::download(new EnqExportFromView($enq), "enqans_{$enq->name}.xlsx");
+            $fn = "enqans_{$enq->name}.xlsx";
+            $fn = preg_replace('/[\\\\\/\:\*\?\"\<\>\|]/', '_', $fn); // ファイル名に使えない文字を置換
+            return Excel::download(new EnqExportFromView($enq), $fn);
         }
         return view("enquete.answers")->with(compact("enq", "enqans", "papers"));
     }
