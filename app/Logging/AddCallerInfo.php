@@ -24,13 +24,11 @@ class AddCallerInfo
                     ) {
                         return $record->with(
                             extra: array_merge($record->extra, [
-                                'file' => $frame['file'],
-                                'line' => $frame['line'] ?? null,
+                                'file' => $frame['file']. ':'.$frame['line'],
                             ])
                         );
                     }
                 }
-
                 return $record;
             });
         }
