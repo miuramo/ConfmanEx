@@ -125,7 +125,7 @@ class StoreFileRequest extends FormRequest
             // PDF以外のとき、すでに同一mimeでのロックファイルが1つでもあれば、Pendingにする
             // ただし、pngのあとでjpegをアップロードして通らないように、mimeの前半部分がマッチしたらPendingにする。
             $firstmime = explode("/", $file->mime)[0];
-            info($firstmime);
+            // info($firstmime);
             $countlocked_similar = File::where("paper_id", $pid)->where("locked", 1)->where("mime", "like", "{$firstmime}%")->count();
             if ($countlocked_similar > 0) {
                 $file->pending = true;
