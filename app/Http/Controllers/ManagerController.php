@@ -102,6 +102,7 @@ class ManagerController extends Controller
     public function test9w()
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        Log::info("Dispatching Test9w job");
         Test9w::dispatch();
         // $this->ocr9w();
         ExportHintFileJob::dispatch();

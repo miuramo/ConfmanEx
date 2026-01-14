@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class LogAccess extends Model
 {
@@ -35,7 +36,7 @@ class LogAccess extends Model
             ->limit($limit)
             ->pluck('id')->toArray();
             
-        info($users);
+        Log::channel('db')->info("Updating last_login_at for users: ".implode(", ", $users));
 
         foreach ($users as $uid) {
             // 最後のログイン日時を取得

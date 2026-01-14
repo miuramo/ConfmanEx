@@ -377,7 +377,6 @@ class PaperController extends Controller
             }
             $ret[$sub->booth] = $rret;
         }
-        info($ret);
         return json_encode($ret, JSON_THROW_ON_ERROR);
     }
 
