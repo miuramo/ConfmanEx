@@ -207,7 +207,7 @@ class Paper extends Model
             } else {
                 $relatedId = Contact::find($relatedId);
             }
-            Log::info("{$operation}: {$related->getTable()} ID {$relatedId->id} ({$relatedId->email}) <=> {$parent->getTable()} ID {$parent->getKey()} {$parent->name}");
+            // Log::info("{$operation}: {$related->getTable()} ID {$relatedId->id} ({$relatedId->email}) <=> {$parent->getTable()} ID {$parent->getKey()} {$parent->name}");
         });            //
         // return $this->belongsToMany(Contact::class, 'paper_contact'); 
     }
