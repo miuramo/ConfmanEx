@@ -88,7 +88,7 @@ class StoreFileRequest extends FormRequest
                     $old_pdf_file = File::find($paper->pdf_file_id);
                     // info("old file exists");
                     if (!$old_pdf_file->locked) { // ロックされていなければ
-                        info("old file not locked, delete and replace");
+                        Log::channel('single')->info("old file not locked, delete and replace. paper_id: {$paper->id}, old_file_id: {$old_pdf_file->id}, new_file_id: {$file->id}");
                         $old_pdf_file->deleted = true; // 古いファイルに削除フラグをつける
                         $old_pdf_file->save();
                         $paper->pdf_file_id = $file->id; //差し替える
