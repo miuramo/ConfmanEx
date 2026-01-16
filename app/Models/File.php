@@ -175,7 +175,10 @@ class File extends Model
         while (!file_exists($fullpath_png)) {
             sleep(1);
             $retry++;
-            if ($retry > 10) break;
+            if ($retry > 10) {
+                Log::error("File@makePdfHeadThumb before crop : no file {$fullpath_png} (pdftoppm failed?)");
+                break;
+            }
         }
         // Log::info("convert {$fullpath_png} -crop {$crop_w}x{$crop_h}+{$crop_x}+{$crop_y} {$dirpath}/h-00001.png");
         $out = shell_exec("convert {$fullpath_png} -crop {$crop_w}x{$crop_h}+{$crop_x}+{$crop_y} {$dirpath}/h-00001.png 2>&1");
@@ -263,6 +266,17 @@ class File extends Model
         $dir = substr($this->fname, 0, -4);
         $dirpath = storage_path(File::apf() . '/' . $dir);
         $txtpath = $dirpath . "/p-00001.txt";
+
+        // ディレクトリができるのを待つ
+        $retry = 0;
+        while (!file_exists($dirpath)) {
+            sleep(1);
+            $retry++;
+            if ($retry > 10) {
+                Log::error("File@makePdfText: no dirpath {$dirpath} (pdftoppm failed?)");
+                break;
+            }
+        }
         $txtf = fopen($txtpath, "w");
         if ($txtf) {
             fwrite($txtf, $text);
