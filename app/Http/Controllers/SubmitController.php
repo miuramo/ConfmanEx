@@ -18,6 +18,7 @@ use App\Models\Submit;
 use App\Models\Viewpoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use STS\ZipStream\Facades\Zip;
 use ZipArchive;
 
@@ -480,7 +481,7 @@ class SubmitController extends Controller
                 if ($sub->paper->pdf_file != null) {
                     $out[$booth]['pagenum'] = $sub->paper->pdf_file->pagenum;
                 } else {
-                    info("no pdf file for " . $sub->paper->id);
+                    Log::channel("single")->info("json_bta: no pdf file for " . $sub->paper->id);
                     $out[$booth]['pagenum'] = '◆◆ no pdf◆◆';
                 }
                 $out[$booth]['bibauthors'] = $sub->paper->bibauthors(true, $use_short_for_bibauthors); //同一所属を省略 , use_short=true
