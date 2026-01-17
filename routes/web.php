@@ -21,6 +21,7 @@ use App\Http\Controllers\ViewpointController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\AffilController;
 use App\Http\Controllers\EnqueteConfigController;
+use App\Http\Controllers\FailedJobController;
 use App\Http\Controllers\LogAccessController;
 use App\Models\RevConflict;
 use App\Models\User;
@@ -141,6 +142,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_filelist', [AdminController::class, 'filelist'])->name('admin.filelist');
     Route::get('/admin_gen_dlkey', [AdminController::class, 'gen_dlkey'])->name('admin.gen_dlkey');
     Route::get('/admin_users', [AdminController::class, 'users'])->name('admin.users');
+
+    Route::get('/admin_failed_jobs/{all?}', [FailedJobController::class, 'index'])->name('admin.failed_jobs');
+    Route::post('/admin_failed_jobs/{id}/mark_as_read', [FailedJobController::class, 'markAsRead'])->name('admin.failed_jobs.mark_as_read');
 
     Route::post('/admin_user_yomi', [ManagerController::class, 'user_yomi_post'])->name('admin.user_yomi_post'); // ユーザーの読み仮名一括登録
 

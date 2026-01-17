@@ -142,10 +142,6 @@
         <x-element.linkbutton href="{{ route('mt.index') }}" color="pink">
             メール雛形
         </x-element.linkbutton>
-        {{-- <span class="px-5"></span>
-        <x-element.linkbutton href="{{ route('admin.mailtest') }}" color="pink">
-            mailtest
-        </x-element.linkbutton> --}}
         <span class="px-5"></span>
         <x-element.linkbutton href="{{ route('admin.paperlist_headimg') }}" color="yellow">
             切り取り画像の確認
@@ -181,6 +177,10 @@
         <span class="px-5"></span>
         <x-element.linkbutton href="{{ route('admin.users') }}" color="blue">
             ユーザ管理
+        </x-element.linkbutton>
+        <span class="px-5"></span>
+        <x-element.linkbutton href="{{ route('admin.failed_jobs') }}" color="purple">
+            Failed Jobs
         </x-element.linkbutton>
 
     </x-element.h1>
