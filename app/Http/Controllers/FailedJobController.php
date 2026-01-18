@@ -24,6 +24,11 @@ class FailedJobController extends Controller
     {
         if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
 
+        if ($id == 0) {
+            // Mark all as read
+            FailedJob::where('is_read', false)->update(['is_read' => true]);
+            return redirect()->route('admin.failed_jobs')->with('feedback.success', 'All failed jobs marked as read.');
+        }
         $failedJob = FailedJob::findOrFail($id);
         $failedJob->is_read = true;
         $failedJob->save();
