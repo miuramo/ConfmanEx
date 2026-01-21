@@ -6,6 +6,7 @@
         'id',
         'id03d',
         'title',
+        'authors',
         'owner',
         'owneraffil',
         'owneremail',
@@ -64,6 +65,8 @@
                 <td class="p-1">{{ $paper->id_03d() }}
                 </td>
                 <td class="p-1">{{ $paper->title }}
+                </td>
+                <td class="p-1">{!! nl2br(e($paper->authorlist)) !!}
                 </td>
                 <td class="p-1">{{ $paper->paperowner->name }}
                 </td>
