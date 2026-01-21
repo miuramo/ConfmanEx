@@ -312,8 +312,9 @@ class SubmitController extends Controller
      * bibinfo for web (プログラム出力)
      * useshort 所属を短縮するなら1 (preルールは0でも1でも適用される)
      * filechk 0 非表示、1 確認可能なリンク
+     * postpone 0 通常、1 発表延期も表示する
      */
-    public function bibinfo(int $catid, bool $abbr = false, int $useshort = 0, int $filechk = 0)
+    public function bibinfo(int $catid, bool $abbr = false, int $useshort = 0, int $filechk = 0, int $postpone = 0)
     {
         if (!auth()->user()->can('role_any', 'admin|pc|pub|web')) abort(403);
 
@@ -321,7 +322,7 @@ class SubmitController extends Controller
             $query->where("judge", ">", 0);
         })->orderBy("orderint")->get();
 
-        return view('pub.bibinfo', ["cat" => $catid])->with(compact("subs", "catid", "abbr", "useshort","filechk"));
+        return view('pub.bibinfo', ["cat" => $catid])->with(compact("subs", "catid", "abbr", "useshort","filechk","postpone"));
     }
 
     /**

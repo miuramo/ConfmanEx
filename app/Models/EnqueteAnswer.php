@@ -49,7 +49,18 @@ class EnqueteAnswer extends Model
         return $ret;
     }
 
+    /**
+     * 単一のEnqueteItemのみについて、Paperごとの回答を取得する
+     * 参加登録は含めない(withpaper = true のもののみ) 含めると、関係のない機微情報が入ってしまうため
+     * 現状では、postpone 結果のみを bibinfo で参照することを想定している
+     */
+    public static function getAnswers_singleItem(string $itemname)
+    {
+        $ei_id = EnqueteItem::where("name", $itemname)->first()->id;
 
+        $result = EnqueteAnswer::where("enquete_item_id", $ei_id)->pluck("valuestr", "paper_id")->toArray();
+        return $result;
+    }
 
     /**
      * デモ希望としているアンケート回答数を、採択状況ごとに分けてカウントする
