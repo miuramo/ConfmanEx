@@ -97,7 +97,7 @@
 
             @if ($postpone == 0 && isset($postpone_ary[$sub->paper->id]) && strpos($postpone_ary[$sub->paper->id], 'はい') !== false)
                 <div>({{ $sub->booth }})
-                    <span class="text-purple-600 font-bold">【公開延期希望のため、タイトル非公開】</span>
+                    <span class="text-orange-600 font-bold">【公開延期希望のため、タイトル非公開】</span>
                 </div>
             @else
                 <div>({{ $sub->booth }})
