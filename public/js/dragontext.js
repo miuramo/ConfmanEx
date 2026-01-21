@@ -11,6 +11,7 @@ function maydirty_mode(mode) {
     maydirty = mode;
     if (mode) $("#seltext").css('background-color', '#e9d5ff'); // purple
     else $("#seltext").css('background-color', '#fef9c3'); // yellow
+    $("#seltext").focus();
 }
 
 document.getElementById("seltext").addEventListener("keydown", function(event) {
@@ -131,6 +132,26 @@ function removespaces() {
 // post する (paper.dragontextpost)
 function valset(field) {
     var stext = document.getElementById("seltext").value;
+
+    // 著者名・所属バリデーション
+    if (field == 'authorlist' || field == 'eauthorlist') {
+        // stext を行ごとに分割して、各行をバリデーションする
+        var lines = stext.split("\n");
+        for (var i = 0; i < lines.length; i++) {
+            if (!author_affil_validation(lines[i])) {
+                return;
+            }
+        }
+    }
+    if (field == 'eauthorlist') {
+        // 英文著者リストの場合、全角文字を含んでいないかチェックする
+        var ascii_only_pattern = /^[\x20-\x7E\r\n\t]*$/;
+        if (!ascii_only_pattern.test(stext)) {
+            alert("英文著者リストに全角文字が含まれています。全角文字を半角に修正してください。");
+            return;
+        }
+    }
+
     var fd = new FormData();
     fd.append('_token', $('meta[name="csrf-token"]').attr("content"));
     fd.append('target_field', field);
@@ -169,5 +190,31 @@ function valset(field) {
             alert("error dragontext post");
         }
     });
+}
 
+function author_affil_validation(txt){
+    // 著者名・所属のバリデーションを行う
+    txt = txt.trim();
+    orig = txt;
+    if (txt.length == 0) return true; // 空行はOK
+    txt = txt.replace(/　/g, " "); // 全角スペースを半角に変換
+    txt = txt.replace(/（/g, "(").replace(/）/g, ")");
+    txt = txt.replace(/\(/g, "\t").replace(/\)/g, "\t");
+    ary = txt.split("\t");
+    if(ary.length < 3){ // 閉じ括弧もチェックするため、タブで3つに分割されていることを確認する
+        alert("所属は半角または全角の括弧の中に記入してください。\n【エラー行】"+orig);
+        return false;
+    }
+    // 氏名部分のバリデーション
+    namepart = ary[0].trim();
+    nameary = namepart.split(" ");
+    if(nameary.length < 2){
+        alert("氏名は姓と名の間を半角スペースで区切ってください。\n【エラー行】"+orig+"\n\n（例1）投稿 太郎 (投稿大学)\n（例2）Toukou, Taro (Toukou University)");
+        return false;
+    }
+    if(namepart.indexOf(" ,") != -1){
+        alert("英文の場合は、カンマのあとに半角スペースを入れてください。カンマのまえには入れないでください。\n【エラー行】"+orig+"\n\n（例1）投稿 太郎 (投稿大学)\n（例2）Toukou, Taro (Toukou University)");
+        return false;
+    }
+    return true;
 }

@@ -5,7 +5,6 @@ window.onload = function () {
         let textNodes = [];
         // ノードが除外対象のタグに含まれていないかチェック
         if (excludeTags.includes(node.nodeName.toLowerCase())) {
-            console.log(node.nodeName.toLowerCase());
             return textNodes;
         }
 
