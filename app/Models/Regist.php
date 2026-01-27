@@ -154,7 +154,6 @@ class Regist extends Model
     }
     public function chk_student($ary)
     {
-        info($ary);
         if (empty($ary['isstudent'])) {
             return "種別（一般 / 学生）を選択してください。";
         }
