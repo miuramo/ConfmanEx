@@ -41,6 +41,7 @@ class ReplaceKutenMiddleware
             route('mt.edit', ['mt' => 'NUM']),
             route('mt.show', ['mt' => 'NUM']),
             route('mt.index'),
+            route('file.favicon'),
         ];
 
         $baseurl = url('/');
@@ -62,7 +63,7 @@ class ReplaceKutenMiddleware
         if ($response instanceof \Illuminate\Http\Response) {
             $content = $response->getContent();
 
-            if (Setting::isTrue("REPLACE_PUNCTUATION")) {
+            if (Setting::isValid("REPLACE_PUNCTUATION")) {
                 $replaceary = json_decode(Setting::getValue("REPLACE_PUNCTUATION"));
                 foreach ($replaceary as $old => $new) {
                     $content = str_replace($old, $new, $content);

@@ -77,6 +77,15 @@ class Setting extends Model
         }
     }
 
+    public static function isValid($setting_name)
+    {
+        $setting = Setting::where('name', $setting_name)->first();
+        if ($setting) {
+            return $setting->valid;
+        }
+        return false;
+    }
+
     public static function seeder()
     {
         Setting::firstOrCreate([
