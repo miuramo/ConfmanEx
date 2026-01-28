@@ -391,7 +391,7 @@ class PaperController extends Controller
         }
         // PDFがなければ終了
         if ($paper->pdf_file_id == null) {
-            return redirect()->route('paper.edit', ['paper' => $paper])->with('feedback.error', 'PDFがありません。');
+            return redirect()->route('paper.edit', ['paper' => $paper])->with('feedback.error', '書誌情報の設定に必要な、PDFがありません。');
         }
 
         if ($paper->locked) {
