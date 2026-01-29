@@ -52,7 +52,7 @@ class Regist extends Model
     public static function sponsortoken()
     {
         $reg_early_limit = Setting::getval('REG_EARLY_LIMIT');
-        return substr(sha1('sponsor' . $reg_early_limit ), 0, 16);
+        return substr(sha1('sponsor' . $reg_early_limit), 0, 16);
     }
 
     public function enqans()
@@ -108,7 +108,7 @@ class Regist extends Model
             return $res;
         }
         // 追加のチェック from Validation
-        $vals = Validation::where('event_id', 1)->orderBy('orderint')->get(); // 現在はイベントID=1（参加登録）のみ
+        $vals = Validation::where('event_id', $this->event_id)->orderBy('orderint')->get(); // 現在はイベントID=1（参加登録）のみ
         foreach ($vals as $val) {
             // script を評価
             if (!empty($val->script)) {
@@ -122,17 +122,59 @@ class Regist extends Model
         // $res[] = $this->chk_kubun($ary);
         // $res[] = $this->chk_othergakkai($ary);
         // $res[] = $this->chk_student($ary);
-        // foreach($this->enq_key_value() as $k=>$v){
-        //     $res[] = $k.": ".$v;
+        // foreach ($ary as $k => $v) {
+        //     $res[] = $k . ": " . $v;
         // }
+        // $res[] = $this->nogood(['ismember' => 2, 'presen_charge' => 1]); // 現地論文発表は会員でないといけない
+        // $res[] = $this->nogood(['ismember' => 2, 'kubun' => 1]); // 非会員は参加費一般を選択できない
+        // $res[] = $this->nogood(['isstudent' => 1, 'kubun' => 2]); // 一般は学生参加費を選択できない
+        // $res[] = $this->nogood(['ismember' => 1, 'kubun' => 3]); // 会員は非会員参加費を選択できない
         return $res;
     }
 
-    public function chk_existence($ary, $key_, $desc)
+    /**
+     * NGになる組み合わせで回答されているかどうかを判定する
+     * NGになるルールは、配列で ['is_student' => 2, 'kubun' => [3,4]] のように与える
+     * ルールは3要素以上でもよい。 NGになるとは、すべての要素にマッチする場合を指す
+     */
+    public function nogood($ruleary)
     {
-        if (empty($ary[$key])) {
-            return "{$desc}を入力してください。";
+        $selids = EventConfig::getEnqueteAnswersBySelectionNumber($this->event_id, $this->user_id);
+        $num_match = 0;
+        foreach ($ruleary as $key => $rule) {
+            if (is_array($rule)) {
+                foreach ($rule as $selid) {
+                    if (isset($selids[$key]) && $selids[$key] == $selid) {
+                        $num_match++;
+                        break;
+                    }
+                }
+            } else {
+                if (isset($selids[$key]) && $selids[$key] == $rule) {
+                    $num_match++;
+                }
+            }
         }
+        if ($num_match == count($ruleary)) {
+            // フィードバック（なにがNGなのか、その理由）を生成して返す。
+            return $this->ng_feedback($ruleary);
+        }
+    }
+    public function ng_feedback($ruleary)
+    {
+        $ans = $this->enq_key_value();
+        $descs = EnqueteItem::pluck('desc', 'name')->toArray();
+        $selected = [];
+        foreach ($ruleary as $key => $rule) {
+            $selected[] = "【" . $descs[$key] . "】を『" . $ans[$key]."』";
+        }
+        if (count($ruleary) == 2) {
+            $msg = $selected[0] . "にしたとき、" . $selected[1] . " にすることはできません。";
+        } else {
+            $msg = "以下の組み合わせは選択できません：";
+            $msg .= implode("かつ、", $selected) . "のとき。";
+        }
+        return $msg;
     }
 
     public function chk_kubun($ary)
@@ -204,7 +246,7 @@ class Regist extends Model
             ->leftJoin('enquete_answers', function ($join) use ($enquete_item_target) {
                 $join->on('regists.user_id', '=', 'enquete_answers.user_id')
                     ->where('enquete_answers.enquete_item_id', $enquete_item_target->id);
-                $join->where('enquete_answers.paper_id','>',0); // ここで、アンケートプレビューからの重複回答を排除
+                $join->where('enquete_answers.paper_id', '>', 0); // ここで、アンケートプレビューからの重複回答を排除
             })
             ->selectRaw('enquete_answers.valuestr as ' . $enqitm_name . ', regists.isearly, count(*) as cnt')
             ->groupBy($enqitm_name, 'isearly')
