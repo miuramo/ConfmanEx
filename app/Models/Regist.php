@@ -104,6 +104,9 @@ class Regist extends Model
         $ary = $this->enq_key_value();
         $res = Enquete::validateEnquetes(User::find($this->user_id));
 
+        if (count($res) > 0) {
+            return $res;
+        }
         // 追加のチェック from Validation
         $vals = Validation::where('event_id', 1)->orderBy('orderint')->get(); // 現在はイベントID=1（参加登録）のみ
         foreach ($vals as $val) {
@@ -123,6 +126,13 @@ class Regist extends Model
         //     $res[] = $k.": ".$v;
         // }
         return $res;
+    }
+
+    public function chk_existence($ary, $key_, $desc)
+    {
+        if (empty($ary[$key])) {
+            return "{$desc}を入力してください。";
+        }
     }
 
     public function chk_kubun($ary)
