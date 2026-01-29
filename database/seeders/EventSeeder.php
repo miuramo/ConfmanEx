@@ -12,6 +12,10 @@ class EventSeeder extends Seeder
      */
     public function run(): void
     {
+        \App\Models\Event::factory()->create([
+            'id' => 1,
+            'name' => '参加登録',
+        ]);
         //
     }
 }

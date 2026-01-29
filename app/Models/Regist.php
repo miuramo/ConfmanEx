@@ -103,9 +103,25 @@ class Regist extends Model
     {
         $ary = $this->enq_key_value();
         $res = Enquete::validateEnquetes(User::find($this->user_id));
-        $res[] = $this->chk_kubun($ary);
-        $res[] = $this->chk_othergakkai($ary);
-        $res[] = $this->chk_student($ary);
+
+        // 追加のチェック from Validation
+        $vals = Validation::where('event_id', 1)->orderBy('orderint')->get(); // 現在はイベントID=1（参加登録）のみ
+        foreach ($vals as $val) {
+            // script を評価
+            if (!empty($val->script)) {
+                eval($val->script);
+            }
+            // closure を評価 (scriptとclosureの違いはあまりない。)
+            if (!empty($val->closure)) {
+                eval($val->closure);
+            }
+        }
+        // $res[] = $this->chk_kubun($ary);
+        // $res[] = $this->chk_othergakkai($ary);
+        // $res[] = $this->chk_student($ary);
+        // foreach($this->enq_key_value() as $k=>$v){
+        //     $res[] = $k.": ".$v;
+        // }
         return $res;
     }
 

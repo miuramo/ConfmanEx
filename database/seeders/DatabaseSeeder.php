@@ -54,7 +54,9 @@ class DatabaseSeeder extends Seeder
             AcceptSeeder::class,
             SettingSeeder::class,
             MailTemplateSeeder::class,
+            EventSeeder::class,
             EventConfigSeeder::class,
+            ValidationSeeder::class,
         ]);
     }
 }
