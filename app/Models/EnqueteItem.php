@@ -39,11 +39,29 @@ class EnqueteItem extends Model
         return [];
     }
 
-    public static function getDescAndSelText(string $key, int $selid){
+    /**
+     * 指定された key と選択肢IDから、説明文と選択肢テキストを取得する
+     * たとえば、key = ismenber、selid=2 を指定すると、
+     * ["desc"=> "会員種別", "text"=> "非会員"] のような配列を返す
+     * 見つからない場合は null を返す
+     * 注意：keyはユニークであることを想定。複数あった場合は最初の1件のみ返す
+     */
+    public static function getDescAndSelText(string $key, int $selid)
+    {
         $item = EnqueteItem::where("name", $key)->first(); // name はユニークであることを想定
-        if(!$item) return null;
+        if (!$item) return null;
         $selections = $item->selections();
-        if(!isset($selections[$selid-1])) return null;
-        return ["desc"=> $item->desc, "text"=> $selections[$selid-1]];
+        if (!isset($selections[$selid - 1])) return null;
+        return ["desc" => $item->desc, "text" => $selections[$selid - 1]];
+    }
+
+    /**
+     * 全 EnqueteItem の id => desc 配列を返す
+     */
+    public static function enq_enqitmid_desc()
+    {
+        // TODO: 他のアンケートと、name の重複がないようにする必要あり。name=>idにするのも一つの方法。
+        $enqitm_id_desc = EnqueteItem::pluck('desc', 'id')->toArray();
+        return $enqitm_id_desc;
     }
 }

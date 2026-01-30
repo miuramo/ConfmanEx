@@ -55,6 +55,11 @@ class Regist extends Model
         return substr(sha1('sponsor' . $reg_early_limit), 0, 16);
     }
 
+    /**
+     * この参加登録に関連するアンケート回答(EnqueteAnswer)を返す
+     * アンケートIDごとに配列化して返す
+     * @return array [enquete_id][enquete_item_id] = EnqueteAnswer
+     */
     public function enqans()
     {
         // EnqueteAnswers を返す
@@ -69,6 +74,11 @@ class Regist extends Model
         return $enqans;
     }
 
+    /**
+     * この参加登録に関連するアンケート回答(EnqueteAnswer)の
+     * enqitm.name(質問項目keyname) => value 配列を返す
+     * $this->check()と $this->ng_feedback() で使用
+     */
     public function enq_key_value()
     {
         $enqans = $this->enqans();
@@ -81,22 +91,22 @@ class Regist extends Model
         }
         return $res;
     }
-    public function enq_enqitmid_value()
+    /**
+     * この参加登録に関連するアンケート回答(EnqueteAnswer)の
+     * enqitm.desc(質問項目) => value 配列を返す
+     * confirmation.blade.php で使用
+     */
+    public function enq_enqitmdesc_value()
     {
+        $itemid_desc = EnqueteItem::enq_enqitmid_desc();//すべての EnqueteItem の id => desc 配列を取得
         $enqans = $this->enqans();
         $res = [];
         foreach ($enqans as $enqid => $items) {
             foreach ($items as $itemid => $ans) {
-                $res[$itemid] = $ans->valuestr;
+                $res[$itemid_desc[$itemid]] = $ans->valuestr;
             }
         }
         return $res;
-    }
-    public function enq_enqitmid_desc()
-    {
-        // TODO: 他のアンケートと、name の重複がないようにする必要あり。name=>idにするのも一つの方法。
-        $enqitm_id_desc = EnqueteItem::pluck('desc', 'id')->toArray();
-        return $enqitm_id_desc;
     }
 
     public function check()
