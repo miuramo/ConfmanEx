@@ -87,7 +87,7 @@ class AdminController extends Controller
                     $paper2 = Paper::with("contacts")->find($paper->id);
                     $paper2->remove_contact($contact); // ここでの修正は、log_modifiesに反映されない
                     // メール送信（またはスプール） TODO: mail send
-                    $paper2->pendingMail(new DisableEmail($paper2, $em));
+                    if ($paper2) (new DisableEmail($paper2, $em))->process_send();
                 }
             }
         }

@@ -9,9 +9,8 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class FailedJobsAlert extends Mailable
+class FailedJobsAlert extends RetryMailable
 {
-    use Queueable, SerializesModels;
 
     public int $count;
 
@@ -44,15 +43,5 @@ class FailedJobsAlert extends Mailable
                 'count' => $this->count,
             ],
         );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
     }
 }

@@ -18,21 +18,13 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
-class BbNotify extends Mailable implements ShouldQueue
+class BbNotify extends RetryMailable
 {
-    use Queueable, SerializesModels;
 
     public Bb $bb;
     public BbMes $bbmes;
     public Paper $paper;
-    public array $mail_to_cc;
     public string $name; // 〜〜掲示板
-
-    public $tries = 10;
-    public $backoff = 10;
-    public $timeout = 60;
-
-    public bool $failed = false;
 
     /**
      * Create a new message instance.
@@ -52,15 +44,24 @@ class BbNotify extends Mailable implements ShouldQueue
         $this->paper = $_bb->paper;
         $this->mail_to_cc = $_bb->get_mail_to_cc();
         $this->name = $names[$_bb->type];
-        //TODO: paperの情報をつかって書き込む
-        // $this->imagePath = $imagePath;
+
+        $this->subject = $this->name . '掲示板に投稿がありました : ' . $this->paper->id_03d();
+        $this->content = new Content(
+            markdown: 'emails.bbnotify',
+            with: [
+                'bbsub' => $this->bbmes->subject,
+                'mes' => $this->bbmes->mes,
+                'bburl' => $this->bb->url(),
+                'name' => $this->name,
+                'pid03d' => $this->paper->id_03d(),
+            ],
+        );
     }
-    /**
+    /*
      * メール送信
      */
     public function process_send()
     {
-        info($this->mail_to_cc);
         if (!isset($this->mail_to_cc['to'])) {
             // 正常ならここは実行されないので、めったにないはずだが、もしToが抜けていたら、bccだった宛先に個別に送る必要がある
             if (count($this->mail_to_cc['separate_to']) == 0) {
@@ -80,64 +81,6 @@ class BbNotify extends Mailable implements ShouldQueue
             $pmail->bcc($this->mail_to_cc['bcc']);
             $pmail->queue($this);
         }
-    }
-
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        if ($this->failed){
-            return new Envelope(
-                subject: "★★メール送信失敗？★★ ".$this->name . '掲示板に投稿がありました : ' . $this->paper->id_03d(),
-            );
-        } 
-        return new Envelope(
-            subject: $this->name . '掲示板に投稿がありました : ' . $this->paper->id_03d(),
-        );
-    }
-
-    // public function convertImageToDataURI($filePath)
-    // {
-    //     $imageData = base64_encode(file_get_contents($filePath));
-    //     $mimeType = mime_content_type($filePath);
-    //     return "data:{$mimeType};base64,{$imageData}";
-    // }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            markdown: 'emails.bbnotify',
-            with: [
-                'bbsub' => $this->bbmes->subject,
-                'mes' => $this->bbmes->mes,
-                'bburl' => $this->bb->url(),
-                'name' => $this->name,
-                'pid03d' => $this->paper->id_03d(),
-            ],
-        );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [
-            // Attachment::fromPath(storage_path('app/public/files/nofile.png')),
-        ];
-    }
-
-    public function failed(\Exception $exception)
-    {
-        info('BbNotify:メール送信に失敗しました: ' . $exception->getMessage());
-        $this->failed = true;
-        Mail::to(env("MAIL_BCC_ADDRESS", null))->queue($this);
     }
 
 }

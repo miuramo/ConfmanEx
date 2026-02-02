@@ -11,9 +11,8 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class RegistrationConfirmation extends Mailable
+class RegistrationConfirmation extends RetryMailable
 {
-    use Queueable, SerializesModels;
 
     public Regist $regist;
     public $conftitle;
@@ -25,39 +24,13 @@ class RegistrationConfirmation extends Mailable
     {
         $this->regist = $regist;
         $this->conftitle = Setting::getval('CONFTITLE');
-    }
-
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: "【{$this->conftitle}】参加登録が完了しました",
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
+        $this->subject = "【{$this->conftitle}】参加登録が完了しました";
+        $this->content = new Content(
             markdown: 'emails.registration.confirmation',
             with: [
                 'regist' => $this->regist,
                 'conftitle' => $this->conftitle,
             ],
         );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
     }
 }
