@@ -88,9 +88,16 @@ class RetryMailable extends Mailable implements ShouldQueue
 
     public function failed(\Exception $exception)
     {
-        info('メール送信に失敗しました: ' . $exception->getMessage());
+        // ローカルログ（必ず残す）
+        Log::error('メール送信に最終失敗しました: ' . $exception->getMessage(), [
+            'to' => $this->mail_to_cc['to'] ?? null,
+            'cc' => $this->mail_to_cc['cc'] ?? [],
+            'subject' => $this->subject,
+            'tries' => $this->tries,
+        ]);
         $this->failed = true;
         $this->errormessage = "\n\n".$exception->getMessage();
-        Mail::to(env("MAIL_BCC_ADDRESS", null))->queue($this);
+
+        // Mail::to(env("MAIL_BCC_ADDRESS", null))->queue($this);
     }
 }

@@ -111,7 +111,8 @@ class BbMesController extends Controller
         }
         // 論文情報を保存
         $bb->paper->save();
-        $memo = "PaperID:{$bb->paper->id} の {$ft[$ftype]}ファイルを差し替えました。(new fileid={$file_id})  ";
+        $id_03d = sprintf("%03d", $bb->paper->id);
+        $memo = "PaperID: {$id_03d} の {$ft[$ftype]}ファイルを差し替えました。(new fileid={$file_id})  ";
         // 新しいファイルのPaperIDをセット
         $newfile->paper_id = $bb->paper->id;
         $newfile->pending = 0;
