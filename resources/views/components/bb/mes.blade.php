@@ -31,6 +31,9 @@
                         @if ($mes->bb->paper->pdf_file_id == $file->id || $mes->bb->paper->img_file_id == $file->id || $mes->bb->paper->video_file_id == $file->id || $mes->bb->paper->altpdf_file_id == $file->id)
                             <span class="mx-1 text-sm text-blue-400">(採用済み)</span>
                         @endif
+                        @if ($file->paper_id == 0)
+                            <span class="text-sm text-gray-500">注：論文投稿者以外がアップロードしたファイルです。</span>
+                        @endif
                     @endforeach
                 </div>
             @endif
@@ -98,6 +101,8 @@
                             @else
                                 <span class="text-sm text-gray-500">→措置済み（未採用）</span>
                             @endif
+                        @else
+                            <span class="text-sm text-gray-500">注：論文投稿者以外がアップロードしたファイルです。</span>
                         @endif
                     @endif
                 @endforeach
