@@ -13,9 +13,9 @@ use Illuminate\Http\Request;
 
 class BbMesController extends Controller
 {
-    
 
-    
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -39,10 +39,11 @@ class BbMesController extends Controller
         if ($req->has('bbfile')) {
             $tmp = $req->file("bbfile");
             // もし、bb->paper->owner == auth()->id() なら、paperに紐付ける
-            if ($bb->paper->owner == auth()->id()) {
+            // if ($bb->paper->owner == auth()->id()) {
+            if (auth()->user()->can('show_paper', $bb->paper)) { // 論文のオーナーか共著者なら、差し替え可能ファイルにする
                 $file = File::createnew($tmp, $bb->paper->id);
             } else {
-                $file = File::createnew($tmp);
+                $file = File::createnew($tmp); 
             }
             $file->bb_mes_id = $bbmes->id;
             $file->pending = 1;
@@ -82,8 +83,8 @@ class BbMesController extends Controller
             ]);
             //メール通知
             (new BbNotify($bb, $bbmes))->process_send();
-    
-            return redirect()->route('bb.show', ['bb' => $bbid, 'key' => $key])->with('feedback.success', "ファイルを未採用＆措置済みにし、本掲示板にその旨を通知しました。");    
+
+            return redirect()->route('bb.show', ['bb' => $bbid, 'key' => $key])->with('feedback.success', "ファイルを未採用＆措置済みにし、本掲示板にその旨を通知しました。");
         }
 
 
@@ -138,13 +139,4 @@ class BbMesController extends Controller
 
         return redirect()->route('bb.show', ['bb' => $bbid, 'key' => $key])->with('feedback.success', "ファイルを採用し、本掲示板にその旨を通知しました。");
     }
-
-
-    
-
-    
-
-    
-
-    
 }

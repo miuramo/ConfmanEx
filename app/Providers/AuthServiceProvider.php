@@ -70,7 +70,9 @@ class AuthServiceProvider extends ServiceProvider
             return false;
         });
 
-
+        /**
+         * 論文情報を作成したオーナー
+         */
         Gate::define('edit_paper', function ($user, $paper) {
             if ($paper->owner === $user->id) {
                 $ret = "user uid{$user->id} is owner of pid{$paper->id}";
@@ -80,13 +82,16 @@ class AuthServiceProvider extends ServiceProvider
             return ($paper->owner === $user->id);
         });
 
+        /**
+         * 登録された共著者
+         */
         Gate::define('show_paper', function ($user, $paper) {
-            if ($paper->owner === $user->id) $ret = "user uid{$user->id} is owner of pid{$paper->id}";
-            else if ($paper->isCoAuthorEmail($user->email)) {
-                $ret = "user uid{$user->id} is coauthor of pid{$paper->id}";
-            } else {
-                $ret = "NOT ALLOWED: show_paper";
-            }
+            // if ($paper->owner === $user->id) $ret = "user uid{$user->id} is owner of pid{$paper->id}";
+            // else if ($paper->isCoAuthorEmail($user->email)) {
+            //     $ret = "user uid{$user->id} is coauthor of pid{$paper->id}";
+            // } else {
+            //     $ret = "NOT ALLOWED: show_paper";
+            // }
             if ($paper->owner === $user->id) return true;
             return $paper->isCoAuthorEmail($user->email);
         });
