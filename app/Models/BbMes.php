@@ -28,5 +28,19 @@ class BbMes extends Model
         return $this->hasMany(File::class, 'bb_mes_id');
     }
 
-
+    public static function whois(BbMes $mes)
+    {
+        $bb = $mes->bb;
+        $paper = $bb->paper;
+        $email = User::find($mes->user_id)->email ?? "";
+        if ($mes->user_id == $paper->owner) {
+            return "（投稿者）";
+        } else if ($paper->isCoAuthorEmail($email)) {
+            return "（共著者）";
+        } else if ($mes->user_id == 0) {
+            return "（システム）";
+        } else {
+            return "(委員)";
+        }
+    }
 }
