@@ -84,6 +84,7 @@ class AuthServiceProvider extends ServiceProvider
 
         /**
          * 登録された共著者
+         * 関連： BbMes::whois()
          */
         Gate::define('show_paper', function ($user, $paper) {
             // if ($paper->owner === $user->id) $ret = "user uid{$user->id} is owner of pid{$paper->id}";

@@ -117,6 +117,9 @@
                             @endif
                         @else
                             <span class="text-sm text-gray-500">注：論文投稿者以外がアップロードしたファイルです。</span>
+                            <x-element.linkbutton
+                                href="{{ route('bb.set_file_paperid', ['file' => $file->id, 'bb' => $mes->bb->id]) }}"
+                                color="pink" size="xs" target="_blank">→このファイルを差し替え可能にする（論文ID {{ $mes->bb->paper_id }} に関連付ける）</x-element.linkbutton>
                         @endif
                     @endif
                 @endforeach

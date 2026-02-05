@@ -43,4 +43,19 @@ class BbMes extends Model
             return "（委員）";
         }
     }
+
+    public static function whois_numeric(BbMes $mes)
+    {
+        $bb = $mes->bb;
+        $paper = $bb->paper;
+        if ($mes->user_id == $paper->owner) {
+            return 1; // 投稿者
+        } else if ($mes->user_id == 0) {
+            return 0; // システム
+        } else if ($paper->isCoAuthorEmail(User::find($mes->user_id)->email ?? "")) {
+            return 2; // 共著者
+        } else {
+            return 4; // 委員
+        }
+    }
 }

@@ -231,4 +231,22 @@ BodyLine3
         }
         return redirect()->route('bb.index_for_pub')->with('feedback.success', "フラグを変更しました。");
     }
+
+    /** 
+     * 投稿者や共著者以外のファイルについて、差し替え可能にするために paper_id をセットする 
+     * PaperIDは、Bbのpaper_id を使う
+    */
+    public function set_file_paperid($fileid, $bbid)
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager|pc|pub')) abort(403);
+        $bb = Bb::find($bbid);
+        if ($bb == null) abort(404, "bb not found");
+        $file = \App\Models\File::find($fileid);
+        if ($file == null) abort(404, "file not found");
+        $file->paper_id = $bb->paper_id;
+        $file->save();
+        return redirect()->route('bb.show', ['bb' => $bb->id, 'key' => $bb->key])->with('feedback.success', "ファイルの paper_id をセットしました。");
+        //        return view("bb.show")->with(compact("bb", "revid"));
+
+    }
 }

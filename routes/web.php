@@ -275,6 +275,7 @@ Route::middleware('auth')->group(function () {
     Route::get('bb_multisubmit/{type?}', [BbController::class, 'multisubmit'])->name('bb.multisubmit');
     Route::post('bb_multisubmit/{type?}', [BbController::class, 'multisubmit'])->name('bb.multisubmitpost');
     Route::post('bb_needreply', [BbController::class, 'needreply'])->name('bb.needreply');
+    Route::get('bb_set_file_paperid/{file}/{bb}', [BbController::class, 'set_file_paperid'])->name('bb.set_file_paperid');
 
     // 参加登録
     // Route::resource('part', ParticipantController::class);
