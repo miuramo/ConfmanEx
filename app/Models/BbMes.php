@@ -40,7 +40,7 @@ class BbMes extends Model
         } else if ($mes->user_id == 0) {
             return "（システム）";
         } else {
-            return "(委員)";
+            return "（委員）";
         }
     }
 }
