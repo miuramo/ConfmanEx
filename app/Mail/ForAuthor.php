@@ -47,7 +47,7 @@ class ForAuthor extends RetryMailable
         }
         $this->subject = $this->template->make_subject($this->replacetxt);
         $this->content = new Content(
-            markdown: 'emails.generic',
+            markdown: 'emails.forauthor',
             with: [
                 'body' => $this->template->make_body($this->replacetxt),
             ],
