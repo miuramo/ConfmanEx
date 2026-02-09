@@ -57,8 +57,8 @@ class BbNotify extends RetryMailable
             ],
         );
     }
-    /*
-     * メール送信
+    /** 
+     * メール送信 （独自実装にする必要はないが、一応Cc: を除いている）
      */
     public function process_send()
     {

@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Jobs\SendMailJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -11,6 +12,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\Mailer\Exception\UnexpectedResponseException;
 
 class RetryMailable extends Mailable implements ShouldQueue
 {
@@ -32,18 +34,17 @@ class RetryMailable extends Mailable implements ShouldQueue
      * Create a new message instance.
      *
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
     /**
      * メール送信
      */
-    public function process_send(){
+    public function process_send()
+    {
         $pmail = Mail::to($this->mail_to_cc['to']);
         if (count($this->mail_to_cc['cc']) > 0) $pmail->cc($this->mail_to_cc['cc']);
         if (isset($this->mail_to_cc['bcc']) && count($this->mail_to_cc['bcc']) > 0) $pmail->bcc($this->mail_to_cc['bcc']);
-        info($this->mail_to_cc);
         $pmail->queue($this);
+        // SendMailJob::dispatch($this);
     }
 
     /**
@@ -51,9 +52,9 @@ class RetryMailable extends Mailable implements ShouldQueue
      */
     public function envelope(): Envelope
     {
-        if ($this->failed){
+        if ($this->failed) {
             return new Envelope(
-                subject: "★★メール送信失敗の可能性★★ ".$this->subject . " ".$this->errormessage,
+                subject: "★★メール送信失敗の可能性★★ " . $this->subject . " " . $this->errormessage,
             );
         }
         return new Envelope(
@@ -96,7 +97,7 @@ class RetryMailable extends Mailable implements ShouldQueue
             'tries' => $this->tries,
         ]);
         $this->failed = true;
-        $this->errormessage = "\n\n".$exception->getMessage();
+        $this->errormessage = "\n\n" . $exception->getMessage();
 
         // Mail::to(env("MAIL_BCC_ADDRESS", null))->queue($this);
     }

@@ -43,12 +43,4 @@ class DisableEmail extends RetryMailable
             ],
         );
     }
-    /**
-     * メール送信
-     */
-    public function process_send(){
-        $pmail = Mail::to($this->mail_to_cc['to']);
-        $pmail->cc($this->mail_to_cc['cc']);
-        $pmail->queue($this);
-    }
 }

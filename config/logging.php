@@ -99,7 +99,7 @@ return [
             'emoji' => ':boom:',
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
-            'tap' => [App\Logging\AddCallerInfo::class],
+            'tap' => [App\Logging\AddCallerInfo::class, App\Logging\SkipOn451Tap::class],
             'formatter' => LineFormatter::class,
             'formatter_with' => [
                 'format' => "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n",

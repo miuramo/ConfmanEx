@@ -54,14 +54,4 @@ class ForAuthor extends RetryMailable
         );
     }
 
-    /**
-     * メール送信
-     */
-    public function process_send()
-    {
-        $pmail = Mail::to($this->mail_to_cc['to']);
-        if (count($this->mail_to_cc['cc']) > 0) $pmail->cc($this->mail_to_cc['cc']);
-        if (isset($this->mail_to_cc['bcc']) && count($this->mail_to_cc['bcc']) > 0) $pmail->bcc($this->mail_to_cc['bcc']);
-        $pmail->queue($this);
-    }
 }
