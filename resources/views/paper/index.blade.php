@@ -36,16 +36,16 @@
                 </div>
 
                 <div></div>
-            
-                @if(auth()->user()->can('role_any','reviewer|metareviewer'))
-                <div
-                    class="xs:text-sm sm:text-xl text-blue-700 bg-cyan-200 dark:bg-cyan-800 dark:text-blue-700 p-4 rounded-md text-center">
-                    【査読者のかたへ】依頼された査読・Biddingをはじめるには、以下の「査読一覧」ボタン（または、トップメニューの「査読」）をクリックしてください。
-                    <div class="mt-5 mb-2">
-                        <x-element.linkbutton href="{{ route('role.top', ['role' => 'reviewer']) }}" color="cyan">
-                            査読一覧 </x-element.linkbutton>
+
+                @if (auth()->user()->can('role_any', 'reviewer|metareviewer'))
+                    <div
+                        class="xs:text-sm sm:text-xl text-blue-700 bg-cyan-200 dark:bg-cyan-800 dark:text-blue-700 p-4 rounded-md text-center">
+                        【査読者のかたへ】依頼された査読・Biddingをはじめるには、以下の「査読一覧」ボタン（または、トップメニューの「査読」）をクリックしてください。
+                        <div class="mt-5 mb-2">
+                            <x-element.linkbutton href="{{ route('role.top', ['role' => 'reviewer']) }}" color="cyan">
+                                査読一覧 </x-element.linkbutton>
+                        </div>
                     </div>
-                </div>
                 @endif
             @else
                 @foreach ($all as $paper)
@@ -159,9 +159,14 @@
                 {{-- <div class="bg-yellow-100 p-3 motion-safe:hover:scale-[1.03] transition-all duration-250"> --}}
                 <x-element.paperid size=2 :paper_id="$paper->id">
                 </x-element.paperid>
+                @if ($show_booth[$paper->category_id])
+                    &nbsp;
+                    <x-element.boothid size="xl" :paper="$paper">
+                    </x-element.boothid>
+                @endif
                 &nbsp;
                 &nbsp;
-                <x-element.category :cat="$paper->category_id">
+                <x-element.category size="sm" :cat="$paper->category_id">
                 </x-element.category>
 
                 @if ($revreturn[$paper->category_id])
