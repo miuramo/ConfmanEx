@@ -144,7 +144,7 @@
             </div>
 
             <div class="mx-2 mt-8">
-                <span class="bg-teal-200 p-2">（以下の未回答数について補足）カテゴリがアンケート受付対象だったかどうかは考慮していません。</span>
+                <span class="bg-teal-200 p-2">（以下の未回答数について補足）特定のカテゴリがアンケート受付対象外であったかどうかに関わらず、すべてのカテゴリを表示しています。</span>
                 <table class="table-auto mt-2">
                     <thead>
                         <tr>
