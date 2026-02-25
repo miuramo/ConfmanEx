@@ -37,8 +37,16 @@ class VoteController extends Controller
             }
         } else {
             $cookie_token = Cookie::get('vote_ticket_token');
+            info("index - Cookieから投票トークンを取得: " . ($cookie_token ? $cookie_token : 'null'));
+            
+            // Cookie取得失敗時の詳細ログ
+            if (!$cookie_token) {
+                info("index - Cookieが存在しない理由の可能性: ブラウザでCookie無効、HTTPS/HTTP不一致、ドメイン不一致");
+            }
+            
             $ticket = VoteTicket::where('token', $cookie_token)->where('activated', true)->where('valid', true)->first();
             if (!$ticket) {
+                info("index - 有効なチケットが見つからない: Token=" . ($cookie_token ? $cookie_token : 'null'));
                 return view('vote.vote_error')->with('reason', 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。投票トークンをアカウントに紐づけている場合は、ログインしてください。');
                 // abort(403, 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。');
             }
@@ -66,18 +74,24 @@ class VoteController extends Controller
                         return view('vote.activate_error')->with('reason', '現在ログインしているアカウントには、すでに別の投票権が紐づけられています。そのため、この投票トークンを有効化することはできません。');
                     } else {
                         // 以前と同じトークンなので、そのまま投票ページに遷移する
+                        info("既に有効化済みのトークンでリダイレクト: " . $token);
                         return redirect('/vote'); // ->with('feedback.success', '注：この投票トークンは以前有効化されています。');
                     }
                 }
                 // ユーザーIDを設定して有効化
+                info("ログイン済みユーザーに投票権を紐付け - User ID: " . auth()->id() . ", Token: " . $token);
                 $ticket->user_id = auth()->id();
             } else {
-                info("Cookieからトークンを取得 " . $token);
-                $minutes = 60 * 24 * 3; // 3日間有効なクッキー
-                Cookie::queue('vote_ticket_token', $token, $minutes);
+                // 未ログインユーザーの場合、Cookieに投票トークンを設定
+                info("未ログインユーザーのCookieにトークンを設定: " . $token);
+                $this->setSecureVoteTokenCookie($token);
             }
             $ticket->activated = true;
             $ticket->save();
+            info("チケット有効化完了 - ID: " . $ticket->id . ", Token: " . $token);
+        } else {
+            info("無効なチケットのため処理をスキップ - Token: " . $token . ", Valid: " . ($ticket->valid ? 'true' : 'false'));
+            return view('vote.activate_error')->with('reason', 'この投票トークンは無効です。');
         }
         return redirect('/vote')->with('feedback.success', '投票権が有効化されました。');
     }
@@ -96,8 +110,16 @@ class VoteController extends Controller
         } else {
             $uid = null;
             $cookie_token = Cookie::get('vote_ticket_token');
+            info("vote - Cookieから投票トークンを取得: " . ($cookie_token ? $cookie_token : 'null'));
+            
+            // Cookie取得失敗時の詳細ログ
+            if (!$cookie_token) {
+                info("vote - Cookieが存在しない理由の可能性: ブラウザでCookie無効、HTTPS/HTTP不一致、ドメイン不一致");
+            }
+            
             $ticket = VoteTicket::where('token', $cookie_token)->where('activated', true)->where('valid', true)->first();
             if (!$ticket) {
+                info("vote - 有効なチケットが見つからない: Token=" . ($cookie_token ? $cookie_token : 'null'));
                 return view('vote.vote_error')->with('reason', 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。投票トークンをアカウントに紐づけている場合は、ログインしてください。');
             }
         }
@@ -149,6 +171,10 @@ class VoteController extends Controller
                 }
             }
 
+            // 投票完了後、セキュリティのためCookieを削除（オプション）
+            // 必要に応じてコメントアウトを外してください
+            // $this->clearVoteTokenCookie();
+            
             return redirect()->route('vote.vote', ['vote' => $vote])->with('feedback.success', '投票結果を保存しました。');
         }
         // チェック再現のため、保存データを取得する
@@ -320,6 +346,40 @@ class VoteController extends Controller
             $voteitem->save();
         }
         return redirect()->route('vote.edit_voteitem', ['voteitem' => $voteitem->id])->with('feedback.success', '投票項目を更新しました。');
+    }
+
+    /**
+     * 投票トークンのCookieを削除する
+     */
+    private function clearVoteTokenCookie()
+    {
+        Cookie::queue(Cookie::forget('vote_ticket_token'));
+        info("投票トークンCookieを削除しました");
+    }
+
+    /**
+     * セキュアなCookie設定のヘルパー
+     */
+    private function setSecureVoteTokenCookie(string $token, int $minutes = 0)
+    {
+        if ($minutes === 0) {
+            $minutes = 60 * 24 * 3; // デフォルト3日間
+        }
+        
+        $secure = request()->secure();
+        Cookie::queue(
+            'vote_ticket_token', 
+            $token, 
+            $minutes, 
+            '/', 
+            null, 
+            $secure, 
+            true, 
+            false, 
+            'Strict'
+        );
+        
+        info("セキュアCookie設定完了 - Token: " . $token . ", 有効期限: " . $minutes . "分, Secure: " . ($secure ? 'true' : 'false'));
     }
 
 }
