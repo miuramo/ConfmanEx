@@ -127,7 +127,6 @@ Route::middleware('auth')->group(function () {
 
     // admin
     Route::get('/admin_dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::post('/admin_disable_email', [AdminController::class, 'disable_email'])->name('admin.disable_email');
     Route::get('/admin_paperlist', [AdminController::class, 'paperlist'])->name('admin.paperlist');
     Route::post('/admin_paperlist', [AdminController::class, 'paperlist'])->name('admin.paperlist');
     Route::get('/admin_deletepaper/{cat}', [AdminController::class, 'deletepaper'])->name('admin.deletepaper');          // PC Top
@@ -329,6 +328,7 @@ Route::middleware('guest')->group(function () {
 
 require __DIR__ . '/web_annotpaper.php';
 require __DIR__ . '/web_register.php';
+require __DIR__ . '/web_contact.php';
 
 require __DIR__ . '/auth.php';
 

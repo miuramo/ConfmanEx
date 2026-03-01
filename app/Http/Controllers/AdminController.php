@@ -67,33 +67,6 @@ class AdminController extends Controller
         return view('admin.admindb')->with(compact("roles", "roleall"));
     }
 
-    public function disable_email(Request $req)
-    {
-        if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);
-
-        $em = $req->input("invalid_email");
-        $dryrun = $req->input("dryrun");
-        if (strlen($em) < 4) {
-            return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.error', '無効にしたいメールアドレスを入力してください。');
-        }
-
-        // Contactから辿れる、papersについて、投稿連絡用メールアドレスcontactemails から抜く。抜いた後でcontactsリレーションを更新。
-        $contact = Contact::findByIdOrName($em, null, "email");
-        $ids = [];
-        if ($contact != null && $contact->papers != null) {
-            foreach ($contact->papers as $paper) {
-                $ids[] = $paper->id_03d();
-                if ($dryrun == null || $dryrun != "DRYRUN") {
-                    $paper2 = Paper::with("contacts")->find($paper->id);
-                    $paper2->remove_contact($contact); // ここでの修正は、log_modifiesに反映されない
-                    // メール送信（またはスプール） TODO: mail send
-                    if ($paper2) (new DisableEmail($paper2, $em))->process_send();
-                }
-            }
-        }
-
-        return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.success', 'すべてのPaperの投稿連絡用メールアドレスから削除しました。' . implode(",", $ids));
-    }
 
     public function paperlist(Request $req)
     {

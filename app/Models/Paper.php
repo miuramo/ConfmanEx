@@ -312,6 +312,13 @@ class Paper extends Model
         $this->contacts()->detach(); // 既存のはすべて削除する
         //contactemails から、Contactを作成する（重複はtableのunique制約で保証される）
         $ema = explode("\n", trim($this->contactemails));
+        if ($this->paperowner != null) {
+            $ema[] = $this->paperowner->email; // paperownerのメールも、contactemailsに含めることにする。これも、重複はunique制約で保証される。 
+        } else {
+            if ($this->deleted_at == null) {
+                Log::info("Paper ID {$this->id} has no paperowner. owner ID: {$this->owner}");
+            }
+        }
         foreach ($ema as $e) {
             DB::transaction(function () use ($e) {
                 $con = Contact::firstOrCreate([

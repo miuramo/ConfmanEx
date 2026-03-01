@@ -91,28 +91,6 @@
             </div>
         </div>
 
-        <x-element.h1>問題のあるメールアドレスの管理</x-element.h1>
-        <div class="mx-10 py-4">
-            <form action="{{ route('admin.disable_email') }}" method="post" id="disable_email">
-                @csrf
-                @method('post')
-                <div class="mb-1">
-                    <label for="invalid_email"
-                        class="block text-sm font-medium text-gray-900 dark:text-white">無効にするメールアドレス</label>
-                    <input id="invalid_email" name="invalid_email" size="60"
-                        class="mb-1 block p-1 w-3/6 text-sm text-gray-900 bg-gray-50 rounded-lg dark:bg-slate-800 dark:text-slate-400 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <div>
-                        <input type="checkbox" id="dryrun_chk" name="dryrun" checked switch>
-                        <label class="form-check-label dark:text-gray-300" for="dryrun_chk">
-                            Dry Run (本当に実行したいときはチェックを外す)
-                        </label>
-                    </div>
-                    <x-element.submitbutton color="red" value="9999">
-                        無効にする
-                    </x-element.submitbutton>
-                </div>
-            </form>
-        </div>
 
         <x-element.h1>その他：
             <x-element.linkbutton href="{{ route('admin.chkexefiles') }}" color="slate">
