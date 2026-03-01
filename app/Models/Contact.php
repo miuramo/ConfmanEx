@@ -27,7 +27,7 @@ class Contact extends Model
     {
         // paper_contact テーブルをcontact_idでグループ化して、最も多くのpaperに関連しているcontactを取得する
         $top_contacts = self::join('paper_contact', 'contacts.id', '=', 'paper_contact.contact_id')
-            ->select('contacts.*', \DB::raw('COUNT(paper_contact.paper_id) as paper_count'), \DB::raw('GROUP_CONCAT(paper_contact.paper_id) as paper_ids'))
+            ->select('contacts.id', 'contacts.email', 'contacts.valid', 'contacts.infoprovider', 'contacts.created_at', 'contacts.updated_at', \DB::raw('COUNT(paper_contact.paper_id) as paper_count'), \DB::raw('GROUP_CONCAT(paper_contact.paper_id) as paper_ids'))
             ->groupBy('contacts.id', 'contacts.email', 'contacts.valid', 'contacts.infoprovider', 'contacts.created_at', 'contacts.updated_at')
             ->orderByRaw('COUNT(paper_contact.paper_id) DESC')
             ->limit($n)
