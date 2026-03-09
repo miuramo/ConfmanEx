@@ -512,7 +512,7 @@ class File extends Model
         $parentdir = storage_path(File::apf());
         // ファイル一覧
         $files = scandir($parentdir);
-        $files = array_diff($files, ['.', '..','.DS_Store','dump.sql','nofile.png','passdumpsql.zip']);
+        $files = array_diff($files, ['.', '..', '.DS_Store', 'dump.sql', 'nofile.png', 'passdumpsql.zip']);
         return $files;
     }
 
@@ -523,7 +523,7 @@ class File extends Model
         $folders = [];
         foreach ($list as $file) {
             if ($file == "." || $file == "..") continue;
-            if (is_dir($parentdir . "/".$file)) {
+            if (is_dir($parentdir . "/" . $file)) {
                 $folders[] = $file;
             }
         }
@@ -567,5 +567,106 @@ class File extends Model
             // }
             // info($realfiles);
         }
+    }
+    /**
+     * PDFにフォントが埋め込まれているかどうかをチェックする
+     */
+    public function font_not_embedded()
+    {
+        if ($this->mime != "application/pdf") {
+            return null; // PDF以外は、フォント埋め込みの概念がないので、nullを返す
+        }
+        $fullpath = $this->fullpath();
+        $out = shell_exec("pdffonts {$fullpath}");
+        $lines = preg_split("/\r\n|\n|\r/", $out);
+        // parse: find header line containing 'name' and 'emb'
+        $headerIndex = -1;
+        $headerTokens = [];
+        for ($i = 0; $i < count($lines); $i++) {
+            $line = trim($lines[$i]);
+            // detect header line: must contain 'name' and 'emb' tokens (case-insensitive)
+            if (preg_match('/\bname\b/i', $line) && preg_match('/\bemb\b/i', $line)) {
+                $headerIndex = $i;
+                // split header by whitespace
+                $headerTokens = preg_split('/\s+/', $line);
+                break;
+            }
+        }
+
+        if ($headerIndex === -1) {
+            Log::channel("single")->error("Error: pdffonts のヘッダ行を検出できませんでした。\n期待されるヘッダ（例: name type encoding emb sub uni object ID）を含む行が必要です。\n");
+            return false;
+        }
+
+        // determine index of important columns
+        $lowerHeader = array_map('strtolower', $headerTokens);
+        $embCol = array_search('emb', $lowerHeader);
+        $nameCol = array_search('name', $lowerHeader);
+        $typeCol = array_search('type', $lowerHeader); // optional
+
+        if ($embCol === false || $nameCol === false) {
+            Log::channel("single")->error("Error: ヘッダに 'emb' または 'name' カラムが見つかりません。\n");
+            return false;
+        }
+
+        // collect non-embedded fonts
+        $nonEmbedded = [];
+        for ($i = $headerIndex + 1; $i < count($lines); $i++) {
+            $line = $lines[$i];
+            if (trim($line) === '') continue;
+            // skip separator lines like "---- ----"
+            if (preg_match('/^[-\s]+$/', trim($line))) continue;
+
+            // split by whitespace
+            $tokens = preg_split('/\s+/', trim($line));
+
+            // sometimes object ID column may contain two numbers, causing token count to vary.
+            // we assume name is first token and emb at embCol (by header mapping) when possible.
+            if (count($tokens) < max($embCol, $nameCol) + 1) {
+                // fallback: try to pad tokens by merging trailing ones (best-effort)
+                // but if we can't parse, skip line with warning
+                Log::channel("single")->error("Warning: 行を解析できません (トークン不足): '{$line}'\n");
+                continue;
+            }
+
+            $embVal = strtolower($tokens[$embCol]);
+            $fontName = $tokens[$nameCol];
+
+            // If font name may include spaces (rare), try to reconstruct using column widths:
+            // (Advanced parsing omitted here; pdffonts usually uses single-token font names.)
+            if ($embVal !== 'yes' && $embVal !== 'no') {
+                // sometimes header positions differ; attempt to find first 'yes'/'no' token in line
+                $found = false;
+                foreach ($tokens as $ti => $tk) {
+                    $lk = strtolower($tk);
+                    if ($lk === 'yes' || $lk === 'no') {
+                        $embVal = $lk;
+                        // assume font name is token 0
+                        $fontName = $tokens[0];
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    Log::channel("single")->error("Warning: emb 値 (yes/no) を行から見つけられませんでした: '{$line}'\n");
+                    continue;
+                }
+            }
+
+            if ($embVal !== 'yes') {
+                // collect extra info (type if available)
+                $typeVal = ($typeCol !== false && isset($tokens[$typeCol])) ? $tokens[$typeCol] : '';
+                $nonEmbedded[] = ['name' => $fontName, 'emb' => $embVal, 'type' => $typeVal, 'raw' => $line];
+            }
+        }
+
+        if (count($nonEmbedded) > 0) {
+            Log::channel("single")->info("非埋め込みフォントが見つかりました:\n");
+            foreach ($nonEmbedded as $font) {
+                Log::channel("single")->info("- フォント名: {$font['name']}, 埋め込み: {$font['emb']}, タイプ: {$font['type']}\n  行内容: {$font['raw']}\n");
+            }
+            return $nonEmbedded;
+        }
+        return $nonEmbedded; // empty array means all fonts are embedded
     }
 }

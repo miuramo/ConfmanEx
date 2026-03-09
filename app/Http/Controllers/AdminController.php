@@ -764,6 +764,7 @@ class AdminController extends Controller
             "md5sum --version",
             "file -v",
             "pdfinfo -v",
+            "pdffonts -v",
             "node -v",
             "npm -v",
             "ffmpeg -version",

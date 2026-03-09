@@ -464,12 +464,23 @@ class Paper extends Model
         if ($cat == null) return []; //通常はありえないが、テストを通すため...
         foreach ($this->files as $file) {
             if ($file->mime == "application/pdf") {
+                $non_embedded = $file->font_not_embedded();
 
                 if ($file->deleted) continue;
                 if ($file->pending) continue;
                 if ($cat->accept_altpdf > 0 && $cat->pagenum_between($file->pagenum, "altpdf")) {
+                    if (count($non_embedded) > 0) {
+                        $errorary[] = "ALTPDFに非埋め込みフォントが含まれています。すべてのフォントを埋め込んでください。";
+                        Log::channel("single")->info("ALTPDF file ID {$file->id} has non-embedded fonts. paper_id: {$this->id}, file_id: {$file->id}, non_embedded_fonts: " . json_encode($non_embedded));
+                        continue;
+                    }
                     $checkary['altpdf'][] = $file->id;
                 } else if ($cat->pagenum_between($file->pagenum, "pdf")) {
+                    if (count($non_embedded) > 0) {
+                        $errorary[] = "PDFに非埋め込みフォントが含まれています。すべてのフォントを埋め込んでください。";
+                        Log::channel("single")->info("PDF file ID {$file->id} has non-embedded fonts. paper_id: {$this->id}, file_id: {$file->id}, non_embedded_fonts: " . json_encode($non_embedded));
+                        continue;
+                    }
                     $checkary['pdf'][] = $file->id;
                 } else {
                     $errorary[] = "PDFのページ数を確認してください。";
