@@ -184,7 +184,7 @@ class Paper extends Model
 
     public function files()
     {
-        return $this->hasMany(File::class, 'paper_id')->where('valid', 1)->where('deleted', 0);
+        return $this->hasMany(File::class, 'paper_id')->where('valid', 1)->where('deleted', 0)->orderBy('created_at', 'desc');
     }
     public function files_with_deleted()
     {
@@ -527,7 +527,15 @@ class Paper extends Model
                 }
             }
         }
-        if (count($errorary) > 0) return $errorary;
+
+        if (count($errorary) > 0) {
+            // ALTPDFは、全体エラーがあっても(ALL OKじゃなくても)Paperにセットする。複数の場合、最新のファイルが採用される。
+            if (isset($checkary['altpdf'][0])) {
+                $this->altpdf_file_id = $checkary['altpdf'][0];
+                $this->save();
+            }
+            return $errorary;
+        }
 
         // ALL OKなら、paperにセットする
         $this->pdf_file_id = $checkary['pdf'][0];
@@ -849,7 +857,9 @@ class Paper extends Model
         $txt .= "authorhead\t" . $this->authorhead . "\n";
         $txt .= "updated\t" . date("Y-m-d_H:i:s") . "\n";
 
-        $this->pdf_file->writeHintFile($txt);
+        if ($this->pdf_file) {
+            $this->pdf_file->writeHintFile($txt);
+        }
     }
 
     public function pdftotext()
