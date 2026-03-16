@@ -40,7 +40,10 @@ class LogAccess
         } else {
             $url = $basePath;
         }
-
+        if ($url == '/file/favicon' || strlen($url) == 0) {
+            // faviconはアクセスログに記録しない
+            return $hozon;
+        }
         $accessLog = new ModelsLogAccess([
             'uid' => $uid,
             'url' => $url, // substr($request->fullUrl(), strlen($rooturl)),
