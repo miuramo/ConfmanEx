@@ -23,6 +23,19 @@
                 </div>
             </div>
 
+            <script type="module" src="/js/webauthn.js"></script>
+ 
+            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    {{ __('Register Passkey') }}
+                </h2>
+
+                <div class="max-w-xl mt-4">
+                    <x-setcolor-button id="passkey-register" color="green"
+                        type="button">{{ __('Register Passkey') }}</x-setcolor-button>
+                </div>
+            </div>
+
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg dark:bg-slate-800 dark:text-slate-400">
                 <div class="max-w-xl">
                     @include('profile.partials.delete-user-form')

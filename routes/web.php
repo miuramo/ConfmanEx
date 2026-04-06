@@ -27,6 +27,8 @@ use App\Models\RevConflict;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WebAuthn\WebAuthnLoginController;
+use App\Http\Controllers\WebAuthn\WebAuthnRegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -343,3 +345,14 @@ if (env('APP_DEBUG')) {
         return redirect('/')->with('feedback.error', 'ユーザが見つかりません');
     })->middleware(['auth'])->name('role.login-as');
 }
+
+// WebAuthn Routes
+Route::controller(WebAuthnRegisterController::class)->middleware('auth')->group(function () {
+    Route::get('/webauthn/register/options', 'options')->name('webauthn.register.options');
+    Route::post('/webauthn/register', 'register')->name('webauthn.register');
+});
+
+Route::controller(WebAuthnLoginController::class)->middleware('guest')->group(function () {
+    Route::post('/webauthn/login/options', 'options')->name('webauthn.login.options');
+    Route::post('/webauthn/login', 'login')->name('webauthn.login');
+});
