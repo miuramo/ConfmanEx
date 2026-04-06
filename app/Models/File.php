@@ -39,7 +39,7 @@ class File extends Model
         File::mkdir_ifnot(storage_path(File::apf()));
 
         $file = new File();
-        $uid = $file->user_id = Auth::user()->id;
+        $file->user_id = Auth::user()->id;
         $pid = $file->paper_id = $pid;
         // fnameは暫定として、一回保存して、fileid を確定する
         $file->fname = "zantei.pdf";
@@ -122,7 +122,14 @@ class File extends Model
     }
     public function fullpath()
     {
-        return storage_path(File::apf() . '/' . $this->fname);
+        if (file_exists(storage_path(File::apf() . '/' . $this->fname))) {
+            return storage_path(File::apf() . '/' . $this->fname);
+        } else {
+            if (endsWith($this->fname, ".png")) { // fallback if thumbnail png is missing
+                return storage_path(File::apf() . '/' . substr($this->fname, 0, -4) . '/t-00001.png');
+            }
+        }
+        return storage_path(File::apf() . '/nofile.png'); // NoFile
     }
     public function extension()
     {
