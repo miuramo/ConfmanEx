@@ -249,11 +249,15 @@ class File extends Model
     }
     public function read_textfile($fn)
     {
+        // ファイルがあるかチェック
+        if (!file_exists($fn)) {
+            return "（準備中です。しばらくお待ちいただき、再読み込みしてください。）";
+        }
         $txtf = fopen($fn, "r");
         if ($txtf) {
             return fread($txtf, filesize($fn));
         }
-        return null;
+        return "（準備中です。しばらくお待ちいただき、再読み込みしてください。）";
     }
     public function write_textfile($fn, $txt)
     {
