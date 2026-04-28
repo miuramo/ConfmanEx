@@ -114,12 +114,12 @@ class StoreFileRequest extends FormRequest
                 $file->save(); // last save?
             }
             // 1ページ目のサムネをつくる
-            shell_exec("pdftoppm -png -singlefile {$fullpath} " . storage_path(File::apf() . '/' . substr($hashname, 0, -4)));
+            $file->makeThumbPNG();
             // 残りのタスク
             PdfJob::dispatch($file);
         } else if (strpos($file->mime, "video") === 0) {
             // ビデオのサムネをつくる
-            shell_exec("ffmpeg -i {$fullpath} -vf thumbnail=100,scale=600:-1 -vframes 1 " . storage_path(File::apf() . '/' . substr($hashname, 0, -4)) . ".png");
+            $file->makeThumbPNG();
             // not implemented VideoJob::dispatch($file);
         } else {
             // PDF以外のとき、すでに同一mimeでのロックファイルが1つでもあれば、Pendingにする

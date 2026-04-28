@@ -66,7 +66,8 @@ class File extends Model
         $file->pagenum = $pnum;
         $file->save();
         // 1ページ目のサムネをつくる
-        shell_exec("pdftoppm -png -singlefile {$fullpath} " . storage_path(File::apf() . '/' . substr($hashname, 0, -4)));
+        $file->makeThumbPNG();
+        // shell_exec("pdftoppm -png -singlefile {$fullpath} " . storage_path(File::apf() . '/' . substr($hashname, 0, -4)));
 
         if ($file->mime == "application/pdf") {
             PdfJob::dispatch($file);
@@ -192,6 +193,18 @@ class File extends Model
         if (strlen($out) > 1) Log::info($out);
     }
 
+    /**
+     *  PDFなら1ページ目のサムネイルPNG、動画なら動画のサムネイルPNGを作成する
+     */
+    public function makeThumbPNG()
+    {
+        $fullpath = storage_path(File::apf() . '/' . $this->fname);
+        if ($this->mime == "application/pdf") {
+            shell_exec("pdftoppm -png -singlefile {$fullpath} " . storage_path(File::apf() . '/' . substr($this->fname, 0, -4)));
+        } else if (strpos($this->mime, "video") === 0) {
+            shell_exec("ffmpeg -i {$fullpath} -ss 00:00:01.000 -vframes 1 " . storage_path(File::apf() . '/' . substr($this->fname, 0, -4) . ".png"));
+        }
+    }
 
     /**
      * PDFのサムネイルをつくる
@@ -230,6 +243,7 @@ class File extends Model
         $dir = substr($this->fname, 0, -4);
         return storage_path(File::apf() . '/' . $dir . "/" . $h_00001);
     }
+
     public function getPdfThumbPath(int $pagenum)
     {
         $page05f = sprintf("t-%05d.png", $pagenum);
@@ -342,9 +356,11 @@ class File extends Model
         @rmdir($path);
     }
 
-    public static function kanjifn($str, $substr = 0, $type = "guess")
+    /**
+     * 未使用
+     */
+    public static function kanjifn(string $str, int $substr = 0, string $type = "guess")
     {
-        $fn = null;
         $ostype = $type;
         if ($type == "guess") {
             $ua = $_SERVER['HTTP_USER_AGENT'];
@@ -374,7 +390,7 @@ class File extends Model
         $fn1 = str_replace([' ', '　'], '', trim($str));
         $fn1 = Normalizer::normalize($fn1, Normalizer::FORM_C); //winだがmacもOK?
         if ($substr > 0) {
-            $fn = mb_substr($fn, $substr);
+            $fn1 = mb_substr($fn1, $substr);
         }
         $fn1 = str_replace(['\\', '/', ':', '*', '?', '"', '<', '>', '|', '﻿—'], '_', $fn1);
         $fn = mb_convert_encoding($fn1, $encode, "utf-8");

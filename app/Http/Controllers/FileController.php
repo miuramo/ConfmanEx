@@ -91,10 +91,15 @@ class FileController extends Controller
             $this->noimage();
             return;
         }
-        // $aT = $file->paper->getAuthorType();
-        // if ($aT < 0) abort(403);
-        return response()->file(storage_path(File::apf() . '/' . substr($file->fname, 0, -4) . ".png"));
-        // ->header("Content-Disposition", $file->origname);
+        // $file はあるが、サムネイルpngがない場合は、PDFからサムネイルを作る。これも失敗したらnoimageを出す。
+        if (file_exists($filepath = storage_path(File::apf() . '/' . substr($file->fname, 0, -4) . ".png"))) {
+            return response()->file($filepath);
+        } else if (file_exists($filepath_fallback = storage_path(File::apf() . '/' . substr($file->fname, 0, -4) . '/t-00001.png'))) { // fallback: PDFの1ページ目のサムネイル
+            return response()->file($filepath_fallback);
+        } else {
+            $file->makeThumbPNG();
+            return response()->file($filepath);
+        }
     }
     /**
      * PDFサムネイルを画像で
@@ -138,9 +143,9 @@ class FileController extends Controller
         }
     }
 
-    
 
-    
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -414,7 +419,7 @@ class FileController extends Controller
         // まず、アンケート回答を取得
         $enqitm = EnqueteItem::where("name", $enqname)->first();
         if (!$enqitm) {
-            return redirect()->route('role.top', ['role'=> "demo"])->with('feedback.error', "アンケート項目で『{$enqname}』が見つかりませんでした。");
+            return redirect()->route('role.top', ['role' => "demo"])->with('feedback.error', "アンケート項目で『{$enqname}』が見つかりませんでした。");
             // abort(404, "Enquete Item not found: {$enqname}");
         }
         $enqanswers_pid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->get()->pluck('valuestr', 'paper_id')->toArray();
