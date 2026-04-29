@@ -204,7 +204,6 @@ class PaperController extends Controller
         File::mkdir_ifnot(storage_path(File::apf()));
 
         imagepng($im, storage_path(File::apf() . '/' . $fn));
-        imagedestroy($im);
         return response()->file(storage_path(File::apf() . '/' . $fn));
 
         // $img = ob_get_clean();
@@ -229,7 +228,6 @@ class PaperController extends Controller
         imagestring($im, 5, 20, 40, "Preparing... Wait a moment.", $colw);
         header("Content-Type: image/png");
         imagepng($im);
-        imagedestroy($im);
     }
 
     /**
