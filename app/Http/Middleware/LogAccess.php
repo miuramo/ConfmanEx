@@ -40,8 +40,8 @@ class LogAccess
         } else {
             $url = $basePath;
         }
-        if ($url == '/file/favicon' || strlen($url) == 0) {
-            // faviconはアクセスログに記録しない
+        if ($url == '/file/favicon' || $url == '/livewire/update' || strlen($url) == 0) {
+            // favicon、livewireの更新はアクセスログに記録しない
             return $hozon;
         }
         $accessLog = new ModelsLogAccess([
