@@ -160,7 +160,7 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
     }
 
     // エディターの最高権限を文字列で返す
-    public function maxRole()
+    public function maxRole(): string
     {
         $roles = $this->roles;
         foreach ($roles as $role) {
@@ -171,7 +171,7 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
         return "author";
     }
 
-    public function is_pc_member()
+    public function is_pc_member(): bool
     {
         return $this->maxRole() !== "author";
     }
@@ -179,7 +179,7 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
     /**
      * 初回のみ、パスワード再設定メールを変更している。see User.php
      */
-    public function sendPasswordResetNotification($token)
+    public function sendPasswordResetNotification($token): void
     {
         if ($this->name == User::$initialName) {
             $this->notify(new FirstEntryNotification($token));
@@ -216,7 +216,7 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
     /**
      * デバッグ用の表示
      */
-    public function print_coauthor_papers()
+    public function print_coauthor_papers(): void
     {
         // owner papers
         $contact = Contact::where('email', $this->email)->first();
@@ -231,7 +231,7 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
     /**
      * 共著表示バリデーション、テスト用のデータ
      */
-    public function coary($rettype = "ret")
+    public function coary($rettype = "ret"): array
     {
         $ret = [];
         $mypids = [];
@@ -258,7 +258,7 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
     }
 
     // テスト用：適当にBiddingをする
-    public function test_revconflict()
+    public function test_revconflict(): void
     {
         $mypids = $this->coary("mypids");
         foreach (Paper::whereNotIn('id', $mypids)->get() as $p) {
@@ -270,12 +270,16 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
         }
     }
 
-    public function get_mail_to_cc()
+    public function get_mail_to_cc(): array
     {
         $cclist = [];
         return ["to" => $this->email, "cc" => $cclist];
     }
-    public function id_03d()
+    public function id_03d(): string
+    {
+        return sprintf("%03d", $this->id);
+    }       
+    public function uid_name(): string
     {
         return sprintf("uid%d %s", $this->id, $this->name);
     }
@@ -283,7 +287,7 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
     /**
      * Contactを直す（投稿リセットをすると、Contactを壊してしまう？）
      */
-    public function fix_broken_contact()
+    public function fix_broken_contact(): void
     {
         DB::transaction(function () {
             $con = Contact::firstOrCreate([
@@ -296,7 +300,7 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
     /**
      * Userが存在しないContactを参照していたら、直す
      */
-    public static function fix_broken_contact_all()
+    public static function fix_broken_contact_all(): void
     {
         // 存在していないContactを参照していたら、作成しなおす
         $con = Contact::pluck("id")->toArray();
@@ -317,7 +321,7 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
     /**
      * 氏名が全角スペース区切りだったり、半角スペース複数区切りだったりするのを修正
      */
-    public static function fix_username_space_all()
+    public static function fix_username_space_all(): void
     {
         $uary = User::all();
         foreach ($uary as $u) {
@@ -338,7 +342,7 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
         }
     }
 
-    public function accepted_papers_as_owner()
+    public function accepted_papers_as_owner(): array
     {
         $accPIDs = Submit::with('paper')->whereHas('paper', function ($query) {
             $query->where('owner', $this->id);
@@ -347,7 +351,7 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
         })->get()->pluck("paper_id")->toArray();
         return $accPIDs;
     }
-    public function accepted_papers_as_coauthor()
+    public function accepted_papers_as_coauthor(): array
     {
         $coPIDs = $this->coauthor_papers()->pluck("id")->toArray();
         $accPIDs = Submit::with('paper')->whereHas('paper', function ($query) use ($coPIDs) {
@@ -357,7 +361,7 @@ class User extends Authenticatable implements MustVerifyEmail, WebAuthnAuthentic
         })->get()->pluck("paper_id")->toArray();
         return $accPIDs;
     }
-    public function accepted_papers_as_any()
+    public function accepted_papers_as_any(): array
     {
         $accPIDs = $this->accepted_papers_as_owner();
         $cooPIDs = $this->accepted_papers_as_coauthor();

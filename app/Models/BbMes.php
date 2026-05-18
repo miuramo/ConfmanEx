@@ -28,7 +28,7 @@ class BbMes extends Model
         return $this->hasMany(File::class, 'bb_mes_id');
     }
 
-    public static function whois(BbMes $mes)
+    public static function whois(BbMes $mes): string
     {
         $bb = $mes->bb;
         $paper = $bb->paper;
@@ -44,7 +44,7 @@ class BbMes extends Model
         }
     }
 
-    public static function whois_numeric(BbMes $mes)
+    public static function whois_numeric(BbMes $mes): int
     {
         $bb = $mes->bb;
         $paper = $bb->paper;

@@ -32,7 +32,7 @@ class Category extends Model
         return $this->hasMany(Paper::class, 'category_id')->whereNotNull('pdf_file_id')->orderBy('id');
     }
 
-    public static function spans()
+    public static function spans(): array
     {
         $all = Category::all();
         $spans = [];
@@ -45,28 +45,28 @@ class Category extends Model
     /**
      * 新規投稿受付ボタン
      */
-    public function isOpen()
+    public function isOpen(): bool
     {
         return Enquete::checkdayduration($this->openstart, $this->openend);
     }
 
-    public function is_accept_pdf()
+    public function is_accept_pdf(): bool
     {
         return Enquete::checkdayduration($this->pdf_accept_start, $this->pdf_accept_end);
     }
 
-    public function is_accept_altpdf()
+    public function is_accept_altpdf(): bool
     {
         if ($this->altpdf_accept_start == null || $this->altpdf_accept_end == null) return false;
         if ($this->altpdf_accept_start == $this->altpdf_accept_end) return false;
         return Enquete::checkdayduration($this->altpdf_accept_start, $this->altpdf_accept_end);
     }
-    public function pagenum_between($pdf_page,$field="pdf"){
+    public function pagenum_between(int $pdf_page, string $field = "pdf"): bool {
         $page_max = $this->{$field . '_page_max'};
         $page_min = $this->{$field . '_page_min'};
         return $this->between($page_min, $pdf_page, $page_max);
     }
-    public function between(int $s, int $x, int $e)
+    public function between(int $s, int $x, int $e): bool
     {
         return ($s <= $x && $x <= $e);
     }
@@ -75,7 +75,7 @@ class Category extends Model
     /**
      * 投稿数が設定の上限(upperlimit)を超えたらfalse
      */
-    public function isnotUpperLimit()
+    public function isnotUpperLimit(): bool
     {
         if ($this->upperlimit == 0) return true;
         $papercount = Paper::where("category_id", $this->id)->count();
@@ -87,7 +87,7 @@ class Category extends Model
      * @param int $cat_id カテゴリID
      * ここの結果がtrue の場合、査読者やメタ査読者が、査読結果一覧をみれるようになる。（リンクが表示される。）
      */
-    public static function isShowReview($cat_id)
+    public static function isShowReview(int $cat_id): bool
     {
         $canshow = false;
         $revlist = Category::select('id', 'status__revlist_on')->get()->pluck('status__revlist_on', 'id')->toArray();
@@ -103,7 +103,7 @@ class Category extends Model
         return $canshow;
     }
 
-    public static function canEditReview($cat_id)
+    public static function canEditReview(int $cat_id): bool
     {
         $canedit = false;
         $revediton = Category::select('id', 'status__revedit_on')->get()->pluck('status__revedit_on', 'id')->toArray();
@@ -114,7 +114,7 @@ class Category extends Model
     /**
      * used at ReviewController.conflict
      */
-    public static function canBid(int $cat_id)
+    public static function canBid(int $cat_id): bool
     {
         $canbid = false;
         $bidding_on = Category::select('id', 'status__bidding_on')->get()->pluck('status__bidding_on', 'id')->toArray();
@@ -132,7 +132,7 @@ class Category extends Model
     /**
      * PC長ではなく、manage_cat 権限のみの場合は、そのカテゴリのみ返す。
      */
-    public static function manage_cats()
+    public static function manage_cats(): array
     {
         $cats = Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
         if (auth()->user()->can('role', 'pc')) {

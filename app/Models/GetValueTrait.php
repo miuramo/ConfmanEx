@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 trait GetValueTrait
 {
 
-    public static function isTrue(object|string $id)
+    public static function isTrue(object|string $id): bool
     {
         $obj = self::findByIdOrName($id);
         if ($obj == null) return false;
@@ -17,7 +17,7 @@ trait GetValueTrait
         if ($obj->value == 'true') return true;
         return false;
     }
-    public static function getValue(object|string $id)
+    public static function getValue(object|string $id): ?string
     {
         $obj = self::findByIdOrName($id);
         if ($obj == null) return null;
@@ -25,7 +25,7 @@ trait GetValueTrait
         if (isset($obj->value)) return $obj->value;
         return null;
     }
-    public static function getObj(object|string $id)
+    public static function getObj(object|string $id): ?object
     {
         $obj = self::findByIdOrName($id);
         if ($obj == null) return null;

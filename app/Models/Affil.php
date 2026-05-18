@@ -20,14 +20,15 @@ class Affil extends Model
     /**
      * すべて再構築
      */
-    public static function rebuild($border_score = 100) {
+    public static function rebuild($border_score = 100): void
+    {
         Affil::truncate();
         Affil::distill($border_score);
     }
     /**
      * 書誌情報の著者所属を、抽出する
      */
-    public static function distill($border_score = 100)
+    public static function distill($border_score = 100): void
     {
         // Affil::truncate();
 
@@ -89,7 +90,7 @@ class Affil extends Model
         }
     }
 
-    public static function after_kouho(string $str)
+    public static function after_kouho(string $str): string
     {
         if (preg_match('|大学大学院|u', $str, $matches, PREG_OFFSET_CAPTURE)) {
             $str = substr($str, 0, $matches[0][1] + 3);

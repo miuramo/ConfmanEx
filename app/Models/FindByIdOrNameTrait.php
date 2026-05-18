@@ -14,7 +14,7 @@ trait FindByIdOrNameTrait
      * 第2引数はnull以外なら返却Objのフィールドを返す
      * 第3引数は検索するときのフィールド名。通常はname
      */
-    public static function findByIdOrName(object|string $id, ?string $getfield = null, string $field = 'name')
+    public static function findByIdOrName(object|string $id, ?string $getfield = null, string $field = 'name'): ?object
     {
         if (is_object($id)) { // オブジェクトなら、そのまま返す
             return $id;

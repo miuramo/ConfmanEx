@@ -31,18 +31,19 @@ class RevConflict extends Model
     /**
      * カテゴリとユーザで絞り込んだ件数を返す
      */
-    public static function countByCatAndUser(int $cat_id, int $user_id){
+    public static function countByCatAndUser(int $cat_id, int $user_id): int
+    {
         return RevConflict::where('user_id', $user_id)
-        ->whereHas('paper', function ($q) use ($cat_id) {
-            $q->where('category_id', $cat_id);
-        })->count();
+            ->whereHas('paper', function ($q) use ($cat_id) {
+                $q->where('category_id', $cat_id);
+            })->count();
     }
 
     /**
      * ネストした配列で返す
      * arr[paper_id][user_id] = bidding_id
      */
-    public static function arr_pu_bid(int $cat_id = 1)
+    public static function arr_pu_bid(int $cat_id = 1): array
     {
         $ret = [];
         foreach (RevConflict::all() as $a) {
@@ -55,7 +56,7 @@ class RevConflict extends Model
      * ネストした配列で返す
      * arr[paper_id][user_id] = bidding_name
      */
-    public static function arr_pu_bname(int $cat_id = 1)
+    public static function arr_pu_bname(int $cat_id = 1): array
     {
         $bids = Bidding::pluck("name", "id")->toArray();
         $bidbgs = Bidding::pluck("bgcolor", "id")->toArray();
@@ -81,7 +82,7 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
   ->pluck("count", "user_id");
     field=id or name
      */
-    public static function bidding_status($skip_finished = false, $field = "id")
+    public static function bidding_status(bool $skip_finished = false, string $field = "id"): array
     {
         // 現在、OpenしているBiddingについて (Category.bidding_on && !bidding_off)
         $catid = Category::where("status__bidding_on", true)->where("status__bidding_off", false)
@@ -111,7 +112,7 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
     /**
      * bidding_id でgroup by
      */
-    public static function bidding_stat($catid)
+    public static function bidding_stat(int $catid): array
     {
         $papers_in_cat = Category::find($catid)->paperswithpdf->pluck("title", "id")->toArray();
 
@@ -132,7 +133,7 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
      * 申告利害に、現在のユーザの共著関係をまとめたもの
      * 3未満だと利害あり。
      */
-    public static function arr_pu_rigai(int $cat_id = 1)
+    public static function arr_pu_rigai(int $cat_id = 1): array
     {
         $ret = [];
         foreach (RevConflict::all() as $a) {
@@ -154,7 +155,7 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
     /**
      * 特定のユーザ（査読者）が、利害申告したPaperList
      */
-    public static function rigaiPapersByUid(int $uid)
+    public static function rigaiPapersByUid(int $uid): array
     {
         $rigaipaperids = RevConflict::where('user_id', $uid)->where('bidding_id', '<', 3)->get()->pluck('paper_id')->toArray();
         return $rigaipaperids;
@@ -164,7 +165,7 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
     /**
      * Bidding未入力の場合に、Biddingを代理作成する
      */
-    public static function fillBidding(int $cat_id = 1, string $role_name = "metareviewer", int $bidding_id = 7)
+    public static function fillBidding(int $cat_id = 1, string $role_name = "metareviewer", int $bidding_id = 7): array
     {
         $catid = Category::find($cat_id);
         $papers_in_cat = $catid->paperswithpdf->pluck("title", "id")->toArray();
@@ -176,7 +177,7 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
         foreach ($reviewers as $reviewer) {
             foreach ($papers_in_cat as $pid => $ptitle) {
                 if (!isset($rigais[$pid][$reviewer->id])) {
-                    $log []= "add {$pid}-{$reviewer->name} as {$bidding_id}";
+                    $log[] = "add {$pid}-{$reviewer->name} as {$bidding_id}";
                     $rc = new RevConflict();
                     $rc->paper_id = $pid;
                     $rc->user_id = $reviewer->id;
@@ -200,7 +201,7 @@ App\Models\RevConflict::select(DB::raw("count(id) as count, user_id"))
     //  * $ret['rigai'][paper_id] = array( u1, u2,)
     //  * 
     //  */
-    // public static function reviewer_names()
+    // public static function reviewer_names(): array
     // {
     //     $ret = [];
     //     foreach (RevConflict::all() as $a) {

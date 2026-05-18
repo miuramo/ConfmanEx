@@ -24,21 +24,22 @@ class Setting extends Model
     /**
      * Settingの REVIEWER_MEMBER や PC_MEMBERをみて、自動でロールをわりあてる
      */
-    public static function auto_role_member(){
-        $sets = Setting::where("name","like","%_MEMBER")->where("valid",true)->get();
-        foreach($sets as $set){
+    public static function auto_role_member(): void
+    {
+        $sets = Setting::where("name", "like", "%_MEMBER")->where("valid", true)->get();
+        foreach ($sets as $set) {
             $val = $set->value;
-            if (strlen($val)<2) continue;
+            if (strlen($val) < 2) continue;
             // role name
-            $role_name = strtolower(explode("_",$set->name)[0]);
+            $role_name = strtolower(explode("_", $set->name)[0]);
             $role = Role::findByIdOrName($role_name);
             // | で区切る
-            $ary = explode("|",$val);
-            if (count($ary)<1) continue;
-            foreach($ary as $name){
-                $tmpu = User::where("name",$name)->first();
+            $ary = explode("|", $val);
+            if (count($ary) < 1) continue;
+            foreach ($ary as $name) {
+                $tmpu = User::where("name", $name)->first();
                 if ($tmpu == null) continue;
-                if (!$role->containsUser($tmpu->id)){ // ふくまれていなければ
+                if (!$role->containsUser($tmpu->id)) { // ふくまれていなければ
                     $tmpu->roles()->syncWithoutDetaching($role);
                     dump("auto_role_member {$name} {$role->name}");
                 }
@@ -49,7 +50,7 @@ class Setting extends Model
     /**
      * 設定名から、valueを返す。ただし、validがfalseの場合はnullを返す。
      */
-    public static function getval($setting_name)
+    public static function getval(string $setting_name): ?string
     {
         $setting = Setting::where('name', $setting_name)->first();
         if ($setting && $setting->valid) {
@@ -60,7 +61,7 @@ class Setting extends Model
         }
         return null;
     }
-    public static function setval($setting_name, $setting_value)
+    public static function setval(string $setting_name, string $setting_value): void
     {
         $setting = Setting::where('name', $setting_name)->first();
         if ($setting) {
@@ -133,9 +134,9 @@ class Setting extends Model
             'isbool' => false,
             'valid' => false,
         ]);
-        $sets = Setting::where("name","like","%_MEMBER")->where("valid",true)->get();
-        foreach($sets as $set){
-            if (strlen($set->value)<1) {
+        $sets = Setting::where("name", "like", "%_MEMBER")->where("valid", true)->get();
+        foreach ($sets as $set) {
+            if (strlen($set->value) < 1) {
                 $set->valid = false;
                 $set->misc = "（注意）氏 名を|で区切って設定しておくと、自動でROLE付与します。";
                 $set->save();
@@ -370,6 +371,5 @@ class Setting extends Model
 
         Vote::init();
         VoteItem::init();
-
     }
 }

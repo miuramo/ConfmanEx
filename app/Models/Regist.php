@@ -27,7 +27,7 @@ class Regist extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         $ary = [];
         $ary['状況'] = $this->valid ? '有効' : '無効';
@@ -41,7 +41,7 @@ class Regist extends Model
     /**
      * 編集用トークンを返す
      */
-    public function token()
+    public function token(): string
     {
         return sha1($this->id . $this->user_id . $this->created_at);
     }
@@ -49,7 +49,7 @@ class Regist extends Model
     /**
      * スポンサー参加登録用トークンを返す
      */
-    public static function sponsortoken()
+    public static function sponsortoken(): string
     {
         $reg_early_limit = Setting::getval('REG_EARLY_LIMIT');
         return substr(sha1('sponsor' . $reg_early_limit), 0, 16);
@@ -60,7 +60,7 @@ class Regist extends Model
      * アンケートIDごとに配列化して返す
      * @return array [enquete_id][enquete_item_id] = EnqueteAnswer
      */
-    public function enqans()
+    public function enqans(): array
     {
         // EnqueteAnswers を返す
         $enqs = Enquete::needForRegist();
@@ -79,7 +79,7 @@ class Regist extends Model
      * enqitm.name(質問項目keyname) => value 配列を返す
      * $this->check()と $this->ng_feedback() で使用
      */
-    public function enq_key_value()
+    public function enq_key_value(): array
     {
         $enqans = $this->enqans();
         $enqitm_id_name = EnqueteItem::pluck('name', 'id')->toArray();
@@ -96,7 +96,7 @@ class Regist extends Model
      * enqitm.desc(質問項目) => value 配列を返す
      * confirmation.blade.php で使用
      */
-    public function enq_enqitmdesc_value()
+    public function enq_enqitmdesc_value(): array
     {
         $itemid_desc = EnqueteItem::enq_enqitmid_desc();//すべての EnqueteItem の id => desc 配列を取得
         $enqans = $this->enqans();
@@ -109,7 +109,7 @@ class Regist extends Model
         return $res;
     }
 
-    public function check()
+    public function check(): array
     {
         $ary = $this->enq_key_value();
         $res = Enquete::validateEnquetes(User::find($this->user_id));
@@ -147,7 +147,7 @@ class Regist extends Model
      * NGになるルールは、配列で ['is_student' => 2, 'kubun' => [3,4]] のように与える
      * ルールは3要素以上でもよい。 NGになるとは、すべての要素にマッチする場合を指す
      */
-    public function nogood($ruleary)
+    public function nogood(array $ruleary): ?string
     {
         $selids = EventConfig::getEnqueteAnswersBySelectionNumber($this->event_id, $this->user_id);
         $num_match = 0;
@@ -169,8 +169,9 @@ class Regist extends Model
             // フィードバック（なにがNGなのか、その理由）を生成して返す。
             return $this->ng_feedback($ruleary);
         }
+        return null;
     }
-    public function ng_feedback($ruleary)
+    public function ng_feedback(array $ruleary): string
     {
         $ans = $this->enq_key_value();
         $descs = EnqueteItem::pluck('desc', 'name')->toArray();
@@ -187,7 +188,7 @@ class Regist extends Model
         return $msg;
     }
 
-    public function chk_kubun($ary)
+    public function chk_kubun(array $ary): ?string
     {
         if (empty($ary['kubun'])) {
             return "参加区分を選択してください。";
@@ -207,8 +208,9 @@ class Regist extends Model
                 return "参加区分→「非会員」を選択した場合は、学会は「非会員」を選択してください。";
             }
         }
+        return null;
     }
-    public function chk_othergakkai($ary)
+    public function chk_othergakkai(array $ary): ?string
     {
         if (empty($ary['gakkai'])) {
             return "学会を選択してください。";
@@ -229,8 +231,9 @@ class Regist extends Model
                 return "学会→「その他」を選択していない場合は、「その他の学会名」を入力しないでください。";
             }
         }
+        return null;
     }
-    public function chk_student($ary)
+    public function chk_student(array $ary): ?string
     {
         if (empty($ary['isstudent'])) {
             return "種別（一般 / 学生）を選択してください。";
@@ -243,9 +246,10 @@ class Regist extends Model
                 return "参加区分で「学生・・・」を選択した場合は、種別（一般 / 学生）でも学生を選択してください。";
             }
         }
+        return null;
     }
 
-    public static function countByItemAndIsearly($enqitm_name = 'kubun')
+    public static function countByItemAndIsearly(string $enqitm_name = 'kubun'): array
     {
         // $key の回答enquete_item_id を取得
         $enquete_item_target = EnqueteItem::where('name', $enqitm_name)->first();

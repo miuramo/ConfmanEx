@@ -10,7 +10,7 @@ class EventConfig extends Model
     use HasFactory;
 
     // イベントID に対応するアンケートIDから、関連するEnqueteItemsを取得
-    public static function getEnqueteItems(int $event_id)
+    public static function getEnqueteItems(int $event_id): array
     {
         $enqids = EventConfig::where('event_id', $event_id)->pluck('enquete_id')->toArray();
         if (count($enqids) == 0) {
@@ -20,7 +20,7 @@ class EventConfig extends Model
         return $items;
     }
 
-    public static function getEnqueteAnswers(int $event_id, int $user_id)
+    public static function getEnqueteAnswers(int $event_id, int $user_id): array
     {
         $enqids = EventConfig::where('event_id', $event_id)->pluck('enquete_id')->toArray();
         if (count($enqids) == 0) {
@@ -31,7 +31,7 @@ class EventConfig extends Model
     }
 
     // 参加申込時の選択項目について、テキストではなく選択肢番号(1,2,3)で返す。
-    public static function getEnqueteAnswersBySelectionNumber(int $event_id, int $user_id)
+    public static function getEnqueteAnswersBySelectionNumber(int $event_id, int $user_id): array
     {
         $answers = EventConfig::getEnqueteAnswers($event_id, $user_id);
         $enqids = EventConfig::where('event_id', $event_id)->pluck('enquete_id')->toArray();

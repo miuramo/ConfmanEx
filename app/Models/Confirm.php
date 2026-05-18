@@ -22,7 +22,7 @@ class Confirm extends Model
     /**
      * 免責事項
      */
-    public static function seeder_policy()
+    public static function seeder_policy(): void
     {
         Confirm::firstOrCreate(
             [

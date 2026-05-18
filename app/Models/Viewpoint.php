@@ -29,7 +29,7 @@ class Viewpoint extends Model
     /**
      * コロンではなくセミコロンに変更
      */
-    public static function change_separator()
+    public static function change_separator(): string
     {
         $pre = ":";
         $post = self::$separator;
@@ -67,7 +67,7 @@ class Viewpoint extends Model
     /**
      * OrderInt をstep ずつで再設定する
      */
-    public static function reorderint($cat_id, $step = 10)
+    public static function reorderint(int $cat_id, int $step = 10): void
     {
         $items = Viewpoint::where("category_id", $cat_id)->orderBy("orderint")->get();
         $num = $step;

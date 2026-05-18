@@ -52,7 +52,7 @@ class Role extends Model
     public function users()
     {
         $tbl = 'role_user';
-        return $this->belongsToMany(User::class, $tbl)->withPivot('mailnotify')->orderBy('yomi');//->using(RolesUser::class);
+        return $this->belongsToMany(User::class, $tbl)->withPivot('mailnotify')->orderBy('yomi'); //->using(RolesUser::class);
     }
 
     public function containsUser(int $user_id): bool
@@ -60,10 +60,11 @@ class Role extends Model
         return $this->users()->where("user_id", $user_id)->exists();
     }
 
-    public static function checkRoleUser(string|int $role_id, int $user_id){
-        if (is_integer($role_id)){
+    public static function checkRoleUser(string|int $role_id, int $user_id): bool
+    {
+        if (is_integer($role_id)) {
             $role = Role::find($role_id);
-        } else if (is_string($role_id)){
+        } else if (is_string($role_id)) {
             $role = Role::where("name", $role_id)->first();
         }
         return $role->containsUser($user_id);
@@ -73,15 +74,15 @@ class Role extends Model
      * このRoleよりも、idが小さいRoleのnameを | でつないだもの
      * ただし、長さが0だったら、admin を追加する。
      */
-    public function aboveRoles()
+    public function aboveRoles(): string
     {
         $roles = Role::orderBy("id")->get();
         $ary = [];
-        foreach($roles as $role){
+        foreach ($roles as $role) {
             if ($this->id >= $role->id) break; // 自分自身も含めない
-            $ary []= $role->name;
+            $ary[] = $role->name;
         }
-        if (count($ary)==0) $ary[] = "admin";
+        if (count($ary) == 0) $ary[] = "admin";
         return implode("|", $ary);
     }
 
@@ -90,34 +91,35 @@ class Role extends Model
      * demo = 10
      * metareviewer|reviewer|pc|pub|award|acc|demo|web|wc|admin
      */
-    public static function resetRolesExcept(int $user_id, $roles){
+    public static function resetRolesExcept(int $user_id, string $roles): array
+    {
         $user = User::find($user_id);
-        if (is_string($roles)){
+        if (is_string($roles)) {
             $roles = explode("|", $roles);
             $roles = Role::whereIn("name", $roles)->pluck("id")->toArray();
         }
         $user->roles()->detach();
-        foreach($roles as $role){
+        foreach ($roles as $role) {
             $user->roles()->syncWithoutDetaching($role);
         }
         return $roles;
     }
     // テスト用：tinkerから呼び出す
-    public static function setRolesExcept(int $user_id, $roles){
+    public static function setRolesExcept(int $user_id, string $roles): array
+    {
         $user = User::find($user_id);
-        if (is_string($roles)){
+        if (is_string($roles)) {
             $roles = explode("|", $roles);
             $roles = Role::whereIn("name", $roles)->pluck("id")->toArray();
             info($roles);
         }
         $all = Role::pluck("id")->toArray();
-        foreach($all as $role){
+        foreach ($all as $role) {
             $user->roles()->syncWithoutDetaching($role);
         }
-        foreach($roles as $role){
+        foreach ($roles as $role) {
             $user->roles()->detach($role);
         }
         return $user->roles;
     }
-
 }

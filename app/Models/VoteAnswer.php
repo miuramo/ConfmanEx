@@ -26,7 +26,7 @@ class VoteAnswer extends Model
         return $this->belongsTo(VoteItem::class, 'vote_item_id');
     }
 
-    public static function vote_result()
+    public static function vote_result(): array
     {
         $ret = [];
         $tmp = VoteAnswer::select(DB::raw("count(id) as count, booth, vote_id"))

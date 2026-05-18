@@ -27,7 +27,7 @@ class MailTemplate extends Model
     /**
      * Role member追加から呼ばれる。
      */
-    public static function bundleUser($uids, $sub, $body)
+    public static function bundleUser(array $uids, string $sub, string $body): void
     {
         $targets = User::whereIn('id', $uids)->get();
         $mt = MailTemplate::create();
@@ -43,7 +43,7 @@ class MailTemplate extends Model
         }
     }
 
-    public function getreplacetxt(Paper|User $p_or_u)
+    public function getreplacetxt(Paper|User $p_or_u): array
     {
         if (strpos(get_class($p_or_u), "User") > 0) {
             $replacetxt["UID"] = $p_or_u->id;
@@ -89,7 +89,7 @@ class MailTemplate extends Model
         $body .= "\n\n-----\n[" . env("APP_NAME") . "](" . env("APP_URL") . ")";
         return $body;
     }
-    public function handle_to()
+    public function handle_to(): Collection
     {
         // && や || を、セミコロンに変換する
         // $this->to = str_replace("&&", ";", $this->to);
@@ -125,7 +125,7 @@ class MailTemplate extends Model
     /**
      * 便宜上、papersにいれているが、中身はPaper or Userの配列
      */
-    public function targets()
+    public function targets(): ?Collection
     {
         $papers = $this->handle_to();
         if (isset($papers)) return $papers;
@@ -141,7 +141,7 @@ class MailTemplate extends Model
     /**
      * 雛形のコピーを作成
      */
-    public static function makecopy(int $mtid)
+    public static function makecopy(int $mtid): MailTemplate
     {
         $mt = MailTemplate::find($mtid);
         $newmt = $mt->replicate(); // copy data
@@ -154,15 +154,15 @@ class MailTemplate extends Model
     /**
      * カテゴリの投稿すべて
      */
-    public static function mt_category(int $cat)
+    public static function mt_category(int $cat): array
     {
-        return Paper::where('category_id', $cat)->get();
+        return Paper::where('category_id', $cat)->get()->toArray();
     }
 
     /**
      * 採択
      */
-    public static function mt_accept(int ...$cats)
+    public static function mt_accept(int ...$cats): array
     {
         $papers = [];
         foreach ($cats as $cat) {
@@ -177,7 +177,7 @@ class MailTemplate extends Model
     /**
      * 不採択（未判定は含まない）
      */
-    public static function mt_reject(int ...$cats)
+    public static function mt_reject(int ...$cats): array
     {
         $papers = [];
         foreach ($cats as $cat) {
@@ -189,15 +189,15 @@ class MailTemplate extends Model
         }
         return $papers;
     }
-    public static function mt_paperid(...$args)
+    public static function mt_paperid(int ...$args): array
     {
-        $papers = Paper::whereIn('id', $args)->get();
+        $papers = Paper::whereIn('id', $args)->get()->toArray();
         return $papers;
     }
     /**
      * Accept tableのid
      */
-    public static function mt_acc_id(...$accept_ids)
+    public static function mt_acc_id(int ...$accept_ids): array
     {
         $papers = [];
         $subs = Submit::whereIn('accept_id', $accept_ids)->orderBy('paper_id')->get();
@@ -209,7 +209,7 @@ class MailTemplate extends Model
     /**
      * Accept tableのjudge
      */
-    public static function mt_acc_judge(...$accept_judges)
+    public static function mt_acc_judge(int ...$accept_judges): array
     {
         $papers = [];
         $accept_ids = Accept::whereIn('judge', $accept_judges)->pluck("id")->toArray();
@@ -222,7 +222,7 @@ class MailTemplate extends Model
     /**
      * 当初のcat_id and acc_id
      */
-    public static function mt_cat_acc_id($catid, ...$accept_ids)
+    public static function mt_cat_acc_id(int $catid, int ...$accept_ids): array
     {
         $papers = [];
         $subs = Submit::whereIn('accept_id', $accept_ids)->orderBy('paper_id')->get();
@@ -235,7 +235,7 @@ class MailTemplate extends Model
     /**
      * ファイル無し投稿
      */
-    public static function mt_nofile(...$args)
+    public static function mt_nofile(int ...$args): array
     {
         $papers = [];
         $cols = Paper::whereIn('category_id', $args)->get();
@@ -250,7 +250,7 @@ class MailTemplate extends Model
     /**
      * タイトルなし投稿
      */
-    public static function mt_notitle(...$args)
+    public static function mt_notitle(int ...$args): array
     {
         $papers = [];
         $cols = Paper::whereIn('category_id', $args)->get();
@@ -263,7 +263,7 @@ class MailTemplate extends Model
      * PDFTextの先頭部分が指定文字列で始まる論文
      * 第2引数以降は、category_idの羅列
      */
-    public static function mt_pdftext_startswith($startstr, ...$args)
+    public static function mt_pdftext_startswith(string $startstr, int ...$args): array
     {
         $papers = [];
         $cols = Paper::whereIn('category_id', $args)->get();
@@ -284,7 +284,7 @@ class MailTemplate extends Model
      * PDFText（1ページ目の内容）に指定文字列が含まれない論文
      * 第2引数以降は、category_idの羅列
      */
-    public static function mt_pdftext_notincluding($str, ...$args)
+    public static function mt_pdftext_notincluding(string $str, int ...$args): array
     {
         $papers = [];
         $cols = Paper::whereIn('category_id', $args)->get();
@@ -302,15 +302,15 @@ class MailTemplate extends Model
     /**
      * UserIDの羅列
      */
-    public static function mt_userid(...$args)
+    public static function mt_userid(int ...$args): array
     {
-        $users = User::whereIn('id', $args)->get();
+        $users = User::whereIn('id', $args)->get()->toArray();
         return $users;
     }
     /**
      * RoleIDの羅列
      */
-    public static function mt_roleid(...$args)
+    public static function mt_roleid(int ...$args): array
     {
         $users = [];
         $roles = Role::whereIn('id', $args)->get();
@@ -324,7 +324,7 @@ class MailTemplate extends Model
     /**
      * RoleIDの羅列
      */
-    public static function mt_roleid_noaccess(...$args)
+    public static function mt_roleid_noaccess(int ...$args): array
     {
         $users = [];
         $roles = Role::whereIn('id', $args)->get();
@@ -340,28 +340,28 @@ class MailTemplate extends Model
     /**
      * Bidding未完了がある査読者
      */
-    public static function mt_miss_bid()
+    public static function mt_miss_bid(): array
     {
         $missing = RevConflict::bidding_status(true); //skip_allfinished=true(すべて完了の人を除く)
-        return User::whereIn('id', array_keys($missing))->get();
+        return User::whereIn('id', array_keys($missing))->get()->toArray();
     }
 
     /**
      * 査読担当があるのに、まだ査読用ファイルをダウンロードしていないユーザ
      */
-    public static function mt_notdownloaded($catid)
+    public static function mt_notdownloaded(int $catid): array
     {
         // 査読用ファイルをダウンロードしたユーザ
         // TODO: review_downzipのパラメータに、catidをいれる
         $downus = LogAccess::where('url', 'like', "/review_downzip/{$catid}%")->pluck("uid", "id")->toArray();
         // カテゴリ catid の査読担当者のうち、ダウンロードしたユーザ以外
         $notrevus = Review::where('category_id', $catid)->whereNotIn('user_id', $downus)->pluck("user_id", "id")->toArray();
-        return User::whereIn('id', $notrevus)->get();
+        return User::whereIn('id', $notrevus)->get()->toArray();
     }
     /**
      * 査読未完了
      */
-    public static function mt_norev()
+    public static function mt_norev(): array
     {
         Review::validateAllRev(); // statusを更新
         $norev_userids = Review::select(["user_id"])
@@ -369,12 +369,12 @@ class MailTemplate extends Model
             ->groupBy("user_id")
             ->pluck("user_id")
             ->toArray();
-        return User::whereIn('id', $norev_userids)->get();
+        return User::whereIn('id', $norev_userids)->get()->toArray();
     }
     /**
      * 査読未完了
      */
-    public static function mt_norev_cat($catid)
+    public static function mt_norev_cat(int $catid): array
     {
         Review::validateAllRev(); // statusを更新
         $norev_userids = Review::select(["user_id"])
@@ -383,12 +383,12 @@ class MailTemplate extends Model
             ->groupBy("user_id")
             ->pluck("user_id")
             ->toArray();
-        return User::whereIn('id', $norev_userids)->get();
+        return User::whereIn('id', $norev_userids)->get()->toArray();
     }
     /**
      * 査読未完了
      */
-    public static function mt_norev_catmeta($catid, $ismeta)
+    public static function mt_norev_catmeta(int $catid, int $ismeta): array
     {
         Review::validateAllRev(); // statusを更新
         $norev_userids = Review::select(["user_id"])
@@ -398,23 +398,23 @@ class MailTemplate extends Model
             ->groupBy("user_id")
             ->pluck("user_id")
             ->toArray();
-        return User::whereIn('id', $norev_userids)->get();
+        return User::whereIn('id', $norev_userids)->get()->toArray();
     }
     /**
      * 「条件付き採録のプライマリ査読者」のように、特定の採択ID（ジャッジ値ではない）の査読者
      */
-    public static function mt_primary_of_acc(...$accids)
+    public static function mt_primary_of_acc(int ...$accids): array
     {
         // submit→review->uid->user
         $subids = Submit::whereIn('accept_id', $accids)->pluck('id')->toArray();
         $revs = Review::whereIn('submit_id', $subids)->where('ismeta', 1)->get();
         $uids = $revs->pluck('user_id')->toArray();
-        return User::whereIn('id', $uids)->get();
+        return User::whereIn('id', $uids)->get()->toArray();
     }
     /**
      * 特定のPaperIDのプライマリ査読者
      */
-    public static function mt_primary_of_paper(...$pids)
+    public static function mt_primary_of_paper(int ...$pids): array
     {
         // submit→review->uid->user
         $subids = Submit::whereIn('paper_id', $pids)->pluck('id')->toArray();
@@ -443,7 +443,7 @@ class MailTemplate extends Model
     /**
      * 著者名未入力（採択分のみ）
      */
-    public static function mt_noauthorlist($catid)
+    public static function mt_noauthorlist(int $catid): array
     {
         $papers = [];
         $accept_ids = Accept::where('judge', '>', 0)->pluck("id")->toArray();
@@ -461,7 +461,7 @@ class MailTemplate extends Model
      * 引数：catids
      * 採択分のみ、ということに注意。投稿時のチェックはPaper.validateBibinfo()で行う。
      */
-    public static function mt_nobib(...$args)
+    public static function mt_nobib(int ...$args): array
     {
         // info($koumoku);
         $accPIDs = Submit::with('paper')->whereIn("category_id", $args)->whereHas("accept", function ($query) {
@@ -498,7 +498,7 @@ class MailTemplate extends Model
     /**
      * 期日以前にアップされたPDFファイルのまま
      */
-    public static function mt_oldfile($catid, $date)
+    public static function mt_oldfile(int $catid, string $date): array 
     {
         $subs = Submit::subs_accepted($catid);
         $pid2sub = [];
@@ -518,7 +518,7 @@ class MailTemplate extends Model
     /**
      * 公開予定のVIDEOファイルがある
      */
-    public static function mt_hasvideo(...$catids)
+    public static function mt_hasvideo(int ...$catids): array
     {
         $accPIDs = Submit::with('paper')->whereIn("category_id", $catids)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
@@ -542,7 +542,7 @@ class MailTemplate extends Model
      * review_score(1, 'metasuisenjournal', '>=', 2) とする。
      * 注：現在は、1つでも条件にあうスコアがあれば、含まれる。平均値で絞り込む場合は、別途実装が必要。その場合は、$revid_scoreval と$revid_paperidを使って,paper毎の平均スコアを計算する。
      */
-    public static function mt_review_score($catid, $name, $cop, $score)
+    public static function mt_review_score(int $catid, string $name, string $cop, int $score): array
     {
         // catidは、reviewを絞り込むため。
 
@@ -566,7 +566,7 @@ class MailTemplate extends Model
      * review_score(1, 'metasuisenjournal', '>=', 2) とする。
      * 注：現在は、1つでも条件にあうスコアがあれば、含まれる。平均値で絞り込む場合は、別途実装が必要。その場合は、$revid_scoreval と$revid_paperidを使って,paper毎の平均スコアを計算する。
      */
-    public static function mt_review_score_accept($catid, $name, $cop, $score)
+    public static function mt_review_score_accept(int $catid, string $name, string $cop, int $score): array
     {
         $accepted_pids = Submit::with('paper')->where("category_id", $catid)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
@@ -592,7 +592,7 @@ class MailTemplate extends Model
      * catids のいずれかでアクセプトされ、まだnameのアンケートに回答していないPaper
      * （投稿時のカテゴリと、採択カテゴリが異なっている場合は、含まれないので、mt_noenqans_submitを使用する）
      */
-    public static function mt_noenqans($name, ...$catids)
+    public static function mt_noenqans(string $name, int ...$catids): array
     {
         // 当初投稿時のcategory_idで絞り込む
         $target_paperids = Paper::whereIn('category_id', $catids)->whereNull('deleted_at')->pluck('id')->toArray();
@@ -617,7 +617,7 @@ class MailTemplate extends Model
      * catids のいずれかでアクセプトされ、まだnameのアンケートに回答していないPaper
      * （投稿時のカテゴリを指定）
      */
-    public static function mt_noenqans_submit($name, ...$catids)
+    public static function mt_noenqans_submit(string $name, int ...$catids): array
     {
         // 当初投稿時のcategory_idで絞り込む
         $target_paperids = Paper::whereIn('category_id', $catids)->whereNull('deleted_at')->pluck('id')->toArray();
@@ -637,7 +637,7 @@ class MailTemplate extends Model
     /**
      * AltPDFのアンケート回答と、PDF提出の不一致
      */
-    public static function mt_altpdf_inconsistent(array $catids, $enqname = "30sec_presen", $enqans_yes = "希望する")
+    public static function mt_altpdf_inconsistent(array $catids, string $enqname = "30sec_presen", string $enqans_yes = "希望する"): array
     {
         // アンケート回答と、PDF提出を、それぞれ取得する。
         // まず、アンケート回答を取得
@@ -667,7 +667,7 @@ class MailTemplate extends Model
     /**
      * 登録ユーザ全員 引数を省略すると有効ユーザ、0を指定すると無効ユーザ
      */
-    public static function mt_reg_user_valid($valid = 1)
+    public static function mt_reg_user_valid(int $valid = 1): array
     {
         $uids = Regist::where('valid', $valid)->pluck('user_id')->toArray();
         return User::whereIn('id', $uids)->get();

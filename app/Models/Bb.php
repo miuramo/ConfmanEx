@@ -40,13 +40,13 @@ class Bb extends Model
         return $this->hasOne(BbMes::class, 'bb_id')->latest();
     }
 
-    public function nummessages()
+    public function nummessages(): int
     {
         // メッセージの数を返す
 
         return $this->hasMany(BbMes::class, 'bb_id')->count();
     }
-    public static function make_bb(int $type, int $pid, int $cid)
+    public static function make_bb(int $type, int $pid, int $cid): Bb
     {
         $subs = [
             1 => "reviewer|metareviewer",
@@ -81,7 +81,7 @@ class Bb extends Model
         return $bb; // Bb::with("messages")->with("paper")->with("category")->find($bb->id);
     }
 
-    public static function submitplain(int $pid, int $type, string $subject, string $mes)
+    public static function submitplain(int $pid, int $type, string $subject, string $mes): ?BbMes
     {
         $paper = Paper::find($pid);
         if ($paper == null) return null;
@@ -102,35 +102,35 @@ class Bb extends Model
     /**
      * Bb通知メールをおくる
      */
-    public static function send_email_nofity(Bb $bb, BbMes $bbmes)
+    public static function send_email_nofity(Bb $bb, BbMes $bbmes): void
     {
         // pcのみ利害関係に注意する。
         (new BbNotify($bb, $bbmes))->process_send();
     }
-    public function url()
+    public function url(): string
     {
         return route('bb.show', ['bb' => $this->id, 'key' => $this->key]);
     }
-    public static function url_from_rev(Review $rev, int $type = 1)
+    public static function url_from_rev(Review $rev, int $type = 1): ?string
     {
         $bb = Bb::where("paper_id", $rev->paper_id)->where("category_id", $rev->category_id)->where("type", $type)->first();
         if ($bb == null) return null;
         return $bb->url();
     }
-    public static function url_from_bbmesid(int $bbmesid)
+    public static function url_from_bbmesid(int $bbmesid): ?string
     {
         $bbmes = BbMes::find($bbmesid);
         if ($bbmes == null) return null;
         return $bbmes->bb->url();
     }
-    public static function url_from_bbid(int $bbid)
+    public static function url_from_bbid(int $bbid): ?string
     {
         $bb = Bb::find($bbid);
         if ($bb == null) return null;
         return $bb->url();
     }
 
-    public function get_mail_to_cc()
+    public function get_mail_to_cc(): array
     {
         $tolist = [];
         $bcclist = [];
@@ -171,23 +171,23 @@ class Bb extends Model
         return ["to" => $tolist, "bcc" => $bcclist];
     }
 
-    public function get_reviewers()
+    public function get_reviewers(): \Illuminate\Database\Eloquent\Collection
     {
         $revuids = Review::where("paper_id", $this->paper_id)->where("category_id", $this->category_id)->where("ismeta", 0)->pluck("user_id", "id")->toArray();
         return User::whereIn("id", $revuids)->get();
     }
-    public function revuid2rev()
+    public function revuid2rev(): array
     {
         $revuid2rev = Review::where("paper_id", $this->paper_id)->where("category_id", $this->category_id)->where("ismeta", 0)->pluck("id", "user_id")->toArray();
         return $revuid2rev;
     }
-    public function ismeta_myself()
+    public function ismeta_myself(): bool
     {
         // 自分がメタ査読者かどうかを返す
         $rev = Review::where("paper_id", $this->paper_id)->where("category_id", $this->category_id)->where("user_id", auth()->id())->where("ismeta", 1)->first();
         return $rev != null;
     }
-    public function metauser()
+    public function metauser(): ?User
     {
         // メタ査読者を返す
         $rev = Review::where("paper_id", $this->paper_id)->where("category_id", $this->category_id)->where("ismeta", 1)->first();
@@ -197,7 +197,7 @@ class Bb extends Model
     /**
      * ユーザIDから、シェファーディング掲示板を取得する
      */
-    public static function getShepherdingBbs($user_id)
+    public static function getShepherdingBbs(int $user_id): \Illuminate\Database\Eloquent\Collection
     {
         // get all meta reviews
         $metarev_pids = Review::where('user_id', $user_id)->where('ismeta', 1)->get()->pluck('paper_id')->toArray();

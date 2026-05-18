@@ -19,7 +19,7 @@ class Accept extends Model
      * 与えられたカテゴリにおいて、判定で使用されているaccept_idを key & value の両方で返す。
      * key にしているのは、isset() での判定ができるため。
      */
-    public static function used_accepts($cat_id = 1)
+    public static function used_accepts($cat_id = 1): array
     {
         $res = DB::select("select distinct accept_id from submits where category_id = ? " .
             " and paper_id in (select id from papers where deleted_at is null) order by accept_id", [$cat_id]);
@@ -30,7 +30,7 @@ class Accept extends Model
         return $ret;
     }
 
-    public static function acc_status($include_paperid = false)
+    public static function acc_status($include_paperid = false): array
     {
         $fs = [
             "papers.category_id as origcat",
@@ -63,7 +63,7 @@ class Accept extends Model
         }
     }
 
-    public static function random_pids_for_each_accept($cat_id = 1)
+    public static function random_pids_for_each_accept($cat_id = 1): array
     {
         $paperlist = Accept::acc_status(true);
         $accepts = Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
@@ -98,7 +98,7 @@ class Accept extends Model
         ];
     }
 
-    public static function nodes()
+    public static function nodes(): array
     {
         $nodes = [];
         $links = [];

@@ -27,7 +27,7 @@ class Score extends Model
         return $this->belongsTo(Viewpoint::class);
     }
 
-    public function submit_score_update()
+    public function submit_score_update(): void
     {
         // 点数に関係なければ終了
         $this->review->validateOneRev();
@@ -83,7 +83,7 @@ class Score extends Model
     /**
      * 問題ありそうだったので、Submitで作成した。
      */
-    public static function updateAllScoreStat()
+    public static function updateAllScoreStat(): void
     {
         Submit::updateAllScoreStat();
 

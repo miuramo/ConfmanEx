@@ -33,7 +33,7 @@ class VoteItem extends Model
     /**
      * boothが決まらないと、投票アイテムは表示されないことに注意。
      */
-    public static function init()
+    public static function init(): void
     {
         // 各カテゴリで、学生発表とそれ以外（一般発表）に分ける。
         // アンケートは4番、paper_id => valuestr をとっておく。
@@ -114,11 +114,11 @@ class VoteItem extends Model
     // booth => paper_id の配列を返す。
     // 1,2のカテゴリで、学生発表とそれ以外（一般発表）に分ける。
     // ただし、アンケートは4番、paper_id => valuestr をとっておく。
-    public static function init_boothes()
+    public static function init_boothes(): void
     {
         self::init();
     }
-    public static function student_boothes()
+    public static function student_boothes(): array
     {
         $student_pids = EnqueteAnswer::where("enquete_id", 4)->where("valuestr", "学生")->orderBy("paper_id")
             ->get()->pluck("paper_id")->toArray();

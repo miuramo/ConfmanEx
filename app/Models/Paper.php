@@ -110,7 +110,7 @@ class Paper extends Model
         'deleted_at'
     ];
 
-    public static function mandatory_bibs($catid = 1)
+    public static function mandatory_bibs($catid = 1): array
     {
         $koumoku = [
             'title' => '和文タイトル',
@@ -143,7 +143,7 @@ class Paper extends Model
         return $koumoku;
     }
 
-    public function addFilesToZip(ZipArchive $zip, array $filetypes)
+    public function addFilesToZip(ZipArchive $zip, array $filetypes): int
     {
         $count = 0;
         foreach ($filetypes as $ft) {
@@ -156,7 +156,7 @@ class Paper extends Model
         return $count;
     }
     // https://github.com/stechstudio/laravel-zipstream を使用
-    public function addFilesToZipStream(Builder $zip, array $filetypes)
+    public function addFilesToZipStream(Builder $zip, array $filetypes): int
     {
         $count = 0;
         foreach ($filetypes as $ft) {
@@ -169,7 +169,7 @@ class Paper extends Model
         return $count;
     }
     // こちらも https://github.com/stechstudio/laravel-zipstream を使用
-    public function addFilesToZip_ForPub(Builder $zip, array $filetypes, string $fn_prefix, string $fn)
+    public function addFilesToZip_ForPub(Builder $zip, array $filetypes, string $fn_prefix, string $fn): int
     {
         $count = 0;
         foreach ($filetypes as $ft) {
@@ -225,7 +225,7 @@ class Paper extends Model
         return $this->hasMany(Submit::class);
     }
 
-    public function id_03d()
+    public function id_03d(): string
     {
         return sprintf("%03d", $this->id);
     }
@@ -249,7 +249,7 @@ class Paper extends Model
     {
         return $this->hasMany(EnqueteAnswer::class, 'paper_id');
     }
-    public function enqansByItemId($enq_itm_id)
+    public function enqansByItemId(int $enq_itm_id)
     {
         return null;
     }
@@ -257,7 +257,7 @@ class Paper extends Model
     /**
      * 採択済みのBooth ID
      */
-    public function boothes_accepted()
+    public function boothes_accepted(): string
     {
         $bs = [];
         foreach ($this->submits as $sub) {
@@ -271,7 +271,7 @@ class Paper extends Model
     /**
      * この論文の査読結果のトークンを生成（著者がみえる査読結果）
      */
-    public function token()
+    public function token(): string
     {
         return sha1($this->id . $this->user_id . $this->paper_id . $this->category_id . $this->title);
     }
@@ -289,7 +289,7 @@ class Paper extends Model
         }
         return -1;
     }
-    public static function getAT($uid, $pid): int
+    public static function getAT(int $uid, int $pid): int
     {
         $p = Paper::find($pid);
         $u = User::find($uid);
@@ -307,7 +307,7 @@ class Paper extends Model
      *
      * （投稿者アカウントのメールが変更されたら、どうする？＞基本的に、すべてのPaperについて、ここを実行すればよいが、もうすこし省力化できるかも）
      */
-    public function updateContacts()
+    public function updateContacts(): void
     {
         $this->contacts()->detach(); // 既存のはすべて削除する
         //contactemails から、Contactを作成する（重複はtableのunique制約で保証される）
@@ -334,7 +334,7 @@ class Paper extends Model
         $this->refresh();
     }
     // 主にテスト用。現在のContactリレーションからcontactemailsを逆に生成する。
-    public function updateContactemailsFromContacts()
+    public function updateContactemailsFromContacts(): array
     {
         // ここで、いったん$this->contactsを再読み込みする必要があるらしい。
         $this->refresh();
@@ -348,7 +348,7 @@ class Paper extends Model
     }
 
     // contactemailsから抜く
-    public function remove_contact(Contact $con)
+    public function remove_contact(Contact $con): void
     {
         $this->contacts()->detach($con->id);
         // ここで、いったんcontactsを再読み込みする必要があるらしい。
@@ -356,13 +356,13 @@ class Paper extends Model
         $this->refresh();
     }
     // contactemailsに足す
-    public function add_contact(Contact $con)
+    public function add_contact(Contact $con): void
     {
         $this->contacts()->syncWithoutDetaching($con->id, ['created_at' => now(), 'updated_at' => now()]);
         $this->updateContactemailsFromContacts();
         $this->refresh();
     }
-    public function add_contactemail(string $em)
+    public function add_contactemail(string $em): void
     {
         $ema = explode("\n", trim($this->contactemails));
         $ema[] = $em;
@@ -371,7 +371,7 @@ class Paper extends Model
         $this->updateContacts();
     }
 
-    public function get_mail_to_cc()
+    public function get_mail_to_cc(): array
     {
         $cclist = [];
         $bcclist = [];
@@ -418,7 +418,7 @@ class Paper extends Model
     /**
      * このPaperと、引数pidで与えられた論文との、contactsの重複があるか調べる。
      */
-    public function hasSharedContacts(int $pid)
+    public function hasSharedContacts(int $pid): bool
     {
         $thispid = $this->id;
         $contacts = DB::select("select contact_id from paper_contact where paper_id in ({$pid} , {$thispid}) order by contact_id");
@@ -436,13 +436,13 @@ class Paper extends Model
     //     return $this->hasMany(Submit::class);
     // }
 
-    public function delete_me()
+    public function delete_me(): void
     {
         $this->contacts()->detach(); //belongsToManyリレーションを削除する
         Paper::destroy($this->id);
     }
 
-    public function softdelete_me()
+    public function softdelete_me(): void
     {
         $this->delete();
     }
@@ -450,7 +450,7 @@ class Paper extends Model
     /**
      * 投稿ファイルのバリデーション（注：投稿可能期間のみ有効）
      */
-    public function validateFiles()
+    public function validateFiles(): array
     {
         $checkary = [];
         $checkary['pdf'] = [];
@@ -560,7 +560,7 @@ class Paper extends Model
     /**
      * PDFファイルがなければ true (@MailTemplate mt_nofile)
      */
-    public function check_nofile()
+    public function check_nofile(): bool
     {
         if ($this->pdf_file_id == null) return true;
         // もし、pdf_file_id が無効なら、もう一度validateする。
@@ -577,7 +577,7 @@ class Paper extends Model
     /**
      * 書誌情報のチェック。足りないものを配列で返す。
      */
-    public function validateBibinfo()
+    public function validateBibinfo(): array
     {
         // 何が必須か？は、全部から、SKIP_BIBINFOを引く。
         // $manda = ["title", "etitle", "authorlist", "eauthorlist", "abst", "eabst", "keyword", "ekeyword"];
@@ -603,14 +603,14 @@ class Paper extends Model
         return $errors;
     }
 
-    public function bibinfo_error()
+    public function bibinfo_error(): string
     {
         $errors = $this->validateBibinfo();
         return implode("\n", $errors);
     }
 
 
-    public function between(int $s, int $x, int $e)
+    public function between(int $s, int $x, int $e): bool
     {
         return ($s <= $x && $x <= $e);
     }
@@ -618,7 +618,7 @@ class Paper extends Model
     /**
      * PdfJob => File(2ページ以上のとき) =>　ここでタイトル設定・更新
      */
-    public function extractTitleAndAuthors(string $text)
+    public function extractTitleAndAuthors(string $text): void
     {
         // もし、カテゴリの投稿受付設定 extract_title が　0　だったら、実行しない。
         $cat = Category::find($this->category_id);
@@ -662,7 +662,7 @@ class Paper extends Model
         $this->save();
     }
 
-    public function demo_ifaccepted()
+    public function demo_ifaccepted(): bool
     {
         $demoenqitem = EnqueteItem::where("name", "demoifaccepted")->first();
         if ($demoenqitem != null) {
@@ -675,7 +675,7 @@ class Paper extends Model
         return false;
     }
 
-    public function validate_accepted()
+    public function validate_accepted(): void
     {
         //ファイルエラー
         $fileerrors = $this->validateFiles();
@@ -688,7 +688,7 @@ class Paper extends Model
         $this->accepted = (count($fileerrors) == 0 && count($enqerrors) == 0);
         $this->save();
     }
-    public function biberrors()
+    public function biberrors(): array
     {
         $cat = Category::find($this->category_id);
         // 書誌情報エラー(もしshow_bibinfo_btnが1かつ、書誌情報が無い場合)
@@ -703,7 +703,7 @@ class Paper extends Model
     /**
      * 著者名(所属) のチェック
      */
-    public function authorlist_check($field = "authorlist")
+    public function authorlist_check($field = "authorlist"): bool
     {
         $src = $this->{$field};
         $src = str_replace("（", "(", $src);
@@ -725,7 +725,7 @@ class Paper extends Model
     }
 
     // 著者名と所属のパース結果を配列で返す。英文所属は引数にeauthorlist を指定する。
-    public function authorlist_ary($field = "authorlist", bool $use_short = false)
+    public function authorlist_ary($field = "authorlist", bool $use_short = false): array
     {
         $ret = [];
         // まず、カッコをおきかえる
@@ -748,7 +748,7 @@ class Paper extends Model
         }
         return $ret;
     }
-    public function getAllAffils($idx = 1, $prefix = "")
+    public function getAllAffils($idx = 1, $prefix = ""): string
     {
         $ary = $this->authorlist_ary($prefix . "authorlist");
         $ret = [];
@@ -761,7 +761,7 @@ class Paper extends Model
     /**
      * 配列をかえす
      */
-    public function bibinfo(bool $use_short = false)
+    public function bibinfo(bool $use_short = false): array
     {
         $ret = [];
         $ret['title'] = $this->title;
@@ -782,7 +782,7 @@ class Paper extends Model
     /**
      * 基本ルール(pre)は適用する。
      */
-    public function apply_affil_fix($affil, bool $pre_apply = true, bool $use_short = false)
+    public function apply_affil_fix(string $affil, bool $pre_apply = true, bool $use_short = false): string
     {
         // $affil = str_replace("、", "/", $affil);
         // $affil = str_replace(",", "/", $affil);
@@ -832,7 +832,7 @@ class Paper extends Model
      * 著者名、文字列をかえす
      * abbr 連続する著者の所属を省略する
      */
-    public function bibauthors(bool $abbr = false, bool $use_short = false, string $field = "authorlist")
+    public function bibauthors(bool $abbr = false, bool $use_short = false, string $field = "authorlist"): string
     {
         $name = [];
         $affil = [];
@@ -860,7 +860,7 @@ class Paper extends Model
         return implode("，", $ret); // カンマでつなげて出力
     }
 
-    public function writeHintFile()
+    public function writeHintFile(): void
     {
         $txt = "pdf_file_id\t" . $this->pdf_file_id . "\n";
         $txt .= "title\t" . $this->title . "\n";
@@ -873,13 +873,13 @@ class Paper extends Model
         }
     }
 
-    public function pdftotext()
+    public function pdftotext(): string
     {
         if ($this->pdf_file)
             return $this->pdf_file->getPdfText();
         return "(pdftotext準備中)";
     }
-    public function title_candidate()
+    public function title_candidate(): string
     {
         $title = str_replace("\n", "", $this->pdftotext());
         // owner name
@@ -895,7 +895,7 @@ class Paper extends Model
      * いずれかのカテゴリで、採択されているならtrue
      * ただし、著者に査読結果が返っている場合のみ返す。それ以外はfalse
      */
-    public function is_accepted_in_any_category()
+    public function is_accepted_in_any_category(): bool
     {
         $revreturn = Category::select('status__revreturn_on', 'id')
             ->where('id', $this->category_id)
@@ -916,7 +916,7 @@ class Paper extends Model
      * カメラレディ投稿期間は、採択者のみtrue
      * 予稿集編集準備期間は、false
      */
-    public function can_upload_files()
+    public function can_upload_files(): bool
     {
         $cat = Category::find($this->category_id);
         if ($cat->status__revedit_on == 0) return true; // 投稿時（査読開始前）
@@ -935,7 +935,7 @@ class Paper extends Model
     /**
      * このファイルの予稿集収録をとりやめる（参照をはずす）
      */
-    public function file_abandon(int $fileid)
+    public function file_abandon(int $fileid): void
     {
         if ($this->pdf_file_id == $fileid) {
             $this->pdf_file_id = null;

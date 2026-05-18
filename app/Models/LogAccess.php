@@ -28,7 +28,7 @@ class LogAccess extends Model
      * App\Http\Middleware\LogAccess で、実際のアクセスログ保存処理を行っている。
      */
 
-    public static function update_last_login(int $limit = 10)
+    public static function update_last_login(int $limit = 10): int
     {
         // まだlast_login_atが設定されていないユーザを$limits件取得する
         $users = User::whereNull('last_login_at')

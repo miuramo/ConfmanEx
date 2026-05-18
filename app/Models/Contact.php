@@ -23,7 +23,7 @@ class Contact extends Model
         return $this->belongsToMany(Paper::class, $tbl); //->using(RolesUser::class);
     }
 
-    public static function top_n($n = 10)
+    public static function top_n(int $n = 10): \Illuminate\Support\Collection
     {
         // paper_contact テーブルをcontact_idでグループ化して、最も多くのpaperに関連しているcontactを取得する
         $top_contacts = self::join('paper_contact', 'contacts.id', '=', 'paper_contact.contact_id')
@@ -36,7 +36,7 @@ class Contact extends Model
     }
 
     // paper_contactに存在しないcontactを取得するための関数
-    public static function unused()
+    public static function unused(): \Illuminate\Support\Collection
     {
         // paper_contact には存在するが、contactには存在しないcontactを取得する
         $unused_contacts = self::whereNotIn('id', function ($query) {
@@ -49,7 +49,7 @@ class Contact extends Model
         return $unused_contacts;
     }
 
-    public static function rebuild_from_papers()
+    public static function rebuild_from_papers(): void
     {
         // すべてのPaperContactを削除してから、すべてのPaperに対してupdateContacts()を呼び出す
         PaperContact::truncate();
@@ -59,7 +59,7 @@ class Contact extends Model
         }
     }
 
-    public static function invalidate()
+    public static function invalidate(): void
     {
         $unused_contacts = self::unused();
         foreach ($unused_contacts as $contact) {
@@ -67,14 +67,14 @@ class Contact extends Model
             $contact->save();
         }
     }
-    public static function bundle_delete()
+    public static function bundle_delete(): void
     {
         $unused_contacts = self::unused();
         foreach ($unused_contacts as $contact) {
             $contact->delete();
         }
     }
-    public static function delete_invalid()
+    public static function delete_invalid(): void
     {
         $invalid_contacts = self::where('valid', false)->get();
         foreach ($invalid_contacts as $contact) {
@@ -84,7 +84,7 @@ class Contact extends Model
 
 
     // 問題のあるメールアドレスを無効にする（未テスト）
-    public static function disable_email(string $em)
+    public static function disable_email(string $em): void
     {
         // Contactから辿れる、papersについて、投稿連絡用メールアドレスcontactemails から抜く。抜いた後でcontactsリレーションを更新。
         $contact = Contact::findByIdOrName($em, null, "email");

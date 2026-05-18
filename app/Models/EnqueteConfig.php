@@ -24,7 +24,7 @@ class EnqueteConfig extends Model
      * 明日、受付開始するアンケートを取得する
      * ただし、01-01開始のアンケートは除外する
      */
-    public static function tomorrowOpenEnquetes($debugmonth = null, $debugday = null)
+    public static function tomorrowOpenEnquetes($debugmonth = null, $debugday = null): array
     {
         $month = $debugmonth ?? date('n');
         $day = $debugday ?? date('j');
@@ -39,7 +39,7 @@ class EnqueteConfig extends Model
      * 今日が最終日のアンケートを取得する
      * ただし、12-31終了のアンケートは除外する
      */
-    public static function todayCloseEnquetes($debugmonth = null, $debugday = null)
+    public static function todayCloseEnquetes($debugmonth = null, $debugday = null): array
     {
         $month = $debugmonth ?? date('n');
         $day = $debugday ?? date('j');
@@ -51,7 +51,7 @@ class EnqueteConfig extends Model
             ->get();
     }
 
-    public function toString()
+    public function toString(): string
     {
         return sprintf(
             "EnqueteConfig: %s, %s 〜 %s, %s, %s, %s",

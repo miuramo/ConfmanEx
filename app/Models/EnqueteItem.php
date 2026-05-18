@@ -17,7 +17,7 @@ class EnqueteItem extends Model
     /**
      * バリデーション
      */
-    public function validate_rule(string $val)
+    public function validate_rule(string $val): bool
     {
         if ($val == null) return true;
         if ($this->pregrule == null) return true;
@@ -26,7 +26,7 @@ class EnqueteItem extends Model
         return preg_match($this->pregrule, $val);
     }
 
-    public function selections()
+    public function selections(): array
     {
         $ary = explode(Viewpoint::$separator, $this->content); //改行ではなく、セミコロン ; で区切っていることに注意
         $item_title = nl2br(trim($ary[0])); // 最初の要素は、説明
@@ -46,7 +46,7 @@ class EnqueteItem extends Model
      * 見つからない場合は null を返す
      * 注意：keyはユニークであることを想定。複数あった場合は最初の1件のみ返す
      */
-    public static function getDescAndSelText(string $key, int $selid)
+    public static function getDescAndSelText(string $key, int $selid): ?array
     {
         $item = EnqueteItem::where("name", $key)->first(); // name はユニークであることを想定
         if (!$item) return null;
@@ -58,7 +58,7 @@ class EnqueteItem extends Model
     /**
      * 全 EnqueteItem の id => desc 配列を返す
      */
-    public static function enq_enqitmid_desc()
+    public static function enq_enqitmid_desc(): array
     {
         // TODO: 他のアンケートと、name の重複がないようにする必要あり。name=>idにするのも一つの方法。
         $enqitm_id_desc = EnqueteItem::pluck('desc', 'id')->toArray();

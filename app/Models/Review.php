@@ -39,7 +39,7 @@ class Review extends Model
     /**
      * この査読のトークンを生成（査読者同士の参照用）
      */
-    public function token()
+    public function token(): string
     {
         return sha1($this->id . $this->user_id . $this->paper_id . $this->category_id);
     }
@@ -47,7 +47,7 @@ class Review extends Model
      * 査読割り当て
      * status 2がメタ 1が通常 0が解除
      */
-    public static function review_assign($paper_id, $user_id, $status)
+    public static function review_assign(int $paper_id, int $user_id, int $status): void
     {
         $paper = Paper::find($paper_id);
         $status = intval($status);
@@ -81,7 +81,7 @@ class Review extends Model
     /**
      * 数をしらべる。( field = paper_id or user_id )
      */
-    public static function revass_stat($catid, $field = "user_id")
+    public static function revass_stat(int $catid, string $field = "user_id"): array
     {
         $tmp = Review::select(DB::raw("count(id) as count, {$field}, ismeta"))
             ->where('category_id', $catid)
@@ -95,7 +95,7 @@ class Review extends Model
         }
         return $ret;
     }
-    public static function revass_stat_allcategory()
+    public static function revass_stat_allcategory(): array
     {
         $field = "user_id";
         $tmp = Review::select(DB::raw("count(id) as count, {$field}, ismeta"))
@@ -114,7 +114,7 @@ class Review extends Model
      * ネストした配列で返す
      * arr[paper_id][user_id] = rev
      */
-    public static function arr_pu_rev()
+    public static function arr_pu_rev(): array
     {
         $ret = [];
         foreach (Review::all() as $a) {
@@ -126,7 +126,7 @@ class Review extends Model
      * ネストした配列で返す
      * arr[paper_id][user_id] = status(2:meta 1:normal)
      */
-    public static function arr_pu_status()
+    public static function arr_pu_status(): array
     {
         $ret = [];
         foreach (Review::all() as $a) {
@@ -138,7 +138,7 @@ class Review extends Model
     /**
      * 主にテスト用
      */
-    public static function arr_up_status()
+    public static function arr_up_status(): array
     {
         $ret = [];
         foreach (Review::all() as $a) {
@@ -149,7 +149,7 @@ class Review extends Model
     /**
      * 主にテスト用
      */
-    public static function arr_up_rev()
+    public static function arr_up_rev(): array
     {
         $ret = [];
         foreach (Review::all() as $a) {
@@ -162,7 +162,7 @@ class Review extends Model
      * ネストした配列で返す
      * arr[paper_id][user_id] = star span
      */
-    public static function arr_pu_star()
+    public static function arr_pu_star(): array
     {
         $ret = [];
         $colors = ["teal", "cyan", "red"];
@@ -178,7 +178,7 @@ class Review extends Model
      * 査読者名を取得する
      * ret[paper_id][ismeta][user_id] = name
      */
-    public static function arr_pu_revname()
+    public static function arr_pu_revname(): array
     {
         $ret = [];
         foreach (Review::all() as $a) {
@@ -190,7 +190,7 @@ class Review extends Model
     /**
      * 査読割り当ての前に、全査読者の利害を抽出する
      */
-    public static function extractAllCoAuthorRigais()
+    public static function extractAllCoAuthorRigais(): void
     {
         // 査読者とメタ査読者
         $roles = Role::where("name", "like", "%reviewer")->get();
@@ -218,7 +218,7 @@ class Review extends Model
     }
 
     // status 0は未回答、1は回答中、2は完了 を更新する
-    public function validateOneRev()
+    public function validateOneRev(): void
     {
         $finish_vpids_ary = Score::where('review_id', $this->id)->whereNotNull('valuestr')->whereHas('viewpoint', function ($query) {
             $query->where('mandatory', 1);
@@ -259,7 +259,7 @@ class Review extends Model
      * @param $accepted が 0のとき、doReturnAcceptOnly が 1のものは表示しない
      * @param $am_i_meta が 1のとき、meta査読者として見ているとみなす（hidefromrev の処理のため）
      */
-    public function scores_and_comments($only_doreturn = 1, $only_score = 0, $accepted = 1, $am_i_meta = 0)
+    public function scores_and_comments(int $only_doreturn = 1, int $only_score = 0, int $accepted = 1, int $am_i_meta = 0): array
     {
         $aryscores = $this->scores->pluck("valuestr", "viewpoint_id")->toArray();
         $vps = Viewpoint::where('category_id', $this->category_id)->orderBy('orderint')->get();
@@ -284,14 +284,14 @@ class Review extends Model
     /**
      * txtに含まれるURLをリンクに変換する
      */
-    public static function urllink($txt)
+    public static function urllink(string $txt): string
     {
         $txt = preg_replace_callback("/(<a [^>]+?>.+?<\/a>)|(https?:\/\/[a-zA-Z0-9_\.\/\~\%\:\#\?=&\;\-]+)/i", ["App\Models\Review", "urllink_callback"], $txt);
         $txt = strip_tags($txt, "<a>");
         return $txt;
     }
 
-    public static function urllink_callback($match)
+    public static function urllink_callback(array $match): string
     {
         if ($match[1]) {
             // 最初から<a>タグで囲まれている場合
@@ -313,12 +313,13 @@ class Review extends Model
                 htmlspecialchars($match[2]),
             );
         }
+        return "unexpected pattern";
     }
 
     /**
      * すべてのstatusを更新する（査読未完了のチェックの前に実行する）
      */
-    public static function validateAllRev()
+    public static function validateAllRev(): void
     {
         $all = Review::all();
         foreach ($all as $rev) {
@@ -336,7 +337,7 @@ class Review extends Model
      * $ret['scores'] = $scores;
      * $ret['descs'] = $descs;
      */
-    public static function my_scores($uid, $cat_id)
+    public static function my_scores(int $uid, int $cat_id): array
     {
         // review list
         $sql1 =
@@ -375,7 +376,7 @@ class Review extends Model
      * @param int $cat_id
      * 
      */
-    public static function get_scores($paper_id, $cat_id)
+    public static function get_scores(int $paper_id, int $cat_id): array
     {
         $sql1 =
             'select reviews.id, paper_id, title, name, affil, ismeta, status from reviews ' .
@@ -416,7 +417,7 @@ class Review extends Model
      * Random assign reviewers to papers
      * repnum: number of reviewers assigned to paper [regular, meta]
      */
-    public static function randomAssign($repnum = [4, 1], $catids = [2, 3], $exclude = [])
+    public static function randomAssign(array $repnum = [4, 1], array $catids = [2, 3], array $exclude = []): array
     {
         info("random assignment task started");
         // 
@@ -509,7 +510,7 @@ class Review extends Model
     /**
      * 自動査読割り当てにおける、所属のチェックと、別カテゴリでの利害申告状況の調査
      */
-    public static function detectConflict(int $pid, int $rid)
+    public static function detectConflict(int $pid, int $rid): bool
     {
         $paper = Paper::find($pid);
         $rev = User::find($rid);

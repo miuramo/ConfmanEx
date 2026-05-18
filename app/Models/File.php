@@ -6,10 +6,12 @@ use App\Jobs\OcrJob;
 use App\Jobs\PdfJob;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Normalizer;
 
 class File extends Model
@@ -33,7 +35,7 @@ class File extends Model
      * 
      * BBMesControllerから呼ばれる
      */
-    public static function createnew($tmp, $pid = 0)
+    public static function createnew(UploadedFile $tmp, $pid = 0): File
     {
         // フォルダがなければ作る
         File::mkdir_ifnot(storage_path(File::apf()));
@@ -78,13 +80,13 @@ class File extends Model
     // public static $app_public_files = 'app/public/';
     // public static $public_files = 'public';
     public static $filedir = 'zzz2024';
-    public static function apf()
+    public static function apf(): string
     {
         File::$filedir = Setting::where('name', 'FILEPUT_DIR')->first()['value']; // Config::get('fileput.dir');
         if (strlen(File::$filedir) == 0) File::$filedir = env('FILEPUT_DIR', 'plz_set_Setting_FILEPUT_DIR');
         return 'app/public/' . File::$filedir;
     }
-    public static function pf()
+    public static function pf(): string
     {
         File::$filedir = Setting::where('name', 'FILEPUT_DIR')->first()['value'];
         if (strlen(File::$filedir) == 0) File::$filedir = env('FILEPUT_DIR', 'plz_set_Setting_FILEPUT_DIR');
@@ -104,7 +106,7 @@ class File extends Model
         'pagenum' => 0,
     ];
 
-    public function remove_the_file()
+    public function remove_the_file(): void
     {
         $fullpath = $this->fullpath();
         $ret = @unlink($fullpath); // Storage::delete( $fullpath );
@@ -121,34 +123,34 @@ class File extends Model
             @unlink(substr($fullpath, 0, -4) . ".png");
         }
     }
-    public function fullpath()
+    public function fullpath(): string
     {
         if (file_exists(storage_path(File::apf() . '/' . $this->fname))) {
             return storage_path(File::apf() . '/' . $this->fname);
         } else {
-            if (endsWith($this->fname, ".png")) { // fallback if thumbnail png is missing
+            if (Str::endsWith($this->fname, '.png')) { // fallback if thumbnail png is missing
                 return storage_path(File::apf() . '/' . substr($this->fname, 0, -4) . '/t-00001.png');
             }
         }
         return storage_path(File::apf() . '/nofile.png'); // NoFile
     }
-    public function extension()
+    public function extension(): string
     {
         return pathinfo($this->fname, PATHINFO_EXTENSION);
     }
 
-    public function delete_me()
+    public function delete_me(): void
     {
         File::destroy($this->id);
     }
 
-    public function makeThumbFolder()
+    public function makeThumbFolder(): bool
     {
         $dir = substr($this->fname, 0, -4);
         return File::mkdir_ifnot(storage_path(File::apf() . '/' . $dir));
     }
 
-    public static function mkdir_ifnot($dirpath)
+    public static function mkdir_ifnot(string $dirpath): bool
     {
         if (!file_exists($dirpath)) {
             return mkdir($dirpath, 0777, true);
@@ -156,7 +158,7 @@ class File extends Model
         return true;
     }
 
-    public function makePdfHeadThumb()
+    public function makePdfHeadThumb(): void
     {
         $fullpath_pdf = storage_path(File::apf() . '/' . $this->fname); // 元のPDFファイル名
         $dir = substr($this->fname, 0, -4);
@@ -196,7 +198,7 @@ class File extends Model
     /**
      *  PDFなら1ページ目のサムネイルPNG、動画なら動画のサムネイルPNGを作成する
      */
-    public function makeThumbPNG()
+    public function makeThumbPNG(): void
     {
         $fullpath = storage_path(File::apf() . '/' . $this->fname);
         if ($this->mime == "application/pdf") {
@@ -209,7 +211,7 @@ class File extends Model
     /**
      * PDFのサムネイルをつくる
      */
-    public function makePdfThumbs()
+    public function makePdfThumbs(): void
     {
         $fullpath = storage_path(File::apf() . '/' . $this->fname); // 元のファイル名
         $dir = substr($this->fname, 0, -4);
@@ -237,20 +239,20 @@ class File extends Model
         }
     }
     // cropした画像
-    public function getPdfHeadPath()
+    public function getPdfHeadPath(): string
     {
         $h_00001 = sprintf("h-%05d.png", 1);
         $dir = substr($this->fname, 0, -4);
         return storage_path(File::apf() . '/' . $dir . "/" . $h_00001);
     }
 
-    public function getPdfThumbPath(int $pagenum)
+    public function getPdfThumbPath(int $pagenum): string
     {
         $page05f = sprintf("t-%05d.png", $pagenum);
         $dir = substr($this->fname, 0, -4);
         return storage_path(File::apf() . '/' . $dir . "/" . $page05f);
     }
-    public function getPdfTextPath()
+    public function getPdfTextPath(): string
     {
         $page05f = "p-00001.txt";
         $dir = substr($this->fname, 0, -4);
@@ -261,7 +263,7 @@ class File extends Model
         $fn = $this->getPdfTextPath();
         return $this->read_textfile($fn);
     }
-    public function read_textfile($fn)
+    public function read_textfile(string $fn): string
     {
         // ファイルがあるかチェック
         if (!file_exists($fn)) {
@@ -273,7 +275,7 @@ class File extends Model
         }
         return "（準備中です。しばらくお待ちいただき、再読み込みしてください。）";
     }
-    public function write_textfile($fn, $txt)
+    public function write_textfile(string $fn, string $txt): int|null
     {
         $txtf = fopen($fn, "w");
         if ($txtf) {
@@ -310,7 +312,7 @@ class File extends Model
         return $text;
     }
     //ページ数が2ページ以上のときなど、論文PDFのときに使用 PDFJob
-    public function extractTitleAndAuthors(string $text)
+    public function extractTitleAndAuthors(string $text): void
     {
         if ($this->pagenum < 2) return;
         // Log::info("[File@extractTitle] File id: {$this->id} pagenum {$this->pagenum} start title extracts");
@@ -319,7 +321,7 @@ class File extends Model
     /**
      * 標準出力を取り出して、返却値とする
      */
-    public function getstdout($dir, $cmd)
+    public function getstdout(string $dir, string $cmd): string
     {
         chdir($dir);
         $cmdh = popen($cmd, "r");
@@ -330,14 +332,14 @@ class File extends Model
         return $cmdret;
     }
 
-    public function remove_mb4($str)
+    public function remove_mb4(string $str): string
     {
         $str = preg_replace('/[\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF]/', '', $str);
         return $str;
     }
 
 
-    public static function removeDirectory($path)
+    public static function removeDirectory(string $path): void
     {
         if (!is_dir($path)) {
             return;
@@ -359,7 +361,7 @@ class File extends Model
     /**
      * 未使用
      */
-    public static function kanjifn(string $str, int $substr = 0, string $type = "guess")
+    public static function kanjifn(string $str, int $substr = 0, string $type = "guess"): string
     {
         $ostype = $type;
         if ($type == "guess") {
@@ -401,7 +403,7 @@ class File extends Model
     /**
      * サムネイルとタイトルの再構成
      */
-    public static function rebuildPDFThumb()
+    public static function rebuildPDFThumb(): void
     {
         $pdfs = File::where("mime", "application/pdf")->get();
         foreach ($pdfs as $pdf) {
@@ -414,7 +416,7 @@ class File extends Model
     /**
      * タイトル部分画像のみを再構成（注: 現状は画像も再生成してしまう）
      */
-    public function altimg_recrop()
+    public function altimg_recrop(): void
     {
         @unlink($this->getPdfHeadPath());
         PdfJob::dispatch($this);
@@ -424,7 +426,7 @@ class File extends Model
      * サーバ側でPDFから生成するファイルについて、不足があればtrueをかえす。
      * 注：PDFのみ意味がある。ビデオや画像には適用できない。
      */
-    public function someLostFiles()
+    public function someLostFiles(): bool
     {
         $dir = substr($this->fname, 0, -4);
         if (!file_exists(storage_path(File::apf() . '/' . $dir))) return true;
@@ -437,7 +439,7 @@ class File extends Model
         if (!file_exists($this->getPdfTextPath())) return true;
         return false;
     }
-    public static function rebuildOcrTsv()
+    public static function rebuildOcrTsv(): void
     {
         $pdfs = File::where("mime", "application/pdf")->get();
         foreach ($pdfs as $pdf) {
@@ -447,13 +449,13 @@ class File extends Model
             }
         }
     }
-    public function getPdfOcrTsvPath()
+    public function getPdfOcrTsvPath(): string
     {
         $page05f = "h-00001.tsv";
         $dir = substr($this->fname, 0, -4);
         return storage_path(File::apf() . '/' . $dir . "/" . $page05f);
     }
-    public function makeOcrTsv()
+    public function makeOcrTsv(): void
     {
         $dir = substr($this->fname, 0, -4);
         $dirpath = storage_path(File::apf() . '/' . $dir); // /でおわらないので注意
@@ -463,7 +465,7 @@ class File extends Model
         shell_exec("tesseract t-00001.png t-00001 -l jpn tsv ");
     }
 
-    public function getTailHead()
+    public function getTailHead(): array
     {
         // $paper = Paper::find($this->file->paper_id);
         // if ($paper->pdf_file_id != $this->id) return "unlink";
@@ -508,24 +510,24 @@ class File extends Model
         return $words;
     }
 
-    public function getHintFilePath()
+    public function getHintFilePath(): string
     {
         $fn = "hint.txt";
         $dir = substr($this->fname, 0, -4);
         return storage_path(File::apf() . '/' . $dir . "/" . $fn);
     }
 
-    public function removeHintFile()
+    public function removeHintFile(): void
     {
         @unlink($this->getHintFilePath());
         // $this->writeHintFile("xx");
     }
-    public function writeHintFile($txt)
+    public function writeHintFile(string $txt): void
     {
         $this->write_textfile($this->getHintFilePath(), $txt);
     }
 
-    public function getFileSize()
+    public function getFileSize(): int
     {
         $fullpath = $this->fullpath();
         if (file_exists($fullpath)) {
@@ -534,7 +536,7 @@ class File extends Model
         return 0;
     }
 
-    public static function getRealFileNames()
+    public static function getRealFileNames(): array
     {
         $parentdir = storage_path(File::apf());
         // ファイル一覧
@@ -543,7 +545,7 @@ class File extends Model
         return $files;
     }
 
-    public static function getRealFolderNames()
+    public static function getRealFolderNames(): array
     {
         $parentdir = storage_path(File::apf());
         $list = self::getRealFileNames();
@@ -556,7 +558,7 @@ class File extends Model
         }
         return $folders;
     }
-    public static function getFileNamesNotInDB()
+    public static function getFileNamesNotInDB(): array
     {
         $fnames = self::getRealFileNames();
         $notindb = [];
@@ -572,7 +574,7 @@ class File extends Model
         }
         return ['notindb' => $notindb, 'indb' => $indb];
     }
-    public static function delete_notindb()
+    public static function delete_notindb(): void
     {
         $folders = self::getFileNamesNotInDB();
         $notindb = $folders['notindb'];
@@ -598,10 +600,10 @@ class File extends Model
     /**
      * PDFにフォントが埋め込まれているかどうかをチェックする
      */
-    public function font_not_embedded()
+    public function font_not_embedded(): array
     {
         if ($this->mime != "application/pdf") {
-            return null; // PDF以外は、フォント埋め込みの概念がないので、nullを返す
+            return []; // PDF以外は、フォント埋め込みの概念がないので、空の配列を返す
         }
         $fullpath = $this->fullpath();
         $out = shell_exec("pdffonts {$fullpath}");
@@ -622,7 +624,7 @@ class File extends Model
 
         if ($headerIndex === -1) {
             Log::channel("single")->error("Error: pdffonts のヘッダ行を検出できませんでした。\n期待されるヘッダ（例: name type encoding emb sub uni object ID）を含む行が必要です。\n");
-            return false;
+            return [];
         }
 
         // determine index of important columns
@@ -633,7 +635,7 @@ class File extends Model
 
         if ($embCol === false || $nameCol === false) {
             Log::channel("single")->error("Error: ヘッダに 'emb' または 'name' カラムが見つかりません。\n");
-            return false;
+            return [];
         }
 
         // collect non-embedded fonts

@@ -12,7 +12,7 @@ class Bidding extends Model
     /**
      * used by ReviewController@conflict
      */
-    public static function revcondiv()
+    public static function revcondiv(): array
     {
         $bids = Bidding::all();
         $revcondiv = [];

@@ -39,19 +39,19 @@ class Submit extends Model
     /**
      * この査読のトークンを生成（査読者同士の参照用）
      */
-    public function token()
+    public function token(): string
     {
         return sha1($this->id . $this->paper_id . $this->category_id . $this->created_at);
     }
 
-    public static function subs_accepted(int $cat_id, string $ord = "orderint")
+    public static function subs_accepted(int $cat_id, string $ord = "orderint"): array
     {
         $subs = Submit::with('paper')->where("category_id", $cat_id)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
         })->orderBy($ord)->get();
         return $subs;
     }
-    public static function subs_all(int $cat_id, string $ord = "orderint")
+    public static function subs_all(int $cat_id, string $ord = "orderint"): array
     {
         $subs = Submit::with('paper')->where("category_id", $cat_id)->whereNot("paper_id", 0)->orderBy($ord)->get();
         return $subs;
@@ -60,7 +60,7 @@ class Submit extends Model
     /**
      * このSubmitに関連するReviewの点数を更新する
      */
-    public function updateScoreStat()
+    public function updateScoreStat(): void
     {
         // まず、このSubmitに関連するReviewを取得
         // $scores = Score::whereHas('viewpoint', function ($query) {
@@ -100,7 +100,7 @@ class Submit extends Model
     /**
      * すべてのSubmitの点数統計(score, stddevscore)を更新する
      */
-    public static function updateAllScoreStat()
+    public static function updateAllScoreStat(): void
     {
         $subs = Submit::all();
         foreach ($subs as $sub) {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DateTime;
+use InvalidArgumentException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,14 +25,14 @@ class Enquete extends Model
         return $this->belongsToMany(Role::class, $tbl);
     }
 
-    public function getkey(int $len = 5)
+    public function getkey(int $len = 5): string
     {
         return substr(sha1($this->id . $this->name), 0, $len);
     }
     /**
      * デモ希望をだしているPaperID を返す
      */
-    public static function paperids_demoifaccepted($cat_id)
+    public static function paperids_demoifaccepted(int $cat_id): array
     {
         $demoenqitem = EnqueteItem::where("name", "demoifaccepted")->first();
         if ($demoenqitem != null) {
@@ -52,7 +53,7 @@ class Enquete extends Model
     /**
      * 参加登録はこちらを使う。
      */
-    public static function needForRegist()
+    public static function needForRegist(): array
     {
         // Enquete.withpaper = false のとき、参加登録関連のアンケートとみなす。
         $forReg_enqids = Enquete::where('withpaper', false)->pluck('id')->toArray();
@@ -90,7 +91,7 @@ class Enquete extends Model
     /**
      * 必要なアンケートを返す
      */
-    public static function needForSubmit(Paper $paper)
+    public static function needForSubmit(Paper $paper): array
     {
         $cat_id = $paper->category_id;
 
@@ -130,7 +131,7 @@ class Enquete extends Model
         return ["canedit" => $canedit, "readonly" => $readonly, "until" => $until];
     }
 
-    public function countAnswers(Paper $paper)
+    public function countAnswers(Paper $paper): int
     {
         // 参加者の回答数をカウントする
         return EnqueteAnswer::where('enquete_id', $this->id)->where('paper_id', $paper->id)->count();
@@ -140,7 +141,7 @@ class Enquete extends Model
      * 投稿時 (or 参加登録時) のアンケートのチェックを行う。
      * 元々はPaper、参加登録のときはUserを引数にとる。
      */
-    public static function validateEnquetes(Paper|User $paper)
+    public static function validateEnquetes(Paper|User $paper): array
     {
         $errorary = [];
         if ($paper instanceof User) {
@@ -162,7 +163,7 @@ class Enquete extends Model
     /**
      * 未回答アンケート項目(EnqItem) id=>desc の配列をかえす。[] ならエラーなし。
      */
-    public function validateOneEnq(Paper|User $paper)
+    public function validateOneEnq(Paper|User $paper): array
     {
         $eis = $this->items;
         // exist answers: select enquete_item_id from enquete_answers where paper_id =
@@ -176,7 +177,7 @@ class Enquete extends Model
         return $eis;
     }
 
-    public static function in_csv($csv, $findlet)
+    public static function in_csv(string $csv, string $findlet): bool
     {
         $arycsv = explode(",", $csv);
         foreach ($arycsv as $n => $v) {
@@ -191,7 +192,7 @@ class Enquete extends Model
      * 11-01 〜 03-31 のように、begin>endの場合、
      * 単純に、ひっくり返して、条件を反転すればよい
      */
-    public static function checkdayduration($openstart, $openend, $debugmonth = null, $debugday = null)
+    public static function checkdayduration(string $openstart, string $openend, ?int $debugmonth = null, ?int $debugday = null): bool
     {
         $s = array_map("intval", explode("-", $openstart));
         $e = array_map("intval", explode("-", $openend));
@@ -211,7 +212,7 @@ class Enquete extends Model
         }
     }
 
-    public static function dayplus($mmdd, $plusday = 1)
+    public static function dayplus(string $mmdd, int $plusday = 1): string
     {
         $e = array_map("intval", explode("-", $mmdd));
         $year = date('Y'); // 仮に今年で扱う（年は不要なら何でも良い）
@@ -240,7 +241,7 @@ class Enquete extends Model
         return sprintf('%02d-%02d', (int) $date->format('n'), (int) $date->format('j'));
     }
 
-    public static function mm_dd_fancy($mmdd)
+    public static function mm_dd_fancy(string $mmdd): string
     {
         $e = array_map("intval", explode("-", $mmdd));
         return "{$e[0]}月{$e[1]}日";
@@ -249,7 +250,7 @@ class Enquete extends Model
     /**
      * OrderInt をstep ずつで再設定する
      */
-    public static function reorderint($step = 10, $target_enq_id = null)
+    public static function reorderint(int $step = 10, ?int $target_enq_id = null): void
     {
         if ($target_enq_id !== null) {
             $all = Enquete::where('id', $target_enq_id)->get();
@@ -270,7 +271,7 @@ class Enquete extends Model
      * 
      * 配列で返すなら、$returnAry = true
      */
-    public static function accessibleEnquetes($returnAry = false)
+    public static function accessibleEnquetes(bool $returnAry = false)
     {
         $uid = auth()->id();
         $rolename_id = User::find($uid)

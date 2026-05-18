@@ -24,7 +24,7 @@ class VoteTicket extends Model
     //     'email' => 'test@example.com',
     // ];
 
-    public function url()
+    public function url(): string
     {
         return route('vote.activate', ['token' => $this->token]);
     }
