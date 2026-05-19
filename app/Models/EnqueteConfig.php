@@ -11,7 +11,7 @@ class EnqueteConfig extends Model
     use HasFactory;
 
 
-    public function isopen()
+    public function isopen(): bool
     {
         return Enquete::checkdayduration($this->openstart, $this->openend);
     }

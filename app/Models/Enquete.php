@@ -192,7 +192,7 @@ class Enquete extends Model
      * 11-01 〜 03-31 のように、begin>endの場合、
      * 単純に、ひっくり返して、条件を反転すればよい
      */
-    public static function checkdayduration(string $openstart, string $openend, ?int $debugmonth = null, ?int $debugday = null): bool
+    public static function checkdayduration(?string $openstart, ?string $openend, ?int $debugmonth = null, ?int $debugday = null): bool
     {
         $s = array_map("intval", explode("-", $openstart));
         $e = array_map("intval", explode("-", $openend));
