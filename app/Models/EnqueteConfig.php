@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,7 +25,7 @@ class EnqueteConfig extends Model
      * 明日、受付開始するアンケートを取得する
      * ただし、01-01開始のアンケートは除外する
      */
-    public static function tomorrowOpenEnquetes($debugmonth = null, $debugday = null): array
+    public static function tomorrowOpenEnquetes($debugmonth = null, $debugday = null): Collection
     {
         $month = $debugmonth ?? date('n');
         $day = $debugday ?? date('j');
@@ -39,7 +40,7 @@ class EnqueteConfig extends Model
      * 今日が最終日のアンケートを取得する
      * ただし、12-31終了のアンケートは除外する
      */
-    public static function todayCloseEnquetes($debugmonth = null, $debugday = null): array
+    public static function todayCloseEnquetes($debugmonth = null, $debugday = null): Collection
     {
         $month = $debugmonth ?? date('n');
         $day = $debugday ?? date('j');
