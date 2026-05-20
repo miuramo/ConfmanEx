@@ -49,7 +49,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/file/favicon', [FileController::class, 'favicon'])->name('file.favicon');
+Route::get('/file_favicon', [FileController::class, 'favicon'])->name('file.favicon');
 
 //表彰状作成用のJSON
 Route::get('awards/json_booth_title_author/{key?}/{readable?}/{usa1?}/{usa2?}', [SubmitController::class, 'json_bta'])->name('pub.json_booth_title_author');
