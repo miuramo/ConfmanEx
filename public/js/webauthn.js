@@ -102,11 +102,11 @@ const assertionToJSON = (cred) => ({
 async function registerPasskey() {
     try {
         // 1) サーバから登録オプション取得
-        //    Laragear既定: GET /webauthn/register/options もしくは POST
-        const opts = await get('/webauthn/register/options');
+        //    Laravel Passkeys: GET /user/passkeys/options
+        const opts = await get('/user/passkeys/options');
 
         // 2) オプションのBase64URL→ArrayBuffer整形
-        const publicKey = normalizeCreationOptions(opts);
+        const publicKey = normalizeCreationOptions(opts.options);
 
         // 3) 生体認証/セキュリティキーで鍵ペア生成
         const cred = await navigator.credentials.create({ publicKey });
@@ -114,7 +114,7 @@ async function registerPasskey() {
 
         // 4) サーバへ登録結果(Attestation)を送信
         const payload = attestationToJSON(cred);
-        await post('/webauthn/register', payload);
+        await post('/user/passkeys', payload);
 
         alert('パスキーを登録しました！');
         // 必要ならページ更新や鍵一覧再取得など
@@ -136,8 +136,8 @@ async function loginWithPasskey({ conditional = false } = {}) {
 
     try {
         // 1) サーバから認証オプション取得
-        const opts = await post('/webauthn/login/options', {});
-        const publicKey = normalizeRequestOptions(opts);
+        const opts = await get('/passkeys/login/options');
+        const publicKey = normalizeRequestOptions(opts.options);
 
         // 2) パスキー選択
         const getOpts = {
@@ -157,7 +157,7 @@ async function loginWithPasskey({ conditional = false } = {}) {
 
         // 3) サーバへ認証結果(Assertion)を送信
         const payload = assertionToJSON(cred);
-        await post('/webauthn/login', payload);
+        await post('/passkeys/login', payload);
 
         // ログイン成功 → 遷移
         window.location.reload();

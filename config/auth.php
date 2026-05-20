@@ -61,9 +61,8 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent-webauthn',
+            'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
-            'password_fallback' => true,
         ],
 
         // 'users' => [
