@@ -177,8 +177,11 @@ class Enquete extends Model
         return $eis;
     }
 
-    public static function in_csv(string $csv, string $findlet): bool
+    public static function in_csv(?string $csv, string $findlet): bool
     {
+        if ($csv === null) {
+            return false;
+        }
         $arycsv = explode(",", $csv);
         foreach ($arycsv as $n => $v) {
             if ($v == $findlet) return true;
