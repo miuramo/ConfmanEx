@@ -89,7 +89,7 @@ class MailTemplate extends Model
         $body .= "\n\n-----\n[" . env("APP_NAME") . "](" . env("APP_URL") . ")";
         return $body;
     }
-    public function handle_to(): Collection
+    public function handle_to()
     {
         // && や || を、セミコロンに変換する
         // $this->to = str_replace("&&", ";", $this->to);
@@ -115,7 +115,7 @@ class MailTemplate extends Model
         }
         return $col;
     }
-    public function first_item(): array|null
+    public function first_item()
     {
         $papers = $this->handle_to();
         if (isset($papers) && isset($papers[0])) {
@@ -127,7 +127,7 @@ class MailTemplate extends Model
     /**
      * 便宜上、papersにいれているが、中身はPaper or Userの配列
      */
-    public function targets(): ?Collection
+    public function targets()
     {
         $papers = $this->handle_to();
         if (isset($papers)) return $papers;
