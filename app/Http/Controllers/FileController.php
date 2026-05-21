@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreFileRequest;
-use App\Http\Requests\UpdateFileRequest;
-use App\Jobs\PdfJob;
 use App\Models\EnqueteAnswer;
 use App\Models\EnqueteItem;
 use App\Models\File;
@@ -16,8 +14,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
@@ -83,7 +79,7 @@ class FileController extends Controller
         header("Content-Type: image/png");
         imagepng($im);
     }
-    public function altimgshow(int $pdffileid, string $firsthash)
+    public function altimgshow(int|string $pdffileid, string $firsthash)
     {
         $file = File::where('id', $pdffileid)->where('key', 'like', $firsthash . "%")->first();
         if ($file == null) {
@@ -103,7 +99,7 @@ class FileController extends Controller
     /**
      * PDFサムネイルを画像で
      */
-    public function pdfimages(int $pdffileid, int $pagenum = null, $firsthash = null)
+    public function pdfimages(int|string $pdffileid, int|string $pagenum = 1, $firsthash = null)
     {
         // 権限の確認
         try {
@@ -113,18 +109,13 @@ class FileController extends Controller
                 if (strlen($firsthash) < 12) abort(403, 'file id and key required');
                 if (strpos($file->key, $firsthash) !== 0) abort(403, 'file key mismatch');
             }
-            if (!is_numeric($pagenum)) {
-                // return view("file.pdfimages")->with(compact("file"));
-                // } else {
-                $pagenum = 1;
-            }
-            return response()->file($file->getPdfThumbPath($pagenum));
+            return response()->file($file->getPdfThumbPath((int)$pagenum));
             // ->header("Content-Disposition", $file->origname);
         } catch (ModelNotFoundException $e) {
             return "error";
         }
     }
-    public function pdftext(int $pdffileid)
+    public function pdftext(int|string $pdffileid)
     {
         try {
             $file = File::findOrFail($pdffileid);
@@ -149,7 +140,7 @@ class FileController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $fileid)
+    public function destroy(int|string $fileid)
     {
         $ones = File::where('user_id', Auth::user()->id)->where('id', $fileid)->get();
         foreach ($ones as $one) {
@@ -166,7 +157,7 @@ class FileController extends Controller
     /**
      * このファイルの予稿集収録をとりやめる
      */
-    public function abandon(Request $req, int $fileid)
+    public function abandon(Request $req, int|string $fileid)
     {
         $file = File::where('user_id', Auth::user()->id)->where('id', $fileid)->first();
         $referrer = $req->headers->get('referer');

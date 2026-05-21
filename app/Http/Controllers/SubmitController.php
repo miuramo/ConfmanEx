@@ -16,6 +16,8 @@ use App\Models\Score;
 use App\Models\Setting;
 use App\Models\Submit;
 use App\Models\Viewpoint;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -25,25 +27,10 @@ use ZipArchive;
 class SubmitController extends Controller
 {
     
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-
     /**
      * 出版担当またはプログラムチェアによる、プログラム編成とブース設定
      */
-    public function booth(Request $req, int $catid)
+    public function booth(Request $req, int $catid): string|RedirectResponse|View
     {
         if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
 
@@ -93,7 +80,7 @@ class SubmitController extends Controller
         return view('pub.booth', ["cat" => $catid])->with(compact("subs"));
     }
 
-    public function boothtxt(Request $req, int $catid)
+    public function boothtxt(Request $req, int $catid): string|RedirectResponse|View
     {
         if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
 
@@ -163,7 +150,7 @@ class SubmitController extends Controller
     /** 
      * ブースの割り当てを修正する
      */
-    public function boothmodify(Request $req)
+    public function boothmodify(Request $req): string|RedirectResponse|View
     {
         if (!auth()->user()->can('role_any', 'pc|pub|web|demo')) abort(403);
         $tableName = 'submits';
@@ -177,6 +164,7 @@ class SubmitController extends Controller
         $title = "ブース割り当ての修正（注：査読結果に紐づいているため、PaperIDの編集はしないでください）";
 
         $domain = config('database.default');
+        if (!$domain) abort(500, 'Database default not found in config');
         $db_name = config('database.connections.' . str_replace('.', '_', $domain) . '.database');
 
         $whereBy['booth'] = $req->input("booth");
@@ -263,7 +251,7 @@ class SubmitController extends Controller
     /**
      * 書誌情報の確認と修正
      */
-    public function bibinfochk(Request $req, int $catid)
+    public function bibinfochk(Request $req, int $catid): View
     {
         if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
 
@@ -277,7 +265,7 @@ class SubmitController extends Controller
 
         return view('pub.bibinfochk', ["cat" => $catid])->with(compact("subs", "subs2", "catid"));
     }
-    public function bibinfochk_paper(Request $req, int $paperid)
+    public function bibinfochk_paper(Request $req, int $paperid): View
     {
         if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
 
@@ -290,7 +278,7 @@ class SubmitController extends Controller
     /**
      * update maydirty (for reset) 確認済みにする (falseをセットする)
      */
-    public function update_maydirty(Request $req)
+    public function update_maydirty(Request $req): string|false
     {
         if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
         info($req->all());
@@ -314,7 +302,7 @@ class SubmitController extends Controller
      * filechk 0 非表示、1 確認可能なリンク
      * postpone 0 通常、1 発表延期も表示する
      */
-    public function bibinfo(int $catid, bool $abbr = false, int $useshort = 0, int $filechk = 0, int $postpone = 0)
+    public function bibinfo(int $catid, bool $abbr = false, int $useshort = 0, int $filechk = 0, int $postpone = 0): View
     {
         if (!auth()->user()->can('role_any', 'admin|pc|pub|web')) abort(403);
 
@@ -328,7 +316,7 @@ class SubmitController extends Controller
     /**
      * ファイルのタイムスタンプ確認（カメラレディ投稿されたか？）
      */
-    public function fileinfochk(Request $req, int $catid)
+    public function fileinfochk(Request $req, int $catid): View
     {
         if (!auth()->user()->can('role_any', 'admin|pc|pub|web')) abort(403);
 
@@ -346,7 +334,7 @@ class SubmitController extends Controller
     /**
      * 採択状況一覧
      */
-    public function accstatus()
+    public function accstatus(): View
     {
         if (!auth()->user()->can('role_any', 'admin|pc|pub|demo|web')) abort(403);
         $stats = Accept::acc_status();
@@ -359,7 +347,7 @@ class SubmitController extends Controller
     /**
      * 採択状況一覧（グラフ）
      */
-    public function accstatusgraph()
+    public function accstatusgraph(): View
     {
         if (!auth()->user()->can('role_any', 'admin|pc|pub|demo|web')) abort(403);
         $stats = Accept::acc_status();
@@ -372,7 +360,7 @@ class SubmitController extends Controller
     /**
      * 採択状況一覧・編集画面
      */
-    public function accstatus_edit()
+    public function accstatus_edit(): View
     {
         if (!auth()->user()->can('role_any', 'admin|pc|pub|demo|web')) abort(403);
         return view('pub.accstatus_edit');
@@ -381,7 +369,7 @@ class SubmitController extends Controller
     /**
      * 別カテゴリでの採否を追加する
      */
-    public function addsubmit(Request $req)
+    public function addsubmit(Request $req): View|RedirectResponse
     {
         if (!auth()->user()->can('role_any', 'admin|pc|pub|web')) abort(403);
         if ($req->method() === 'POST') {
@@ -428,26 +416,26 @@ class SubmitController extends Controller
         return view('pub.addsubmit')->with(compact("cats", "accepts", "papers", "old", "checksubmit"));
 
         // 現在の採択フラグ状況
-        $fs = ["category_id", "accept_id", "name", "judge"];
-        $sql1 = "select count(submits.id) as cnt, " . implode(",", $fs);
-        $sql1 .= " from submits left join accepts on submits.accept_id = accepts.id where canceled = 0 group by " . implode(",", $fs);
-        $sql1 .= " order by " . implode(",", $fs);
-        $cols = DB::select($sql1);
+        // $fs = ["category_id", "accept_id", "name", "judge"];
+        // $sql1 = "select count(submits.id) as cnt, " . implode(",", $fs);
+        // $sql1 .= " from submits left join accepts on submits.accept_id = accepts.id where canceled = 0 group by " . implode(",", $fs);
+        // $sql1 .= " order by " . implode(",", $fs);
+        // $cols = DB::select($sql1);
 
-        $sql2 = "select paper_id, category_id, accept_id ";
-        $sql2 .= "from submits where canceled = 0 order by category_id, accept_id, paper_id";
-        $res2 = DB::select($sql2);
-        $pids = [];
-        foreach ($res2 as $res) {
-            if (is_array(@$pids[$res->category_id][$res->accept_id])) {
-                $pids[$res->category_id][$res->accept_id][] = sprintf("%03d", $res->paper_id);
-            } else {
-                $pids[$res->category_id][$res->accept_id] = [];
-                $pids[$res->category_id][$res->accept_id][] = sprintf("%03d", $res->paper_id);
-            }
-        }
+        // $sql2 = "select paper_id, category_id, accept_id ";
+        // $sql2 .= "from submits where canceled = 0 order by category_id, accept_id, paper_id";
+        // $res2 = DB::select($sql2);
+        // $pids = [];
+        // foreach ($res2 as $res) {
+        //     if (is_array(@$pids[$res->category_id][$res->accept_id])) {
+        //         $pids[$res->category_id][$res->accept_id][] = sprintf("%03d", $res->paper_id);
+        //     } else {
+        //         $pids[$res->category_id][$res->accept_id] = [];
+        //         $pids[$res->category_id][$res->accept_id][] = sprintf("%03d", $res->paper_id);
+        //     }
+        // }
 
-        return view('pub.addsubmit')->with(compact("cats", "accepts", "papers", "old", "cols", "pids"));
+        // return view('pub.addsubmit')->with(compact("cats", "accepts", "papers", "old", "cols", "pids"));
     }
 
     /**
@@ -455,7 +443,7 @@ class SubmitController extends Controller
      * awards/json_booth_title_author/{key}
      * プログラム生成にも使えるように、affils を追加。
      */
-    public function json_bta(string $key = null, bool $readable = false, bool $use_short_for_affils = false, bool $use_short_for_bibauthors = false)
+    public function json_bta(string $key = "null", bool $readable = false, bool $use_short_for_affils = false, bool $use_short_for_bibauthors = false): string|false
     {
         $downloadkey = Setting::getval("AWARDJSON_DLKEY");
         if ($key != $downloadkey) abort(403);
@@ -511,7 +499,7 @@ class SubmitController extends Controller
      * doReturn = 1
      * doReturnAcceptOnly = 1
      */
-    public function json_review(int $catid, string $key = null)
+    public function json_review(int $catid, string $key = "null"): string|false
     {
         $downloadkey = Setting::getval("AWARDJSON_DLKEY");
         if ($key != $downloadkey) abort(403);
@@ -539,7 +527,7 @@ class SubmitController extends Controller
      * ファイル情報のJSON
      * PIDごとに返す。
      */
-    public function json_fileinfo(string $key = null, bool $readable = false)
+    public function json_fileinfo(string $key = "null", bool $readable = false): string|false
     {
         $skip_unlink = true;
         $downloadkey = Setting::getval("AWARDJSON_DLKEY");
@@ -593,7 +581,7 @@ class SubmitController extends Controller
         }
     }
 
-    public function paperfile(int $paperid)
+    public function paperfile(int $paperid): View
     {
         if (!auth()->user()->can('role_any', 'admin|pc|pub|web')) abort(403);
         $paper = Paper::findOrFail($paperid);

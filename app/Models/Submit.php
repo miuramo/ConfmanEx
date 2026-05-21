@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -44,14 +45,14 @@ class Submit extends Model
         return sha1($this->id . $this->paper_id . $this->category_id . $this->created_at);
     }
 
-    public static function subs_accepted(int $cat_id, string $ord = "orderint"): array
+    public static function subs_accepted(int $cat_id, string $ord = "orderint"): Collection
     {
         $subs = Submit::with('paper')->where("category_id", $cat_id)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
         })->orderBy($ord)->get();
         return $subs;
     }
-    public static function subs_all(int $cat_id, string $ord = "orderint"): array
+    public static function subs_all(int $cat_id, string $ord = "orderint"): Collection
     {
         $subs = Submit::with('paper')->where("category_id", $cat_id)->whereNot("paper_id", 0)->orderBy($ord)->get();
         return $subs;
