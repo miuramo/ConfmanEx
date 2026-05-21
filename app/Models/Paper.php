@@ -487,7 +487,11 @@ class Paper extends Model
                     if ($warn_pdftext_startswith != null) {
                         $pdftext = $file->getPdfText();
                         if (Str::startsWith($pdftext, $warn_pdftext_startswith)) {
-                            $errorary[] = "ヘッダ・フッタを削除したPDFをアップロードしてください。". "<a href='{$warn_pdftext_instruction_url}' target='_blank' class='bg-yellow-700 hover:underline hover:bg-yellow-300'>対応方法の説明</a>";
+                            $mes = "ヘッダ・フッタを削除したPDFをアップロードしてください。";
+                            if ($warn_pdftext_instruction_url != null) {
+                                $mes .= " <a href=\"{$warn_pdftext_instruction_url}\" target='_blank' class='bg-yellow-700 hover:underline hover:bg-yellow-300'>対応方法の説明</a>";
+                            }
+                            $errorary[] = $mes;
                             continue;
                         }
                     }
@@ -495,7 +499,11 @@ class Paper extends Model
                     if ($warn_pdftext_notincluding != null) {
                         $pdftext = $file->getPdfText();
                         if (!Str::contains($pdftext, $warn_pdftext_notincluding)) {
-                            $errorary[] = "「{$warn_pdftext_notincluding}」が含まれていません。". "<a href='{$warn_pdftext_instruction_url}' target='_blank' class='bg-yellow-700 hover:underline hover:bg-yellow-300'>対応方法の説明</a>";
+                            $mes = "「{$warn_pdftext_notincluding}」が含まれていません。";
+                            if ($warn_pdftext_instruction_url != null) {
+                                $mes .= " <a href=\"{$warn_pdftext_instruction_url}\" target='_blank' class='bg-yellow-700 hover:underline hover:bg-yellow-300'>対応方法の説明</a>";
+                            }
+                            $errorary[] = $mes;
                             continue;
                         }
                     }
