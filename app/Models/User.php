@@ -83,15 +83,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
             } else {
                 $relatedId = Role::find($relatedId);
             }
-            Log::info("{$operation}: {$related->getTable()} ID {$relatedId->id} ({$relatedId->desc}) <=> {$parent->getTable()} ID {$parent->getKey()} {$parent->name}");
-            // Log::info("{$operation}: {$related->getTable()} ID {$relatedId->id} ({$relatedId->desc}) <=> {$parent->getTable()} ID {$parent->getKey()} {$parent->name}");
-            // Log::info("{$operation}: {$related->getTable()} ID {$relatedId} {$parent->id} <=> {$parent->getTable()} ID {$parent->getKey()} {$parent->name} ({$parent->affil}) {$parent->email} {$operation} role {$relatedId}");
-        });            //
-
-        // $tbl = 'role_user';
-        // return $this->belongsToMany(Role::class, $tbl)->withPivot('mailnotify')->orderBy('orderint')->orderBy('roles.id'); //->using(RolesUser::class);
-        // $table_fields = Schema::getColumnListing($tbl);
-        // return $this->belongsToMany(User::class, $tbl, 'role_id', 'user_id');// ->withPivot($table_fields)->using(RolesUser::class);
+            Log::info("{$operation}: {$related->getTable()} ID {$relatedId->id} ({$relatedId->desc}) <=> {$parent->getTable()} ID {$parent->getKey()} {$parent->name}  (操作者： " . auth()->user()->name . " " . auth()->id() . " " . auth()->user()->email . ")");
+        });           
     }
 
     // attach をラップする関数（role_userの追加削除をログに記録するため）
