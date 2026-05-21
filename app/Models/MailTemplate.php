@@ -115,10 +115,10 @@ class MailTemplate extends Model
         }
         return $col;
     }
-    public function first_item(): Paper|User|null
+    public function first_item(): array|null
     {
         $papers = $this->handle_to();
-        if (isset($papers) && isset($papers[0])) return $papers[0];
+        if (isset($papers) && isset($papers[0])) return $papers[0]->toArray();
         else return null;
     }
 
