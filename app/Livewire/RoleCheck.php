@@ -49,11 +49,23 @@ class RoleCheck extends Component
         $this->search = '';
         $this->users = [];
     }
-    public function addUser($user_id)
+    public function addUser(int $user_id)
     {
         if (!$this->role->containsUser($user_id)) {
             $this->role->users()->attach($user_id);
             // $this->resetSearch();
         }
+    }
+    /**
+     * 自分がこのRoleから脱退する
+     */
+    public function revoke_me()
+    {
+        $user_id = auth()->id();
+        if ($this->role->containsUser($user_id)) {
+            $this->role->users()->detach($user_id);
+        }
+        // ページ全体のリロードを行う
+        $this->redirect(request()->header('Referer') ?? url()->current(), navigate: false);
     }
 }

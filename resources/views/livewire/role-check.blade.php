@@ -13,6 +13,11 @@
                 class="mt-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800">
                 既存ユーザを検索して「{{ $role->desc }}」に追加する画面をひらく
             </button>
+            <button x-data
+                x-on:click.prevent="if (confirm('【{{ $role->desc }}】から脱退しますか？（この操作は元に戻せません）')) { $wire.revoke_me() }"
+                class="mt-2 ml-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 dark:bg-red-700 dark:hover:bg-red-800 text-xs" >
+                自分がこのRoleから脱退する
+            </button>
         @else
             <div class="mt-0 bg-blue-100 p-3 rounded dark:bg-blue-900">
                 <input id="id_regist_searchbox" type="text" wire:model.live.debounce.500ms="search"
