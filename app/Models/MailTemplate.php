@@ -118,8 +118,10 @@ class MailTemplate extends Model
     public function first_item(): array|null
     {
         $papers = $this->handle_to();
-        if (isset($papers) && isset($papers[0])) return $papers[0]->toArray();
-        else return null;
+        if (isset($papers) && isset($papers[0])) {
+            if (is_array($papers[0])) return $papers[0];
+            else return $papers[0]->toArray();
+        } else return null;
     }
 
     /**
