@@ -102,7 +102,7 @@
 
         {{-- ファイルエラーは、投稿フェーズに関係なく、表示して大丈夫 --}}
         @foreach ($fileerrors as $er)
-            <x-alert.error>{{ $er }}</x-alert.error>
+            <x-alert.error>{!! $er !!}</x-alert.error>
         @endforeach
         {{-- アンケートエラーは、査読中は表示しない。査読中とは、revedit_on が true かつ、revreturn が false のとき。 --}}
         @php
@@ -115,7 +115,7 @@
                 @if (!$is_reviewing && ($need_camera_ready || !$revedit_on[$paper->category_id]))
                     @foreach ($enqerrors as $er)
                         @if ($loop->iteration < 4)
-                            <x-alert.error>{{ $er }}</x-alert.error>
+                            <x-alert.error>{!! $er !!}</x-alert.error>
                         @endif
                     @endforeach
                     @if (count($enqerrors) > 3)

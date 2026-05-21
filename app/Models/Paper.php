@@ -464,10 +464,10 @@ class Paper extends Model
         if ($cat == null) return []; //通常はありえないが、テストを通すため...
         foreach ($this->files as $file) {
             if ($file->mime == "application/pdf") {
-                $non_embedded = $file->font_not_embedded();
-
                 if ($file->deleted) continue;
                 if ($file->pending) continue;
+                $non_embedded = $file->font_not_embedded();
+
                 if ($cat->accept_altpdf > 0 && $cat->pagenum_between($file->pagenum, "altpdf")) {
                     if (count($non_embedded) > 0) {
                         $errorary[] = "ALTPDFに非埋め込みフォントが含まれています。すべてのフォントを埋め込んでください。";
@@ -481,6 +481,25 @@ class Paper extends Model
                         Log::channel("single")->info("PDF file ID {$file->id} has non-embedded fonts. paper_id: {$this->id}, file_id: {$file->id}, non_embedded_fonts: " . json_encode($non_embedded));
                         continue;
                     }
+                    // 必須ワード・禁止ワードのチェック
+                    $warn_pdftext_instruction_url = Setting::getval("WARN_PDFTEXT_INSTRUCTION_URL");
+                    $warn_pdftext_startswith = Setting::getval("WARN_PDFTEXT_STARTSWITH");
+                    if ($warn_pdftext_startswith != null) {
+                        $pdftext = $file->getPdfText();
+                        if (Str::startsWith($pdftext, $warn_pdftext_startswith)) {
+                            $errorary[] = "ヘッダ・フッタを削除したPDFをアップロードしてください。". "<a href='{$warn_pdftext_instruction_url}' target='_blank' class='bg-yellow-700 hover:underline hover:bg-yellow-300'>対応方法の説明</a>";
+                            continue;
+                        }
+                    }
+                    $warn_pdftext_notincluding = Setting::getval("WARN_PDFTEXT_NOTINCLUDING");
+                    if ($warn_pdftext_notincluding != null) {
+                        $pdftext = $file->getPdfText();
+                        if (!Str::contains($pdftext, $warn_pdftext_notincluding)) {
+                            $errorary[] = "「{$warn_pdftext_notincluding}」が含まれていません。". "<a href='{$warn_pdftext_instruction_url}' target='_blank' class='bg-yellow-700 hover:underline hover:bg-yellow-300'>対応方法の説明</a>";
+                            continue;
+                        }
+                    }
+
                     $checkary['pdf'][] = $file->id;
                 } else {
                     $errorary[] = "PDFのページ数を確認してください。";

@@ -244,7 +244,7 @@ class Setting extends Model
         ], [
             'value' => "情報処理学会研究報告",
             'isnumber' => false,
-            'isbool' => true,
+            'isbool' => false,
             'valid' => false,
             'misc' => 'ヘッダとフッタを削除していないPDFは警告をだし、受理しない',
         ]);
@@ -253,9 +253,18 @@ class Setting extends Model
         ], [
             'value' => "キーワード：",
             'isnumber' => false,
-            'isbool' => true,
+            'isbool' => false,
             'valid' => false,
             'misc' => '和文キーワードは必須',
+        ]);
+        Setting::firstOrCreate([
+            'name' => "WARN_PDFTEXT_INSTRUCTION_URL",
+        ], [
+            'value' => "https://exconf.istlab.info/pdftext_instruction.pdf",
+            'isnumber' => false,
+            'isbool' => false,
+            'valid' => false,
+            'misc' => '補足説明URL（PDFテキスト抽出の警告に表示）',
         ]);
         Setting::firstOrCreate([
             'name' => "REGOPEN",
