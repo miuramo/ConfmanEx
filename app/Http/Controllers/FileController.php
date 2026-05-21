@@ -57,7 +57,7 @@ class FileController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $fileid, string $firsthash)
+    public function show(int|string $fileid, string $firsthash)
     {
         if (strlen($firsthash) < 8) abort(403, 'file id and key required');
         try {
