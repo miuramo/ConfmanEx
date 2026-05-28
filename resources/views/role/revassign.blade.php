@@ -86,6 +86,7 @@
     @push('localjs')
         <script src="/js/jquery.min.js"></script>
         <script src="/js/rev_ass.js"></script>
+        <script src="/js/sortable.js"></script>
     @endpush
 
 
