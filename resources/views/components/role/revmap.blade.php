@@ -28,7 +28,13 @@
                     @if (isset($rigais[$p->id][auth()->id()]) && $rigais[$p->id][auth()->id()] < 3) text-gray-400 @endif
                     ">
                     {{ $p->id_03d() }}
-                    {{ $p->title }}
+                    @isset($p->pdf_file)
+                        <a href="{{ route('file.showhash', ['file' => $p->pdf_file_id, 'hash' => substr($p->pdf_file->key, 0, 8)]) }}"
+                           target="paper_preview"
+                           class="hover:bg-lime-100">{{ $p->title }}</a>
+                    @else
+                        {{ $p->title }}
+                    @endisset
                 </td>
 
                 @foreach ($reviewers as $rev)
