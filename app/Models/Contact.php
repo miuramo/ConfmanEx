@@ -25,11 +25,17 @@ class Contact extends Model
 
     public static function top_n(int $n = 10): \Illuminate\Support\Collection
     {
-        // paper_contact テーブルをcontact_idでグループ化して、最も多くのpaperに関連しているcontactを取得する
-        $top_contacts = self::join('paper_contact', 'contacts.id', '=', 'paper_contact.contact_id')
-            ->select('contacts.id', 'contacts.email', 'contacts.valid', 'contacts.infoprovider', 'contacts.created_at', 'contacts.updated_at', \DB::raw('COUNT(paper_contact.paper_id) as paper_count'), \DB::raw('GROUP_CONCAT(paper_contact.paper_id) as paper_ids'))
-            ->groupBy('contacts.id', 'contacts.email', 'contacts.valid', 'contacts.infoprovider', 'contacts.created_at', 'contacts.updated_at')
-            ->orderByRaw('COUNT(paper_contact.paper_id) DESC')
+        // 先に paper_contact 側で集計し、contacts と結合することで ONLY_FULL_GROUP_BY を回避する
+        $paper_counts = PaperContact::query()
+            ->select('contact_id', \DB::raw('COUNT(paper_id) as paper_count'), \DB::raw('GROUP_CONCAT(paper_id) as paper_ids'))
+            ->groupBy('contact_id');
+
+        $top_contacts = self::query()
+            ->joinSub($paper_counts, 'paper_counts', function ($join) {
+                $join->on('contacts.id', '=', 'paper_counts.contact_id');
+            })
+            ->select('contacts.*', 'paper_counts.paper_count', 'paper_counts.paper_ids')
+            ->orderByDesc('paper_counts.paper_count')
             ->limit($n)
             ->get();
         return $top_contacts;

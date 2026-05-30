@@ -50,24 +50,29 @@ class UpdateReviewRequest extends FormRequest
         // 基本的には、ひとつのviewpointに対するデータしかはいらない
         foreach ($data as $key => $value) {
             // info($key." => ".$value);
-            DB::transaction(function () use ($rev_id, $viewpoint_id, $value) {
-                $scr = Score::firstOrCreate([
-                    'review_id' => $rev_id,
-                    'user_id' => Auth::id(),
-                    'viewpoint_id' => $viewpoint_id,
-                ]);
-                if (is_numeric($value)) {
-                    $scr->value = $value;
-                    $scr->valuestr = $value;
-                } else if (is_string($value)){
-                    $scr->value = null;
-                    $scr->valuestr = $value;
-                } else if (is_null($value)){
-                    $scr->value = null;
-                    $scr->valuestr = null;
+            $valueNum = is_numeric($value) ? $value : null;
+            $valueStr = !is_null($value) ? $value : null;
+            $key3 = [
+                'review_id'    => $rev_id,
+                'user_id'      => Auth::id(),
+                'viewpoint_id' => $viewpoint_id,
+            ];
+            $values = ['value' => $valueNum, 'valuestr' => $valueStr];
+            try {
+                // updateOrCreate は firstOrCreate と同様に SELECT→INSERT/UPDATE の2ステップだが、
+                // 既存行があれば UPDATE になるため重複エラーが起きにくい。
+                // それでも並走時に INSERT が競合した場合は catch でフォールバックする。
+                DB::transaction(function () use ($key3, $values) {
+                    Score::updateOrCreate($key3, $values);
+                });
+            } catch (\Illuminate\Database\QueryException $e) {
+                // 1062: Duplicate entry — 並走リクエストが先に INSERT したケース
+                if (($e->errorInfo[1] ?? 0) === 1062) {
+                    Score::where($key3)->update($values);
+                } else {
+                    throw $e;
                 }
-                $scr->save();                    
-            });
+            }
         }
         return json_encode($data);
     }
