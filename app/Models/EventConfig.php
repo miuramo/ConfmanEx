@@ -20,11 +20,11 @@ class EventConfig extends Model
         return $items;
     }
 
-    public static function getEnqueteAnswers(int $event_id, int $user_id): array
+    public static function getEnqueteAnswers(int $event_id, int $user_id): Collection
     {
         $enqids = EventConfig::where('event_id', $event_id)->pluck('enquete_id')->toArray();
         if (count($enqids) == 0) {
-            return [];
+            return new Collection(); // 空のコレクションを返す
         }
         $answers = EnqueteAnswer::whereIn('enquete_id', $enqids)->where('user_id', $user_id)->get();
         return $answers;
@@ -36,7 +36,7 @@ class EventConfig extends Model
         $answers = EventConfig::getEnqueteAnswers($event_id, $user_id);
         $enqids = EventConfig::where('event_id', $event_id)->pluck('enquete_id')->toArray();
         if (count($enqids) == 0) {
-            return [];
+            return []; // 空のコレクションを返す
         }
         $answers = EnqueteAnswer::whereIn('enquete_id', $enqids)->get();
         $key_selids = [];
