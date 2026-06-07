@@ -4,6 +4,12 @@
 
     // Setting seeder
     App\Models\Setting::seeder();
+
+    if (App\Models\BibEntry::count() == 0) {
+        // BibEntry seeder
+        App\Models\BibEntry::seeder();
+    }
+
     // Confirm seeder
     App\Models\Confirm::seeder_policy();
 

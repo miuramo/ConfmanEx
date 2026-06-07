@@ -31,9 +31,9 @@
                     {{ implode('、', array_values($koumoku)) }}
                     ）を設定していただきます。
                     <div class="my-2"></div>
-                    ここでは、「和文タイトル」を例にして、設定方法を説明します。<br>最初に、画面下部の<span
+                    ここでは、「{{ $koumoku['title'] }}」を例にして、設定方法を説明します。<br>最初に、画面下部の<span
                         class="border border-gray-600 bg-cyan-50 p-0.5">PDFから抽出したテキスト</span>
-                    の和文タイトル部分を、マウスドラッグによって選択してください。<br>
+                    の{{ $koumoku['title'] }}部分を、マウスドラッグによって選択してください。<br>
                     選択したテキストが下の <span class="border border-gray-600 bg-yellow-100 p-0.5">エディタ</span>
                     にコピーされます。必要があれば修正してください。（例：和文中の不要な空白を除去）
                     <div class="my-2 mx-4 bg-pink-50 px-4 py-1">
@@ -50,9 +50,9 @@
                             class="border border-gray-600 bg-cyan-50 p-0.5">PDFから抽出したテキスト</span> を再度ドラッグで選択してください。
                     </div>
 
-                    修正がおわったら、エディタ下の「和文タイトルに設定」ボタンを押すと、エディタ内のテキストを和文タイトルとして設定します。
+                    修正がおわったら、エディタ下の「{{ $koumoku['title'] }}に設定」ボタンを押すと、エディタ内のテキストを{{ $koumoku['title'] }}として設定します。
 
-                    この手順を繰り返し、和文アブストラクト、和文著者名についても、設定してください。
+                    この手順を繰り返し、ほかの項目についても、設定してください。
                     <div class="my-2"></div>
 
                     <a href="#confirm_shoshi"

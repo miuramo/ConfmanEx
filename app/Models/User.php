@@ -83,7 +83,7 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
             } else {
                 $relatedId = Role::find($relatedId);
             }
-            Log::info("{$operation}: {$related->getTable()} ID {$relatedId->id} ({$relatedId->desc}) <=> {$parent->getTable()} ID {$parent->getKey()} {$parent->name}  (操作者： " . auth()->user()->name . " " . auth()->id() . " " . auth()->user()->email . ")");
+            Log::info("{$operation}: {$related->getTable()} ID {$relatedId->id} ({$relatedId->desc}) <=> {$parent->getTable()} ID {$parent->getKey()} {$parent->name}  (操作者： " . auth()->user()?->name . " " . auth()->id() . " " . auth()->user()?->email . ")");
         });           
     }
 

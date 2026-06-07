@@ -16,16 +16,8 @@
     </div>
 
     @php
-        $koumoku = [
-            'title' => '和文タイトル',
-            'authorlist' => '和文著者・所属',
-            'abst' => '和文アブストラクト',
-            'keyword' => '和文キーワード',
-            'etitle' => '英文Title',
-            'eauthorlist' => '英文著者・所属',
-            'eabst' => '英文Abstract',
-            'ekeyword' => '英文Keyword',
-        ];
+        $koumoku = \App\Models\BibEntry::where('is_required', 1)->where('for_manage', 0)->orderBy('display_order')->pluck('name_jp', 'key')->toArray();
+
         $dtype = [
             'title' => 'varchar',
             'authorlist' => 'mediumtext',

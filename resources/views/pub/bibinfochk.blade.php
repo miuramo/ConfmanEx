@@ -68,26 +68,8 @@
     </div>
 
     @php
-        $koumoku = [
-            'title' => '和文タイトル',
-            'authorlist' => '和文著者・所属',
-            'abst' => '和文アブストラクト',
-            'keyword' => '和文キーワード',
-            'etitle' => '英文Title',
-            'eauthorlist' => '英文著者・所属',
-            'eabst' => '英文Abstract',
-            'ekeyword' => '英文Keyword',
-        ];
-        $dtype = [
-            'title' => 'varchar',
-            'authorlist' => 'mediumtext',
-            'abst' => 'mediumtext',
-            'keyword' => 'varchar',
-            'etitle' => 'varchar',
-            'eauthorlist' => 'mediumtext',
-            'eabst' => 'mediumtext',
-            'ekeyword' => 'varchar',
-        ];
+        $koumoku = \App\Models\BibEntry::orderBy('display_order')->pluck('name_jp', 'key')->toArray();
+        $dtype = \App\Models\BibEntry::pluck('dtype', 'key')->toArray();
 
         if (count($subs) == 0) {
             $subs = $subs2;

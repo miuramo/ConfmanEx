@@ -10,18 +10,6 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class MaydirtyExport implements FromCollection, WithMapping, ShouldAutoSize, WithHeadings
 {
-    public $koumoku = [
-        'pid' => 'PaperID',
-        'catid' => 'カテゴリーID',
-        'title' => '和文タイトル',
-        'abst' => '和文アブストラクト',
-        'keyword' => '和文キーワード',
-        'authorlist' => '和文著者名',
-        'etitle' => '英文Title',
-        'eabst' => '英文Abstract',
-        'ekeyword' => '英文Keyword',
-        'eauthorlist' => '英文Author(s)'
-    ];
 
     /**
      * @return \Illuminate\Support\Collection
@@ -33,7 +21,11 @@ class MaydirtyExport implements FromCollection, WithMapping, ShouldAutoSize, Wit
 
     public function headings(): array
     {
-        return array_keys($this->koumoku);
+        $koumoku = \App\Models\BibEntry::where('is_required', 1)->where('for_manage', 0)->orderBy('display_order')->pluck('name_jp', 'key')->toArray();
+        $koumoku['pid'] = 'PaperID';
+        $koumoku['catid'] = 'カテゴリーID';
+
+        return array_keys($koumoku);
     }
 
     public function map($paper): array
@@ -44,13 +36,14 @@ class MaydirtyExport implements FromCollection, WithMapping, ShouldAutoSize, Wit
         // key=true の項目だけ抽出する
         $ret['pid'] = $paper->id;
         $ret['catid'] = $paper->category_id;
-        foreach ($this->koumoku as $field => $label) {
-            if ($field == 'pid') {
-                continue;
-            }
-            if ($field == 'catid') {
-                continue;
-            }
+        $koumoku = \App\Models\BibEntry::where('is_required', 1)->where('for_manage', 0)->orderBy('display_order')->pluck('name_jp', 'key')->toArray();
+        foreach ($koumoku as $field => $label) {
+            // if ($field == 'pid') {
+            //     continue;
+            // }
+            // if ($field == 'catid') {
+            //     continue;
+            // }
             if (!isset($manda_bibs[$field])) {
                 // 必須項目でなければスキップ
                 $ret[$field] = "__skip__";

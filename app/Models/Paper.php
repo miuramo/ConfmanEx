@@ -112,16 +112,7 @@ class Paper extends Model
 
     public static function mandatory_bibs($catid = 1): array
     {
-        $koumoku = [
-            'title' => '和文タイトル',
-            'abst' => '和文アブストラクト',
-            'keyword' => '和文キーワード',
-            'authorlist' => '和文著者名',
-            'etitle' => '英文Title',
-            'eabst' => '英文Abstract',
-            'ekeyword' => '英文Keyword',
-            'eauthorlist' => '英文Author(s)'
-        ];
+        $koumoku = \App\Models\BibEntry::where('is_required', 1)->where('for_manage', 0)->orderBy('display_order')->pluck('name_jp', 'key')->toArray();
         $catspecific = Setting::getval("SKIP_BIBINFO_CAT{$catid}");
         if ($catspecific != null) {
             $catspecific = json_decode($catspecific);
