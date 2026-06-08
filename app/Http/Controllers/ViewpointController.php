@@ -49,11 +49,13 @@ class ViewpointController extends Controller
             $newdatum = $enqitm->replicate(); // copy data
             $newdatum->orderint++;
             $newdatum->save();
+            return redirect()->route('viewpoint.itmsetting', ['cat_id' => $req->input('cat_id'), 'cat_name' => $req->input('cat_name')])->with('feedback.success', '観点をコピーしました');
         }
         // del_id がセットされていたら、行を削除する
         if ($req->has('del_id')) {
             $del_id = $req->input('del_id');
             Viewpoint::destroy($del_id);
+            return redirect()->route('viewpoint.itmsetting', ['cat_id' => $req->input('cat_id'), 'cat_name' => $req->input('cat_name')])->with('feedback.success', '観点を削除しました');
         }
         $coldetails = AdminController::column_details($tableName);
         $coldetails['COPY'] = 'COPY';
