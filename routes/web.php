@@ -20,6 +20,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewpointController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\AffilController;
+use App\Http\Controllers\ConfirmController;
 use App\Http\Controllers\EnqueteConfigController;
 use App\Http\Controllers\FailedJobController;
 use App\Http\Controllers\LogAccessController;
@@ -306,6 +307,12 @@ Route::middleware('auth')->group(function () {
     Route::get('export_maydirty', [AdminController::class, 'export_maydirty'])->name('admin.export_maydirty');
     // インタラクティブブース検討用のExcel出力
     Route::get('export_interactivebooth', [AdminController::class, 'export_interactivebooth'])->name('admin.export_interactivebooth');
+
+    // 確認事項の編集
+    Route::get('confirm_edit/{grp?}', [ConfirmController::class, 'edit'])->name('confirm.edit');
+    Route::get('confirm_edit_copy/{copy_id}/{grp}', [ConfirmController::class, 'edit_copy'])->name('confirm.edit_copy');
+    Route::get('confirm_edit_delete/{del_id}/{grp}', [ConfirmController::class, 'edit_delete'])->name('confirm.edit_delete');
+
 });
 
 // 投票
