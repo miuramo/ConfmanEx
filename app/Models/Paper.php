@@ -489,13 +489,20 @@ class Paper extends Model
                     $warn_pdftext_notincluding = Setting::getval("WARN_PDFTEXT_NOTINCLUDING");
                     if ($warn_pdftext_notincluding != null) {
                         $pdftext = $file->getPdfText();
-                        if (!Str::contains($pdftext, $warn_pdftext_notincluding)) {
-                            $mes = "「{$warn_pdftext_notincluding}」が含まれていません。";
-                            if ($warn_pdftext_instruction_url != null) {
-                                $mes .= " <a href=\"{$warn_pdftext_instruction_url}\" target='_blank' class='bg-yellow-700 hover:underline hover:bg-yellow-300'>対応方法の説明</a>";
+                        // もし、pdftext がまだ準備中なら、チェックしない。
+                        if ($pdftext == null || strlen($pdftext) <= strlen("（準備中です．しばらくお待ちいただき，再読み込みしてください．）")) {
+                            $errorary[] = "PDFのテキストを確認中です。お手数ですが、5秒ほど待ってから再読み込みしてください。";
+                        } else {
+                            $found = Str::contains(\Normalizer::normalize($pdftext, \Normalizer::FORM_C), \Normalizer::normalize($warn_pdftext_notincluding, \Normalizer::FORM_C))
+                                || Str::contains(\Normalizer::normalize($pdftext, \Normalizer::FORM_D), \Normalizer::normalize($warn_pdftext_notincluding, \Normalizer::FORM_D));
+                            if (!$found) {
+                                $mes = "「{$warn_pdftext_notincluding}」が含まれていません。";
+                                if ($warn_pdftext_instruction_url != null) {
+                                    $mes .= " <a href=\"{$warn_pdftext_instruction_url}\" target='_blank' class='bg-yellow-700 hover:underline hover:bg-yellow-300'>対応方法の説明</a>";
+                                }
+                                $errorary[] = $mes . $pdftext;
+                                continue;
                             }
-                            $errorary[] = $mes;
-                            continue;
                         }
                     }
 

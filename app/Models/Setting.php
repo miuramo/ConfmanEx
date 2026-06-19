@@ -251,7 +251,7 @@ class Setting extends Model
         Setting::firstOrCreate([
             'name' => "WARN_PDFTEXT_NOTINCLUDING",
         ], [
-            'value' => "キーワード：",
+            'value' => "キーワード",
             'isnumber' => false,
             'isbool' => false,
             'valid' => false,
