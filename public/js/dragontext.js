@@ -151,6 +151,21 @@ function valset(field) {
             return;
         }
     }
+    if (field == 'title' || field == 'etitle') {
+        // タイトルの場合、255文字以内かチェックする
+        if (stext.length > 255) {
+            alert("タイトルは255文字以内にしてください。現在の文字数：" + stext.length);
+            return;
+        }
+    }
+    if (field == 'etitle') {
+        // 英文タイトルの場合、全角文字を含んでいないかチェックする
+        var ascii_only_pattern = /^[\x20-\x7E\r\n\t]*$/;
+        if (!ascii_only_pattern.test(stext)) {
+            alert("英文タイトルに全角文字が含まれています。全角文字を半角に修正してください。");
+            return;
+        }
+    }
 
     var fd = new FormData();
     fd.append('_token', $('meta[name="csrf-token"]').attr("content"));
