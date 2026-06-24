@@ -37,6 +37,24 @@ class ConfirmController extends Controller
         $numdata = DB::table($tableName)->where('grp', $grp)->count();
         return view('confirm.edit')->with(compact("tableName", "coldetails", "data", "whereBy", "numdata", "tableComments", "title", "titles", "note", "grp"));
     }
+    // nameを昇順に並べ替え、連番を振り直す
+    public function renumber_name(int $grp)
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
+        $tableName = 'confirms';
+        $data = DB::table($tableName)->where('grp', $grp)->orderBy('name')->get();
+        // nameのうち、数字を除く部分文字列を取得する
+        $prefixes = $data->map(function ($row) {
+            return preg_replace('/\d+/', '', $row->name);
+        })->unique();
+
+        $i = 1;
+        foreach ($data as $row) {
+            DB::table($tableName)->where('id', $row->id)->update(['name' => $prefixes[0] . sprintf('%02d', $i)]);
+            $i++;
+        }
+        return redirect()->route('confirm.edit', ['grp' => $grp]);
+    }
     public function edit_copy(Request $request, int $copy_id, int $grp)
     {
         if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);

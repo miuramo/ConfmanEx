@@ -126,6 +126,13 @@
     </div>
 
     <div class="px-4">
+        <x-element.linkbutton href="{{ route('confirm.renumber_name', ['grp' => $grp]) }}" color="cyan" size="sm">
+            nameの連番を修正
+        </x-element.linkbutton>
+    </div>
+    
+
+    <div class="px-4">
         <x-element.h1>プレビュー</x-element.h1>
         <ol class="list-decimal px-8 pt-4">
             @foreach ($data as $d)

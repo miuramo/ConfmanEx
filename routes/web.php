@@ -312,6 +312,7 @@ Route::middleware('auth')->group(function () {
     Route::get('confirm_edit/{grp?}', [ConfirmController::class, 'edit'])->name('confirm.edit');
     Route::get('confirm_edit_copy/{copy_id}/{grp}', [ConfirmController::class, 'edit_copy'])->name('confirm.edit_copy');
     Route::get('confirm_edit_delete/{del_id}/{grp}', [ConfirmController::class, 'edit_delete'])->name('confirm.edit_delete');
+    Route::get('confirm_renumber_name/{grp}', [ConfirmController::class, 'renumber_name'])->name('confirm.renumber_name');
 
 });
 
