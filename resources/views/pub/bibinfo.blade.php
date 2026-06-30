@@ -7,6 +7,7 @@
     }
     $postpone_ary = App\Models\EnqueteAnswer::getAnswers_singleItem('postpone');
 
+    $postpone_enable = (count($postpone_ary) > 0);
 @endphp
 <x-app-layout>
     <!-- pub.bibinfo -->
@@ -101,7 +102,7 @@
                 </div>
             @else
                 <div>({{ $sub->booth }})
-                    @if (!isset($postpone_ary[$sub->paper->id]))
+                    @if ($postpone_enable && !isset($postpone_ary[$sub->paper->id]))
                         <span class="text-red-600">【注意：公開延期アンケート未回答】</span>
                     @endif
                     {{ $sub->paper->title }}

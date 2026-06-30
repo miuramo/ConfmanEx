@@ -56,7 +56,7 @@ class EnqueteAnswer extends Model
      */
     public static function getAnswers_singleItem(string $itemname): array
     {
-        $ei_id = EnqueteItem::where("name", $itemname)->first()->id;
+        $ei_id = EnqueteItem::where("name", $itemname)->first()?->id;
 
         $result = EnqueteAnswer::where("enquete_item_id", $ei_id)->pluck("valuestr", "paper_id")->toArray();
         return $result;
