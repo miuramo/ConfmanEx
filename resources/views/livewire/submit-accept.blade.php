@@ -13,12 +13,17 @@
     wire:keydown.escape="cancelEdit()">
     @if ($accept_id == 0)
     @else
-        @if (self::$judges[$accept_id] > 0)
-            <span class="text-blue-600 font-bold">
-            @else
-                <span class="text-slate-400">_
+        @if (!isset(self::$judges[$accept_id]) || !isset(self::$accepts[$accept_id]))
+            キャッシュをクリアしました。ページを再読み込みしてください。
+            <button wire:click="reloadPage()" class="mt-1 p-2 rounded-md bg-purple-300 hover:bg-purple-500">再読み込み</button>
+        @else
+            @if (self::$judges[$accept_id] > 0)
+                <span class="text-blue-600 font-bold">
+                @else
+                    <span class="text-slate-400">_
+            @endif
+            {{ self::$accepts[$accept_id] }}
         @endif
-        {{ self::$accepts[$accept_id] }}
         </span>
     @endif
     @if ($isEditing === true)
