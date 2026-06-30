@@ -1,3 +1,14 @@
+@php
+    if (!isset(self::$judges[$accept_id])) {
+        Cache::forget('judges');
+    }
+    if (!isset(self::$accepts[$accept_id])) {
+        Cache::forget('accepts');
+    }
+    if (!isset(self::$catcolors[$cid])) {
+        Cache::forget('catcolors');
+    }
+@endphp
 <td class="text-center bg-{{ self::$catcolors[$cid] }}-50 select-none" wire:dblclick="editAccept()"
     wire:keydown.escape="cancelEdit()">
     @if ($accept_id == 0)
@@ -23,8 +34,9 @@
                 @endforeach
             </select>
         </div>
-        @if($accept_id == 20 && $canDelete)
-        <button wire:click="deleteSubmit()" class="mt-1 p-2 rounded-md bg-purple-300 hover:bg-purple-500">削除</button>
+        @if ($accept_id == 20 && $canDelete)
+            <button wire:click="deleteSubmit()"
+                class="mt-1 p-2 rounded-md bg-purple-300 hover:bg-purple-500">削除</button>
         @endif
     @endif
 
