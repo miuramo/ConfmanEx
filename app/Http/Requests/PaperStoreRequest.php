@@ -114,6 +114,7 @@ class PaperStoreRequest extends FormRequest
                 'category_id' => $this->input("action"),
                 'contactemails' => $em,
                 'owner' => Auth::user()->id,
+                'authorlist' => Auth::user()->name . " (" . Auth::user()->affil . ")",
             ]);
             // $paper->updateContacts();
         } catch (QueryException $e) {
