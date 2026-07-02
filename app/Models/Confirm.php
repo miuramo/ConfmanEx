@@ -27,7 +27,7 @@ class Confirm extends Model
         Confirm::firstOrCreate(
             [
                 "grp" => 0,
-                "name" => "policy1"
+                "name" => "policy01"
             ],
             [
                 "mes" => "本投稿システムでは、投稿管理の都合上、入力された情報（論文PDFや画像、動画など）を加工したり、情報を抽出することがあります。"
@@ -39,7 +39,7 @@ class Confirm extends Model
         Confirm::firstOrCreate(
             [
                 "grp" => 0,
-                "name" => "policy2"
+                "name" => "policy02"
             ],
             [
                 "mes" => "入力された情報およびそれらを投稿システムが加工した情報は基本的に本会議（シンポジウム／ワークショップ）の運営目的のみ利用します。"
@@ -50,7 +50,7 @@ class Confirm extends Model
         Confirm::firstOrCreate(
             [
                 "grp" => 0,
-                "name" => "policy3"
+                "name" => "policy03"
             ],
             [
                 "mes" => "投稿者への連絡は主にメールで行います。"
@@ -62,7 +62,7 @@ class Confirm extends Model
         Confirm::firstOrCreate(
             [
                 "grp" => 0,
-                "name" => "policy4"
+                "name" => "policy04"
             ],
             [
                 "mes" => "投稿する論文PDFや画像、動画、動画内で使用する楽曲等については、第三者の著作権を侵害しないよう注意してください。"
@@ -73,7 +73,7 @@ class Confirm extends Model
         Confirm::firstOrCreate(
             [
                 "grp" => 0,
-                "name" => "policy5"
+                "name" => "policy05"
             ],
             [
                 "mes" => "公正な査読のため、論文PDFにはかならず共著者をふくむ著者全員の氏名と所属を記してください。"
@@ -85,7 +85,7 @@ class Confirm extends Model
         Confirm::firstOrCreate(
             [
                 "grp" => 0,
-                "name" => "policy6"
+                "name" => "policy06"
             ],
             [
                 "mes" => "確認事項に追加や変更が発生した場合、ログイン後の画面にて再度確認をしていただく場合があります。あらかじめご了承ください。",
