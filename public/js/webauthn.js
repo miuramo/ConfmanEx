@@ -110,6 +110,17 @@ async function registerPasskey() {
         // 2) オプションのBase64URL→ArrayBuffer整形
         const publicKey = normalizeCreationOptions(opts.options);
 
+        // ここが重要: ブラウザの表示に効く情報をサービス名付きにする
+        if (publicKey.rp) {
+            publicKey.rp.name = SERVICE_LABEL;
+        }
+        if (publicKey.user) {
+            const base = publicKey.user.displayName || publicKey.user.name || '';
+            publicKey.user.displayName = base
+                ? `${SERVICE_LABEL} / ${base}`
+                : SERVICE_LABEL;
+        }
+        
         // 3) 生体認証/セキュリティキーで鍵ペア生成
         const cred = await navigator.credentials.create({ publicKey });
         if (!cred) throw new Error('credential was null');
