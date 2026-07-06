@@ -57,6 +57,7 @@
             </x-primary-button>
         </div>
     </form>
+    <script>window.SERVICE_LABEL = "{{ e(env('MAIL_FROM_NAME')) }}";</script>
     <script type="module" src="/js/webauthn.js"></script>
 
 </x-guest-layout>

@@ -23,6 +23,7 @@
                 </div>
             </div>
 
+            <script>window.SERVICE_LABEL = "{{ e(env('MAIL_FROM_NAME')) }}";</script>
             <script type="module" src="/js/webauthn.js"></script>
  
             <div id="passkeys-section" class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">

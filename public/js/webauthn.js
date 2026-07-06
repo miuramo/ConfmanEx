@@ -1,4 +1,6 @@
 // resources/js/webauthn.js
+const SERVICE_LABEL = window.SERVICE_LABEL ?? 'ConfmanEx';
+
 // ========= Base64URL helpers =========
 const b64urlToBuf = (b64url) => {
     // Base64URL( - _ 無し/有り ) → Base64
