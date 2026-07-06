@@ -51,7 +51,8 @@ class AdminController extends Controller
         // Userが存在しないContactを参照していたら、直す
         User::fix_broken_contact_all();
 
-        return view('admin.admindb')->with(compact("roles", "roleall"));
+        return redirect()->route('paper.index');
+        // return view('admin.admindb')->with(compact("roles", "roleall"));
     }
 
 

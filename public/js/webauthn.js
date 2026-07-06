@@ -113,11 +113,14 @@ async function registerPasskey() {
         if (!cred) throw new Error('credential was null');
 
         // 4) サーバへ登録結果(Attestation)を送信
-        const payload = attestationToJSON(cred);
+        const nameInput = document.getElementById('passkey-name');
+        const name = (nameInput?.value?.trim()) || 'My Passkey';
+        const payload = { name, credential: attestationToJSON(cred) };
         await post('/user/passkeys', payload);
 
-        alert('パスキーを登録しました！');
-        // 必要ならページ更新や鍵一覧再取得など
+        // ハッシュをセットしてからリロード → Passkeysセクションへジャンプ
+        history.replaceState(null, '', '#passkeys-section');
+        window.location.reload();
 
     } catch (e) {
         handleWebAuthnError(e, '登録に失敗しました');
@@ -156,7 +159,7 @@ async function loginWithPasskey({ conditional = false } = {}) {
         if (!cred) throw new Error('credential was null');
 
         // 3) サーバへ認証結果(Assertion)を送信
-        const payload = assertionToJSON(cred);
+        const payload = { credential: assertionToJSON(cred) };
         await post('/passkeys/login', payload);
 
         // ログイン成功 → 遷移
@@ -190,12 +193,44 @@ async function enableConditionalUIPrompt() {
     }
 }
 
+// ========= Passkey削除 =========
+async function deletePasskey(id) {
+    if (!confirm('このパスキーを削除しますか？')) return;
+    try {
+        const r = await fetch(`/user/passkeys/${id}`, {
+            method: 'DELETE',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrf,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+        if (!r.ok) throw new Error(await r.text());
+        // 該当行をDOMから除去
+        document.getElementById(`passkey-row-${id}`)?.remove();
+        // 残りが0件なら「まだ登録なし」メッセージを表示
+        const list = document.getElementById('passkey-list');
+        if (list && list.children.length === 0) {
+            list.insertAdjacentHTML(
+                'afterend',
+                '<p class="mt-4 text-sm text-gray-500" id="passkey-empty">パスキーはまだ登録されていません。</p>'
+            );
+            list.remove();
+        }
+    } catch (e) {
+        alert('削除に失敗しました: ' + (e.message || e));
+    }
+}
+// モジュールスコープ外（インラインonclick）から呼べるようにグローバルに公開
+window.deletePasskey = deletePasskey;
+
 // ========= お行儀よくエラーを整形 =========
 function handleWebAuthnError(err, fallback) {
     // 代表的ブラウザエラーをユーザー向けに言い換え
     const msg = (err?.name) ? ({
         NotAllowedError: '操作がキャンセルされました（タイムアウト/キャンセル）',
-        InvalidStateError: 'そのパスキーは既に登録済みか、使えない状態です',
+        InvalidStateError: 'このデバイス/認証器のパスキーは既に登録済みです。別のデバイスや認証器（セキュリティキーなど）で追加登録してください。',
         SecurityError: 'オリジン/HTTPS要件を満たしていません',
         ConstraintError: 'プラットフォーム要件を満たせませんでした',
         UnknownError: '認証器で予期しないエラーが発生しました'
@@ -205,6 +240,35 @@ function handleWebAuthnError(err, fallback) {
     alert(msg);
 }
 
+// ========= デバイス/ブラウザ名を取得 =========
+function getDeviceLabel() {
+    // Chrome/Edge: User-Agent Client Hints が使えれば優先
+    if (navigator.userAgentData?.brands) {
+        const brand = navigator.userAgentData.brands
+            .filter(b => !/Not|Chromium/i.test(b.brand))
+            .map(b => b.brand)[0];
+        const platform = navigator.userAgentData.platform || '';
+        if (brand && platform) return `${platform} ${brand}`;
+        if (brand) return brand;
+    }
+    // Fallback: UA 文字列を解析
+    const ua = navigator.userAgent;
+    let browser = 'Browser';
+    if (/Edg\//.test(ua))                          browser = 'Edge';
+    else if (/OPR\/|Opera/.test(ua))               browser = 'Opera';
+    else if (/Chrome\//.test(ua))                  browser = 'Chrome';
+    else if (/Firefox\//.test(ua))                 browser = 'Firefox';
+    else if (/Safari\//.test(ua))                  browser = 'Safari';
+    let os = '';
+    if      (/iPhone/.test(ua))  os = 'iPhone';
+    else if (/iPad/.test(ua))    os = 'iPad';
+    else if (/Android/.test(ua)) os = 'Android';
+    else if (/Mac/.test(ua))     os = 'Mac';
+    else if (/Windows/.test(ua)) os = 'Windows';
+    else if (/Linux/.test(ua))   os = 'Linux';
+    return os ? `${os} ${browser}` : browser;
+}
+
 // ========= イベントバインド =========
 document.addEventListener('DOMContentLoaded', () => {
     const regBtn = document.getElementById('passkey-register');
@@ -212,6 +276,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loginBtn = document.getElementById('passkey-login');
     if (loginBtn) loginBtn.addEventListener('click', () => loginWithPasskey());
+
+    // パスキー名の初期値をブラウザ/デバイス名にセット
+    const nameInput = document.getElementById('passkey-name');
+    if (nameInput) nameInput.value = getDeviceLabel();
 
     // ログインページでオートフィルUIを使いたい時だけ有効化
     const isLoginPage = !!document.getElementById('passkey-login');

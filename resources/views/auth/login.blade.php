@@ -6,7 +6,7 @@
         @csrf
 
         <div class="text-center mb-4">
-            <x-primary-button class="ms-3 bg-green-800" id="passkey-login">
+            <x-primary-button type="button" class="ms-3 bg-green-800" id="passkey-login">
                 {{ __('Log in with Passkey') }}
             </x-primary-button>
             <span class="mx-2"></span>

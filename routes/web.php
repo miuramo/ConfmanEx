@@ -45,7 +45,8 @@ Route::get('/', function () {
 })->name('guesttop');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect()->route('paper.index');
+    // return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/file_favicon', [FileController::class, 'favicon'])->name('file.favicon');

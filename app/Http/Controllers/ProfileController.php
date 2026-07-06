@@ -20,6 +20,7 @@ class ProfileController extends Controller
     {
         return view('profile.edit', [
             'user' => $request->user(),
+            'passkeys' => $request->user()->passkeys()->latest()->get(),
         ]);
     }
 

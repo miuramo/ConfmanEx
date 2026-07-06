@@ -16,5 +16,14 @@
     "Email Password Reset Link": "パスワード再設定メールを送信",
     "Register Passkey": "パスキーの登録",
     "How to register passkey": "パスキー登録方法",
-    "Log in with Passkey": "パスキーでログイン"
+    "Log in with Passkey": "パスキーでログイン",
+    "Passkey Name": "パスキー名",
+    "Enter a name to identify this passkey, such as your device name (e.g. \"MacBook Touch ID\", \"iPhone Face ID\").": "このパスキーを識別するための名前を入力してください。例: 「MacBook Touch ID」「iPhone Face ID」",
+    "Passkey Registration": "パスキー登録",
+    "Passkey Login": "パスキーでログイン",
+    "Passkey Login Instructions": "パスキーでログインする手順",
+    "To log in with a passkey, click the 'Log in with Passkey' button on the login page.": "パスキーでログインするには、ログインページの「パスキーでログイン」ボタンをクリックしてください。",
+    "If you have multiple passkeys registered, you may be prompted to select one.": "複数のパスキーが登録されている場合は、どのパスキーを使用するか選択するよう求められることがあります。",
+    "Follow the on-screen instructions to complete the login process.": "画面の指示に従ってログインを完了してください。",
+    "If you encounter any issues during the login process, please contact support for assistance.": "ログイン中に問題が発生した場合は、サポートにお問い合わせください。"
 }
