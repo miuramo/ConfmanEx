@@ -148,7 +148,11 @@
                                     $mes = "【概要説明スライド】のみ、{$gendo[0]}月{$gendo[1]}日まで追加可";
                                 } else {
                                     $gendo = array_map('intval', explode('-', $cat->pdf_accept_end));
-                                    $mes = "{$gendo[0]}月{$gendo[1]}日まで修正可";
+                                    if (!isset($gendo[1])) {
+                                        $mes = $cat->pdf_accept_end . 'まで修正可';
+                                    } else {
+                                        $mes = "{$gendo[0]}月{$gendo[1]}日まで修正可";
+                                    }
                                 }
                             @endphp
                             <x-element.gendospan>{{ $mes }}</x-element.gendospan>
