@@ -17,6 +17,7 @@ class ConfirmController extends Controller
             0 => 'トップページ',
             1 => '新規投稿',
             2 => '連絡用メールアドレス',
+            9 => '参加登録',
         ];
         $title = $titles[$grp] ?? 'その他';
         $tableName = 'confirms';
