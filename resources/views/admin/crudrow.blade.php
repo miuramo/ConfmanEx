@@ -10,7 +10,10 @@
         </div>
 
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Edit') }} id={{ $data[0]->id }} of {{ $tableName }}
+            {{ __('Edit') }} 
+            @isset($data[0])
+                id={{ $data[0]->id }} of {{ $tableName }}
+            @endisset
         </h2>
     </x-slot>
 
@@ -45,7 +48,7 @@
                             <tr class="">
                                 <td class="border-b border-gray-400 px-4 py-2 text-center">{{ $nam }}</td>
 
-                                <td class="border-b border-gray-400 px-4 py-2 hover:text-blue-600 hover:bg-slate-200 clicktoedit"
+                                <td class="border-b border-gray-400 px-4 py-2 hover:text-blue-600 hover:bg-slate-200 clicktoedit break-all"
                                     id="{{ $nam }}__{{ $d->id }}__{{ $typ }}"
                                     data-orig="{{ $d->$nam }}">
                                     {!! nl2br($d->$nam) !!}

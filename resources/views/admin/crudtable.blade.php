@@ -81,7 +81,7 @@
                                             id="{{ $nam }}__{{ $d->id }}__{{ $typ }}"
                                             :checked="$d->$nam"></x-toggle>
                                     @else
-                                    <td class="p-2 hover:text-blue-600 hover:bg-slate-200 clicktoedit  dark:hover:bg-slate-700 dark:hover:text-blue-500"
+                                    <td class="p-2 hover:text-blue-600 hover:bg-slate-200 clicktoedit dark:hover:bg-slate-700 dark:hover:text-blue-500 break-all"
                                         id="{{ $nam }}__{{ $d->id }}__{{ $typ }}">
                                         @if ($nam == 'id')
                                             <a
