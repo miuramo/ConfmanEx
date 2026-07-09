@@ -402,6 +402,10 @@ class AdminController extends Controller
             if (count($whereBy) == 0) {
                 if (isset($coldetails['created_at'])) {
                     $data = DB::table($tableName)->orderByDesc('created_at')->limit(100)->get()->toArray();
+                } else if (isset($coldetails['failed_at'])) {
+                    $data = DB::table($tableName)->orderByDesc('failed_at')->limit(100)->get()->toArray();
+                } else if (isset($coldetails['logged_at'])) {
+                    $data = DB::table($tableName)->orderByDesc('logged_at')->limit(100)->get()->toArray();
                 } else if (isset($coldetails['id'])) {
                     $data = DB::table($tableName)->orderBy('id')->limit(100)->get()->toArray();
                 } else {
