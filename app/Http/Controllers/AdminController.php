@@ -429,7 +429,12 @@ class AdminController extends Controller
                 $data = $query->limit(100)->get()->toArray();
             }
             $view = ($req->has('row')) ? 'admin.crudrow' : 'admin.crudtable';
-            return view($view)->with(compact("tableName", "coldetails", "data", "whereBy", "numdata", "row"));
+            $scheduledUpdateTargetType = null;
+            $eloModelName = 'App\\Models\\' . Str::studly(Str::singular($tableName));
+            if (class_exists($eloModelName)) {
+                $scheduledUpdateTargetType = $eloModelName;
+            }
+            return view($view)->with(compact("tableName", "coldetails", "data", "whereBy", "numdata", "row", "scheduledUpdateTargetType"));
         } else {
             // dump($connection);
             $tables = $this->get_db_tables();

@@ -176,6 +176,10 @@
         <x-element.linkbutton href="{{ route('admin.failed_jobs') }}" color="purple">
             Failed Jobs
         </x-element.linkbutton>
+        <span class="px-5"></span>
+        <x-element.linkbutton href="{{ route('scheduled_update.index') }}" color="pink">
+            予約更新
+        </x-element.linkbutton>
 
     </x-element.h1>
 
