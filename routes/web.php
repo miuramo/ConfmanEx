@@ -15,6 +15,7 @@ use App\Http\Controllers\RevConflictController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ScoreController;
+use App\Http\Controllers\ScheduledUpdateController;
 use App\Http\Controllers\SubmitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewpointController;
@@ -146,6 +147,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin_failed_jobs/{all?}', [FailedJobController::class, 'index'])->name('admin.failed_jobs');
     Route::post('/admin_failed_jobs/{id}/mark_as_read', [FailedJobController::class, 'markAsRead'])->name('admin.failed_jobs.mark_as_read');
+    Route::post('/scheduled_update/bulk_reschedule_next_year', [ScheduledUpdateController::class, 'bulkRescheduleNextYear'])->name('scheduled_update.bulk_reschedule_next_year');
+    Route::resource('scheduled_update', ScheduledUpdateController::class)->except(['show']);
 
     Route::post('/admin_user_yomi', [ManagerController::class, 'user_yomi_post'])->name('admin.user_yomi_post'); // ユーザーの読み仮名一括登録
 

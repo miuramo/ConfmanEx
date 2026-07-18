@@ -50,7 +50,10 @@
 
                                 <td class="border-b border-gray-400 px-4 py-2 hover:text-blue-600 hover:bg-slate-200 clicktoedit break-all"
                                     id="{{ $nam }}__{{ $d->id }}__{{ $typ }}"
-                                    data-orig="{{ $d->$nam }}">
+                                    data-orig="{{ $d->$nam }}"
+                                    data-scheduled-update-cell="1"
+                                    data-field="{{ $nam }}"
+                                    data-target-id="{{ $d->id }}">
                                     {!! nl2br($d->$nam) !!}
                                 </td>
 
@@ -98,6 +101,14 @@
         @method('post')
     </form>
 
+    @if ($scheduledUpdateTargetType)
+        <div id="scheduled-update-context-menu" class="hidden fixed z-50 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 shadow-lg rounded-md py-1 text-sm">
+            <a id="scheduled-update-context-link" href="#" class="block px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-pink-100 dark:hover:bg-slate-700">
+                このセルを予約更新
+            </a>
+        </div>
+    @endif
+
     @push('localjs')
         <script src="/js/jquery.min.js"></script>
         <script src="/js/crud_table.js"></script>
@@ -109,6 +120,48 @@
         var origData = {};
         var mode_br = true; // 改行反映する
         var sizecols = 80; // 横幅
+        @if ($scheduledUpdateTargetType)
+            var scheduledUpdateCreateUrl = "{{ route('scheduled_update.create') }}";
+            var scheduledUpdateTargetType = @json($scheduledUpdateTargetType);
+        @endif
     </script>
+
+    @if ($scheduledUpdateTargetType)
+        <script>
+            (() => {
+                const menu = document.getElementById('scheduled-update-context-menu');
+                const link = document.getElementById('scheduled-update-context-link');
+
+                document.querySelectorAll('[data-scheduled-update-cell="1"]').forEach((cell) => {
+                    cell.addEventListener('contextmenu', (event) => {
+                        const field = cell.dataset.field;
+                        if (!field || field === 'id') {
+                            return;
+                        }
+
+                        event.preventDefault();
+                        const params = new URLSearchParams({
+                            target_type: scheduledUpdateTargetType,
+                            target_id: cell.dataset.targetId,
+                            field_name: field,
+                        });
+                        link.href = `${scheduledUpdateCreateUrl}?${params.toString()}`;
+                        menu.style.left = `${event.clientX}px`;
+                        menu.style.top = `${event.clientY}px`;
+                        menu.classList.remove('hidden');
+                    });
+                });
+
+                document.addEventListener('click', () => {
+                    menu.classList.add('hidden');
+                });
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape') {
+                        menu.classList.add('hidden');
+                    }
+                });
+            })();
+        </script>
+    @endif
 
 </x-app-layout>

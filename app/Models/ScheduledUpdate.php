@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class ScheduledUpdate extends Model
 {
     protected $fillable = [
+        'target_type',
+        'target_id',
         'field_name',
         'new_value',
         'status',
