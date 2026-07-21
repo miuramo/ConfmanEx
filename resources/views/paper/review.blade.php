@@ -54,7 +54,7 @@
                                 査読者 {{ $count }} &nbsp; 【RevID: {{ $rev->id }}】
 
                                 @if ($rev->ismeta)
-                                    <span class="mx-2 text-blue-500">（{{$nameofmeta}}） </span>
+                                    <span class="mx-2 text-blue-500">（{{ $nameofmeta }}） </span>
                                 @endif
                             </th>
                             {{-- <th class="bg-slate-300 border-4 border-slate-300">
@@ -73,6 +73,15 @@
                                         （とくにお伝えする事項は、ありません）
                                     @else
                                         {!! nl2br(htmlspecialchars($valstr)) !!}
+                                        @if (strlen($valstr) < 2)
+                                            @php
+                                                $item_title = App\Models\Viewpoint::firstContent($vpdesc);
+                                                // 査読者用指示を省略
+                                                $item_title = str_replace('で評価してください．', '', $item_title);
+                                                $item_title = preg_replace('/\(.*\)/', '', $item_title);
+                                            @endphp
+                                            <span class="text-gray-400 text-sm pl-8">〈参考〉{{ $item_title }}</span>
+                                        @endif
                                     @endif
                                     {{-- vpsubdesc スコアの意味などを表示する --}}
                                     @isset($vpsubdescs[$vpdesc])

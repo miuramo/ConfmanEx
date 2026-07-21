@@ -77,4 +77,14 @@ class Viewpoint extends Model
             $num += $step;
         }
     }
+
+    public static function firstContent(string $desc): ?string
+    {
+        $vp = Viewpoint::where("desc", $desc)->first();
+        if ($vp == null) {
+            return null;
+        }
+        $ary = explode(self::$separator, $vp->content);
+        return nl2br(trim($ary[0]));
+    }
 }
