@@ -28,13 +28,14 @@
         @php
             $dkey = App\Models\Setting::getval('AWARDJSON_DLKEY');
         @endphp
-        <x-element.linkbutton href="{{ route('pub.json_booth_title_author', ['key' => $dkey]) }}" color="cyan" size="sm"
-            target="_blank">
+        <x-element.linkbutton href="{{ route('pub.json_booth_title_author', ['key' => $dkey]) }}" color="cyan"
+            size="sm" target="_blank">
             JSON
         </x-element.linkbutton>
 
         <span class="mx-4"></span>
-        <x-element.linkbutton href="https://git.istlab.info/miura250/SSSAward" color="green" target="_blank" size="sm">
+        <x-element.linkbutton href="https://git.istlab.info/miura250/SSSAward" color="green" target="_blank"
+            size="sm">
             表彰状生成スクリプト
         </x-element.linkbutton>
 
@@ -60,7 +61,8 @@
             ];
         @endphp
         @foreach ($shortcuts as $key => $tbl)
-            <x-element.linkbutton color="cyan" href="{{ route('admin.crud', ['table' => $tbl]) }}" target="_blank" size="sm">
+            <x-element.linkbutton color="cyan" href="{{ route('admin.crud', ['table' => $tbl]) }}" target="_blank"
+                size="sm">
                 {{ $key }}
             </x-element.linkbutton>
             <span class="mx-2"></span>
@@ -78,26 +80,24 @@
     <div class="my-8">
     </div>
 
-    <x-element.h1>
+    <x-element.h1c color="red">
         Danger Zone
-        <span class="mx-2"></span>
-        <x-element.linkbutton href="{{ route('vote.initializeall') }}" color="lime" size="sm"
-            confirm="本当に投票の初期設定を行う？（投票データはリセットしません）">
-            投票の初期設定を行う
-        </x-element.linkbutton>
-        <span class="text-sm">←既存の投票データはリセットしません。Vote, VoteItem が無い場合に、デフォルト値で作成します。</span>
-        <x-element.linkbutton
-            href="{{ route('vote.initializeall', ['truncate_vote' => 0, 'truncate_voteitem' => 1]) }}" color="orange"
-            size="sm" confirm="本当に投票の初期設定を行う？（VoteItemを削除して再構成します）">
-            投票の初期設定（VoteItemを削除して再構成）
-        </x-element.linkbutton> <span
-            class="text-sm">←Voteを残すことで、既存設定（学生を分けるかどうかや、投票件数割合など）をつかってVoteItemのみを再構成できます。</span>
+        <div class="my-2">
+            <x-element.linkbutton
+                href="{{ route('vote.initializeall', ['truncate_vote' => 0, 'truncate_voteitem' => 1]) }}"
+                color="lime" size="sm" confirm="本当に投票の初期設定を行う？（VoteItemを削除して再構成します）">
+                投票の初期設定（VoteItemを削除して再構成）
+            </x-element.linkbutton> <span
+                class="text-sm">←Voteを残すことで、既存設定（学生を分けるかどうかや、投票件数割合など）をつかってVoteItemのみを再構成できます。</span>
 
-        <x-element.linkbutton
-            href="{{ route('vote.initializeall', ['truncate_vote' => 1, 'truncate_voteitem' => 1]) }}" color="red"
-            size="sm" confirm="本当に投票の初期設定を行う？（Vote, VoteItemを削除して再構成します）">
-            投票の初期設定（VoteとVoteItemを削除して再構成）
-        </x-element.linkbutton>
+        </div>
+        <div class="my-2">
+            <x-element.linkbutton
+                href="{{ route('vote.initializeall', ['truncate_vote' => 1, 'truncate_voteitem' => 1]) }}"
+                color="red" size="sm" confirm="本当に投票の初期設定を行う？（Vote, VoteItemを削除して再構成します）">
+                投票の初期設定（VoteとVoteItemを削除して再構成）
+            </x-element.linkbutton>
+        </div>
 
 
         <div class="my-6">
@@ -116,13 +116,13 @@
             投票データをすべてリセット
         </x-element.linkbutton>
         <span class="text-sm">確認ダイアログがでます</span>
-    </x-element.h1>
+        </x-element.h1>
 
 
-    @push('localjs')
-        <script src="/js/jquery.min.js"></script>
-        <script src="/js/sortable.js"></script>
-        <script src="/js/openclose.js"></script>
-    @endpush
+        @push('localjs')
+            <script src="/js/jquery.min.js"></script>
+            <script src="/js/sortable.js"></script>
+            <script src="/js/openclose.js"></script>
+        @endpush
 
 </div>
