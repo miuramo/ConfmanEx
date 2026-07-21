@@ -8,6 +8,8 @@
 
 <div class="py-4 px-10  dark:text-gray-400">
     @foreach ($votes as $vote)
+        @if (!$vote->valid) @continue @endif 
+        
         @if ($vote->for_pc)
             @if (!auth()->check())
                 @continue

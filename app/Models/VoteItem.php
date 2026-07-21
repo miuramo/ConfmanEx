@@ -35,79 +35,78 @@ class VoteItem extends Model
      */
     public static function init(): void
     {
-        // 各カテゴリで、学生発表とそれ以外（一般発表）に分ける。
-        // アンケートは4番、paper_id => valuestr をとっておく。
-        // または、valuestr = 学生 のpaper_id 配列をとっておく。
-        $student_pids = EnqueteAnswer::where("enquete_id", 4)->where("valuestr", "学生")->orderBy("paper_id")
-            ->get()->pluck("paper_id")->toArray();
-        // info($student_pids);
-
-        // 1,2のカテゴリで、学生発表とそれ以外（一般発表）に分ける。
-        /*        foreach([1,2] as $catid){
-            foreach(["一般"=>false,"学生"=>true] as $zoku=>$val){
-                $subs = Submit::where("category_id", $catid)->whereHas("accept", function($query) {
+        $votes = Vote::where("valid", true)->get();
+        foreach ($votes as $vote) {
+            if ($vote->category_id === null) continue; // カテゴリIDがない場合はスキップ
+            if ($vote->separate_student) {
+                // 学生発表と一般発表を分ける場合
+                $student_pids = explode(",", $vote->student_paper_ids);
+                $cat_id = $vote->category_id;
+                foreach (["一般" => false, "学生" => true] as $zoku => $val) {
+                    $subs = Submit::where("category_id", $cat_id)->whereHas("accept", function ($query) {
+                        $query->where("judge", ">", 0);
+                    })->whereHas("paper", function ($query) use ($student_pids, $val) {
+                        if ($val) $query->whereIn("id", $student_pids);
+                        else $query->whereNotIn("id", $student_pids);
+                    })->orderBy("orderint")->select("paper_id", "booth")->pluck("paper_id", "booth")->toArray();
+                    VoteItem::firstOrCreate(
+                        [
+                            'vote_id' => $vote->id,
+                            'name' => "【{$vote->name}：{$zoku}】",
+                        ],
+                        [
+                            'orderint' => ($val) ? 2 : 1,
+                            'submits' => json_encode($subs),
+                            'upperlimit' => count($subs) * $vote->percentage_upperlimit, // 上限は、投票対象の件数に対して割合で設定する。
+                        ]
+                    );
+                }
+            } else {
+                // 学生発表と一般発表を分けない場合
+                $cat_id = $vote->category_id;
+                $subs = Submit::where("category_id", $cat_id)->whereHas("accept", function ($query) {
                     $query->where("judge", ">", 0);
-                })->whereHas("paper", function($query) use ($student_pids, $val){
-                    if ($val) $query->whereIn("id", $student_pids);
-                    else $query->whereNotIn("id", $student_pids);
-                })->orderBy("orderint")->select("paper_id","booth")->pluck("paper_id","booth")->toArray();
-                // info($catid." ".$zoku);
-                // info($subs);
+                })->orderBy("orderint")->select("paper_id", "booth")->pluck("paper_id", "booth")->toArray();
+                $catname = Category::find($cat_id)->name ?? "不明";
                 VoteItem::firstOrCreate(
                     [
-                        'vote_id' => $catid,
-                        'name' => "【{$zoku}発表】",
+                        'vote_id' => $vote->id,
+                        'name' => "【{$catname}】",
                     ],
                     [
-                        'orderint' => ($val)? 2:1 ,
+                        'desc' => "素晴らしいとお感じになった発表",
+                        'orderint' => 1,
                         'submits' => json_encode($subs),
+                        'upperlimit' => count($subs) * $vote->percentage_upperlimit, // 上限は、投票対象の件数に対して割合で設定する。
                     ]
                 );
-
             }
         }
-            */
-        // 学生と一般を分けない
-        $cats = Category::whereIn("id", [1, 2])->orderBy("id")->pluck("name", "id")->toArray();
-        foreach ($cats as $catid => $catname) {
-            $subs = Submit::where("category_id", $catid)->whereHas("accept", function ($query) {
-                $query->where("judge", ">", 0);
-            })->orderBy("orderint")->select("paper_id", "booth")->pluck("paper_id", "booth")->toArray();
+
+        // 論文賞 平均スコア4.0以上のものを対象とする。
+        $subs = Submit::where("category_id", 1)->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->where("score", ">=", 4.0)->orderBy("orderint")->select("paper_id", "booth")->pluck("paper_id", "booth")->toArray();
+
+        // $subs2 = Submit::where("category_id", 1)->whereIn("id", [7, 15, 35, 36, 10, 16]) // PaperIDで抽出する
+        //     ->orderBy("orderint")->select("paper_id", "booth")->pluck("paper_id", "booth")->toArray();
+        foreach ($votes as $vote) {
+            if ($vote->category_id !== null) continue; // カテゴリIDがない場合はスキップ
+
             VoteItem::firstOrCreate(
                 [
-                    'vote_id' => $catid,
-                    'name' => "【{$catname}】",
+                    'vote_id' => $vote->id,
+                    'name' => "【{$vote->name}】",
+                    'desc' => "{$vote->name}に相応しい優れた論文",
                 ],
                 [
-                    'desc' => "素晴らしいとお感じになった発表",
-                    'orderint' => 1,
                     'submits' => json_encode($subs),
-                    'upperlimit' => 10, // 上限10
+                    'orderint' => 1,
+                    'upperlimit' => 2, // 上限2
+                    'show_pdf_link' => true, // 論文賞はPDFリンクを表示する
                 ]
             );
         }
-
-        // 論文賞 平均スコア2.3以上のものを対象とする。
-        // $subs = Submit::where("category_id", 1)->whereHas("accept", function ($query) {
-        //     $query->where("judge", ">", 0);
-        // })->where("score", ">=", 2.9)->orderBy("orderint")->select("paper_id", "booth")->pluck("paper_id", "booth")->toArray();
-
-        $subs2 = Submit::where("category_id", 1)->whereIn("id", [7, 15, 35, 36, 10, 16]) // PaperIDで抽出する
-            ->orderBy("orderint")->select("paper_id", "booth")->pluck("paper_id", "booth")->toArray();
-
-        VoteItem::firstOrCreate(
-            [
-                'vote_id' => 3,
-                'name' => "【論文賞】",
-                'desc' => "論文賞に相応しい優れた論文",
-            ],
-            [
-                'submits' => json_encode($subs2),
-                'orderint' => 1,
-                'upperlimit' => 1, // 上限1
-                'show_pdf_link' => true, // 論文賞はPDFリンクを表示する
-            ]
-        );
     }
 
     // 学生発表のブースを取得

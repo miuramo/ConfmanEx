@@ -38,12 +38,12 @@ class VoteController extends Controller
         } else {
             $cookie_token = Cookie::get('vote_ticket_token');
             info("index - Cookieから投票トークンを取得: " . ($cookie_token ? $cookie_token : 'null'));
-            
+
             // Cookie取得失敗時の詳細ログ
             if (!$cookie_token) {
                 info("index - Cookieが存在しない理由の可能性: ブラウザでCookie無効、HTTPS/HTTP不一致、ドメイン不一致");
             }
-            
+
             $ticket = VoteTicket::where('token', $cookie_token)->where('activated', true)->where('valid', true)->first();
             if (!$ticket) {
                 info("index - 有効なチケットが見つからない: Token=" . ($cookie_token ? $cookie_token : 'null'));
@@ -111,12 +111,12 @@ class VoteController extends Controller
             $uid = null;
             $cookie_token = Cookie::get('vote_ticket_token');
             info("vote - Cookieから投票トークンを取得: " . ($cookie_token ? $cookie_token : 'null'));
-            
+
             // Cookie取得失敗時の詳細ログ
             if (!$cookie_token) {
                 info("vote - Cookieが存在しない理由の可能性: ブラウザでCookie無効、HTTPS/HTTP不一致、ドメイン不一致");
             }
-            
+
             $ticket = VoteTicket::where('token', $cookie_token)->where('activated', true)->where('valid', true)->first();
             if (!$ticket) {
                 info("vote - 有効なチケットが見つからない: Token=" . ($cookie_token ? $cookie_token : 'null'));
@@ -126,7 +126,7 @@ class VoteController extends Controller
         if (!$vote->isopen || $vote->isclose) {
             return redirect('/vote')->with('feedback.error', '期間外の投票はできません。');
         }
-        if ($vote->for_pc){
+        if ($vote->for_pc) {
             if (!auth()->check() || !auth()->user()->is_pc_member()) {
                 return redirect('/vote')->with('feedback.error', 'あなたが開こうとした投票ページはプログラム委員のみが投票できます。プログラム委員の方は、ログインしてから投票してください。');
             }
@@ -138,7 +138,7 @@ class VoteController extends Controller
             // info($req->all());
             // 件数チェック
             $cnt = 0;
-            foreach($req->all() as $booth=>$val){
+            foreach ($req->all() as $booth => $val) {
                 if ($val == 'on') {
                     $cnt++;
                 }
@@ -162,7 +162,7 @@ class VoteController extends Controller
                         'user_id' => $uid,
                         'token' => $ticket->token,
                         'submit_id' => $subbooth2id[$booth],
-                        'valid' => 1,// (isset($student_boothes[$booth]) ? 2 : 1),
+                        'valid' => 1, // (isset($student_boothes[$booth]) ? 2 : 1),
                     ], [
                         'comment' => $req->input('comment'),
                         'vote_id' => $vote->id,
@@ -174,7 +174,7 @@ class VoteController extends Controller
             // 投票完了後、セキュリティのためCookieを削除（オプション）
             // 必要に応じてコメントアウトを外してください
             // $this->clearVoteTokenCookie();
-            
+
             return redirect()->route('vote.vote', ['vote' => $vote])->with('feedback.success', '投票結果を保存しました。');
         }
         // チェック再現のため、保存データを取得する
@@ -189,7 +189,22 @@ class VoteController extends Controller
         if (!auth()->user()->can('role_any', 'award')) abort(403);
         return Excel::download(new VoteAnswersExport($vote_id), "投票結果_{$vote_id}.xlsx");
     }
-
+    /**
+     * 投票設定の初期化（投票結果は保持）
+     */
+    public function initializeall($truncate_vote = 0, $truncate_voteitem = 0)
+    {
+        if (!auth()->user()->can('role_any', 'award')) abort(403);
+        if ($truncate_vote) {
+            Vote::truncate();
+        }
+        if ($truncate_voteitem) {
+            VoteItem::truncate();
+        }
+        Vote::init(0); // isclose=0で初期化
+        VoteItem::init();
+        return redirect()->route('role.top', ['role' => 'award'])->with('feedback.success', '投票設定を初期化しました。');
+    }
     /**
      * すべてリセットする
      */
@@ -197,11 +212,11 @@ class VoteController extends Controller
     {
         if (!auth()->user()->can('role_any', 'award')) abort(403);
         VoteAnswer::truncate();
-        VoteItem::truncate();
-        Vote::truncate();
+        // VoteItem::truncate();
+        // Vote::truncate();
 
-        Vote::init($isclose);
-        VoteItem::init();
+        // Vote::init($isclose);
+        // VoteItem::init();
         return redirect()->route('role.top', ['role' => 'award']);
     }
 
@@ -316,7 +331,7 @@ class VoteController extends Controller
             }
             $submits = [];
             foreach ($pids as $pid) {
-                $submits[ $pid2booth[intval($pid)] ] = (int)$pid;
+                $submits[$pid2booth[intval($pid)]] = (int)$pid;
             }
             ksort($submits);
             $voteitem->submits = json_encode($submits);
@@ -339,7 +354,7 @@ class VoteController extends Controller
             }
             $submits = [];
             foreach ($pids as $pid) {
-                $submits[ $pid2booth[$pid] ] = (int)$pid;
+                $submits[$pid2booth[$pid]] = (int)$pid;
             }
             ksort($submits);
             $voteitem->submits = json_encode($submits);
@@ -365,21 +380,20 @@ class VoteController extends Controller
         if ($minutes === 0) {
             $minutes = 60 * 24 * 3; // デフォルト3日間
         }
-        
+
         $secure = request()->secure();
         Cookie::queue(
-            'vote_ticket_token', 
-            $token, 
-            $minutes, 
-            '/', 
-            null, 
-            $secure, 
-            true, 
-            false, 
+            'vote_ticket_token',
+            $token,
+            $minutes,
+            '/',
+            null,
+            $secure,
+            true,
+            false,
             'Strict'
         );
-        
+
         info("セキュアCookie設定完了 - Token: " . $token . ", 有効期限: " . $minutes . "分, Secure: " . ($secure ? 'true' : 'false'));
     }
-
 }

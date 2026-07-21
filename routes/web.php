@@ -294,6 +294,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('vote_destroy_tickets_checked', [VoteController::class, 'destroy_tickets_checked'])->name('vote.destroy_tickets_checked');
     // 投票結果
     Route::get('down_voteanswers/{vote?}', [VoteController::class, 'download_answers'])->name('vote.download_answers');
+    // 投票初期化
+    Route::get('initialize_vote_settings/{truncate_vote?}/{truncate_voteitem?}', [VoteController::class, 'initializeall'])->name('vote.initializeall'); // 初期化
     Route::get('resetall_voteanswers/{isclose}', [VoteController::class, 'resetall'])->name('vote.resetall'); // すべて削除
     // VoteItemの編集
     Route::get('voteitem/{voteitem}/edit', [VoteController::class, 'edit_voteitem'])->name('vote.edit_voteitem');

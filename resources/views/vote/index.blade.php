@@ -38,9 +38,6 @@
 
         <div class="py-2"></div>
         <x-element.h1>投票を行うには、以下のボタンを押してください。</x-element.h1>
-        @php
-            $votes = App\Models\Vote::where('isopen', true)->where('isclose', false)->get();
-        @endphp
     </div>
 
     <x-vote.votelink>

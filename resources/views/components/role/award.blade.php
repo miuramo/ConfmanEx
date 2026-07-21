@@ -74,33 +74,51 @@
     <x-vote.votesumtable>
     </x-vote.votesumtable>
 
+    <div class="my-8">
+    </div>
+
     <x-element.h1>
         Danger Zone
         <span class="mx-2"></span>
-        <x-element.linkbutton href="{{ route('vote.resetall', ['isclose' => 0]) }}" color="orange"
-            confirm="本当に投票関係データをすべてリセットして、本番投票を開始する？">
-            投票関係データをすべてリセット（本番投票を開始）
+        <x-element.linkbutton href="{{ route('vote.initializeall') }}" color="lime"
+            confirm="本当に投票の初期設定を行う？（投票データはリセットしません）">
+            投票の初期設定を行う
         </x-element.linkbutton>
-        <span class="mx-2"></span>
-        <x-element.linkbutton href="{{ route('vote.resetall', ['isclose' => 1]) }}" color="purple"
-            confirm="本当に投票関係データをすべてリセットする？（投票開始にはしません）">
-            投票関係データをすべてリセット（本番投票締め切り後）
+        <span class="text-sm">既存の投票データはリセットしません。Vote, VoteItem が無い場合に、デフォルト値で作成します。</span>
+        <x-element.linkbutton href="{{ route('vote.initializeall', ['truncate_vote' => 0, 'truncate_voteitem' => 1]) }}" color="orange"
+            confirm="本当に投票の初期設定を行う？（VoteItemを削除して再構成します）">
+            投票の初期設定（VoteItemを削除して再構成）
+        </x-element.linkbutton>
+        <x-element.linkbutton href="{{ route('vote.initializeall', ['truncate_vote' => 1, 'truncate_voteitem' => 1]) }}" color="red"
+            confirm="本当に投票の初期設定を行う？（Vote, VoteItemを削除して再構成します）">
+            投票の初期設定（Vote, VoteItemを削除して再構成）
+        </x-element.linkbutton>
+
+
+        <div class="my-6">
+            VoteItem 投稿先発表・論文の編集 ：
+            @foreach (App\Models\VoteItem::all() as $voteitem)
+                <x-element.linkbutton href="{{ route('vote.edit_voteitem', ['voteitem' => $voteitem->id]) }}"
+                    color="cyan" size="sm" target="_blank">
+                    {{ str_replace(['【', '】'], '', $voteitem->name) }}
+                </x-element.linkbutton>
+            @endforeach
+
+        </div>
+
+        <x-element.linkbutton href="{{ route('vote.resetall', ['isclose' => 0]) }}" color="purple"
+            confirm="本当に投票データをすべてリセットする？">
+            投票データをすべてリセット
         </x-element.linkbutton>
         <br>
         どちらも、投票関係データをすべてリセットしますが、本番投票締め切り後では新規投票受付はしません(Vote→isclose=1)。
     </x-element.h1>
 
-    (VoteItem) 投稿先発表・論文の編集 ：
-    @foreach(App\Models\VoteItem::all() as $voteitem)
-        <x-element.linkbutton href="{{ route('vote.edit_voteitem', ['voteitem' => $voteitem->id]) }}" color="cyan" size="sm"
-            target="_blank">
-            {{ str_replace(['【', '】'], '', $voteitem->name) }}
-        </x-element.linkbutton>
-    @endforeach
 
     @push('localjs')
         <script src="/js/jquery.min.js"></script>
         <script src="/js/sortable.js"></script>
+        <script src="/js/openclose.js"></script>
     @endpush
 
 </div>

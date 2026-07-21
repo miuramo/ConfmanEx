@@ -5,7 +5,7 @@
                 &larr; 投票Topに戻る
             </x-element.linkbutton>
             @php
-                $votes = App\Models\Vote::where('isopen', true)->where('isclose', false)->get();
+                $votes = App\Models\Vote::where('valid', true)->where('isopen', true)->where('isclose', false)->get();
             @endphp
             <span class="mx-4"></span>
             @foreach ($votes as $vvv)
@@ -86,7 +86,7 @@
                 &larr; 投票Topに戻る
             </x-element.linkbutton>
             @php
-                $votes = App\Models\Vote::where('isopen', true)->where('isclose', false)->get();
+                $votes = App\Models\Vote::where('valid', true)->where('isopen', true)->where('isclose', false)->get();
             @endphp
             <span class="mx-4"></span>
             @foreach ($votes as $vvv)
