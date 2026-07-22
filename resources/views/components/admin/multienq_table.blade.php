@@ -22,6 +22,7 @@
 @php
     $cats = App\Models\Category::select('name', 'id')->get()->pluck('name', 'id')->toArray();
     $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
+    $accept_judges = App\Models\Accept::select('judge', 'id')->get()->pluck('judge', 'id')->toArray();
 
     $enqs = [];
     $enqans = [];
@@ -40,6 +41,7 @@
             $heads[] = $itm->name;
         }
     }
+    $heads[] = 'booth';
 @endphp
 <!-- components.admin.enqtable -->
 
@@ -101,7 +103,14 @@
                         </td>
                     @endforeach
                 @endforeach
-
+                {{-- 発表番号 --}}
+                <td class="p-1">
+                    @foreach ($paper->submits as $subm)
+                        @if ($accept_judges[$subm->accept_id] > 0)
+                            {{ $subm->booth }}
+                        @endif
+                    @endforeach
+                </td>
             </tr>
         @endforeach
     </tbody>
