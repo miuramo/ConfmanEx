@@ -1,7 +1,6 @@
 @props([
     'def_cat' => 1,
     'def_fts' => 'pdf',
-    'def_use_pid' => false,
 ])
 @php
     $cats = App\Models\Category::select('id', 'name')->get()->pluck('name', 'id')->toArray();
@@ -30,15 +29,12 @@
                 @endforeach
             </div>
             <div class="bg-orange-100 p-2">
-                <input type="radio" name="use_pid" value="1" id="labeluse_pid1"
-                    @if ($def_use_pid) checked="checked" @endif>
-                <label for="labeluse_pid1" class="dark:text-gray-300 hover:bg-orange-200">ブース記番の代わりに、PaperID (3桁)
-                    を使用する</label>
-                <span class="mx-2"></span>
-                <input type="radio" name="use_pid" value="0" id="labeluse_pid0"
-                    @if (!$def_use_pid) checked="checked" @endif>
-                <label for="labeluse_pid0"
+                <input type="radio" name="fn_field" value="booth" id="labeluse_booth">
+                <label for="labeluse_booth"
                     class="dark:text-gray-300 hover:bg-orange-200">ブース記番を使用する（注：未定義の場合、「pid+PaperID」を使用します）</label>&nbsp;
+                <span class="mx-2"></span>
+                <input type="radio" name="fn_field" value="serialnum" id="labeluse_serialnum" checked="checked">
+                <label for="labeluse_serialnum" class="dark:text-gray-300 hover:bg-orange-200">ブース記番の代わりに、シリアル値を使用する</label>
             </div>
             <div class="dark:text-gray-400">
                 ファイル名は、Prefix→ <input type="text" name="fn_prefix"

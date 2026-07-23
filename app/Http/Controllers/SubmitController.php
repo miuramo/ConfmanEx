@@ -27,6 +27,27 @@ use ZipArchive;
 class SubmitController extends Controller
 {
     
+    public function serialnum(Request $req, int $catid): string|RedirectResponse|View
+    {
+        if (!auth()->user()->can('role_any', 'pc|pub|web')) abort(403);
+
+        if ($req->method() === 'POST') {
+            if (!preg_match("/%[0-9]*d/", $req->input("print_format"))) return "ERROR: sprintfフォーマットを見直してください。" . $req->input("print_format");
+            $subs = Submit::subs_accepted($catid);
+            $num = 1 + $req->input("additional");
+            foreach ($subs as $sub) {
+                $sub->serialnum = sprintf($req->input("print_format"), $num);
+                $sub->save();
+                $num++;
+            }
+            return redirect()->route('pub.booth', ["cat" => $catid])->with('feedback.success', 'シリアル値を設定しました。');
+        }
+
+        $subs = Submit::subs_accepted($catid);
+        // info($subs);
+        return redirect()->route('pub.booth', ["cat" => $catid]);
+    }
+
     /**
      * 出版担当またはプログラムチェアによる、プログラム編成とブース設定
      */
@@ -217,21 +238,28 @@ class SubmitController extends Controller
             if (strpos($k, "filetype") === 0) $filetypes[] = $v;
         }
         // 採択submits→paper_id list
-        $accept_papers = Submit::with('paper')->whereIn("category_id", $targets)->whereHas("accept", function ($query) {
+        // $accept_papers = Submit::with('paper')->whereIn("category_id", $targets)->whereHas("accept", function ($query) {
+        //     $query->where("judge", ">", 0);
+        // })->orderBy("orderint")->pluck("booth", "paper_id")->toArray();
+        // $accept_papers_serialnumstr = Submit::with('paper')->whereIn("category_id", $targets)->whereHas("accept", function ($query) {
+        //     $query->where("judge", ">", 0);
+        // })->orderBy("orderint")->pluck("serialnumstr", "paper_id")->toArray();
+        // 採択submitsを抽出し、paper_idをキーにして、submitを値にする配列を作成する
+        $accept_submits = Submit::with('paper')->whereIn("category_id", $targets)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
-        })->orderBy("orderint")->pluck("booth", "paper_id")->toArray();
+        })->orderBy("orderint")->get()->keyBy("paper_id")->toArray();
 
         $addcount_tozip = 0;
         if (count($targets) > 0) {
             // find Target Papers
-            $papers = Paper::whereIn('id', array_keys($accept_papers))->get();
+            $papers = Paper::whereIn('id', array_keys($accept_submits))->get();
             $zipFN = 'files.zip';
             $zipstream = Zip::create($zipFN);
             foreach ($papers as $paper) {
-                if ($req->input('use_pid')) {
+                if ($req->input('fn_field') == "paper_id") {
                     $paper->addFilesToZip_ForPub($zipstream, $filetypes, $req->input("fn_prefix"), sprintf("%03d", $paper->id));
                 } else {
-                    $fn = $accept_papers[$paper->id];
+                    $fn = $accept_submits[$paper->id][$req->input('fn_field')] ?? "";
                     if (strlen($fn) < 1) $fn = sprintf("pid%03d", $paper->id);
                     $paper->addFilesToZip_ForPub($zipstream, $filetypes, $req->input("fn_prefix"), $fn);
                 }

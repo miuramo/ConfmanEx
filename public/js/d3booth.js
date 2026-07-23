@@ -47,7 +47,7 @@ $(document).ready(function () {
             "x": 670, // 最初、未配属の発表のx
             "y": yy, // sub.paper_id*100,
             "txt": sub.paper.id,
-            "txt2": sub.orderint+" "+sub.paper.title + " ["+sub.booth+"]",
+            "txt2": sub.orderint+" "+sub.paper.title + " ["+sub.booth+"]" + " " + sub.serialnum,
             "stroke": "green"
         };
         //     var gid4u = u2g[usr.uid];

@@ -58,13 +58,17 @@
                 onclick="openclose('usage')">
             </x-element.button>
             <span class="mx-2"></span>
-            <x-element.button id="toggleButton" value="ブース記番の設定画面をとじる" color='pink' size='md'
+            <x-element.button id="toggleButton" value="ブース記番の設定画面をひらく" color='pink' size='md'
                 onclick="openclose('setbooth')">
+            </x-element.button>
+            <span class="mx-2"></span>
+            <x-element.button id="toggleButton" value="シリアル値の設定画面をひらく" color='cyan' size='md'
+                onclick="openclose('setserialnum')">
             </x-element.button>
 
             <div class="hidden-content bg-green-100 p-4 mt-2 dark:text-gray-600" id="usage" style="display:none;">
                 発表の凡例： <span class="border-4 border-green-600 px-2 py-1 rounded-lg bg-white dark:text-black">PaperID
-                    orderint(通し番号) title [ブース記番]</span>
+                    orderint(通し番号) title [ブース記番] シリアル値</span>
                 <div class="my-2">
                     発表を、sessionにドラッグしてください。ドラッグ終了（自動レイアウト）時に自動保存されます。
                     ページの再読み込みをすると、orderint が更新され、最後に保存された設定を確認できます。
@@ -72,7 +76,7 @@
             </div>
 
             {{-- <div class="hidden-content bg-orange-100 p-4 mt-2 dark:text-gray-600" id="setbooth" style="display:none;"> --}}
-            <div class="bg-gray-200 p-2 mt-2 dark:text-gray-600" id="setbooth">
+            <div class="bg-gray-200 p-2 mt-2 dark:text-gray-600" id="setbooth" style="display:none;">
                 <div class="mt-2 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2">
                     <div class="mx-2 p-3 rounded-lg border-2 border-orange-400 bg-orange-200">
 
@@ -119,7 +123,19 @@
                     セッション割り当てやセッション内の順番を変更したら、再度「設定する」ボタンを押してください。なお、ブース記番はZIPダウンロード時のファイル名の一部になります。
                 </div>
             </div>
-
+            <div class="bg-gray-200 p-2 mt-2 dark:text-gray-600" id="setserialnum" style="display:none;">
+                <form action="{{ route('pub.serialnum', ['cat' => $cat]) }}" method="post" id="boothpost_serialnum">
+                    @csrf
+                    @method('post')
+                        sprintfフォーマット <input type="text" name="print_format" id="print_format" size="8"
+                            value="%03d" class="text-sm p-1 dark:text-black">
+                            <span class="mx-2"></span>
+                    追加する値 <input type="number" name="additional" min=0 max=1000 value=0 class="text-sm p-1 dark:text-black">
+                    <span class="mx-2"></span>
+                    <x-element.submitbutton value="serialnum" color="cyan">orderint + 追加する値 でシリアル値を設定する
+                    </x-element.submitbutton>
+                </form>
+            </div>
         </div>
     </div>
     <form action="{{ route('pub.booth', ['cat' => $cat]) }}" method="post" id="boothpost">

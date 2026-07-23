@@ -189,6 +189,7 @@ Route::middleware('auth')->group(function () {
     Route::post('pub/{cat}/booth', [SubmitController::class, 'booth'])->name('pub.booth');
     Route::get('pub/{cat}/boothtxt', [SubmitController::class, 'boothtxt'])->name('pub.boothtxt');
     Route::post('pub/{cat}/boothtxt', [SubmitController::class, 'boothtxt'])->name('pub.boothtxt');
+    Route::post('pub/{cat}/serialnum', [SubmitController::class, 'serialnum'])->name('pub.serialnum');
     Route::get('pub_boothmodify', [SubmitController::class, 'boothmodify'])->name('pub.boothmodify');
     Route::post('pub_zipf', [SubmitController::class, 'zipdownload'])->name('pub.zipdownload');
     Route::get('pub/{cat}/bibinfochk', [SubmitController::class, 'bibinfochk'])->name('pub.bibinfochk'); //書誌情報の確認と修正
