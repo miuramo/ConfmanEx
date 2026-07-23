@@ -67,24 +67,20 @@
         }
     @endphp
     <table class="table-auto border-collapse border border-slate-400 dark:border-slate-600 text-sm">
-        <thead>
-            <tr>
+        {{-- <thead>
+            <tr> 
                 @foreach ($headers as $n => $h)
-                    <th
-                        class="border border-slate-400 dark:border-slate-600 px-2 py-1 bg-slate-200 dark:bg-slate-700 whitespace-nowrap">
-                        {{-- ({{ $n }}) --}}
+                    <th class="border border-slate-400 dark:border-slate-600 px-2 py-1 bg-slate-200 dark:bg-slate-700 whitespace-nowrap">
                         {{ $h }}</th>
-                @endforeach
-            </tr>
-        </thead>
-        <tbody>
-            {{-- <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-100 dark:bg-slate-800' : '' }}"> --}}
-            <tr class="bg-slate-100 dark:bg-slate-800">
-                @foreach ($indices as $n => $idx)
+                @endforeach 
+                 @foreach ($indices as $n => $idx)
                     <td class="border border-slate-400 dark:border-slate-600 px-2 py-1">{{ $idx }}
                         {{ $replace_person_num[$n] ?? 'null' }}</td>
                 @endforeach
-            </tr>
+            </tr> 
+        </thead> --}}
+        <tbody>
+            {{-- <tr class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-100 dark:bg-slate-800' : '' }}"> --}}
             @for ($i = 0; $i < count($stock_headers); $i++)
                 <tr class="{{ $i % 2 === 0 ? 'bg-slate-100 dark:bg-slate-800' : '' }}">
                     @foreach ($indices as $n => $idx)
@@ -113,7 +109,7 @@
                     $name = [];
                     $ename = [];
                     foreach ($authorlist as $n => $u) {
-                        $affil[$n] = $authorlist[$n][1];
+                        $affil[$n] = str_replace('/','／', $authorlist[$n][1]);
                         $eaffil[$n] = $eauthorlist[$n][1];
                         $name[$n] = str_replace(' ', ', ', $authorlist[$n][0]);
                         $ename[$n] = $eauthorlist[$n][0];
@@ -157,8 +153,5 @@
 
         </tbody>
     </table>
-    @push('localjs')
-        <script src="/js/sortable.js"></script>
-    @endpush
 
 </x-app-layout>

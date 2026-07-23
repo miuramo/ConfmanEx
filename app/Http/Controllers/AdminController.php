@@ -202,12 +202,15 @@ class AdminController extends Controller
             return redirect()->route('admin.hiroba_index')->with('feedback.error', 'テンプレートファイルが存在しません。');
         }
     }
-    public function hiroba_excel()
+    public function hiroba_excel(int $is_tsv = 1)
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         // Formからのカテゴリ選択を配列にいれる
-        // return Excel::download(new PapersExport4Hiroba(), "hiroba.xlsx");
-        return Excel::download(new PapersExport4Hiroba(), "hiroba.tsv", \Maatwebsite\Excel\Excel::TSV);
+        if ($is_tsv) {
+            return Excel::download(new PapersExport4Hiroba(), "hiroba.tsv", \Maatwebsite\Excel\Excel::TSV);
+        } else {
+            return Excel::download(new PapersExport4Hiroba(), "hiroba.xlsx");
+        }
     }
     public function hiroba_tsv()
     {

@@ -30,26 +30,32 @@
             <x-element.linkbutton href="{{ route('admin.hiroba_template_download') }}" color="teal">
                 情報学広場登録用テンプレートファイルのダウンロード
             </x-element.linkbutton>
-            <br>
-            著者の最大人数は {{ $num_max_authors }} 人です。<br>
-
-            <x-element.linkbutton href="{{ route('admin.hiroba_tsv') }}" color="lime">
-                情報学広場登録用データ(TSV)の閲覧
-            </x-element.linkbutton>
-
-
-            <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
-                情報学広場登録用データ(TSV)のダウンロード
-            </x-element.linkbutton>
 
             <form action="{{ route('admin.hiroba_template_delete') }}" method="POST"
-                onsubmit="return confirm('本当に削除しますか？');">
+                onsubmit="return confirm('本当に削除しますか？');" class="inline-block ml-4">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded-lg text-sm">
                     情報学広場登録用テンプレートファイルの削除
                 </button>
             </form>
+
+            <br>
+
+            著者の最大人数は {{ $num_max_authors }} 人でした。<br>
+
+            <x-element.linkbutton href="{{ route('admin.hiroba_tsv') }}" color="lime">
+                情報学広場登録用データ(TSV)の閲覧
+            </x-element.linkbutton>
+            <span class="mx-2"></span>
+            <x-element.linkbutton href="{{ route('admin.hiroba_excel', ['is_tsv' => 1]) }}" color="teal">
+                情報学広場登録用データ(TSV)のダウンロード
+            </x-element.linkbutton>
+            <span class="mx-2"></span>
+            <x-element.linkbutton href="{{ route('admin.hiroba_excel', ['is_tsv' => 0]) }}" color="teal">
+                情報学広場登録用データ(Excel)のダウンロード
+            </x-element.linkbutton>
+
         </div>
         @endif
         <div class="my-4 bg-slate-300 dark:bg-slate-600 p-4 rounded-lg">

@@ -24,6 +24,13 @@ class PapersExport4Hiroba implements FromView, WithCustomCsvSettings
     }
     public function view(): View
     {
+        // Excelファイルを読み込む
+        $infile = storage_path('app/hiroba_template.xlsx');
+        // 表形式で表示する
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($infile);
+        // 配列に変換する
+        $template = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
+
         $submits = Submit::with("accept")->with("paper")->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
         })->orderBy("serialnum", "asc")->get();
@@ -31,9 +38,8 @@ class PapersExport4Hiroba implements FromView, WithCustomCsvSettings
 
         // pagenum array
         $pagenums = File::pluck("pagenum", "id")->toArray();
-        $heads = $this->headings();
 
-        return view('components.paper.excel_hiroba')->with(compact("submits","pagenums","heads"));
+        return view('components.paper.excel_hiroba')->with(compact("submits", "pagenums", "template"));
     }
     public function getCsvSettings(): array
     {
@@ -48,12 +54,35 @@ class PapersExport4Hiroba implements FromView, WithCustomCsvSettings
     public function headings(): array
     {
         return [
-            '順番', 'submission', '文献種類', '論文タイトル', '言語',
-            'キーワード', '公開日', '論文タイトル英語', 'その他タイトル', '著者所属',
-            '著者所属英語', '著者名', '著者名英語', '論文抄録', '論文抄録英語',
-            '研究会名', 'ファイル名', 'ファイル公開日', '非会員価格', '会員価格',
-            'ライセンス表記', '書誌レコードID', '雑誌名', '巻', '号',
-            '開始ページ', '終了ページ', '発行年月日', 'ページ数'
+            '順番',
+            'submission',
+            '文献種類',
+            '論文タイトル',
+            '言語',
+            'キーワード',
+            '公開日',
+            '論文タイトル英語',
+            'その他タイトル',
+            '著者所属',
+            '著者所属英語',
+            '著者名',
+            '著者名英語',
+            '論文抄録',
+            '論文抄録英語',
+            '研究会名',
+            'ファイル名',
+            'ファイル公開日',
+            '非会員価格',
+            '会員価格',
+            'ライセンス表記',
+            '書誌レコードID',
+            '雑誌名',
+            '巻',
+            '号',
+            '開始ページ',
+            '終了ページ',
+            '発行年月日',
+            'ページ数'
         ];
     }
 }

@@ -144,7 +144,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin_hiroba_template_upload', [AdminController::class, 'hiroba_template_upload'])->name('admin.hiroba_template_upload');
     Route::get('/admin_hiroba_template_download', [AdminController::class, 'hiroba_template_download'])->name('admin.hiroba_template_download');
     Route::delete('/admin_hiroba_template_delete', [AdminController::class, 'hiroba_template_delete'])->name('admin.hiroba_template_delete');
-    Route::get('/admin_hiroba_excel', [AdminController::class, 'hiroba_excel'])->name('admin.hiroba_excel');
+    Route::get('/admin_hiroba_excel/{is_tsv?}', [AdminController::class, 'hiroba_excel'])->name('admin.hiroba_excel');
     Route::get('/admin_hiroba_tsv', [AdminController::class, 'hiroba_tsv'])->name('admin.hiroba_tsv');
     Route::get('/admin_filelist', [AdminController::class, 'filelist'])->name('admin.filelist');
     Route::get('/admin_gen_dlkey', [AdminController::class, 'gen_dlkey'])->name('admin.gen_dlkey');
