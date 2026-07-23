@@ -140,7 +140,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin_zipds', [AdminController::class, 'zipdownloadstream'])->name('admin.zipstream');
     Route::post('/admin_zipds_paperids', [AdminController::class, 'zipdownloadstream_paperids'])->name('admin.zipstream_paperids');
     Route::get('/admin_paperlist_excel', [AdminController::class, 'paperlist_excel'])->name('admin.paperlist_excel');
+    Route::get('/admin_hiroba_index', [AdminController::class, 'hiroba_index'])->name('admin.hiroba_index');
+    Route::post('/admin_hiroba_template_upload', [AdminController::class, 'hiroba_template_upload'])->name('admin.hiroba_template_upload');
+    Route::get('/admin_hiroba_template_download', [AdminController::class, 'hiroba_template_download'])->name('admin.hiroba_template_download');
+    Route::delete('/admin_hiroba_template_delete', [AdminController::class, 'hiroba_template_delete'])->name('admin.hiroba_template_delete');
     Route::get('/admin_hiroba_excel', [AdminController::class, 'hiroba_excel'])->name('admin.hiroba_excel');
+    Route::get('/admin_hiroba_tsv', [AdminController::class, 'hiroba_tsv'])->name('admin.hiroba_tsv');
     Route::get('/admin_filelist', [AdminController::class, 'filelist'])->name('admin.filelist');
     Route::get('/admin_gen_dlkey', [AdminController::class, 'gen_dlkey'])->name('admin.gen_dlkey');
     Route::get('/admin_users', [AdminController::class, 'users'])->name('admin.users');

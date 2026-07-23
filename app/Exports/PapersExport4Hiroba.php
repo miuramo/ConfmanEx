@@ -9,12 +9,13 @@ use App\Models\Submit;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 /**
  * 情報学広場 ShouldAutoSize,
  */
-class PapersExport4Hiroba implements FromView, WithHeadings
+class PapersExport4Hiroba implements FromView, WithCustomCsvSettings
 {
     // protected array $targets;
     public function __construct()
@@ -25,7 +26,7 @@ class PapersExport4Hiroba implements FromView, WithHeadings
     {
         $submits = Submit::with("accept")->with("paper")->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
-        })->whereIn("category_id", [1, 2, 3])->orderBy("category_id", "asc")->orderBy("orderint", "asc")->get();
+        })->orderBy("serialnum", "asc")->get();
         // 順番=orderint  submission=paper_id
 
         // pagenum array
@@ -33,6 +34,15 @@ class PapersExport4Hiroba implements FromView, WithHeadings
         $heads = $this->headings();
 
         return view('components.paper.excel_hiroba')->with(compact("submits","pagenums","heads"));
+    }
+    public function getCsvSettings(): array
+    {
+        return [
+            'delimiter' => "\t",
+            'enclosure' => '',
+            'line_ending' => "\n",
+            'use_bom' => true,
+        ];
     }
 
     public function headings(): array

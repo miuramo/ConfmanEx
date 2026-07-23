@@ -13,6 +13,9 @@
     $startpage = 1;
     $endpage = 0;
 @endphp
+
+
+
 <table class="min-w-full divide-y divide-gray-200">
     <thead>
         <tr>

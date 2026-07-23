@@ -59,6 +59,20 @@ class Submit extends Model
     }
 
     /**
+     * 採択されたなかで、著者人数の最大値を調べる（カテゴリによらず）
+     */
+    public static function max_author_count(): int
+    {
+        $max = Submit::whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->with('paper')->get()->map(function ($submit) {
+            // $submit->paper->authorlist の行数を数える
+            return count(preg_split('/\r\n|\r|\n/', $submit->paper->authorlist));
+        })->max();
+        return $max ?? 0;
+    }
+
+    /**
      * このSubmitに関連するReviewの点数を更新する
      */
     public function updateScoreStat(): void

@@ -163,12 +163,72 @@ class AdminController extends Controller
     /**
      * 情報学広場
      */
+    public function hiroba_index()
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        return view('admin.hiroba_index');
+    }
+    public function hiroba_template_upload(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        if ($req->hasFile('template_file')) {
+            $file = $req->file('template_file');
+            $filename = 'hiroba_template.xlsx';
+            // $path = storage_path('app/' . $filename);
+            $file->move(storage_path('app'), $filename);
+            return redirect()->route('admin.hiroba_index')->with('feedback.success', 'テンプレートファイルをアップロードしました。');
+        } else {
+            return redirect()->route('admin.hiroba_index')->with('feedback.error', 'テンプレートファイルが選択されていません。');
+        }
+    }
+    public function hiroba_template_download()
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        $filename = storage_path('app/hiroba_template.xlsx');
+        if (file_exists($filename)) {
+            return response()->download($filename, 'hiroba_template.xlsx');
+        } else {
+            return redirect()->route('admin.hiroba_index')->with('feedback.error', 'テンプレートファイルが存在しません。');
+        }
+    }
+    public function hiroba_template_delete()
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        $filename = storage_path('app/hiroba_template.xlsx');
+        if (file_exists($filename)) {
+            unlink($filename);
+            return redirect()->route('admin.hiroba_index')->with('feedback.success', 'テンプレートファイルを削除しました。');
+        } else {
+            return redirect()->route('admin.hiroba_index')->with('feedback.error', 'テンプレートファイルが存在しません。');
+        }
+    }
     public function hiroba_excel()
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         // Formからのカテゴリ選択を配列にいれる
-        $targets =  [1, 2, 3];
-        return Excel::download(new PapersExport4Hiroba(), "hiroba.xlsx");
+        // return Excel::download(new PapersExport4Hiroba(), "hiroba.xlsx");
+        return Excel::download(new PapersExport4Hiroba(), "hiroba.tsv", \Maatwebsite\Excel\Excel::TSV);
+    }
+    public function hiroba_tsv()
+    {
+        if (!auth()->user()->can('role_any', 'pc')) abort(403);
+        // Excelファイルを読み込む
+        $infile = storage_path('app/hiroba_template.xlsx');
+        // 表形式で表示する
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($infile);
+        // 配列に変換する
+        $template = $spreadsheet->getActiveSheet()->toArray(null, true, true, false);
+
+        $submits = Submit::with("accept")->with("paper")->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->orderBy("serialnum", "asc")->get();
+        // 順番=orderint  submission=paper_id
+
+        // pagenum array
+        $pagenums = File::pluck("pagenum", "id")->toArray();
+
+        // 配列をbladeに渡す
+        return view('admin.hiroba_tsv')->with(compact("template", "submits", "pagenums"));
     }
 
     /**

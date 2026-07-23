@@ -176,8 +176,12 @@
 
     </div>
 
-    <x-element.h1> <x-element.linkbutton href="{{ route('admin.hiroba_excel') }}" color="teal">
-            情報学広場登録用Excel Download
+    <x-element.h1> 
+        <x-element.linkbutton href="{{ route('admin.hiroba_index') }}" color="teal">
+            情報学広場登録用データの生成
+        </x-element.linkbutton>
+        <x-element.linkbutton href="{{ route('admin.hiroba_tsv') }}" color="teal">
+            情報学広場登録用TSVの生成
         </x-element.linkbutton>
     </x-element.h1>
 
