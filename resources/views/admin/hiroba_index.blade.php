@@ -25,46 +25,45 @@
             <span class="text-red-600">情報学広場登録用テンプレートファイル (hiroba_template.xlsx) が存在しません。<br>
                 まず、テンプレートファイルをアップロードしてください。</span>
         @else
-        <div class="my-4 bg-cyan-100 dark:bg-slate-600 p-4 rounded-lg">
-            テンプレートファイル(xlsx) がアップロードされています。
-            <x-element.linkbutton href="{{ route('admin.hiroba_template_download') }}" color="teal">
-                情報学広場登録用テンプレートファイルのダウンロード
-            </x-element.linkbutton>
+            <div class="my-4 bg-cyan-100 dark:bg-slate-600 p-4 rounded-lg">
+                テンプレートファイル(xlsx) がアップロードされています。
+                <x-element.linkbutton href="{{ route('admin.hiroba_template_download') }}" color="cyan">
+                    テンプレートファイルのダウンロード
+                </x-element.linkbutton>
 
-            <form action="{{ route('admin.hiroba_template_delete') }}" method="POST"
-                onsubmit="return confirm('本当に削除しますか？');" class="inline-block ml-4">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded-lg text-sm">
-                    情報学広場登録用テンプレートファイルの削除
-                </button>
-            </form>
+                <form action="{{ route('admin.hiroba_template_delete') }}" method="POST"
+                    onsubmit="return confirm('本当に削除しますか？');" class="inline-block ml-4">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded-lg text-sm">
+                        テンプレートファイルの削除
+                    </button>
+                </form>
 
-            <br>
+                <div class="my-2 mx-2">
+                    <x-element.linkbutton href="{{ route('admin.hiroba_tsv') }}" color="lime">
+                        情報学広場登録用データ(TSV)の閲覧
+                    </x-element.linkbutton>
+                    <span class="mx-2"></span>
+                    <x-element.linkbutton href="{{ route('admin.hiroba_excel', ['is_tsv' => 1]) }}" color="teal">
+                        情報学広場登録用データ(TSV)のダウンロード
+                    </x-element.linkbutton>
+                    <span class="mx-2"></span>
+                    <x-element.linkbutton href="{{ route('admin.hiroba_excel', ['is_tsv' => 0]) }}" color="teal">
+                        情報学広場登録用データ(Excel)のダウンロード
+                    </x-element.linkbutton>
 
-            著者の最大人数は {{ $num_max_authors }} 人でした。<br>
+                    <div class="mt-4 text-sm text-gray-400">最大著者人数は {{ $num_max_authors }} 人でした。</div>
+                </div>
 
-            <x-element.linkbutton href="{{ route('admin.hiroba_tsv') }}" color="lime">
-                情報学広場登録用データ(TSV)の閲覧
-            </x-element.linkbutton>
-            <span class="mx-2"></span>
-            <x-element.linkbutton href="{{ route('admin.hiroba_excel', ['is_tsv' => 1]) }}" color="teal">
-                情報学広場登録用データ(TSV)のダウンロード
-            </x-element.linkbutton>
-            <span class="mx-2"></span>
-            <x-element.linkbutton href="{{ route('admin.hiroba_excel', ['is_tsv' => 0]) }}" color="teal">
-                情報学広場登録用データ(Excel)のダウンロード
-            </x-element.linkbutton>
-
-        </div>
+            </div>
         @endif
         <div class="my-4 bg-slate-300 dark:bg-slate-600 p-4 rounded-lg">
             テンプレートファイル(xlsx)のアップロード／差し替え
             <form action="{{ route('admin.hiroba_template_upload') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="file" name="template_file" accept=".xlsx" required>
-                <button type="submit"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">アップロード</button>
+                <x-element.submitbutton color="cyan">アップロード</x-element.submitbutton>
             </form>
         </div>
 
