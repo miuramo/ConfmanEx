@@ -92,7 +92,7 @@
                         $affil[$n] = str_replace('/','／', $authorlist[$n][1]);
                         $eaffil[$n] = $eauthorlist[$n][1];
                         $name[$n] = str_replace(' ', ', ', $authorlist[$n][0]);
-                        $ename[$n] = $eauthorlist[$n][0];
+                        $ename[$n] = ucwords(strtolower($eauthorlist[$n][0])); // ucwordsで、頭文字だけ大文字にする
                     }
                     $abst = $sub->paper->abst;
                     $eabst = $sub->paper->eabst;
