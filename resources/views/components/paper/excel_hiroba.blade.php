@@ -83,6 +83,12 @@
                     $pdf_file = "IPSJ-SSS{$year}{$sub->serialnum}.pdf";
                     $authorlist = $sub->paper->authorlist_ary("authorlist",true);
                     $eauthorlist = $sub->paper->authorlist_ary("eauthorlist",true);
+                    $keywords = $sub->paper->keyword;
+                    // もし、和文が含まれていたら、カンマを全角に置換する。
+                    if (preg_match('/[一-龠ぁ-ゔァ-ヴー々〆〤]/u', $keywords)) {
+                        $keywords = str_replace(',', '，', $keywords);
+                        $keywords = str_replace(' ', '', $keywords);
+                    }
 
                     $affil = [];
                     $eaffil = [];
