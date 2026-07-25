@@ -99,6 +99,14 @@
                         $eaffil[$n] = $eauthorlist[$n][1];
                         $name[$n] = str_replace(' ', ', ', $authorlist[$n][0]);
                         $ename[$n] = ucwords(strtolower($eauthorlist[$n][0])); // ucwordsで、頭文字だけ大文字にする
+                        // もし、$ename[$n]にカンマが含まれていなかったら、スペースで区切って、最後の単語を先頭にもってきて、カンマをつける
+                        if (strpos($ename[$n], ',') === false) {
+                            $words = explode(' ', $ename[$n]);
+                            if (count($words) > 1) {
+                                $last = array_pop($words);
+                                $ename[$n] = $last . ', ' . implode(' ', $words);
+                            }
+                        }
                     }
                     $abst = $sub->paper->abst;
                     $eabst = $sub->paper->eabst;
