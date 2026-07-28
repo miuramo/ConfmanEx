@@ -45,7 +45,7 @@
     </div>
 
     <div class="px-4 py-4">
-        <table class="border-lime-400 border-2">
+        <table class="border-lime-400 border-2 sortable" id="fileinfotable">
             <tr class="bg-lime-300">
                 @php
                     $hs = [
@@ -152,6 +152,7 @@ if($file->valid && $file->deleted == 0) {
         <script src="/js/openclose.js"></script>
         <script src="/js/crud_table.js"></script>
         <script src="/js/crud_where.js"></script>
+        <script src="/js/sortable.js"></script>
     @endpush
     <form action="{{ route('admin.crudpost') }}" method="post" id="admincrudpost">
         @csrf
@@ -164,13 +165,6 @@ if($file->valid && $file->deleted == 0) {
         var sizecols = 90; // 横幅
     </script>
 
-    {{-- @push('localjs')
-        <script src="/js/jquery.min.js"></script>
-        <script src="https://d3js.org/d3.v5.min.js"></script>
-        <script src="/js/d3groupedit.js"></script>
-        <script src="/js/d3contextmenu.js"></script>
-        <script src="/js/d3booth.js"></script>
-    @endpush --}}
     {{-- <script>
         var subpapers = {!! json_encode($subs) !!};
     </script> --}}
