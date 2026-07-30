@@ -41,7 +41,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
 
 $application = $app->create();
 
-$envFile = getenv('APP_ENV_FILE') ?: '.env';
+$envFile = getenv('X_APP_ENV_FILE') ?: '.env';
 $application->loadEnvironmentFrom(basename($envFile));
 
 return $application;
