@@ -210,6 +210,8 @@ Route::middleware('auth')->group(function () {
     Route::post('mt/import', [MailTemplateController::class, 'import'])->name('mt.import');
     Route::get('mtsearch', [MailTemplateController::class, 'mtsearch'])->name('mt.mtsearch');
 
+    Route::get('/admin_replace_setting', [AdminController::class, 'replace_setting'])->name('admin.replace_setting');
+    Route::post('/admin_replace_setting', [AdminController::class, 'replace_setting'])->name('admin.replace_setting');
     Route::get('/admin_crud', [AdminController::class, 'crud'])->name('admin.crud');
     Route::get('/admin_crudcopy', [AdminController::class, 'crudcopy'])->name('admin.crudcopy');
     Route::get('/admin_cruddelete', [AdminController::class, 'cruddelete'])->name('admin.cruddelete');

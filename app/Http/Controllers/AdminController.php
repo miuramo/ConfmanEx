@@ -36,6 +36,44 @@ use ZipArchive;
 
 class AdminController extends Controller
 {
+    public function replace_setting(Request $req)
+    {
+        if (!auth()->user()->can('role_any', 'admin|manager|pc')) abort(403);
+
+        $pre = $req->old('pre', '');
+        $post = $req->old('post', '');
+        $count = 0;
+
+        if ($req->isMethod('post')) {
+            $pre = (string) $req->input('pre', '');
+            $post = (string) $req->input('post', '');
+
+            if ($pre === '') {
+                return redirect()->back()->with('feedback.error', '置換前の文字列を入力してください。');
+            }
+
+            $settings = Setting::all();
+            foreach ($settings as $setting) {
+                if (!isset($setting->value)) {
+                    continue;
+                }
+
+                $original = (string) $setting->value;
+                $updated = str_replace($pre, $post, $original);
+                if ($updated !== $original) {
+                    $setting->value = $updated;
+                    $setting->save();
+                    $count++;
+                }
+            }
+
+            return redirect()->route('admin.replace_setting')->with('feedback.success', "設定値の一括置換を {$count} 件実行しました。")
+                ->withInput($req->only(['pre', 'post']));
+        }
+
+        return view('admin.replace_setting')->with(compact('pre', 'post', 'count'));
+    }
+
     public function dashboard()
     {
         if (!auth()->user()->can('role_any', 'admin|manager')) abort(403);

@@ -243,6 +243,17 @@
             削除済みファイル管理
         </x-element.linkbutton>
         <span class="px-5"></span>
+        <x-element.linkbutton href="{{ route('admin.gen_dlkey') }}" color="yellow"
+            confirm="AWARDJSON_DLKEYの先頭4文字が、CONFTITLE_YEARと異なる場合のみ、変更します。変更してよいですか？">
+            AWARDJSON_DLKEYの変更
+        </x-element.linkbutton>
+        <span class="px-5"></span>
+
+        <x-element.linkbutton href="{{ route('admin.replace_setting') }}" color="cyan">
+            設定の置換（年次処理）
+        </x-element.linkbutton>
+        <span class="px-5"></span>
+
         <x-element.linkbutton href="{{ route('admin.resetpaper') }}" color="red"
             confirm="ユーザやロール、設定、アクセスログ以外、すべて消えます。ファイルを含め、事前にバックアップをとってください。本当に、リセットしてよいですか？">
             投稿をすべてリセットする
@@ -256,11 +267,6 @@
         <x-element.linkbutton href="{{ route('admin.resetaccesslog') }}" color="orange"
             confirm="アクセスログが消えます。本当に、リセットしてよいですか？">
             アクセスログをすべてリセットする
-        </x-element.linkbutton>
-        <span class="px-5"></span>
-        <x-element.linkbutton href="{{ route('admin.gen_dlkey') }}" color="yellow"
-            confirm="AWARDJSON_DLKEYの先頭4文字が、CONFTITLE_YEARと異なる場合のみ、変更します。変更してよいですか？">
-            AWARDJSON_DLKEYの変更
         </x-element.linkbutton>
     </x-element.h1>
 

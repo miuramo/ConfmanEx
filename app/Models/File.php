@@ -539,6 +539,10 @@ class File extends Model
     public static function getRealFileNames(): array
     {
         $parentdir = storage_path(File::apf());
+        // もし、フォルダがなければ、作成する
+        if (!file_exists($parentdir)) {
+            mkdir($parentdir, 0777, true);
+        }
         // ファイル一覧
         $files = scandir($parentdir);
         $files = array_diff($files, ['.', '..', '.DS_Store', 'dump.sql', 'nofile.png', 'passdumpsql.zip']);
