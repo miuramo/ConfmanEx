@@ -244,7 +244,7 @@
         </x-element.linkbutton>
         <span class="px-5"></span>
         <x-element.linkbutton href="{{ route('admin.gen_dlkey') }}" color="yellow"
-            confirm="AWARDJSON_DLKEYの先頭4文字が、CONFTITLE_YEARと異なる場合のみ、変更します。変更してよいですか？">
+            confirm="現在のAWARDJSON_DLKEYは {{ \App\Models\Setting::getval('AWARDJSON_DLKEY') }} です。更新してよいですか？">
             AWARDJSON_DLKEYの変更
         </x-element.linkbutton>
         <span class="px-5"></span>

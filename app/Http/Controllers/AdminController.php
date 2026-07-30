@@ -778,15 +778,15 @@ class AdminController extends Controller
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
         // 現在の設定
         $current = Setting::getval("AWARDJSON_DLKEY");
-        // 現在の年設定
+        // 最初の4文字を取得
         $year = Setting::getval("CONFTITLE_YEAR");
-        if (substr($current, 0, 4) == $year) {
-            return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.error', '今年のAWARDJSON_DLKEYはすでに生成されているため、生成をキャンセルしました。');
-        }
-        $temporal_key = Setting::getval("CONFTITLE_YEAR") . Str::random(10);
+        // 年を数値として、インクリメント
+        $year = intval($year);
+        $year++;
+        $temporal_key = $year . Str::random(10);
         Setting::setval("AWARDJSON_DLKEY", $temporal_key);
 
-        return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.success', 'ダウンロードキーを生成しました。');
+        return redirect()->route('role.top', ['role' => 'admin'])->with('feedback.success', "ダウンロードキーを {$temporal_key} に変更しました。");
     }
 
 
