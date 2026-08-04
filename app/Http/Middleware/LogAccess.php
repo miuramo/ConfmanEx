@@ -65,8 +65,8 @@ class LogAccess
             ]);
             $accessLog->save();
         } catch (\Exception $e) {
-            info("LogAccess Middleware Error: " . $e->getMessage());
-            info($allreq);
+            Log::channel('single')->info("LogAccess Middleware Error: " . $e->getMessage());
+            Log::channel('single')->info($allreq);
         }
 
         if ($uid > 0 && $url == '/login' && $request->method() == 'POST') {
