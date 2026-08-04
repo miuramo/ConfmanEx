@@ -13,6 +13,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->prepend(\App\Http\Middleware\BlockSuspiciousRequests::class);
         $middleware->append(\App\Http\Middleware\LogAccess::class);
         $middleware->append(\App\Http\Middleware\ReplaceKutenMiddleware::class);
         $middleware->append(\App\Http\Middleware\TrustProxies::class);
