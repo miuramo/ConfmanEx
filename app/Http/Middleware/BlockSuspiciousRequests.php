@@ -19,7 +19,8 @@ class BlockSuspiciousRequests
      * PHP/シェルインジェクション検出パターン（大文字小文字を区別しない）
      */
     private const INJECTION_PATTERNS = [
-        '<?php',
+        '<?',
+        'php_shell_exec(',
         '<?=',
         'phpinfo(',
         'eval(',
