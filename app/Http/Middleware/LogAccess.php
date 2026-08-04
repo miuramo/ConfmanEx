@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\LogAccess as ModelsLogAccess; // ミドルウェアのLogAccessとかぶるので、別名
+use Illuminate\Support\Facades\Log;
 
 class LogAccess
 {
@@ -66,7 +67,7 @@ class LogAccess
             $accessLog->save();
         } catch (\Exception $e) {
             Log::channel('single')->info("LogAccess Middleware Error: " . $e->getMessage());
-            Log::channel('single')->info($allreq);
+            Log::channel('single')->info(implode(', ', $allreq));
         }
 
         if ($uid > 0 && $url == '/login' && $request->method() == 'POST') {
