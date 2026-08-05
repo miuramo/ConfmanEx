@@ -74,23 +74,23 @@ class VoteController extends Controller
                         return view('vote.activate_error')->with('reason', '現在ログインしているアカウントには、すでに別の投票権が紐づけられています。そのため、この投票トークンを有効化することはできません。');
                     } else {
                         // 以前と同じトークンなので、そのまま投票ページに遷移する
-                        info("既に有効化済みのトークンでリダイレクト: " . $token);
+                        Log::channel("single")->info("既に有効化済みのトークンでリダイレクト: " . $token);
                         return redirect('/vote'); // ->with('feedback.success', '注：この投票トークンは以前有効化されています。');
                     }
                 }
                 // ユーザーIDを設定して有効化
-                info("ログイン済みユーザーに投票権を紐付け - User ID: " . auth()->id() . ", Token: " . $token);
+                Log::channel("single")->info("ログイン済みユーザーに投票権を紐付け - User ID: " . auth()->id() . ", Token: " . $token);
                 $ticket->user_id = auth()->id();
             } else {
                 // 未ログインユーザーの場合、Cookieに投票トークンを設定
-                info("未ログインユーザーのCookieにトークンを設定: " . $token);
+                Log::channel("single")->info("未ログインユーザーのCookieにトークンを設定: " . $token);
                 $this->setSecureVoteTokenCookie($token);
             }
             $ticket->activated = true;
             $ticket->save();
-            info("チケット有効化完了 - ID: " . $ticket->id . ", Token: " . $token);
+            Log::channel("single")->info("チケット有効化完了 - ID: " . $ticket->id . ", Token: " . $token);
         } else {
-            info("無効なチケットのため処理をスキップ - Token: " . $token . ", Valid: " . ($ticket->valid ? 'true' : 'false'));
+            Log::channel("single")->info("無効なチケットのため処理をスキップ - Token: " . $token . ", Valid: " . ($ticket->valid ? 'true' : 'false'));
             return view('vote.activate_error')->with('reason', 'この投票トークンは無効です。');
         }
         return redirect('/vote')->with('feedback.success', '投票権が有効化されました。');
@@ -110,17 +110,18 @@ class VoteController extends Controller
         } else {
             $uid = null;
             $cookie_token = Cookie::get('vote_ticket_token');
-            info("vote - Cookieから投票トークンを取得: " . ($cookie_token ? $cookie_token : 'null'));
+            Log::channel("single")->info("vote - Cookieから投票トークンを取得: " . ($cookie_token ? $cookie_token : 'null'));
 
             // Cookie取得失敗時の詳細ログ
             if (!$cookie_token) {
-                info("vote - Cookieが存在しない理由の可能性: ブラウザでCookie無効、HTTPS/HTTP不一致、ドメイン不一致");
+                Log::channel("single")->info("vote - Cookieが存在しない理由の可能性: ブラウザでCookie無効、HTTPS/HTTP不一致、ドメイン不一致");
+                return view('vote.vote_error')->with('reason', 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。投票トークンをアカウントに紐づけている場合は、ログインしてください。');
             }
 
             $ticket = VoteTicket::where('token', $cookie_token)->where('activated', true)->where('valid', true)->first();
             if (!$ticket) {
-                info("vote - 有効なチケットが見つからない: Token=" . ($cookie_token ? $cookie_token : 'null'));
-                return view('vote.vote_error')->with('reason', 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。投票トークンをアカウントに紐づけている場合は、ログインしてください。');
+                Log::channel("single")->info("vote - 有効なチケットが見つからない: Token=" . ($cookie_token ? $cookie_token : 'null'));
+                return view('vote.vote_error')->with('reason', 'Cookieから投票トークンを取得しましたが、有効なチケットが見つかりませんでした。投票トークンをアカウントに紐づけている場合は、ログインしてください。');
             }
         }
         if (!$vote->isopen || $vote->isclose) {
@@ -318,8 +319,6 @@ class VoteController extends Controller
         if (!auth()->user()->can('role_any', 'award')) abort(403);
         // pid2booth
         $pid2booth = Submit::where('category_id', $req->input('category_id'))->select('paper_id', 'booth')->get()->pluck('booth', 'paper_id')->toArray();
-        // info($pid2booth);
-        // info($req->all());
         if ($req->has('pid_str')) {
             $pid_str = $req->input('pid_str');
             $pids = array_map('trim', explode(',', $pid_str));
@@ -369,7 +368,7 @@ class VoteController extends Controller
     private function clearVoteTokenCookie()
     {
         Cookie::queue(Cookie::forget('vote_ticket_token'));
-        info("投票トークンCookieを削除しました");
+        Log::channel("single")->info("投票トークンCookieを削除しました");
     }
 
     /**
@@ -394,6 +393,6 @@ class VoteController extends Controller
             'Strict'
         );
 
-        info("セキュアCookie設定完了 - Token: " . $token . ", 有効期限: " . $minutes . "分, Secure: " . ($secure ? 'true' : 'false'));
+        Log::channel("single")->info("セキュアCookie設定完了 - Token: " . $token . ", 有効期限: " . $minutes . "分, Secure: " . ($secure ? 'true' : 'false'));
     }
 }
