@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
@@ -37,17 +38,16 @@ class VoteController extends Controller
             }
         } else {
             $cookie_token = Cookie::get('vote_ticket_token');
-            info("index - Cookieから投票トークンを取得: " . ($cookie_token ? $cookie_token : 'null'));
 
             // Cookie取得失敗時の詳細ログ
             if (!$cookie_token) {
-                info("index - Cookieが存在しない理由の可能性: ブラウザでCookie無効、HTTPS/HTTP不一致、ドメイン不一致");
+                return view('vote.vote_error')->with('reason', 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。投票トークンをアカウントに紐づけている場合は、ログインしてください。');
             }
 
             $ticket = VoteTicket::where('token', $cookie_token)->where('activated', true)->where('valid', true)->first();
-            if (!$ticket) {
-                info("index - 有効なチケットが見つからない: Token=" . ($cookie_token ? $cookie_token : 'null'));
-                return view('vote.vote_error')->with('reason', 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。投票トークンをアカウントに紐づけている場合は、ログインしてください。');
+            if ($cookie_token && !$ticket) {
+                Log::channel("single")->info("index - 有効なチケットが見つからない: Token=" . ($cookie_token ? $cookie_token : 'null'));
+                return view('vote.vote_error')->with('reason', 'Cookieから投票トークンを取得しましたが、有効なチケットが見つかりませんでした。投票トークンをアカウントに紐づけている場合は、ログインしてください。');
                 // abort(403, 'メールで届く投票URLをクリックしてから、同じブラウザで、こちらの投票ページに遷移してください。');
             }
         }
