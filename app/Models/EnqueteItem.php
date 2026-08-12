@@ -9,6 +9,16 @@ class EnqueteItem extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'enquete_id',
+        'orderint',
+        'name',
+        'desc',
+        'content',
+        'contentafter',
+        'is_mandatory',
+    ];
+
     public function enquete()
     {
         return $this->belongsTo(Enquete::class);

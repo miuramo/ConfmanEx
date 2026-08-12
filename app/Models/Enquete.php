@@ -13,6 +13,13 @@ class Enquete extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'showonpaperindex',
+        'showonreviewerindex',
+        'withpaper',
+    ];
+
     public function items()
     {
         // 並び順を orderint にする

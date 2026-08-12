@@ -10,6 +10,15 @@ class EventConfig extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'event_id',
+        'enquete_id',
+        'orderint',
+        'openstart',
+        'openend',
+        'valid',
+    ];
+
     // イベントID に対応するアンケートIDから、関連するEnqueteItemsを取得
     public static function getEnqueteItems(int $event_id): array
     {
@@ -34,15 +43,22 @@ class EventConfig extends Model
     // 参加申込時の選択項目について、テキストではなく選択肢番号(1,2,3)で返す。
     public static function getEnqueteAnswersBySelectionNumber(int $event_id, int $user_id): array
     {
-        $answers = EventConfig::getEnqueteAnswers($event_id, $user_id);
         $enqids = EventConfig::where('event_id', $event_id)->pluck('enquete_id')->toArray();
         if (count($enqids) == 0) {
             return []; // 空のコレクションを返す
         }
-        $answers = EnqueteAnswer::whereIn('enquete_id', $enqids)->get();
+
+        $answers = EnqueteAnswer::whereIn('enquete_id', $enqids)
+            ->where('user_id', $user_id)
+            ->get();
+
         $key_selids = [];
         foreach ($answers as $ans) {
             $item = EnqueteItem::find($ans->enquete_item_id);
+            if (!$item) {
+                continue;
+            }
+
             $sel_options = $item->selections();
             $value_id = array_flip($sel_options);
             if (isset($value_id[$ans->valuestr])) {
