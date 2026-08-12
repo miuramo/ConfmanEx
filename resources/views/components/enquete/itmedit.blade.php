@@ -36,6 +36,10 @@
         <span class="text-{{ $noinputcolor }}-600 font-extrabold">{{ $descmanda }}</span>
         
         {{ $itm->desc }} →
+
+        <div class="text-lg text-gray-400 dark:text-gray-500 invisible debug-f1">
+            {{ $itm->name }}
+        </div>
     </td>
     @if ($type == 'selection')
         <td id="{{ $itm->name }}_answer" class="text-xl p-4">

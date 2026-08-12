@@ -108,6 +108,19 @@
                 }
             }
         }
+
+        var debug_mode = false;
+        // F1キーを押したら、デバッグモードに切り替える
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'F1') {
+                debug_mode = !debug_mode;
+                if (debug_mode) {
+                    $(".debug-f1").removeClass('invisible');
+                } else {
+                    $(".debug-f1").addClass('invisible');
+                }
+            }
+        });
     </script>
 
     @push('localjs')

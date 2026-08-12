@@ -107,7 +107,8 @@
                                         @if ($reg->submitted_at == null)
                                             <span class="text-red-500 font-extrabold text-center">無効（まだ申込は完了していません）</span>
                                         @else
-                                            <span class="text-red-500 font-extrabold text-center">無効（修正後の入力内容に問題があるか、編集画面で完了ボタンを押していません。「継続する」画面で参加登録を再度完了させてください。）</span>
+                                            <span
+                                                class="text-red-500 font-extrabold text-center">無効（修正後の入力内容に問題があるか、編集画面で完了ボタンを押していません。「継続する」画面で参加登録を再度完了させてください。）</span>
                                         @endif
                                     @endif
                                 </td>
@@ -123,13 +124,15 @@
                                 </tr>
                                 <tr>
                                     <td class="border px-4 py-2 dark:text-gray-100 text-center">申込日時</td>
-                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">{{ $reg->submitted_at }}</td>
+                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">{{ $reg->submitted_at }}
+                                    </td>
                                 </tr>
-                                @if($reg->submitted_at != $reg->updated_at)
-                                <tr>
-                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">申込更新日時</td>
-                                    <td class="border px-4 py-2 dark:text-gray-100 text-center">{{ $reg->updated_at }}</td>
-                                </tr>
+                                @if ($reg->submitted_at != $reg->updated_at)
+                                    <tr>
+                                        <td class="border px-4 py-2 dark:text-gray-100 text-center">申込更新日時</td>
+                                        <td class="border px-4 py-2 dark:text-gray-100 text-center">{{ $reg->updated_at }}
+                                        </td>
+                                    </tr>
                                 @endif
                                 <tr>
                                     <td class="border px-4 py-2 dark:text-gray-100 text-center">申込種別</td>
@@ -172,6 +175,72 @@
 
         </div>
 
+
+        @php
+            if ($reg) {
+                $enqans = $reg->enqans();
+                $OFFSET = 0; // paper_idのオフセット値
+                $uid = $reg->user_id; // ユーザID
+                $independently_editable_enqs = \App\Models\Enquete::needForRegistIndependentlyEditable();
+            } else {
+                $independently_editable_enqs = ['all' => [], 'canedit_idx' => [], 'readonly_idx' => [], 'until' => []];
+            }
+        @endphp
+
+        @if (empty($independently_editable_enqs['all']) || !$reg || !$reg->valid)
+        @else
+            <div
+                class="text-lg bg-lime-500 rounded-lg dark:bg-slate-800 dark:text-gray-400 p-3 mt-6 text-white font-bold">
+                関連アンケートの回答修正（参加登録完了後、参加登録本体とは個別に修正できます。）
+            </div>
+            <div class="mx-6">
+
+                @foreach ($independently_editable_enqs['all'] as $enq)
+                    <a name="enq_{{ $enq->id }}"></a>
+                    <div
+                        class="text-lg mt-5 mb-1 p-3 bg-cyan-200 rounded-lg dark:bg-slate-800 dark:text-gray-400
+                @isset($independently_editable_enqs['canedit_idx'][$enq->id])
+                    hover:bg-cyan-300 dark:hover:bg-lime-800
+                @endisset                 
+                 ">
+                        {{ $enq->name }}
+                        @isset($enqs['readonly_idx'][$enq->id])
+                            <span class="mx-10"></span>
+                            <span class="text-red-500 px-4">修正期限を過ぎています</span>
+                            <x-element.linkbutton2
+                                href="{{ route('enq.preview', ['enq' => $enq->id, 'key' => $enq->getkey(7)]) }}"
+                                size="sm" color="cyan" target="_blank">質問項目をみる</x-element.linkbutton2>
+                        @else
+                            <x-element.gendospan>{{ $independently_editable_enqs['until'][$enq->id] }}まで修正可</x-element.gendospan>
+                        @endisset
+                    </div>
+                    @if ($enq->showonpaperindex)
+                        <div class="mx-10">
+                            @isset($independently_editable_enqs['canedit_idx'][$enq->id])
+                                <form action="{{ route('enquete.update', ['paper' => $OFFSET + $uid, 'enq' => $enq]) }}"
+                                    method="post" id="enqform{{ $enq->id }}">
+                                    @csrf
+                                    @method('put')
+                                    <input type="hidden" name="paper_id" value="{{ $OFFSET + $uid }}">
+                                    <input type="hidden" name="enq_id" value="{{ $enq->id }}">
+                                    <input type="hidden" name="user_id" value="{{ $OFFSET + $uid }}">
+                                    {{-- ここで、参加登録について、実際のユーザではなく、代理捜査の場合の対象ユーザIDを入れる --}}
+                                    <x-enquete.edit :enq="$enq" :enqans="$enqans">
+                                    </x-enquete.edit>
+                                </form>
+                            @else
+                                <x-enquete.view :enq="$enq" :enqans="$enqans">
+                                </x-enquete.view>
+                            @endisset
+                        </div>
+                    @endif
+                @endforeach
+            </div>
+        @endif
+
+
+
+
     </div>
 
     <script>
@@ -195,6 +264,18 @@
                 }
             }
         }
+        var debug_mode = false;
+        // F1キーを押したら、デバッグモードに切り替える
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'F1') {
+                debug_mode = !debug_mode;
+                if (debug_mode) {
+                    $(".debug-f1").removeClass('invisible');
+                } else {
+                    $(".debug-f1").addClass('invisible');
+                }
+            }
+        });
     </script>
 
     @push('localjs')

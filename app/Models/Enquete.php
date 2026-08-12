@@ -96,6 +96,44 @@ class Enquete extends Model
         ];
     }
     /**
+     * 参加登録関連アンケート (is_independently_editable = true) のみを返す
+     */
+    public static function needForRegistIndependentlyEditable(): array
+    {
+        // Enquete.withpaper = false のとき、参加登録関連のアンケートとみなす。
+        $forReg_enqids = Enquete::where('withpaper', false)->where('is_independently_editable', true)->pluck('id')->toArray();
+        $configs = EnqueteConfig::where('valid', 1)->orderBy('openstart', 'desc')->get();
+        $canedit = [];
+        $readonly = [];
+        $until = []; //enqid=>deadline
+        $all = [];
+        $canedit_idx = [];
+        $readonly_idx = [];
+        foreach ($configs as $config) {
+            // Enquete.withpaper = false のとき、参加登録関連のアンケートとみなす。
+            if (!in_array($config->enquete_id, $forReg_enqids)) continue; // 参加登録関連のアンケート以外は除外する
+            if (Enquete::checkdayduration($config->openstart, $config->openend)) {
+                $enq = Enquete::with('items')->find($config->enquete_id);
+                $canedit[] = $enq;
+                $canedit_idx[$enq->id] = $enq->id;
+            } else {
+                $enq = Enquete::with('items')->find($config->enquete_id);
+                $readonly[] = $enq;
+                $readonly_idx[$enq->id] = $enq->id;
+            }
+            $until[$enq->id] = Enquete::mm_dd_fancy($config->openend);
+            $all[$enq->id] = $enq;
+        }
+        return [
+            "canedit" => $canedit,
+            "readonly" => $readonly,
+            "until" => $until,
+            "all" => $all,
+            "canedit_idx" => $canedit_idx,
+            "readonly_idx" => $readonly_idx
+        ];
+    }
+    /**
      * 必要なアンケートを返す
      */
     public static function needForSubmit(Paper $paper): array
