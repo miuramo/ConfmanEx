@@ -18,7 +18,7 @@
         <x-alert.error>{{ session('feedback.error') }}</x-alert.error>
     @endif
 
-    <div class="mx-6">
+    <div class="mx-10 my-6">
 
         <x-element.linkbutton href="{{ route('certificate.itmsettings') }}" color="cyan" size="md">
             表彰状の項目設定
