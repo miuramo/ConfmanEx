@@ -24,6 +24,12 @@
 
 
     <x-element.h1>
+        <x-element.linkbutton href="{{ route('certificate.index') }}" color="lime"
+            size="md">
+            表彰状の一覧と生成
+        </x-element.linkbutton>
+        <span class="mx-4"></span>
+
         表彰用JSON →
         @php
             $dkey = App\Models\Setting::getval('AWARDJSON_DLKEY');
@@ -38,6 +44,8 @@
             size="sm">
             表彰状生成スクリプト
         </x-element.linkbutton>
+
+
 
         <div class="text-sm mt-4">
             表彰用JSONのダウンロードURLは {{ route('pub.json_booth_title_author', ['key' => $dkey]) }} <br>

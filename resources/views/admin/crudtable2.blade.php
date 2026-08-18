@@ -89,7 +89,7 @@
                                                 color="red" size="sm">
                                                 Del
                                             </x-element.linkbutton2>
-                                        @else
+                                        @elseisset($cat_id)
                                             <x-element.linkbutton2
                                                 href="{{ route('viewpoint.itmsetting', ['copy_id' => $d->id, 'cat_id' => $cat_id, 'cat_name' => $cat_name]) }}"
                                                 color="yellow" size="sm">
@@ -98,6 +98,18 @@
                                             <div class="my-2"></div>
                                             <x-element.linkbutton2
                                                 href="{{ route('viewpoint.itmsetting', ['del_id' => $d->id, 'cat_id' => $cat_id, 'cat_name' => $cat_name]) }}"
+                                                color="red" size="sm">
+                                                Del
+                                            </x-element.linkbutton2>
+                                        @else
+                                            <x-element.linkbutton2
+                                                href="{{ route('certificate.itmsettings', ['copy_id' => $d->id]) }}"
+                                                color="yellow" size="sm">
+                                                Copy
+                                            </x-element.linkbutton2>
+                                            <div class="my-2"></div>
+                                            <x-element.linkbutton2
+                                                href="{{ route('certificate.itmsettings', ['del_id' => $d->id]) }}"
                                                 color="red" size="sm">
                                                 Del
                                             </x-element.linkbutton2>
