@@ -1,4 +1,6 @@
-    <div>
+    <div
+    @if($inline) class="inline-block" @endif
+    >
         @if (session()->has('message'))
             <div class="text-green-600 text-sm mb-2">{{ session('message') }}</div>
         @endif

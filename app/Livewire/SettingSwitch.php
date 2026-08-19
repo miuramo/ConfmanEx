@@ -10,9 +10,10 @@ class SettingSwitch extends Component
     public $setting;
     public $message;
     public $inputtext;
+    public $inline;
     public int $textsize = 10;
 
-    public function mount($name)
+    public function mount($name, $inline = false)
     {
         $this->name = $name;
         $this->message = "testing...";
@@ -22,6 +23,7 @@ class SettingSwitch extends Component
         if ($this->setting->isbool == false) {
             $this->inputtext = $this->setting->value;
         }
+        $this->inline = $inline;
     }
     public function updatedInputtext()
     {

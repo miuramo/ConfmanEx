@@ -5,11 +5,17 @@
 @endphp
 <!-- components.role.award -->
 <div class="px-6 py-4">
+    <div class="text-sm text-gray-600 px-4">
+        「投票メニューを表示」をONにすると、本ページの参照権限(Role:award)を持たないユーザーにも「投票」メニューを表示します。
+        権限を持たないユーザーがメニューの「投票」を押すと、「投票ページ」を開きます。
+    </div>
     <x-element.h1>
         <x-element.linkbutton href="{{ route('vote.index') }}" color="cyan" target="_blank">
             投票ページ
         </x-element.linkbutton>
-        <span class="mx-2"></span>
+        <span class="mx-3"></span>
+        <livewire:setting-switch :name="'VOTING'" :inline="true" />
+        <span class="mx-6"></span>
         <x-element.linkbutton href="{{ route('vote.create_tickets') }}" color="lime">
             投票チケットを作成・送信・管理
         </x-element.linkbutton>
@@ -24,8 +30,7 @@
 
 
     <x-element.h1>
-        <x-element.linkbutton href="{{ route('certificate.index') }}" color="lime"
-            size="md">
+        <x-element.linkbutton href="{{ route('certificate.index') }}" color="lime" size="md">
             表彰状の一覧と生成
         </x-element.linkbutton>
         <span class="mx-4"></span>
