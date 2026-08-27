@@ -30,6 +30,7 @@
             @foreach ($heads as $h)
                 <th class="p-1 bg-slate-300">{{ $h }}</th>
             @endforeach
+            <th class="p-1 bg-slate-300">totalfee</th>
         </tr>
     </thead>
 
@@ -76,7 +77,11 @@
                         @endisset
                     </td>
                 @endforeach
-
+                <td class="p-1">
+                    @isset($regists[$paper->id])
+                        {{ number_format($regists[$paper->id]->totalfee()) }}
+                    @endisset
+                </td>
             </tr>
         @endforeach
     </tbody>
