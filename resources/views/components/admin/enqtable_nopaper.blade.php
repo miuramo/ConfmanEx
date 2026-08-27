@@ -79,7 +79,7 @@
                 @endforeach
                 <td class="p-1">
                     @isset($regists[$paper->id])
-                        {{ number_format($regists[$paper->id]->totalfee()) }}
+                        {{ $regists[$paper->id]->totalfee() }}
                     @endisset
                 </td>
             </tr>
