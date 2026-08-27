@@ -144,6 +144,15 @@
                                         @endif
                                     </td>
                                 </tr>
+                                @php
+                                    $totalfee = $reg->totalfee();
+                                @endphp
+                                @if($totalfee)
+                                    <tr>
+                                        <td class="border px-4 py-2 dark:text-gray-100 text-center">合計金額</td>
+                                        <td class="border px-4 py-2 dark:text-gray-100 text-center">{{ number_format($totalfee) }}円</td>
+                                    </tr>
+                                @endif
                             @endif
                         </tbody>
                     </table>

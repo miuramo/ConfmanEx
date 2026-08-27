@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 
 class Regist extends Model
 {
@@ -271,5 +272,26 @@ class Regist extends Model
             $ret[$r->$enqitm_name][$r->isearly] = $r->cnt;
         }
         return $ret;
+    }
+
+    /**
+     * 参加登録のアンケート回答から、合計金額を計算して返す
+     * 参加登録のアンケート回答の中で、値が「数字円」となっているものを合計する。ただし、keyがbikouのものは除外する。
+     * @return int|null 合計金額
+     */
+    public function totalfee(): ?int
+    {
+        $enqans = $this->enq_key_value();
+        $total = 0;
+        foreach ($enqans as $key => $value) {
+            if ($key === 'bikou') {
+                continue; // 備考欄は除外
+            }
+            if (preg_match('/([0-9,]+)円/', $value, $matches)) {
+                $total += intval(str_replace(',', '', $matches[1]));
+            }
+        }
+        // Log::channel('single')->info("totalfee() enqans=" . json_encode($enqans) . ", total=" . $total);
+        return $total;
     }
 }
