@@ -52,7 +52,7 @@
                     @else
                         <x-element.linkbutton href="{{ route('review.conflict', ['cat' => $n]) }}" color="cyan">
                             利害表明 ({{ $cat }})
-                        </x-element.linkbutton> <span class="mx-2"></span>
+                        </x-element.linkbutton> 
                     @endif
                     {{-- 件数表示 --}}
                     @php
@@ -66,10 +66,11 @@
                         <span
                             class="bg-cyan-100 dark:bg-cyan-300 border-2 border-blue-600 p-1 text-blue-600 font-bold">全{{$numpapers_in_cat}}件 入力完了👍</span>
                     @else
-                        <a href="{{ route('review.conflict', ['cat'=>$n, 'noans_only'=>1])}}"><span class="text-red-600 font-bold border-2 border-red-600 p-1 bg-pink-100 dark:bg-pink-300">
+                        <a href="{{ route('review.conflict', ['cat'=>$n, 'noans_only'=>1])}}"><span class="text-red-600 font-bold border-2 border-red-600 p-1 bg-pink-100 dark:bg-pink-300 mx-2">
                             {{ $numpapers_in_cat }} 件中 {{ $numpapers_in_cat - $count_conflict }} 件が未入力です😰
                         </span></a>
                     @endif
+                    <span class="mx-2"></span>
                 @else
                     <div class="p-1 pt-3 text-gray-400">{{ $cat }}の利害表明 / Bidding は、まだ開始していません。</div>
                 @endif
