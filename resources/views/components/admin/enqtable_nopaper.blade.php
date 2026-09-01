@@ -24,7 +24,7 @@
 @endphp
 <!-- components.admin.enqtable_nopaper -->
 
-<table class="min-w-full divide-y divide-gray-200 text-sm">
+<table class="min-w-full divide-y divide-gray-200 text-sm sortable" id="enqtable">
     <thead>
         <tr>
             @foreach ($heads as $h)
