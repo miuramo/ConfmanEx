@@ -51,7 +51,7 @@
                         </div>
                     @else
                         <x-element.linkbutton href="{{ route('review.conflict', ['cat' => $n]) }}" color="cyan">
-                            利害表明 ({{ $cat }})
+                            利害表明 / Bidding ({{ $cat }})
                         </x-element.linkbutton> 
                     @endif
                     {{-- 件数表示 --}}
