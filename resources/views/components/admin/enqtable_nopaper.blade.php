@@ -1,6 +1,6 @@
 @props([
     'papers' => [],
-    'heads' => ['uid', 'name', 'affil', 'email', 'submitted_at', 'updated_at', 'isearly', 'canceled_at'],
+    'heads' => ['regid', 'uid', 'name', 'affil', 'email', 'submitted_at', 'updated_at', 'isearly', 'canceled_at'],
     'enqans' => [],
     'enq' => [],
 ])
@@ -19,6 +19,7 @@
     }
     $OFFSET = 0;
 
+    // nopaper ということは、参加登録と紐づいているはず
     $regists = \App\Models\Regist::where('valid', 1)->get()->keyBy('user_id');
 
 @endphp
@@ -38,6 +39,11 @@
         @foreach ($users as $paper)
             <tr
                 class="{{ $loop->iteration % 2 === 0 ? 'bg-slate-200 dark:bg-slate-700' : 'bg-white dark:bg-slate-600' }}">
+                <td class="p-1">
+                    @isset($regists[$paper->id])
+                        {{ $regists[$paper->id]->id }}
+                    @endisset
+                </td>
                 <td class="p-1">{{ $paper->id }}
                 </td>
                 <td class="p-1">{{ $paper->name }}
