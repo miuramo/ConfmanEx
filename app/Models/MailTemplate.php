@@ -677,4 +677,12 @@ class MailTemplate extends Model
         $uids = Regist::where('valid', $valid)->pluck('user_id')->toArray();
         return Collection::make(User::whereIn('id', $uids)->get());
     }
+
+    /**
+     * 採択発表者で未登録のPaper
+     */
+    public static function mt_noreg(int ...$catids): Collection
+    {
+        return Regist::noreg(...$catids);
+    }
 }

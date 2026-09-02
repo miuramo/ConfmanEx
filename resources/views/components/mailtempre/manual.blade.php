@@ -63,7 +63,7 @@
                 'altpdf_inconsistent([catid1,catid2,...], "name", "ans")' => 'アンケート項目「name」の「ans」回答と、altpdf提出とが一致しない論文（name省略時は"30sec_presen"、ans省略時は"希望する"、アンケート未回答は希望しないに含める。）',
                 'pdftext_startswith(文字列, catid1, catid2, ...)' => 'PDFが、文字列で始まる論文。catidは省略不可',
                 'pdftext_notincluding(文字列, catid1, catid2, ...)' => 'PDFが、文字列を含んでいない論文。catidは省略不可',
-                '' => '',
+                'noreg(catid1,catid2,...)' => '採択発表者で参加登録未完了',
             ];
         @endphp
         <table class="border-pink-200 border-2">

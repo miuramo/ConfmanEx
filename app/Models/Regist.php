@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -293,5 +294,22 @@ class Regist extends Model
         }
         // Log::channel('single')->info("totalfee() enqans=" . json_encode($enqans) . ", total=" . $total);
         return $total;
+    }
+
+    /**
+     * 採択発表者で未登録のPaperを取得する
+     */
+    public static function noreg(int ...$catids): Collection
+    {
+        $accPapers = Submit::with('paper')->whereIn("category_id", $catids)->whereHas("accept", function ($query) {
+            $query->where("judge", ">", 0);
+        })->get()->pluck("paper_id")->toArray();
+        $finished = Regist::with('user')->where('valid', 1)->orderby('created_at')->get();
+        $withauthor_paper_pids = [];
+        foreach( $finished as $reg ) {
+            $withauthor_paper_pids = array_merge($withauthor_paper_pids, $reg->user->accepted_papers_as_any());
+        }
+        $papers_without_presenters = array_diff($accPapers, $withauthor_paper_pids);
+        return Collection::make(Paper::whereIn('id', $papers_without_presenters)->get());
     }
 }
