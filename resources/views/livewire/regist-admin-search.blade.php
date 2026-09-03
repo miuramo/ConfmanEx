@@ -35,10 +35,10 @@
                     <td class="px-2 bg-slate-200">{{ substr($regD[$u->id]->submitted_at, 5, 11) }}</td>
                     <td class="px-2 bg-slate-200">
                         <x-element.linkbutton2
-                            href="{{ route('regist.show', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
+                            href="{{ route('regist.showwithtoken', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
                             color="green" target="_blank" size="xs">参照</x-element.linkbutton2>
                         <x-element.linkbutton2
-                            href="{{ route('regist.edit', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
+                            href="{{ route('regist.editwithtoken', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
                             color="blue" target="_blank" size="xs"
                             confirm="{{ $u->name }} (UserID: {{ $u->id }}) さんの参加登録を代理で編集します。よろしいですか？">編集</x-element.linkbutton2>
                     </td>

@@ -83,7 +83,7 @@ class RegistController extends Controller
         ]);
         if ($reg) {
             // 参加登録が既に存在する場合は、編集画面にリダイレクト
-            return redirect()->route('regist.edit', ['regist' => $reg->id, 'token' => $reg->token()]);
+            return redirect()->route('regist.editwithtoken', ['regist' => $reg->id, 'token' => $reg->token()]);
         }
         // 参加登録のフォームを表示する
         return redirect()->route('regist.index')->with('feedback.error', '参加登録エラー');
@@ -101,7 +101,7 @@ class RegistController extends Controller
         ]);
         if ($reg) {
             // 参加登録が既に存在する場合は、編集画面にリダイレクト
-            return redirect()->route('regist.edit', ['regist' => $reg->id, 'token' => $reg->token()]);
+            return redirect()->route('regist.editwithtoken', ['regist' => $reg->id, 'token' => $reg->token()]);
         }
         // 参加登録のフォームを表示する
         return redirect()->route('regist.index')->with('feedback.error', '参加登録エラー');
