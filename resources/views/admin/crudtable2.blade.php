@@ -37,11 +37,12 @@
 
     @if (session('feedback.success'))
         <x-alert.success>{{ session('feedback.success') }}
-        @if(session('altlink'))
-            <span class="ml-4 text-xl text-blue-100  bg-blue-700 dark:text-gray-300 hover:bg-blue-500 hover:text-white p-2 rounded-md">
-                {!! session('altlink') !!}
-            </span>
-        @endif
+            @if (session('altlink'))
+                <span
+                    class="ml-4 text-xl text-blue-100  bg-blue-700 dark:text-gray-300 hover:bg-blue-500 hover:text-white p-2 rounded-md">
+                    {!! session('altlink') !!}
+                </span>
+            @endif
         </x-alert.success>
     @endif
     @if (session('feedback.error'))
@@ -76,7 +77,7 @@
                         <tr>
                             @foreach ($coldetails as $nam => $typ)
                                 @if ($nam == 'COPY')
-                                    <td class="hover:bg-slate-200">ID= {{$d->id}}
+                                    <td class="hover:bg-slate-200">ID= {{ $d->id }}
                                         @isset($enq_id)
                                             <x-element.linkbutton2
                                                 href="{{ route('enq.enqitmsetting', ['copy_id' => $d->id, 'enq_id' => $enq_id, 'enq_name' => $enq_name]) }}"
@@ -89,37 +90,41 @@
                                                 color="red" size="sm">
                                                 Del
                                             </x-element.linkbutton2>
-                                        @elseisset($cat_id)
-                                            <x-element.linkbutton2
-                                                href="{{ route('viewpoint.itmsetting', ['copy_id' => $d->id, 'cat_id' => $cat_id, 'cat_name' => $cat_name]) }}"
-                                                color="yellow" size="sm">
-                                                Copy
-                                            </x-element.linkbutton2>
-                                            <div class="my-2"></div>
-                                            <x-element.linkbutton2
-                                                href="{{ route('viewpoint.itmsetting', ['del_id' => $d->id, 'cat_id' => $cat_id, 'cat_name' => $cat_name]) }}"
-                                                color="red" size="sm">
-                                                Del
-                                            </x-element.linkbutton2>
                                         @else
-                                            <x-element.linkbutton2
-                                                href="{{ route('certificate.itmsettings', ['copy_id' => $d->id]) }}"
-                                                color="yellow" size="sm">
-                                                Copy
-                                            </x-element.linkbutton2>
-                                            <div class="my-2"></div>
-                                            <x-element.linkbutton2
-                                                href="{{ route('certificate.itmsettings', ['del_id' => $d->id]) }}"
-                                                color="red" size="sm">
-                                                Del
-                                            </x-element.linkbutton2>
+                                            @isset($cat_id)
+                                                <x-element.linkbutton2
+                                                    href="{{ route('viewpoint.itmsetting', ['copy_id' => $d->id, 'cat_id' => $cat_id, 'cat_name' => $cat_name]) }}"
+                                                    color="yellow" size="sm">
+                                                    Copy
+                                                </x-element.linkbutton2>
+                                                <div class="my-2"></div>
+                                                <x-element.linkbutton2
+                                                    href="{{ route('viewpoint.itmsetting', ['del_id' => $d->id, 'cat_id' => $cat_id, 'cat_name' => $cat_name]) }}"
+                                                    color="red" size="sm">
+                                                    Del
+                                                </x-element.linkbutton2>
+                                            @else
+                                                <x-element.linkbutton2
+                                                    href="{{ route('certificate.itmsettings', ['copy_id' => $d->id]) }}"
+                                                    color="yellow" size="sm">
+                                                    Copy
+                                                </x-element.linkbutton2>
+                                                <div class="my-2"></div>
+                                                <x-element.linkbutton2
+                                                    href="{{ route('certificate.itmsettings', ['del_id' => $d->id]) }}"
+                                                    color="red" size="sm">
+                                                    Del
+                                                </x-element.linkbutton2>
+                                            @endisset
                                         @endisset
                                     </td>
                                 @else
                                     @if ($typ == 'tinyint')
                                         <td class="p-2 hover:text-blue-600 hover:bg-slate-200 dark:hover:bg-slate-700 dark:hover:text-blue-500 text-center"
                                             id="td__{{ $nam }}__{{ $d->id }}__{{ $typ }}">
-                                            <x-toggle formid="admincrudpost" name="name_{{ $nam }}__{{ $d->id }}__{{ $typ }}" id="{{ $nam }}__{{ $d->id }}__{{ $typ }}"
+                                            <x-toggle formid="admincrudpost"
+                                                name="name_{{ $nam }}__{{ $d->id }}__{{ $typ }}"
+                                                id="{{ $nam }}__{{ $d->id }}__{{ $typ }}"
                                                 :checked="$d->$nam"></x-toggle>
                                         @else
                                         <td class="p-2 hover:text-blue-600 hover:bg-slate-200 clicktoedit  dark:hover:bg-slate-700 dark:hover:text-blue-500 break-all"
