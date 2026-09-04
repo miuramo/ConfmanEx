@@ -238,6 +238,9 @@ Route::middleware('auth')->group(function () {
     // アンケートの選択的削除 (EnqueteAnswer)
     Route::get('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');    // Danger Zone
     Route::post('/resetenqans', [EnqueteController::class, 'resetenqans'])->name('enq.resetenqans');   // Danger Zone
+    // アンケートの選択的削除 (EnqueteAnswer)
+    Route::get('/resetenqans_nopaper', [EnqueteController::class, 'resetenqans_nopaper'])->name('enq.resetenqans_nopaper');    // Danger Zone
+    Route::post('/resetenqans_nopaper', [EnqueteController::class, 'resetenqans_nopaper'])->name('enq.resetenqans_nopaper');   // Danger Zone
 
     Route::get('/admin_passdumpsql', [AdminController::class, 'passdumpsql'])->name('admin.passdumpsql');
 
