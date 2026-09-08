@@ -138,6 +138,10 @@
 
         <div class="py-5"></div>
         <x-element.h1>Toと雛形の説明
+            <span class="mx-8"></span>
+            <span class="text-sm">凡例：</span>
+            <span class="bg-pink-100 py-2 px-4 mx-2 text-sm">Paper・著者に紐づける雛形</span>
+            <span class="bg-cyan-100 py-2 px-4 mx-2 text-sm">User・査読者に紐づける雛形</span>
         </x-element.h1>
 
         <x-mailtempre.manual>

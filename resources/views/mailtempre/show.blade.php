@@ -52,7 +52,7 @@
             text-align: left;
         }
     </style>
-    @section('title', 'Preview '.$mt->id)
+    @section('title', 'Preview ' . $mt->id)
 
     <!-- mailtempre.index -->
     @if (session('feedback.success'))
@@ -75,15 +75,24 @@
             @if ($count > 0)
                 送信対象は{{ $count }}件：
                 @foreach ($papers as $paper)
-                    <span class="mr-1 px-1 bg-slate-100 dark:bg-slate-500">{{ $paper->id_03d() }}</span>
+                    @if ($paper instanceof \App\Models\Paper)
+                        <span class="mr-1 px-1 bg-pink-100 dark:bg-slate-500 hover:bg-pink-200 hover-on-paper hover:font-bold hover:text-pink-600 pointer cursor-pointer"
+                            onmouseenter="Livewire.dispatch('id-changed', { value: {{ $paper->id }} });"
+                            title="{{ $paper->paperowner->name }} {{ $paper->title }}">{{ $paper->id_03d() }}</span>
+                    @endif
+                    @if ($paper instanceof \App\Models\User)
+                        <span class="mr-1 px-1 bg-sky-100 dark:bg-slate-500 hover:bg-sky-300 hover-on-user hover:font-bold hover:text-sky-600 pointer cursor-pointer"
+                            onmouseenter="Livewire.dispatch('id-changed', { value: {{ $paper->id }} });"
+                            title="{{ $paper->name }}（{{ $paper->affil }}）">{{ $paper->id_03d() }}</span>
+                    @endif
                 @endforeach
             @else
                 送信対象はありません。To に指定できるのは、accept(catid), reject(catid), paperid(pid1,pid2, ...),
                 acc_id(accid1,accid2, ...), acc_judge(judge1,judge2, ...) などです。
             @endif
 
-            <x-element.linkbutton2 href="{{ route('mt.edit', ['mt' => $mt]) }}"
-                color="blue" target="editmt_{{$mt->id}}">
+            <x-element.linkbutton2 href="{{ route('mt.edit', ['mt' => $mt]) }}" color="blue"
+                target="editmt_{{ $mt->id }}">
                 雛形を編集
             </x-element.linkbutton2>
             <span class="px-2"></span>
@@ -95,34 +104,12 @@
 
         </x-element.h1>
 
-        最初の一件のみ、以下でプレビューできます：
-        <div class="bg-sky-100 p-9">
-            <div class="bg-slate-50 py-2 px-4 font-bold text-sm flex justify-between">
-                To : {{ $to_cc['to'] }}
-                <span class="text-slate-400 text-right">To</span>
-            </div>
-            <div class="bg-slate-100 py-2 px-4 font-bold text-sm flex justify-between">
-                Cc : {{ implode(' , ', $to_cc['cc']) }}
-                @isset($mt->cc)
-                    , {{ str_replace(',', ' , ', $mt->cc) }}
-                @endisset
-                <span class="text-slate-400 text-right">Cc</span>
-            </div>
-            @isset($mt->bcc)
-                <div class="bg-slate-100 py-2 px-4 font-bold text-sm flex justify-between">
-                    Bcc :
-                    {{ str_replace(',', ' , ', $mt->bcc) }}
-                    <span class="text-slate-400 text-right">Bcc</span>
-                </div>
-            @endisset
-            <div class="bg-slate-200 py-2 px-4 font-bold text-xl flex justify-between">
-                {{ $subject }} <span class="text-slate-400 text-right">subject</span>
-            </div>
-            <div class="bg-white px-7 py-4 text-gray-700 text-md preview">
-                {!! $markdown !!}
-            </div>
-
-        </div>
+        上の数字にマウスをホバーすると、プレビュー対象を変更できます：
+        @if ($first_item instanceof \App\Models\Paper)
+            <livewire:preview-mail-template :mt="$mt" :type="'paper'" :id="$first_item->id" />
+        @elseif($first_item instanceof \App\Models\User)
+            <livewire:preview-mail-template :mt="$mt" :type="'user'" :id="$first_item->id" />
+        @endif
         <div class="my-5">
             <x-element.linkbutton href="{{ route('mt.show', ['mt' => $mt, 'dosend' => 'do']) }}" color="pink"
                 target="_blank" confirm="本当にメール送信しますか？">
