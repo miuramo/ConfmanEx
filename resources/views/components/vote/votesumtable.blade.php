@@ -19,12 +19,17 @@
         3 => 'orange',
         4 => 'red',
         5 => 'blue',
+        6 => 'pink',
+        7 => 'teal',
+        8 => 'amber',
+        9 => 'cyan',
+        0 => 'indigo',
     ];
 @endphp
 
 @foreach ($votes as $vid => $vname)
     {{-- @foreach ([1 => '一般', 2 => '学生'] as $sid => $stu) --}}
-    <div class="rounded-lg bg-{{ $colors[$vid] }}-200 py-2 px-3 my-2 text-lg">【{{ $vname }}】の集計結果
+    <div class="rounded-lg bg-{{ $colors[$vid%10] }}-200 py-2 px-3 my-2 text-lg">【{{ $vname }}】の集計結果
         <span class="mx-4"></span>
 
         @isset($res[$vid])
@@ -34,7 +39,7 @@
             </x-element.linkbutton>
 
             <span class="mx-4"></span>
-            <x-element.button class="" id="toggle_votesumtable{{ $vid }}" color="{{ $colors[$vid] }}"
+            <x-element.button class="" id="toggle_votesumtable{{ $vid }}" color="{{ $colors[$vid%10] }}"
                 size="sm" onclick="openclose('votesumtable{{ $vid }}')" value="投票結果を表示／非表示">
 
             </x-element.button>
