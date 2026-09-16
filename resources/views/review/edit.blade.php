@@ -69,8 +69,17 @@
         </x-element.h1>
 
         {{-- 書誌情報 --}}
+        @php
+            $cat = \App\Models\Category::find($review->paper->category_id);
+            $show_bibinfo_btn = $cat->show_bibinfo_btn;
+        @endphp
         <div class="text-lg bg-pink-200 p-2">
-            以下の著者リスト（とくに人数）やタイトルがPDFと一致していない場合は、PC長向けコメントにて報告いただけると幸いです。
+            @if ($show_bibinfo_btn)
+                以下の著者リスト（とくに人数）やタイトルがPDFと一致していない場合は、PC長向けコメントにて報告いただけると幸いです。
+            @else
+                以下の著者リストやタイトルはPDFと完全に一致していない項目や、未入力の項目がありますが、ご了承ください。<br>
+                今回は投稿者の手間削減のため、投稿時の入力を省略しております。採択された投稿者には採択通知のあとに入力・修正していただきます。
+            @endif
         </div>
 
         <div class="mt-2 ml-2">
@@ -139,6 +148,5 @@
                 event.returnValue = '';
             }
         });
-                
     </script>
 </x-app-layout>
