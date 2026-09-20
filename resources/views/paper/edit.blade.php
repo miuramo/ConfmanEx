@@ -36,6 +36,10 @@
             ->get()
             ->pluck('status__revedit_on', 'id')
             ->toArray();
+        $show_booth = App\Models\Category::select('status__show_booth', 'id')
+            ->get()
+            ->pluck('status__show_booth', 'id')
+            ->toArray();
     @endphp
 
     <div class="py-2">
@@ -340,24 +344,20 @@
                         @endif
                     @endif
 
-                    @if ($paper->locked)
+                    @if ($paper->locked || $show_booth[$paper->category_id] || $revreturn[$paper->category_id])
                         <div class="mx-5 my-5">
                             <span class="text-red-500 dark:text-red-400">現在、投稿はロックされているため、投稿者による削除はできません。</span>
                         </div>
                     @else
-                        @if (!$revreturn[$paper->category_id])
-                            <div class="mx-5 my-5">
-                                投稿をとりやめるときは
-                                <x-element.deletebutton_nodiv
-                                    action="{{ route('paper.destroy', ['paper' => $paper->id]) }}"
-                                    confirm="アップロードファイルも消えますが、本当にPaperID : {{ $id_03d }} 投稿を削除してよいですか？"> PaperID
-                                    :
-                                    {{ $id_03d }} 投稿を削除
-                                </x-element.deletebutton_nodiv> を押してください。
-                            </div>
-                        @else
-                            <div class="my-5"></div>
-                        @endif
+                        <div class="mx-5 my-5">
+                            投稿をとりやめるときは
+                            <x-element.deletebutton_nodiv
+                                action="{{ route('paper.destroy', ['paper' => $paper->id]) }}"
+                                confirm="アップロードファイルも消えますが、本当にPaperID : {{ $id_03d }} 投稿を削除してよいですか？"> PaperID
+                                :
+                                {{ $id_03d }} 投稿を削除
+                            </x-element.deletebutton_nodiv> を押してください。
+                        </div>
                     @endif
 
                     <div class="mx-6 my-2">
