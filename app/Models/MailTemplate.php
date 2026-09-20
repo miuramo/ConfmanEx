@@ -448,7 +448,7 @@ class MailTemplate extends Model
     /**
      * 著者名未入力（採択分のみ）
      */
-    public static function mt_noauthorlist(int $catid): Collection  
+    public static function mt_noauthorlist(int $catid): Collection
     {
         $papers = Collection::make();
         $accept_ids = Accept::where('judge', '>', 0)->pluck("id")->toArray();
@@ -699,5 +699,30 @@ class MailTemplate extends Model
     public static function mt_noreg(int ...$catids): Collection
     {
         return Regist::noreg(...$catids);
+    }
+
+    /** 
+     * 採択発表者で、ページ数が規定に沿っていないPaper
+     * ページ数規定とは、Category.pdf_page_min 以上、Category.pdf_page_max 以下のページ数を指す。
+     */
+    public static function mt_pdf_pageerror(int ...$catids): Collection
+    {
+        $array_papers = [];
+        foreach ($catids as $catid) {
+            $cat = Category::find($catid);
+            if (!$cat) {
+                continue;
+            }
+            // catid で採択済みのPaperの、pdf_file_id を、File から集める
+            $subs_accepted = Submit::subs_accepted($catid);
+            $file_ids = $subs_accepted->pluck('paper_id', 'Paper.pdf_file_id')->toArray();
+            $files = File::whereIn('id', array_keys($file_ids))->get();
+            foreach ($files as $file) {
+                if ($file->pagenum < $cat->pdf_page_min || $file->pagenum > $cat->pdf_page_max) {
+                    $array_papers[] = Paper::find($file_ids[$file->id]);
+                }
+            }
+        }
+        return Collection::make($array_papers);
     }
 }
