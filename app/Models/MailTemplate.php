@@ -601,11 +601,9 @@ class MailTemplate extends Model
     {
         // 当初投稿時のcategory_idで絞り込む
         $target_paperids = Paper::whereIn('category_id', $catids)->whereNull('deleted_at')->pluck('id')->toArray();
-        // $accPIDs = Submit::with('paper')->whereIn("category_id", $catids)->whereHas("accept", function ($query) {
-        //         $query->where("judge", ">", 0);
-        //     })->get()->pluck("paper_id")->toArray();
         $enqitm = EnqueteItem::where("name", $name)->first();
-        $exist_enqansers_pid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->pluck('paper_id')->toArray();
+        // valuestr が null または空文字（未入力のまま作成されたレコード）は回答済みとみなさない
+        $exist_enqansers_pid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->whereNotNull('valuestr')->where('valuestr', '!=', '')->pluck('paper_id')->toArray();
 
         $noenqansPIDs = Submit::with('paper')->whereIn("category_id", $catids)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
@@ -627,7 +625,8 @@ class MailTemplate extends Model
         // 当初投稿時のcategory_idで絞り込む
         $target_paperids = Paper::whereIn('category_id', $catids)->whereNull('deleted_at')->pluck('id')->toArray();
         $enqitm = EnqueteItem::where("name", $name)->first();
-        $exist_enqansers_pid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->pluck('paper_id')->toArray();
+        // valuestr が null または空文字（未入力のまま作成されたレコード）は回答済みとみなさない
+        $exist_enqansers_pid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->whereNotNull('valuestr')->where('valuestr', '!=', '')->pluck('paper_id')->toArray();
         $noenqansPIDs = Submit::with('paper')->whereIn("paper_id", $target_paperids)->whereHas("accept", function ($query) {
             $query->where("judge", ">", 0);
         })->whereNotIn('paper_id', $exist_enqansers_pid)->get()->pluck("paper_id")->toArray();
@@ -637,6 +636,22 @@ class MailTemplate extends Model
             $array_papers[] = $paper;
         }
         return Collection::make($array_papers);
+    }
+    /**
+     * 参加登録ベース（regists.valid=1）で、アンケート未回答のUserIDを返す
+     */
+    public static function mt_reg_user_noenqans(string $name): Collection
+    {
+        $enqitm = EnqueteItem::where("name", $name)->first();
+        // valuestr が null または空文字（未入力のまま作成されたレコード）は回答済みとみなさない
+        $exist_enqansers_uid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->whereNotNull('valuestr')->where('valuestr', '!=', '')->pluck('user_id')->toArray();
+        $noenqansUIDs = Regist::where('valid', 1)->whereNotIn('user_id', $exist_enqansers_uid)->pluck('user_id')->toArray();
+        $users = User::whereIn('id', $noenqansUIDs)->get();
+        // $array_users = [];
+        // foreach ($users as $user) {
+        //     $array_users[] = $user;
+        // }
+        return $users;
     }
 
     /**

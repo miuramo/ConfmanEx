@@ -80,7 +80,7 @@ class EnqueteController extends Controller
             if (!isset($aEnq[$enq_id])) abort(403);
         }
         if ($req->has("excel") && strpos($req->input("excel"), "Excel") !== false) {
-            return Excel::download(new MultiEnqExportFromView($enq_ids), "enqans_multi_".implode('_', $enq_ids).".xlsx");
+            return Excel::download(new MultiEnqExportFromView($enq_ids), "enqans_multi_" . implode('_', $enq_ids) . ".xlsx");
         }
         return view("enquete.answers_multienq")->with(compact("enq_ids"));
     }
@@ -105,61 +105,88 @@ class EnqueteController extends Controller
             $res[$c->enquete_item_id][$c->valuestr] = $c->cnt;
         }
 
-        // さらに、カテゴリと、採択フラグで分類
-        $sql2 = "select count(enquete_answers.id) as cnt, valuestr, enquete_item_id, category_id, accept_id " .
-            "from enquete_answers " .
-            "left join submits on enquete_answers.paper_id = submits.paper_id " .
-            "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" .
-            "group by valuestr, enquete_item_id, category_id, accept_id " .
-            "order by valuestr, enquete_item_id, category_id, accept_id ";
-        $cols2 = DB::select($sql2);
-        $res2 = [];
-        foreach ($cols2 as $c) {
-            $res2[$c->enquete_item_id][$c->valuestr][$c->category_id][$c->accept_id] = $c->cnt;
-        }
-        // カテゴリのみで分類
-        $sql2c = "select count(enquete_answers.id) as cnt, valuestr, enquete_item_id, category_id " .
-            "from enquete_answers " .
-            "left join submits on enquete_answers.paper_id = submits.paper_id " .
-            "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" .
-            "group by valuestr, enquete_item_id, category_id " .
-            "order by valuestr, enquete_item_id, category_id ";
-        $cols2c = DB::select($sql2c);
-        $res2c = [];
-        foreach ($cols2c as $c) {
-            $res2c[$c->enquete_item_id][$c->valuestr][$c->category_id] = $c->cnt;
+        if ($enq->withpaper) {
+            // さらに、カテゴリと、採択フラグで分類
+            $sql2 = "select count(enquete_answers.id) as cnt, valuestr, enquete_item_id, category_id, accept_id " .
+                "from enquete_answers " .
+                "left join submits on enquete_answers.paper_id = submits.paper_id " .
+                "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" .
+                "group by valuestr, enquete_item_id, category_id, accept_id " .
+                "order by valuestr, enquete_item_id, category_id, accept_id ";
+            $cols2 = DB::select($sql2);
+            $res2 = [];
+            foreach ($cols2 as $c) {
+                $res2[$c->enquete_item_id][$c->valuestr][$c->category_id][$c->accept_id] = $c->cnt;
+            }
+            // カテゴリのみで分類
+            $sql2c = "select count(enquete_answers.id) as cnt, valuestr, enquete_item_id, category_id " .
+                "from enquete_answers " .
+                "left join submits on enquete_answers.paper_id = submits.paper_id " .
+                "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" .
+                "group by valuestr, enquete_item_id, category_id " .
+                "order by valuestr, enquete_item_id, category_id ";
+            $cols2c = DB::select($sql2c);
+            $res2c = [];
+            foreach ($cols2c as $c) {
+                $res2c[$c->enquete_item_id][$c->valuestr][$c->category_id] = $c->cnt;
+            }
+
+            // PaperIDを羅列するために、group by をしない
+            $sql3 = "select enquete_answers.paper_id, valuestr, enquete_item_id, category_id, accept_id " .
+                "from enquete_answers " .
+                "left join submits on enquete_answers.paper_id = submits.paper_id " .
+                "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" .
+                "order by valuestr, enquete_item_id, category_id, accept_id, enquete_answers.paper_id ";
+            $cols3 = DB::select($sql3);
+            $res3 = [];
+            foreach ($cols3 as $c) {
+                $res3[$c->enquete_item_id][$c->valuestr][$c->category_id][$c->accept_id][] = $c->paper_id;
+            }
+        } else {
+            $res2 = [];
+            $res2c = [];
+            $res3 = [];
         }
 
-        // PaperIDを羅列するために、group by をしない
-        $sql3 = "select enquete_answers.paper_id, valuestr, enquete_item_id, category_id, accept_id " .
-            "from enquete_answers " .
-            "left join submits on enquete_answers.paper_id = submits.paper_id " .
-            "where enquete_id = {$enq_id} and accept_id in (select id from accepts where judge > 0)" .
-            "order by valuestr, enquete_item_id, category_id, accept_id, enquete_answers.paper_id ";
-        $cols3 = DB::select($sql3);
-        $res3 = [];
-        foreach ($cols3 as $c) {
-            $res3[$c->enquete_item_id][$c->valuestr][$c->category_id][$c->accept_id][] = $c->paper_id;
-        }
-
-        // 未回答を、submit から、enquete_answers.paper_id にないものを取得
-        foreach ($enqitems as $ei) {
-            $sql4 = "select count(id) as cnt, category_id from submits " .
-                "where paper_id not in (select paper_id from enquete_answers where enquete_item_id = {$ei->id}) " .
-                "and accept_id in (select id from accepts where judge > 0)" .
-                "group by category_id " .
-                "order by category_id ";
-            $cols4 = DB::select($sql4);
-            $noans_cat = [];
-            foreach ($cols4 as $c) {
-                $noans_cat[$c->category_id] = $c->cnt;
+        $noans_cat = [];
+        $noans_reg = [];
+        if ($enq->withpaper) {
+            // 未回答を、submit から、enquete_answers.paper_id にないものを取得
+            // is_mandatory な項目のみを対象にする（オプション項目に未回答でも「回答済み」とみなす）
+            // また、valuestr が null の行（未入力のまま作成されたレコード）は回答済みとみなさない
+            foreach ($enqitems as $ei) {
+                // if (!$ei->is_mandatory) continue;
+                $sql4 = "select count(id) as cnt, category_id, paper_id from submits " .
+                    "where paper_id not in (select paper_id from enquete_answers where enquete_item_id = {$ei->id} and valuestr is not null) " .
+                    "and accept_id in (select id from accepts where judge > 0)" .
+                    "group by category_id, paper_id " .
+                    "order by category_id, paper_id ";
+                $cols4 = DB::select($sql4);
+                foreach ($cols4 as $c) {
+                    $noans_cat[$ei->id][$c->category_id][$c->paper_id] = $c->cnt;
+                }
+            }
+        } else {
+            // 未回答を、regist から、enquete_answers.user_id にないものを取得
+            // is_mandatory な項目のみを対象にする（オプション項目に未回答でも「回答済み」とみなす）
+            // また、valuestr が null の行（未入力のまま作成されたレコード）は回答済みとみなさない
+            foreach ($enqitems as $ei) {
+                $sql4 = "select count(id) as cnt, valid, user_id from regists " .
+                    "where user_id not in (select user_id from enquete_answers where enquete_item_id = {$ei->id} and valuestr is not null) " .
+                    "and deleted_at is null " .
+                    "group by valid, user_id " .
+                    "order by valid, user_id ";
+                $cols4 = DB::select($sql4);
+                foreach ($cols4 as $c) {
+                    $noans_reg[$ei->id][$c->valid][$c->user_id] = $c->cnt;
+                }
             }
         }
 
 
         $catlist = Category::select('id', 'shortname')->get()->pluck('shortname', 'id')->toArray();
         $acclist = Accept::select('id', 'shortname')->get()->pluck('shortname', 'id')->toArray();
-        return view("enquete.anssummary")->with(compact("enq", "enqitems", "res", "res2", "res2c", "res3", "catlist", "acclist", "noans_cat"));
+        return view("enquete.anssummary")->with(compact("enq", "enqitems", "res", "res2", "res2c", "res3", "catlist", "acclist", "noans_cat", "noans_reg"));
     }
 
     /**
@@ -477,7 +504,7 @@ class EnqueteController extends Controller
         foreach ($cols as $c) {
             $cnts[$c->enquete_id][$c->category_id] = $c->cnt;
         }
-        $enqs = Enquete::select('id', 'name')->where('withpaper',true)->get()->pluck("name", "id")->toArray("name", "id");
+        $enqs = Enquete::select('id', 'name')->where('withpaper', true)->get()->pluck("name", "id")->toArray("name", "id");
         $cats = Category::select('id', 'name')->get()->pluck("name", "id")->toArray("name", "id");
         return view("enquete.resetenqans_nopaper")->with(compact("cnts", "enqs", "cats"));
     }

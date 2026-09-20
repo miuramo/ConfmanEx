@@ -52,6 +52,10 @@
                                 </tr>
                             @endforeach
                         @endisset
+                        <tr class="hover:bg-white">
+                            <td class="border px-4 py-2">合計</td>
+                            <td class="border px-4 py-2 text-right">{{ array_sum($res[$ei->id]) }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -118,8 +122,7 @@
                                                                                     {{ $acclist[$accid] }}
                                                                                     <sub>({{ $accid }})</sub>
                                                                                 </td>
-                                                                                <td
-                                                                                    class="border px-4 py-0.5 text-right">
+                                                                                <td class="border px-4 py-0.5 text-right">
                                                                                     {{ $cnt2 }}</td>
                                                                                 <td class="text-xs">
                                                                                     {{ implode(', ', $res3[$ei->id][$str][$catid][$accid]) }}
@@ -143,36 +146,70 @@
                 </table>
             </div>
 
-            <div class="mx-2 mt-8">
-                <span class="bg-teal-200 p-2">（以下の未回答数について補足）特定のカテゴリがアンケート受付対象外であったかどうかに関わらず、すべてのカテゴリを表示しています。</span>
-                <table class="table-auto mt-2">
-                    <thead>
-                        <tr>
-                            <th class="px-4 py-2 bg-slate-500 text-white border">カテゴリ</th>
-                            <th class="px-2 py-2 bg-slate-500 text-white border">未回答数</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($noans_cat as $catid => $cnt)
-                            <tr class="hover:bg-white">
-                                <td class="border px-4 py-2">{{ $catlist[$catid] }}
-                                    <sub>({{ $catid }})</sub>
-                                </td>
-                                <td class="border px-4 py-2 text-right">{{ $cnt }}</td>
+            @if ($enq->withpaper)
+                <div class="mx-2 mt-8">
+                    <span
+                        class="bg-teal-200 p-2">（以下の未回答数について補足）特定のカテゴリがアンケート受付対象外であったかどうかに関わらず、すべてのカテゴリを表示しています。</span>
+                    <table class="table-auto mt-2">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-2 bg-slate-500 text-white border">カテゴリ</th>
+                                <th class="px-2 py-2 bg-slate-500 text-white border">未回答数</th>
+                                <th class="px-2 py-2 bg-slate-500 text-white border">未回答PIDs</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <x-element.h1>
-                参考
-                <span class="mx-4"></span>
-                <x-element.linkbutton2 href="{{ route('pub.accstatus') }}" color="cyan" target="_blank">
-                    採択状況の確認
-                </x-element.linkbutton2>
+                        </thead>
+                        <tbody>
+                            @foreach ($noans_cat[$ei->id] as $catid => $ary)
+                                <tr class="hover:bg-white">
+                                    <td class="border px-4 py-2">{{ $catlist[$catid] }}
+                                        <sub>({{ $catid }})</sub>
+                                    </td>
+                                    <td class="border px-4 py-2 text-right">{{ count($ary) }}</td>
+                                    <td class="border px-4 py-2 text-xs">
+                                        {{ implode(', ', array_keys($ary)) }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <x-element.h1>
+                    参考
+                    <span class="mx-4"></span>
+                    <x-element.linkbutton2 href="{{ route('pub.accstatus') }}" color="cyan" target="_blank">
+                        採択状況の確認
+                    </x-element.linkbutton2>
 
-            </x-element.h1>
+                </x-element.h1>
+            @else
+                <div class="mx-2 mt-8">
+                    <span class="bg-teal-200 p-2">【{{ $ei->desc }}】未回答のユーザー一覧</span>
+                    <table class="table-auto mt-2">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-2 bg-slate-500 text-white border">参加登録valid</th>
+                                <th class="px-2 py-2 bg-slate-500 text-white border">未回答数</th>
+                                <th class="px-2 py-2 bg-slate-500 text-white border">ユーザーID一覧</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @isset($noans_reg[$ei->id])
+                                @foreach ($noans_reg[$ei->id] as $valid => $ary)
+                                    <tr class="hover:bg-white">
+                                        <td class="border px-4 py-2">{{ $valid }}</td>
+                                        <td class="border px-4 py-2 text-right">{{ count($ary) }}</td>
+                                        <td class="border px-4 py-2 text-xs">
+                                            {{ implode(', ', array_keys($ary)) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endisset
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         @endforeach
+
     </div>
 
     <div class="py-2 px-6">
