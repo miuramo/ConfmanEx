@@ -904,4 +904,22 @@ class AdminController extends Controller
             ]
         );
     }
+
+    public function data_status()
+    {
+        $data_status = [
+            'users_count' => \App\Models\User::count(),
+            'files_count' => \App\Models\File::count(),
+            'papers_count' => \App\Models\Paper::count(),
+            'bb_mes_count' => \App\Models\BbMes::count(),
+            'reviews_count' => \App\Models\Review::count(),
+            'enquetes_count' => \App\Models\Enquete::count(),
+            'enquete_answers_count' => \App\Models\EnqueteAnswer::count(),
+            'log_creates_count' => \App\Models\LogCreate::count(),
+            'log_modifies_count' => \App\Models\LogModify::count(),
+            'error_logs_count' => \App\Models\ErrorLog::count(),
+            'mail_templates_count' => \App\Models\MailTemplate::count()
+        ];
+        return response()->json($data_status);
+    }
 }

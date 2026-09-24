@@ -52,6 +52,9 @@ Route::get('/dashboard', function () {
 
 Route::get('/file_favicon', [FileController::class, 'favicon'])->name('file.favicon');
 
+// データベース概要、ファイル概要をJSONで返すroute
+Route::get('/data_status', [AdminController::class, 'data_status'])->name('data_status');
+
 //表彰状作成用のJSON
 Route::get('awards/json_booth_title_author/{key?}/{readable?}/{usa1?}/{usa2?}', [SubmitController::class, 'json_bta'])->name('pub.json_booth_title_author');
 Route::get('json_review/{cat}/{key?}', [SubmitController::class, 'json_review'])->name('pub.json_review');
