@@ -58,7 +58,7 @@
             @endphp
             @isset($sub)
                 {{--  Reviewerの数にあわせて、繰り返す。 --}}
-                @foreach ($sub->reviews as $rev)
+                @foreach ($sub->reviews->sortBy('user_id') as $rev)
                     <th class="p-1 bg-slate-300"> Rev {{ $loop->index + 1 }}</th>
                     @foreach ($vps as $id => $desc)
                         @if ($scoreonly == 1 && strpos($desc, 'コメント') > 0)
@@ -121,7 +121,7 @@
                         </td>
 
                         {{--  ここから、各査読者のコメント --}}
-                        @foreach ($sub->reviews as $rev)
+                        @foreach ($sub->reviews->sortBy('user_id') as $rev)
                             @isset($tantourev[$rev->id])
                                 <td class="bg-red-600 text-gray-200">
                                     <a href="{{ route('review.edit', ['review' => $rev]) }}"
@@ -132,7 +132,7 @@
                                 @else
                                 <td class="bg-yellow-50 text-gray-200">
                             @endif
-                            RevID: {{ $rev->id }}
+                            RevID: {{ $rev->id }} uid: {{ $rev->user_id }}
                     @endif
                     </td>
                     @foreach ($rev->scores_and_comments(0, $scoreonly) as $vpdesc => $valstr)
