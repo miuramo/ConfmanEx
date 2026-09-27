@@ -127,7 +127,7 @@
         <x-element.h1>複数のアンケート結果をひとつの表にまとめて表示・Excelダウンロードする <span class="mx-2"></span></x-element.h1>
 
         <div class="px-12">
-            <div class="mb-2 text-red-500 bg-orange-100 px-2 py-0.5">注：発表関係（左）と、参加登録関係（右）の両方を一度に選択することはできません。
+            <div class="mb-2 text-red-500 bg-orange-100 px-2 py-0.5">注：発表関係（白）と、参加登録関係（黄）の両方を一度に選択することはできません。
             </div>
             <form action="{{ route('enq.answers_multienq_post') }}" method="POST">
                 @csrf
