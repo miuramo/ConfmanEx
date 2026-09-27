@@ -18,6 +18,7 @@
         }
     }
     $after = nl2br($itm->contentafter);
+    $noinputcolor = $itm->closed ? 'purple' : (!$itm->is_mandatory ? 'blue' : 'red');
 @endphp
 <tr
     class="border-4 border-slate-300 {{ $loop->iteration % 2 === 0 ? 'bg-neutral-200' : 'bg-white-50 dark:bg-slate-400' }}">
@@ -27,7 +28,7 @@
         @if (isset($current) && !is_array($current))
             {!! $current !!}
         @else
-            <span class="text-red-600 font-extrabold text-sm">(未入力)</span>
+            <span class="text-{{ $noinputcolor }}-600 font-extrabold text-sm">(未入力)</span>
         @endif
     </td>
 </tr>

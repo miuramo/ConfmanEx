@@ -31,6 +31,10 @@
                 $noinputcolor = 'blue';
                 $descmanda = '【任意】';
             }
+            if ($itm->closed) {
+                $noinputcolor = 'purple';
+                $descmanda = '【回答締切済】';
+            }
             $noinputmessage = '<span class="text-'.$noinputcolor.'-600 font-extrabold">(未入力)</span>'
         @endphp
         <span class="text-{{ $noinputcolor }}-600 font-extrabold">{{ $descmanda }}</span>
@@ -49,9 +53,11 @@
             @foreach ($sel as $choice)
                 <input type="radio" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
                     value="{{ $choice }}" onchange="changed('{{ $formid }}','{{ $itm->name }}');"
-                    @if (isset($current) && $choice == $current) checked @endif>
+                    class="disabled:opacity-50"
+                    @if (isset($current) && $choice == $current) checked @endif
+                    @disabled($itm->closed)>
                 <label for="{{ $itm->name }}{{ $loop->iteration }}"
-                    class="hover:bg-lime-100">{{ $choice }}</label>
+                    class="{{ $itm->closed ? 'text-gray-400' : 'hover:bg-lime-100' }}">{{ $choice }}</label>
                 &nbsp;<br>
             @endforeach
             <div class="my-3"></div>
@@ -66,12 +72,14 @@
             @foreach ($sel as $choice)
                 {{-- 未チェックのときに未入力に戻すためのhidden input  --}}
                 <input type="hidden" id="_{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
-                    value="">
+                    value="" @disabled($itm->closed)>
                 <input type="checkbox" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
                     value="{{ $choice }}" onchange="changed('{{ $formid }}','{{ $itm->name }}');"
-                    @if (isset($current) && $choice == $current) checked @endif>
+                    class="disabled:opacity-50"
+                    @if (isset($current) && $choice == $current) checked @endif
+                    @disabled($itm->closed)>
                 <label for="{{ $itm->name }}{{ $loop->iteration }}"
-                    class="hover:bg-lime-100">{{ $choice }}</label>
+                    class="{{ $itm->closed ? 'text-gray-400' : 'hover:bg-lime-100' }}">{{ $choice }}</label>
                 &nbsp;<br>
             @endforeach
             <div class="my-3"></div>
@@ -84,7 +92,8 @@
             {!! $item_title !!}<br>
             <input type="number" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
                 onchange="changed('{{ $formid }}','{{ $itm->name }}');" value="{{ $current ?? '' }}"
-                min="{{ $sel[0] }}" max="{{ $sel[1] }}">
+                min="{{ $sel[0] }}" max="{{ $sel[1] }}"
+                class="disabled:bg-gray-100 disabled:text-gray-500 disabled:opacity-75" @disabled($itm->closed)>
             {{-- EnterでJSONが表示されてしまう問題に対しては、まずonkeypress ではなく、Controller.update()でリダイレクトすることによって対応
                 その後、Javascript form_changed.js でkeydown処理によって対応 --}}
             <div class="my-3"></div>
@@ -95,10 +104,11 @@
             {!! $current ?? $noinputmessage !!}</td>
         <td class="p-2 pl-10">
             {!! $item_title !!}<br>
-            <input type="hidden" name="{{ $itm->name }}" value="">
+            <input type="hidden" name="{{ $itm->name }}" value="" @disabled($itm->closed)>
             <input type="text" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
                 onblur="changed('{{ $formid }}','{{ $itm->name }}');" value="{{ $current ?? '' }}"
-                size="{{ $sel[0] }}" placeholder="{{ $sel[1] }}">
+                size="{{ $sel[0] }}" placeholder="{{ $sel[1] }}"
+                class="disabled:bg-gray-100 disabled:text-gray-500 disabled:opacity-75" @disabled($itm->closed)>
             <div class="my-3"></div>
             {!! $after !!}
         </td>
@@ -107,11 +117,11 @@
             {!! $currentbr ?? $noinputmessage !!}</td>
         <td class="p-2 pl-10 w-7/12">
             {!! $item_title !!}<br>
-            <input type="hidden" name="{{ $itm->name }}" value="">
-            <textarea class="text-left w-full h-auto-resize" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
+            <input type="hidden" name="{{ $itm->name }}" value="" @disabled($itm->closed)>
+            <textarea class="text-left w-full h-auto-resize disabled:bg-gray-100 disabled:text-gray-500 disabled:opacity-75" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
                 onblur="changed('{{ $formid }}','{{ $itm->name }}');" cols="{{ $sel[0] }}"
                 onclick="this.style.height='auto';this.style.height=this.scrollHeight+'px';" 
-                rows="{{ $sel[1] }}" placeholder="{{ $sel[2] }}">{{ $current ?? '' }}</textarea>
+                rows="{{ $sel[1] }}" placeholder="{{ $sel[2] }}" @disabled($itm->closed)>{{ $current ?? '' }}</textarea>
             <div class="my-3"></div>
             {!! $after !!}
         </td>
