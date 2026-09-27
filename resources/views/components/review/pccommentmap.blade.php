@@ -132,7 +132,7 @@
                                 @else
                                 <td class="bg-yellow-50 text-gray-200">
                             @endif
-                            RevID: {{ $rev->id }} uid: {{ $rev->user_id }}
+                            RevID: {{ $rev->id }} 
                     @endif
                     </td>
                     @foreach ($rev->scores_and_comments(0, $scoreonly) as $vpdesc => $valstr)
