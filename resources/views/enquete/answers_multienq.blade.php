@@ -24,8 +24,13 @@
     @endif
 
     <div class="py-4 px-6  dark:text-gray-400">
-        <x-admin.multienq_table :enq_ids="$enq_ids">
-        </x-admin.multienq_table>
+        @if ($with_paper)
+            <x-admin.multienq_table :enq_ids="$enq_ids">
+            </x-admin.multienq_table>
+        @else
+            <x-admin.multienq_table_regist :enq_ids="$enq_ids">
+            </x-admin.multienq_table_regist>
+        @endif
     </div>
 
     <div class="py-2 px-6">

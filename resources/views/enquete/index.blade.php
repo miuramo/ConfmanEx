@@ -127,15 +127,32 @@
         <x-element.h1>複数のアンケート結果をひとつの表にまとめて表示・Excelダウンロードする <span class="mx-2"></span></x-element.h1>
 
         <div class="px-12">
+            <div class="mb-2 text-red-500 bg-orange-100 px-2 py-0.5">注：発表関係（左）と、参加登録関係（右）の両方を一度に選択することはできません。
+            </div>
             <form action="{{ route('enq.answers_multienq_post') }}" method="POST">
                 @csrf
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-md shadow-md">
                 @foreach ($enqs as $enq)
                     @if ($enq->withpaper)
                         <input type="checkbox" name="enq_ids[]" value="{{ $enq->id }}" class="enq_checkbox mx-1">
                         {{ $enq->name }} (enqID:{{ $enq->id }})
+                        <input type="hidden" name="enq_paper[]" value="{{$enq->id}}">
                         <br>
                     @endif
                 @endforeach
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-md shadow-md">
+                @foreach ($enqs as $enq)
+                    @if (!$enq->withpaper)
+                        <input type="checkbox" name="enq_ids[]" value="{{ $enq->id }}" class="enq_checkbox mx-1">
+                        {{ $enq->name }} (enqID:{{ $enq->id }})
+                        <input type="hidden" name="enq_regist[]" value="{{$enq->id}}">
+                        <br>
+                    @endif
+                @endforeach
+                </div>
+                </div>
                 <input type="submit" name="view" value="チェックをつけたアンケートをまとめて表示"
                     class="mt-4 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm">
                     <span class="mx-2"></span>

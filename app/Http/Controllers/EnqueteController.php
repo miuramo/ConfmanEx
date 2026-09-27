@@ -79,10 +79,28 @@ class EnqueteController extends Controller
         foreach ($enq_ids as $enq_id) {
             if (!isset($aEnq[$enq_id])) abort(403);
         }
-        if ($req->has("excel") && strpos($req->input("excel"), "Excel") !== false) {
-            return Excel::download(new MultiEnqExportFromView($enq_ids), "enqans_multi_" . implode('_', $enq_ids) . ".xlsx");
+        // 発表関係と、参加登録関係を混ぜていないことを確認する
+        $enq_paper = $req->input("enq_paper", []);
+        $enq_regist = $req->input("enq_regist", []);
+        $enq_paper = array_flip($enq_paper);
+        $enq_regist = array_flip($enq_regist);
+        $withpaper_count = 0;
+        $withregist_count = 0;
+        foreach ($enq_ids as $enq_id) {
+            if (isset($enq_paper[$enq_id])) {
+                $withpaper_count++;
+            } elseif (isset($enq_regist[$enq_id])) {
+                $withregist_count++;
+            }
         }
-        return view("enquete.answers_multienq")->with(compact("enq_ids"));
+        if ($withpaper_count > 0 && $withregist_count > 0) {
+            return redirect()->back()->with('feedback.error',"エラー：発表関係と参加登録関係のアンケートを同時に選択することはできません。");
+        }
+        $with_paper = $withpaper_count > 0;
+        if ($req->has("excel") && strpos($req->input("excel"), "Excel") !== false) {
+            return Excel::download(new MultiEnqExportFromView($enq_ids, $with_paper), "enqans_multi_" . implode('_', $enq_ids) . ".xlsx");
+        }
+        return view("enquete.answers_multienq")->with(compact("enq_ids", "with_paper"));
     }
 
     /**
