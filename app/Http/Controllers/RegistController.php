@@ -212,7 +212,7 @@ class RegistController extends Controller
         $enqs = \App\Models\Enquete::needForRegist();
         $enqans = [];
 
-        return view('regist.edit_dummy', compact('enqs', 'enqans', 'sha1'));
+        return view('regist.edit_dummy', compact('enqs', 'enqans', 'sha1', 'key'));
     }
 
     public function email($id)

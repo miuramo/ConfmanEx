@@ -5,10 +5,12 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400">
             参加登録フォームのプレビュー
             <span class="mx-2"></span>
-            <x-element.linkbutton2 href="{{ route('regist.edit_dummy', ['key' => $sha1]) }}"
-                color="cyan" size="sm">
-                内部公開リンク
-            </x-element.linkbutton2>
+            @if ($key == 'foradmin')
+                <x-element.linkbutton2 href="{{ route('regist.edit_dummy', ['key' => $sha1]) }}" color="cyan"
+                    size="sm">
+                    内部公開リンク
+                </x-element.linkbutton2>
+            @endif
         </h2>
     </x-slot>
 
