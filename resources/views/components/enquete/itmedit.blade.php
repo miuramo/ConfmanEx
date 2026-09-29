@@ -3,6 +3,7 @@
     'loop' => 0,
     'formid' => '',
     'current' => null,
+    'mock' => false,
 ])
 <!-- components.enquete.itmedit -->
 @php
@@ -52,7 +53,8 @@
             {!! $item_title !!}<br>
             @foreach ($sel as $choice)
                 <input type="radio" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
-                    value="{{ $choice }}" onchange="changed('{{ $formid }}','{{ $itm->name }}');"
+                    value="{{ $choice }}"
+                    @if ($mock) onchange="updateMockAnswer(this)" @else onchange="changed('{{ $formid }}','{{ $itm->name }}');" @endif
                     class="disabled:opacity-50"
                     @if (isset($current) && $choice == $current) checked @endif
                     @disabled($itm->closed)>
@@ -74,7 +76,8 @@
                 <input type="hidden" id="_{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
                     value="" @disabled($itm->closed)>
                 <input type="checkbox" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
-                    value="{{ $choice }}" onchange="changed('{{ $formid }}','{{ $itm->name }}');"
+                    value="{{ $choice }}"
+                    @if ($mock) onchange="updateMockAnswer(this)" @else onchange="changed('{{ $formid }}','{{ $itm->name }}');" @endif
                     class="disabled:opacity-50"
                     @if (isset($current) && $choice == $current) checked @endif
                     @disabled($itm->closed)>
@@ -91,7 +94,7 @@
         <td class="p-2 pl-10">
             {!! $item_title !!}<br>
             <input type="number" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
-                onchange="changed('{{ $formid }}','{{ $itm->name }}');" value="{{ $current ?? '' }}"
+                @if ($mock) oninput="updateMockAnswer(this)" @else onchange="changed('{{ $formid }}','{{ $itm->name }}');" @endif value="{{ $current ?? '' }}"
                 min="{{ $sel[0] }}" max="{{ $sel[1] }}"
                 class="disabled:bg-gray-100 disabled:text-gray-500 disabled:opacity-75" @disabled($itm->closed)>
             {{-- EnterでJSONが表示されてしまう問題に対しては、まずonkeypress ではなく、Controller.update()でリダイレクトすることによって対応
@@ -106,7 +109,7 @@
             {!! $item_title !!}<br>
             <input type="hidden" name="{{ $itm->name }}" value="" @disabled($itm->closed)>
             <input type="text" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
-                onblur="changed('{{ $formid }}','{{ $itm->name }}');" value="{{ $current ?? '' }}"
+                @if ($mock) oninput="updateMockAnswer(this)" @else onblur="changed('{{ $formid }}','{{ $itm->name }}');" @endif value="{{ $current ?? '' }}"
                 size="{{ $sel[0] }}" placeholder="{{ $sel[1] }}"
                 class="disabled:bg-gray-100 disabled:text-gray-500 disabled:opacity-75" @disabled($itm->closed)>
             <div class="my-3"></div>
@@ -119,7 +122,7 @@
             {!! $item_title !!}<br>
             <input type="hidden" name="{{ $itm->name }}" value="" @disabled($itm->closed)>
             <textarea class="text-left w-full h-auto-resize disabled:bg-gray-100 disabled:text-gray-500 disabled:opacity-75" id="{{ $itm->name }}{{ $loop->iteration }}" name="{{ $itm->name }}"
-                onblur="changed('{{ $formid }}','{{ $itm->name }}');" cols="{{ $sel[0] }}"
+                @if ($mock) oninput="updateMockAnswer(this)" @else onblur="changed('{{ $formid }}','{{ $itm->name }}');" @endif cols="{{ $sel[0] }}"
                 onclick="this.style.height='auto';this.style.height=this.scrollHeight+'px';" 
                 rows="{{ $sel[1] }}" placeholder="{{ $sel[2] }}" @disabled($itm->closed)>{{ $current ?? '' }}</textarea>
             <div class="my-3"></div>

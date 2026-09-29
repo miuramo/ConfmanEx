@@ -27,7 +27,7 @@ class EventConfig extends Model
             return [];
         }
         $items = EnqueteItem::whereIn('enquete_id', $enqids)->get();
-        return $items;
+        return $items->all();
     }
 
     public static function getEnqueteAnswers(int $event_id, int $user_id): Collection

@@ -10,9 +10,14 @@
     <x-element.h1>
         参加登録
         <span class="px-3"></span>
+
         <x-element.linkbutton href="{{ route('regist.index') }}" color="teal">
             参加登録
         </x-element.linkbutton>
+        <span class="px-3"></span>
+        <x-element.linkbutton2 href="{{ route('regist.edit_dummy', ['key' => 'foradmin']) }}" color="teal" size="sm">
+            参加登録プレビュー
+        </x-element.linkbutton2>
         <span class="px-3"></span>
         <x-element.resist_sponsorlink /> {{-- スポンサー向けの特殊な参加登録URLをクリップボードにコピー --}}
         <br>
@@ -25,6 +30,8 @@
                 <livewire:setting-switch :name="'REGOPEN_PUBLIC'" />
                 <span class="px-3"></span>
                 <livewire:setting-switch :name="'REG_EARLY_LIMIT'" textsize=10 />
+                <span class="px-3"></span>
+                <livewire:setting-switch :name="'REG_LATE_LIMIT'" textsize=10 />
                 <span class="px-3"></span>
                 <livewire:setting-switch :name="'REG_START_FOR_PCACC'" />
                 <span class="px-3"></span>

@@ -157,15 +157,12 @@ class RegistController extends Controller
             return redirect()->route('regist.index')->with('feedback.error', '他のユーザーの参加登録を編集することはできません。');
         }
 
-        if ($with_token || auth()->user()->can('is_now_early')) {
+        if ($with_token || auth()->user()->can('can_edit_registration', $reg)) {
             $reg->valid = false; // 編集開始時点で無効にする
             $reg->save();
             return view('regist.edit', ['regist' => $reg])->with('regid', $id)->with('reg', $reg);
         } else {
-            if ($reg->valid) {
-                return redirect()->route('regist.index')->with('feedback.error', '現在は参加登録の編集はできません。');
-            }
-            return view('regist.edit', ['regist' => $reg])->with('regid', $id)->with('reg', $reg);
+            return redirect()->route('regist.index')->with('feedback.error', '現在は参加登録の編集はできません。');
         }
     }
     public function show($id, $token = null)
@@ -186,6 +183,36 @@ class RegistController extends Controller
             return redirect()->route('regist.index')->with('feedback.error', '他のユーザーの参加登録を参照することはできません。');
         }
         return view('regist.show', ['regist' => $reg])->with('regid', $id)->with('reg', $reg);
+    }
+
+    public function preview($id, string $key = 'foradmin')
+    {
+        if (!is_numeric($id)) {
+            return redirect()->route('regist.index')->with('feedback.error', '不正な参加登録IDです。');
+        }
+
+        $reg = Regist::findOrFail($id);
+        if ($key === 'foradmin') {
+            abort_unless(auth()->user()->can('role_any', 'pc|acc'), 403);
+        } else {
+            abort_unless(hash_equals($reg->token(), $key), 403);
+        }
+
+        return view('regist.show', ['regist' => $reg])->with('regid', $id)->with('reg', $reg);
+    }
+
+    public function edit_dummy(string $key = 'foradmin')
+    {
+        if ($key === 'foradmin') {
+            abort_unless(auth()->user()->can('role_any', 'pc|acc'), 403);
+        } elseif (!str_starts_with($key, Regist::previewkey())) {
+            abort(403);
+        }
+        $sha1 = Regist::previewkey(7);
+        $enqs = \App\Models\Enquete::needForRegist();
+        $enqans = [];
+
+        return view('regist.edit_dummy', compact('enqs', 'enqans', 'sha1'));
     }
 
     public function email($id)
@@ -248,7 +275,6 @@ class RegistController extends Controller
         }
         $pcacc = auth()->user()->can('role_any', 'pc|acc');
         $is_owner = false;
-        $is_early = auth()->user()->can('is_now_early');
         $reg = Regist::find($id);
         if ($reg && $reg->user_id === auth()->id()) {
             $is_owner = true;
@@ -257,8 +283,11 @@ class RegistController extends Controller
             return redirect()->route('regist.index')->with('feedback.error', '他のユーザの参加登録を削除することはできません。');
         }
         // 管理者(pcacc)はいつでも削除可能
-        // ユーザ本人は、現在が早期登録期間中であれば削除可能
-        if (!$pcacc && !$is_early) {
+        // ユーザ本人は、申込種別に対応する期間中であれば削除可能
+        $can_delete = $reg->isearly
+            ? auth()->user()->can('is_now_early')
+            : auth()->user()->can('is_now_late');
+        if (!$pcacc && !$can_delete) {
             return redirect()->route('regist.index')->with('feedback.error', '現在は参加登録の削除はできません。');
         }
 

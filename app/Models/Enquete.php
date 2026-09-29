@@ -205,6 +205,20 @@ class Enquete extends Model
         return $errorary;
     }
 
+    public static function validateRegistAnswers(array $answers): array
+    {
+        $errorary = [];
+        foreach (self::needForRegist()['canedit'] as $enq) {
+            foreach ($enq->items->where('is_mandatory', true) as $item) {
+                $value = $answers[$item->name] ?? null;
+                if (!is_string($value) || trim($value) === '') {
+                    $errorary[] = "【{$enq->name}→{$item->desc}】に回答してください。";
+                }
+            }
+        }
+        return $errorary;
+    }
+
     /**
      * 未回答アンケート項目(EnqItem) id=>desc の配列をかえす。[] ならエラーなし。
      */

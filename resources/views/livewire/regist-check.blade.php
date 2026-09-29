@@ -15,16 +15,22 @@
             <span class="mx-2">→</span>
             @php
                 $bg = $is_early ? 'bg-cyan-500' : 'bg-green-500';
+                $can_edit_registration = auth()->user()->can('can_edit_registration', $regobj);
+                $notice_cannot_edit = "";
+                if (!$can_edit_registration) {
+                    $notice_cannot_edit = "※申込完了後の変更はできません。";
+                }
+
             @endphp
             <button
                 @if ($is_early || $regobj->isearly) x-data x-on:click.prevent="if (confirm('早期申込で参加登録を完了します。よろしいですか？')) { $wire.doregist() }" 
             @else x-data
-                x-on:click.prevent="if (confirm('通常申込で参加登録を完了します。申込完了後の変更はできません。本当によろしいですか？')) { $wire.doregist() }" @endif
+                x-on:click.prevent="if (confirm('通常申込で参加登録を完了します。{{ $notice_cannot_edit }}よろしいですか？')) { $wire.doregist() }" @endif
                 class="{{ $bg }} text-white rounded-lg px-5 py-2 mx-1 text-2xl">参加登録を完了する
                 @if ($is_early || $regobj->isearly)
                     （早期申込）
                 @else
-                    （通常申込）※完了後の変更はできませんので、入力内容をよくご確認ください。
+                    （通常申込）{{ $notice_cannot_edit }}
                 @endif
             </button>
         @else

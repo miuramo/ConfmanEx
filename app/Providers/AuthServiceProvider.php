@@ -189,5 +189,23 @@ class AuthServiceProvider extends ServiceProvider
             }
             return new DateTime() <= new DateTime($early_end . " 23:59:59");
         });
+        // 現在が通常申込期間内（早期期間を過ぎた後）か
+        Gate::define('is_now_late', function () {
+            $late_end = \App\Models\Setting::getval('REG_LATE_LIMIT');
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $late_end) !== 1) {
+                Log::warning("REG_LATE_LIMIT is not set correctly. value={$late_end}");
+                return false;
+            }
+            return new DateTime() <= new DateTime($late_end . " 23:59:59") && new DateTime() > new DateTime(\App\Models\Setting::getval('REG_EARLY_LIMIT') . " 23:59:59");
+        });
+
+        // 参加登録がisearlyかつ、早期申し込み期限内、または、参加登録が!isearlyかつ通常申し込み期限内かどうか
+        Gate::define('can_edit_registration', function ($user, $reg) {
+            $is_now_early = $user->can('is_now_early');
+            $is_now_late = $user->can('is_now_late');
+            if ($reg->isearly && $is_now_early) return true;
+            if (!$reg->isearly && $is_now_late) return true;
+            return false;
+        });
     }
 }

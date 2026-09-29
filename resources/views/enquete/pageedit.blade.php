@@ -19,7 +19,7 @@
                     <span class="mx-4 p-2 border-2 border-blue-500 bg-cyan-100 text-blue-500">プレビュー</span>
                     <span class="mx-2"></span>
                     <x-element.linkbutton2 href="{{ route('enq.preview',['enq'=>$enq->id, 'key'=>$enq->getkey(7)]) }}" color="cyan" size="sm">
-                        公開リンク
+                        内部公開リンク
                     </x-element.linkbutton2>
                 @else
                     <div class="mt-4 mx-4 p-2 border-2 border-red-500 bg-pink-100 text-red-500">

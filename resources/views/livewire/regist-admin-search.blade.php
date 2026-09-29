@@ -1,7 +1,7 @@
 <div>
     <input id="id_regist_searchbox" type="text" wire:model.live.debounce.500ms="search" wire:keydown.escape="resetSearch"
         placeholder="氏名・メール等で検索" size="25" x-init="$el.focus()" class="p-1" />
-    <span class="px-3 text-sm text-blue-500">「編集」を開くと、一旦「未完了」となります。完了すると申込更新日時が変更されます。</span>
+    <span class="px-3 text-sm text-blue-500">「編集」を開くと、一旦「未完了」となります。完了すると申込更新日時が変更されます。申込区分（早期/通常）は変更しません。</span>
     <table class="text-sm border-collapse border border-slate-400 mt-2">
         <tr class="bg-slate-300">
             <th class="px-2">UserID</th>
@@ -34,6 +34,9 @@
                     @endif
                     <td class="px-2 bg-slate-200">{{ substr($regD[$u->id]->submitted_at, 5, 11) }}</td>
                     <td class="px-2 bg-slate-200">
+                        <x-element.linkbutton2
+                            href="{{ route('regist.preview', ['regist' => $regD[$u->id]->id, 'key' => 'foradmin']) }}"
+                            color="cyan" target="_blank" size="xs">プレビュー</x-element.linkbutton2>
                         <x-element.linkbutton2
                             href="{{ route('regist.showwithtoken', ['regist' => $regD[$u->id]->id, 'token' => $regD[$u->id]->token()]) }}"
                             color="green" target="_blank" size="xs">参照</x-element.linkbutton2>

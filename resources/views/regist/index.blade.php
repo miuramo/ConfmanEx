@@ -35,7 +35,10 @@
                 $notfinishedCount = \App\Models\Regist::whereNull('submitted_at')->where('canceled', false)->count(); // まだ一度も完了していない人
                 $upperlimit = App\Models\Setting::getval('REG_PERSON_UPPERLIMIT');
 
-                $is_early = auth()->user()->can('is_now_early');
+                $is_now_early = auth()->user()->can('is_now_early');
+                $is_now_late = auth()->user()->can('is_now_late');
+                $reg_early_limit = App\Models\Setting::getval('REG_EARLY_LIMIT');
+                $reg_late_limit = App\Models\Setting::getval('REG_LATE_LIMIT');
 
             @endphp
             <ul class="m-4">
@@ -64,13 +67,18 @@
                         </x-element.linkbutton>
                     @endif
 
-                    @if ($is_early)
+                    @if (auth()->user()->can('can_edit_registration', $reg))
                         @if ($reg->valid)
-                            <span class="mx-8"></span>
+                            <span class="mx-4"></span>
                             <x-element.linkbutton href="{{ route('regist.edit', ['regist' => $reg->id]) }}" color="teal"
                                 confirm="編集画面に遷移すると、登録状況が無効になります。編集画面では修正の有無にかかわらず、最後にかならず「参加登録を完了する」ボタンを押してください。">
                                 参加登録内容を編集する
                             </x-element.linkbutton>
+                            @if($reg->isearly) 
+                                <span class="text-blue-500 font-extrabold text-sm text-center px-4">編集・削除できるのは早期申込期限 {{ str_replace('-', '/', $reg_early_limit) }} までです</span>
+                            @else
+                                <span class="text-purple-500 font-extrabold text-sm text-center px-4">編集・削除できるのは通常申込期間 {{ str_replace('-', '/', $reg_late_limit) }} までです</span>
+                            @endif
                         @endif
                         <span class="mx-8"></span>
                         <x-element.deletebutton action="{{ route('regist.destroy', ['regist' => $reg->id]) }}"
@@ -85,7 +93,7 @@
                     @endif
                     <div
                         class="mx-6 mt-2 px-6 py-2 bg-yellow-50 rounded-lg dark:bg-yellow-900 dark:text-yellow-200 text-lg text-orange-600">
-                        参加登録を編集・削除できるのは、早期申込期間中のみです。以降のキャンセルは「参加登録後の問い合わせ先」にご連絡ください。
+                        参加登録を編集・削除できるのは、早期／通常それぞれの申込期間中のみです。以降のキャンセルは「参加登録後の問い合わせ先」にご連絡ください。
                     </div>
                 </x-element.h1>
                 <div class="mx-6 mt-4">

@@ -1,6 +1,7 @@
 @props([
     'enq' => [],
     'enqans' => [],
+    'mock' => false,
 ])
 
 <!-- components.enquete.edit (呼び出し元は主に paper.edit) -->
@@ -13,7 +14,7 @@
                     : null;
                 $formid = "enqform{$enq->id}";
             @endphp
-            <x-enquete.itmedit :itm="$itm" :formid="$formid" :current="$current" :loop="$loop">
+            <x-enquete.itmedit :itm="$itm" :formid="$formid" :current="$current" :loop="$loop" :mock="$mock">
             </x-enquete.itmedit>
         @empty
         @endforelse

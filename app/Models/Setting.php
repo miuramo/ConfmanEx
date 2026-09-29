@@ -294,6 +294,15 @@ class Setting extends Model
             'misc' => 'EarlyRegistの最終日',
         ]);
         Setting::firstOrCreate([
+            'name' => "REG_LATE_LIMIT",
+        ], [
+            'value' => "2026-10-23",
+            'isnumber' => false,
+            'isbool' => false,
+            'valid' => true,
+            'misc' => 'LateRegistの修正期限日',
+        ]);
+        Setting::firstOrCreate([
             'name' => "REG_START_FOR_PCACC",
         ], [
             'value' => "true",

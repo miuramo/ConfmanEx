@@ -13,6 +13,8 @@ class Regist extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected ?array $mockAnswers = null;
+
     protected $fillable = [
         'user_id',
         'valid',
@@ -55,6 +57,11 @@ class Regist extends Model
     {
         $reg_early_limit = Setting::getval('REG_EARLY_LIMIT');
         return substr(sha1('sponsor' . $reg_early_limit), 0, 16);
+    }
+
+    public static function previewkey(int $len = 7): string
+    {
+        return substr(sha1('regist-preview' . Setting::getval('CONFTITLE')), 0, $len);
     }
 
     /**
@@ -100,7 +107,7 @@ class Regist extends Model
      */
     public function enq_enqitmdesc_value(): array
     {
-        $itemid_desc = EnqueteItem::enq_enqitmid_desc();//すべての EnqueteItem の id => desc 配列を取得
+        $itemid_desc = EnqueteItem::enq_enqitmid_desc(); //すべての EnqueteItem の id => desc 配列を取得
         $enqans = $this->enqans();
         $res = [];
         foreach ($enqans as $enqid => $items) {
@@ -111,10 +118,20 @@ class Regist extends Model
         return $res;
     }
 
-    public function check(): array
+    public function check(?array $answers = null): array
     {
-        $ary = $this->enq_key_value();
-        $res = Enquete::validateEnquetes(User::find($this->user_id));
+        if ($answers === null) {
+            $this->mockAnswers = null;
+            $ary = $this->enq_key_value();
+            $res = Enquete::validateEnquetes(User::find($this->user_id));
+        } else {
+            $ary = [];
+            foreach ($answers as $name => $value) {
+                $ary[$name] = is_scalar($value) ? (string) $value : '';
+            }
+            $this->mockAnswers = $ary;
+            $res = Enquete::validateRegistAnswers($ary);
+        }
 
         if (count($res) > 0) {
             return $res;
@@ -151,7 +168,21 @@ class Regist extends Model
      */
     public function nogood(array $ruleary): ?string
     {
-        $selids = EventConfig::getEnqueteAnswersBySelectionNumber($this->event_id, $this->user_id);
+        if ($this->mockAnswers !== null) {
+            $selids = [];
+            foreach (EventConfig::getEnqueteItems((int) ($this->event_id ?? 0)) as $item) {
+                $answer = $this->mockAnswers[$item->name] ?? null;
+                if (!is_string($answer)) continue;
+                $selection = array_search($answer, $item->selections(), true);
+                if ($selection !== false) {
+                    $selids[$item->name] = $selection + 1;
+                }
+            }
+        } elseif ($this->user_id === null) {
+            $selids = [];
+        } else {
+            $selids = EventConfig::getEnqueteAnswersBySelectionNumber((int) $this->event_id, $this->user_id);
+        }
         $num_match = 0;
         foreach ($ruleary as $key => $rule) {
             if (is_array($rule)) {
@@ -175,17 +206,22 @@ class Regist extends Model
     }
     public function ng_feedback(array $ruleary): string
     {
-        $ans = $this->enq_key_value();
+        $ans = $this->mockAnswers ?? $this->enq_key_value();
         $descs = EnqueteItem::pluck('desc', 'name')->toArray();
         $selected = [];
         foreach ($ruleary as $key => $rule) {
-            $selected[] = "【" . $descs[$key] . "】を『" . $ans[$key]."』";
+            $selected[] = "【" . $descs[$key] . "】を『" . $ans[$key] . "』";
         }
         if (count($ruleary) == 2) {
             $msg = $selected[0] . "にしたとき、" . $selected[1] . " にすることはできません。";
         } else {
-            $msg = "以下の組み合わせは選択できません：";
-            $msg .= implode("かつ、", $selected) . "のとき。";
+            if (count($selected) == 1) {
+                $msg = $selected[0] . "は選択できません。";
+                return $msg;
+            } else {
+                $msg = "以下の組み合わせは選択できません：";
+                $msg .= implode("かつ、", $selected) . "のとき。";
+            }
         }
         return $msg;
     }
@@ -306,7 +342,7 @@ class Regist extends Model
         })->get()->pluck("paper_id")->toArray();
         $finished = Regist::with('user')->where('valid', 1)->orderby('created_at')->get();
         $withauthor_paper_pids = [];
-        foreach( $finished as $reg ) {
+        foreach ($finished as $reg) {
             $withauthor_paper_pids = array_merge($withauthor_paper_pids, $reg->user->accepted_papers_as_any());
         }
         $papers_without_presenters = array_diff($accPapers, $withauthor_paper_pids);

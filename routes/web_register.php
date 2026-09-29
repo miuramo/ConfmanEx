@@ -9,6 +9,8 @@ Route::middleware('auth')->group(function () {
     // override edit and show routes with token support
     Route::get('/regist/{regist}/edit/{token?}', [RegistController::class, 'edit'])->name('regist.editwithtoken');
     Route::get('/regist/{regist}/show/{token?}', [RegistController::class, 'show'])->name('regist.showwithtoken');
+    Route::get('/regist/{regist}/preview/{key?}', [RegistController::class, 'preview'])->name('regist.preview');
+    Route::get('/regist/edit_dummy/{key?}', [RegistController::class, 'edit_dummy'])->name('regist.edit_dummy');
 
     Route::get('/regist_email/{regist}', [RegistController::class, 'email'])->name('regist.email');
 

@@ -53,13 +53,13 @@ class BiddingTest extends TestCase
         $resp = $this->get('/role/reviewer/top');
         $resp->assertStatus(200);
         $resp->assertSee("/review/conflict/1");
-        $resp->assertSee("利害表明 (登壇発表)");
+        $resp->assertSee("利害表明 / Bidding (登壇発表)");
         
         // Bidding終了したら見れない
         parent::start_bidding(1,true);
         parent::end_bidding(1,true);
         $resp = $this->get('/role/reviewer/top');
-        $resp->assertDontSee("利害表明 (登壇発表)");
+        $resp->assertDontSee("利害表明 / Bidding (登壇発表)");
         $resp = $this->get('/review/conflict/1');
         $resp->assertStatus(403);
 
@@ -67,7 +67,7 @@ class BiddingTest extends TestCase
         parent::start_bidding(1,false);
         parent::end_bidding(1,true);
         $resp = $this->get('/role/reviewer/top');
-        $resp->assertDontSee("利害表明 (登壇発表)");
+        $resp->assertDontSee("利害表明 / Bidding (登壇発表)");
         $resp = $this->get('/review/conflict/1');
         $resp->assertStatus(403);
     }

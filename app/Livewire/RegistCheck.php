@@ -44,13 +44,35 @@ class RegistCheck extends Component
 
     public function doregist()
     {
-        $regobj = \App\Models\Regist::find($this->regid);
+        $regobj = \App\Models\Regist::findOrFail($this->regid);
+        $user = auth()->user();
+        $is_admin = $user->can('role_any', 'pc|acc');
+
+        if (!$is_admin && $regobj->user_id !== $user->id) {
+            return redirect()->route('regist.index')->with('feedback.error', '他のユーザーの参加登録を完了することはできません。');
+        }
+
+        $is_first_submission = $regobj->submitted_at === null;
+        $can_complete = $is_first_submission
+            ? $user->can('is_now_early') || $user->can('is_now_late')
+            : $user->can('can_edit_registration', $regobj);
+
+        if (!$is_admin && !$can_complete) {
+            return redirect()->route('regist.index')->with('feedback.error', '現在は参加登録を完了できません。');
+        }
+
+        $this->errors = array_values(array_filter($regobj->check(), function ($value) {
+            return !is_null($value);
+        }));
+        if (count($this->errors) > 0) {
+            return;
+        }
 
         // まだ参加登録が行われていない場合、登録日時を設定し、有効にする
-        if ($regobj->submitted_at == null) {
+        if ($is_first_submission) {
             $regobj->submitted_at = now();
             $regobj->valid = true; // 参加登録を有効にする
-            $regobj->isearly = $this->is_early; // 早期登録かどうかを判定
+            $regobj->isearly = $user->can('is_now_early'); // 完了時点の申込種別をサーバー側で判定
             $regobj->save();
         } else {
             // if ($regobj->user_id == auth()->id()) {
