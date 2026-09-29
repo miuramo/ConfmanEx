@@ -284,6 +284,9 @@ class Paper extends Model
     {
         $p = Paper::find($pid);
         $u = User::find($uid);
+        if (!$p || !$u || !$p->owner) {
+            return -1;
+        }
         if ($p->owner == $uid) {
             return 1; // main author
         } else if ($p->isCoAuthorEmail($u->email)) {
