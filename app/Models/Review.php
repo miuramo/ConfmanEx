@@ -308,9 +308,10 @@ class Review extends Model
             }
         } elseif ($match[2]) {
             // <a>タグで囲まれていないけど http://～ から始まっている場合
+            $url = html_entity_decode($match[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
             return sprintf(
                 '<a class="text-blue-600 hover:underline" href="%1$s" target="_blank">%1$s</a>',
-                htmlspecialchars($match[2]),
+                htmlspecialchars($url, ENT_QUOTES, 'UTF-8'),
             );
         }
         return "unexpected pattern";

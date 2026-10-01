@@ -80,4 +80,16 @@ class ReviewTest extends TestCase
         }
     }
 
+    public function test_urllink_preserves_ampersands_in_query_strings(): void
+    {
+        $url = 'https://example.com/?first=1&second=2';
+
+        foreach ([$url, htmlspecialchars($url, ENT_QUOTES, 'UTF-8')] as $input) {
+            $linked = Review::urllink($input);
+
+            $this->assertStringContainsString('href="https://example.com/?first=1&amp;second=2"', $linked);
+            $this->assertStringNotContainsString('&amp;amp;', $linked);
+        }
+    }
+
 }
