@@ -190,9 +190,25 @@ class File extends Model
                 break;
             }
         }
-        // Log::info("convert {$fullpath_png} -crop {$crop_w}x{$crop_h}+{$crop_x}+{$crop_y} {$dirpath}/h-00001.png");
-        $out = shell_exec("convert {$fullpath_png} -crop {$crop_w}x{$crop_h}+{$crop_x}+{$crop_y} {$dirpath}/h-00001.png 2>&1");
+        $out = self::call_imagemagick("{$fullpath_png} -crop {$crop_w}x{$crop_h}+{$crop_x}+{$crop_y} {$dirpath}/h-00001.png");
         if (strlen($out) > 1) Log::info($out);
+    }
+
+    public static function call_imagemagick(string $command): string
+    {
+        // convertコマンドがあるか調べる
+        $convert_command = "convert";
+        $convert_exists = shell_exec("which convert");
+        if (empty($convert_exists)){
+            $magick_exists = shell_exec("which magick");
+            if (!empty($magick_exists)) {
+                $convert_command = "magick";
+            } else {
+                Log::error("File@call_imagemagick: both convert and magick not found");
+                return "";
+            }
+        }
+        return shell_exec("{$convert_command} {$command} 2>&1");
     }
 
     /**

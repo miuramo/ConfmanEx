@@ -225,6 +225,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin_catsetting', [AdminController::class, 'catsetting'])->name('admin.catsetting');
     Route::get('/admin_chkexefiles', [AdminController::class, 'check_exefiles'])->name('admin.chkexefiles');
 
+    Route::get('/admin_redispatch_pdf_job', [AdminController::class, 'redispatchPdfJob'])->name('admin.redispatch_pdf_job');
+    Route::post('/admin_redispatch_pdf_job', [AdminController::class, 'redispatchPdfJobPost'])->name('admin.redispatch_pdf_job.post');
+
+
     Route::get('/admin_crudajax', [AdminController::class, 'crudajax'])->name('admin.crudajax');
 
     Route::get('/admin_resetpaper', [AdminController::class, 'resetpaper'])->name('admin.resetpaper');             // Danger Zone

@@ -6,6 +6,7 @@ use App\Exports\MaydirtyExport;
 use App\Exports\PapersExport4Hiroba;
 use App\Exports\PapersExportFromView;
 use App\Exports\RawSqlExport;
+use App\Jobs\PdfJob;
 use App\Models\Affil;
 use App\Models\Bb;
 use App\Models\BbMes;
@@ -859,6 +860,7 @@ class AdminController extends Controller
         $in = [
             "pdftoppm -v",
             "convert -version",
+            "magick -version",
             "md5sum --version",
             "file -v",
             "pdfinfo -v",
@@ -904,6 +906,36 @@ class AdminController extends Controller
             ]
         );
     }
+
+    public function redispatchPdfJob()
+    {
+        if (!auth()->user()->can('role_any', 'admin')) abort(403);
+
+        return view('admin.redispatch_pdf_job');
+    }
+
+    public function redispatchPdfJobPost(Request $request)
+    {
+        if (!auth()->user()->can('role_any', 'admin')) abort(403);
+
+        $validated = $request->validate([
+            'file_id' => ['required', 'integer', 'exists:files,id'],
+            'return_to' => ['sometimes', 'in:paperlist_headimg'],
+        ]);
+        $file = File::findOrFail($validated['file_id']);
+        if ($file->mime !== 'application/pdf') {
+            return back()->withInput()->with('feedback.error', '指定されたファイルは PDF ではありません。');
+        }
+
+        PdfJob::dispatch($file);
+
+        $redirect = isset($validated['return_to'])
+            ? redirect()->route('admin.paperlist_headimg')
+            : redirect()->route('admin.redispatch_pdf_job');
+
+        return $redirect->with('feedback.success', "file_id={$file->id} の PdfJob を再実行キューへ投入しました。");
+    }
+
 
     public function data_status()
     {

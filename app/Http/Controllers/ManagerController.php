@@ -59,6 +59,9 @@ class ManagerController extends Controller
 
         return view('admin.paperlist_headimg')->with(compact("all"));
     }
+    /**
+     * すべての画像を再クロップする
+     */
     public function paperlist_headimg_recrop()
     {
         if (!auth()->user()->can('role_any', 'pc')) abort(403);
@@ -66,7 +69,7 @@ class ManagerController extends Controller
         foreach ($all as $paper) {
             $paper->pdf_file->altimg_recrop();
         }
-        return redirect()->route('admin.paperlist_headimg')->with('feedback.success', 'タイトル画像の再クロップを開始しました。');
+        return redirect()->route('admin.paperlist_headimg')->with('feedback.success', 'すべてのタイトル画像の再クロップを開始しました。');
     }
 
     public function addInvitedPaper(Request $req)

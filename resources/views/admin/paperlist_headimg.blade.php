@@ -6,15 +6,20 @@
 
     <x-slot name="header">
         <div class="mb-4">
-            <x-element.linkbutton href="{{ route('role.top', ['role'=>'admin']) }}" color="gray" size="sm">
+            <x-element.linkbutton href="{{ route('role.top', ['role' => 'admin']) }}" color="gray" size="sm">
                 &larr; Admin Topに戻る
             </x-element.linkbutton>
         </div>
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('タイトル部分切り取り画像の確認') }}
             <span class="mx-6"></span>
-            <x-element.linkbutton href="{{ route('admin.paperlist_headimg_recrop') }}" color="red" size="sm">
-                画像の再構成をリクエスト（時間がかかります）
+
+            <x-element.linkbutton href="{{ route('admin.redispatch_pdf_job') }}" color="orange" size="sm">
+                file_id 指定による再構成
+            </x-element.linkbutton>
+            <span class="mx-2"></span>
+            <x-element.linkbutton href="{{ route('admin.paperlist_headimg_recrop') }}" color="red" size="sm" confirm="本当にすべての画像の再構成をリクエストしますか？">
+                すべての画像の再構成をリクエスト（時間がかかります）
             </x-element.linkbutton>
 
         </h2>
@@ -44,6 +49,18 @@
                     {!! $catspans[$paper->category_id] !!}
 
                     @if ($paper->pdf_file_id != null)
+                        @if (auth()->user()->can('role_any', 'admin'))
+                            <form action="{{ route('admin.redispatch_pdf_job.post') }}" method="post"
+                                class="mt-2 inline-block">
+                                @csrf
+                                <input type="hidden" name="file_id" value="{{ $paper->pdf_file_id }}">
+                                <input type="hidden" name="return_to" value="paperlist_headimg">
+                                <x-element.submitbutton color="orange" size="xs" value="redispatch_pdf_job">
+                                    再構成
+                                </x-element.submitbutton>
+                            </form>
+                        @endif
+
                         <a href="{{ route('file.altimgshow', ['file' => $paper->pdf_file_id, 'hash' => substr($paper->pdf_file->key, 0, 8)]) }}"
                             target="_blank">
                     @endif
@@ -57,7 +74,7 @@
             @endforeach
         </div>
         <div class="mb-4 my-10">
-            <x-element.linkbutton href="{{ route('role.top', ['role'=>'admin']) }}" color="gray" size="sm">
+            <x-element.linkbutton href="{{ route('role.top', ['role' => 'admin']) }}" color="gray" size="sm">
                 &larr; Admin Topに戻る
             </x-element.linkbutton>
         </div>
