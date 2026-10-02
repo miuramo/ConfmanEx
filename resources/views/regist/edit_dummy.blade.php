@@ -22,13 +22,30 @@
         <form id="mock-registration-form" action="#" method="get" onsubmit="return false;">
             @foreach ($enqs['all'] as $enq)
                 <a name="enq_{{ $enq->id }}"></a>
-                <div class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-gray-400">
+                <div
+                    class="text-lg mt-5 mb-1 p-3 bg-slate-200 rounded-lg dark:bg-slate-800 dark:text-gray-400
+                    @isset($enqs['canedit_idx'][$enq->id])
+                        hover:bg-green-300 dark:hover:bg-green-800
+                    @endisset                 
+                     ">
                     {{ $enq->name }}
+                    @isset($enqs['readonly_idx'][$enq->id])
+                        <span class="mx-10"></span>
+                        <span class="text-red-500 px-4">修正期限を過ぎています</span>
+                        <x-element.linkbutton2
+                            href="{{ route('enq.preview', ['enq' => $enq->id, 'key' => $enq->getkey(7)]) }}"
+                            size="sm" color="cyan" target="_blank">質問項目をみる</x-element.linkbutton2>
+                    @endisset
                 </div>
                 @if ($enq->showonpaperindex)
                     <div class="mx-10">
-                        <x-enquete.edit :enq="$enq" :enqans="$enqans" :mock="true">
-                        </x-enquete.edit>
+                        @isset($enqs['canedit_idx'][$enq->id])
+                            <x-enquete.edit :enq="$enq" :enqans="$enqans" :mock="true">
+                            </x-enquete.edit>
+                        @else
+                            <x-enquete.view :enq="$enq" :enqans="$enqans">
+                            </x-enquete.view>
+                        @endisset
                     </div>
                 @endif
             @endforeach

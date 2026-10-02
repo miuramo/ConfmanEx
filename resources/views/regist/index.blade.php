@@ -74,10 +74,12 @@
                                 confirm="編集画面に遷移すると、登録状況が無効になります。編集画面では修正の有無にかかわらず、最後にかならず「参加登録を完了する」ボタンを押してください。">
                                 参加登録内容を編集する
                             </x-element.linkbutton>
-                            @if($reg->isearly) 
-                                <span class="text-blue-500 font-extrabold text-sm text-center px-4">編集・削除できるのは早期申込期限 {{ str_replace('-', '/', $reg_early_limit) }} までです</span>
+                            @if ($reg->isearly)
+                                <span class="text-blue-500 font-extrabold text-sm text-center px-4">編集・削除できるのは早期申込期限
+                                    {{ str_replace('-', '/', $reg_early_limit) }} までです</span>
                             @else
-                                <span class="text-purple-500 font-extrabold text-sm text-center px-4">編集・削除できるのは通常申込期間 {{ str_replace('-', '/', $reg_late_limit) }} までです</span>
+                                <span class="text-purple-500 font-extrabold text-sm text-center px-4">編集・削除できるのは通常申込期間
+                                    {{ str_replace('-', '/', $reg_late_limit) }} までです</span>
                             @endif
                         @endif
                         <span class="mx-8"></span>
@@ -155,10 +157,11 @@
                                 @php
                                     $totalfee = $reg->totalfee();
                                 @endphp
-                                @if($totalfee)
+                                @if ($totalfee)
                                     <tr>
                                         <td class="border px-4 py-2 dark:text-gray-100 text-center">合計金額</td>
-                                        <td class="border px-4 py-2 dark:text-gray-100 text-center">{{ number_format($totalfee) }}円</td>
+                                        <td class="border px-4 py-2 dark:text-gray-100 text-center">
+                                            {{ number_format($totalfee) }}円</td>
                                     </tr>
                                 @endif
                             @endif
@@ -221,9 +224,9 @@
                 @endisset                 
                  ">
                         {{ $enq->name }}
-                        @isset($enqs['readonly_idx'][$enq->id])
+                        @isset($independently_editable_enqs['readonly_idx'][$enq->id])
                             <span class="mx-10"></span>
-                            <span class="text-red-500 px-4">修正期限を過ぎています</span>
+                            <span class="text-purple-500 px-4 text-sm font-bold">修正期限外です</span>
                             <x-element.linkbutton2
                                 href="{{ route('enq.preview', ['enq' => $enq->id, 'key' => $enq->getkey(7)]) }}"
                                 size="sm" color="cyan" target="_blank">質問項目をみる</x-element.linkbutton2>
