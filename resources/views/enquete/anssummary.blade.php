@@ -159,17 +159,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($noans_cat[$ei->id] as $catid => $ary)
-                                <tr class="hover:bg-white">
-                                    <td class="border px-4 py-2">{{ $catlist[$catid] }}
-                                        <sub>({{ $catid }})</sub>
-                                    </td>
-                                    <td class="border px-4 py-2 text-right">{{ count($ary) }}</td>
-                                    <td class="border px-4 py-2 text-xs">
-                                        {{ implode(', ', array_keys($ary)) }}
-                                    </td>
-                                </tr>
-                            @endforeach
+                            @isset($noans_cat[$ei->id])
+                                @foreach ($noans_cat[$ei->id] as $catid => $ary)
+                                    <tr class="hover:bg-white">
+                                        <td class="border px-4 py-2">{{ $catlist[$catid] }}
+                                            <sub>({{ $catid }})</sub>
+                                        </td>
+                                        <td class="border px-4 py-2 text-right">{{ count($ary) }}</td>
+                                        <td class="border px-4 py-2 text-xs">
+                                            {{ implode(', ', array_keys($ary)) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endisset
                         </tbody>
                     </table>
                 </div>
