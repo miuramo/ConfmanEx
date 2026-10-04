@@ -384,7 +384,7 @@ class Review extends Model
             'left join papers on reviews.paper_id = papers.id ' .
             'left join users on reviews.user_id = users.id ' .
             'where reviews.paper_id = ' . $paper_id .
-            " and reviews.category_id = $cat_id order by ismeta desc, id";
+            " and reviews.category_id = $cat_id order by reviews.ismeta desc, reviews.user_id, reviews.id"; // pccommentmapの並び順と同じ
         $res1 = DB::select($sql1);
         $names = [];
         $ismeta = [];
