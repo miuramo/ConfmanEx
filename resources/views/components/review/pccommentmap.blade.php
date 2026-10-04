@@ -7,7 +7,10 @@
     $rigais = App\Models\RevConflict::arr_pu_rigai($cat_id);
     $accepts = App\Models\Accept::select('name', 'id')->get()->pluck('name', 'id')->toArray();
     // ユーザが担当しているrevがあれば、ハイライト
-    $tantourev = App\Models\Review::where('user_id', auth()->id())->get()->pluck('paper_id', 'id')->toArray();
+    $tantourev = App\Models\Review::where('user_id', auth()->id())
+        ->get()
+        ->pluck('paper_id', 'id')
+        ->toArray();
     // $colors = ['white', 'red', 'yellow', 'gray', 'lime', 'cyan', 'purple', 'gray', 'gray', 'gray']; // TODO: 色の割り当ては会議によって異なるので環境設定でやる。
     $jsoncolor = App\Models\Setting::findByIdOrName('SCOREMAP_COLORS', null);
     if ($jsoncolor != null && $jsoncolor->valid) {
@@ -58,7 +61,9 @@
             @endphp
             @isset($sub)
                 {{--  Reviewerの数にあわせて、繰り返す。 --}}
-                @foreach ($sub->reviews->sortBy('user_id') as $rev)
+                {{-- @foreach ($sub->reviews->sortBy('user_id') as $rev) --}}
+                @foreach ($sub->reviews->sortBy('user_id')->sortByDesc('ismeta') as $rev)
+                    {{-- @foreach ($sub->reviews as $rev) --}}
                     <th class="p-1 bg-slate-300"> Rev {{ $loop->index + 1 }}</th>
                     @foreach ($vps as $id => $desc)
                         @if ($scoreonly == 1 && strpos($desc, 'コメント') > 0)
@@ -96,8 +101,8 @@
                                     <span class="text-gray-400">
                                         {{ $sub->paper->title }}
                                     </span>
-                                    <!-- enableTitleLink={{$enableTitleLink}} -->
-                                    <!-- rigais={{@$rigais[$sub->paper->id][auth()->id()]}} -->
+                                    <!-- enableTitleLink={{ $enableTitleLink }} -->
+                                    <!-- rigais={{ @$rigais[$sub->paper->id][auth()->id()] }} -->
                             @endif
                         </td>
                         <td class="p-1 text-center">
@@ -121,33 +126,37 @@
                         </td>
 
                         {{--  ここから、各査読者のコメント --}}
-                        @foreach ($sub->reviews->sortBy('user_id') as $rev)
+                        {{-- @foreach ($sub->reviews->sortBy('user_id') as $rev) --}}
+                        @foreach ($sub->reviews->sortBy('user_id')->sortByDesc('ismeta') as $rev)
                             @isset($tantourev[$rev->id])
                                 <td class="bg-red-600 text-gray-200">
-                                    <a href="{{ route('review.edit', ['review' => $rev]) }}"
-                                        target="_blank">RevID: {{ $rev->id }}</a>
+                                    <a href="{{ route('review.edit', ['review' => $rev]) }}" target="_blank">RevID:
+                                        {{ $rev->id }}</a>
                                 @else
                                     @if ($rev->status == 2)
                                 <td class="bg-cyan-50 text-gray-200">
                                 @else
                                 <td class="bg-yellow-50 text-gray-200">
                             @endif
-                            RevID: {{ $rev->id }} 
+                            @if ($rev->ismeta)
+                                <b class="text-gray-300 text-xs">rid {{ $rev->id }}</b>
+                            @else
+                                <span class="text-gray-300 text-xs">rid {{ $rev->id }}</span>
+                            @endif
                     @endif
                     </td>
                     @foreach ($rev->scores_and_comments(0, $scoreonly) as $vpdesc => $valstr)
                         <td class="hover:bg-lime-50 transition-colors
-                            @php
-                            $colors = ['white'];
+                                        @php
+$colors = ['white'];
                             foreach($scoremap_colors as $key => $value){
                                 if (preg_match('/'.$key.'/', $vpdesc)){
                                     $colors = $value;
                                     break;
                                 }
-                            }
-                            @endphp
-                            @if (is_numeric($valstr)) text-center @else text-xs @endif
-                            @isset($colors[intval($valstr)])) 
+                            } @endphp
+                                        @if (is_numeric($valstr)) text-center @else text-xs @endif
+                                        @isset($colors[intval($valstr)])) 
                             bg-{{ $colors[intval($valstr)] }}-200
                             @endif
                         ">
@@ -157,7 +166,7 @@
                 @endforeach
             </tr>
         @endisset
-    @endisset
-    @endforeach
-    </tbody>
-    </table>
+            @endisset
+             @endforeach
+            </tbody>
+        </table>
