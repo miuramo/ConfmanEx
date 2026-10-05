@@ -194,7 +194,7 @@ class File extends Model
         if (strlen($out) > 1) Log::info($out);
     }
 
-    public static function call_imagemagick(string $command): string
+    public static function call_imagemagick(string $command): string|null
     {
         // convertコマンドがあるか調べる
         $convert_command = "convert";
