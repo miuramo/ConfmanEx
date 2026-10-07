@@ -6,6 +6,7 @@
             <tr class="bg-slate-300">
                 <th class="px-2">Early</th>
                 <th class="px-2">Late</th>
+                <th class="px-2">合計</th>
                 <th class="px-2">{{ $item }}</th>
             </tr>
             @php
@@ -23,6 +24,7 @@
                             <td class="px-1 text-right">0</td>
                         @endisset
                     @endforeach
+                    <td class="px-1 text-right">{{ array_sum($ary) }}</td>
                     <td class="px-1">{{ $name }}</td>
                 </tr>
             @endforeach
@@ -30,7 +32,8 @@
                 @foreach ([1, 0] as $isearly)
                     <td class="px-1 text-right">{{ $sum4check[$isearly] }}</td>
                 @endforeach
-                <td class="px-1">（合計）</td>
+                <td class="px-1 text-right">{{ $sum4check[1] + $sum4check[0] }}</td>
+                <td class="px-1"></td>
             </tr>
         </table>
     @endforeach

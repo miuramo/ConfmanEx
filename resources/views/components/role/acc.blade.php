@@ -29,9 +29,9 @@
                 <span class="px-3"></span>
                 <livewire:setting-switch :name="'REGOPEN_PUBLIC'" />
                 <span class="px-3"></span>
-                <livewire:setting-switch :name="'REG_EARLY_LIMIT'" textsize=10 />
+                <livewire:setting-switch :name="'REG_EARLY_LIMIT'" textsize=12 />
                 <span class="px-3"></span>
-                <livewire:setting-switch :name="'REG_LATE_LIMIT'" textsize=10 />
+                <livewire:setting-switch :name="'REG_LATE_LIMIT'" textsize=12 />
                 <span class="px-3"></span>
                 <livewire:setting-switch :name="'REG_START_FOR_PCACC'" />
                 <span class="px-3"></span>

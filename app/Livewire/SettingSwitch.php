@@ -11,11 +11,12 @@ class SettingSwitch extends Component
     public $message;
     public $inputtext;
     public $inline;
-    public int $textsize = 10;
+    public int $textsize = 12;
 
-    public function mount($name, $inline = false)
+    public function mount($name, $inline = false, int $textsize = 12)
     {
         $this->name = $name;
+        $this->textsize = $textsize;
         $this->message = "testing...";
         $this->setting = \App\Models\Setting::where('name', $name)->first();
         $this->setting->valid = true;
