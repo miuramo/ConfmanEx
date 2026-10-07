@@ -75,6 +75,7 @@ class EnqueteController extends Controller
     public function answers_multienq_post(Request $req)
     {
         $enq_ids = $req->input("enq_ids");
+        // 参照権限があるか確認する
         $aEnq = Enquete::accessibleEnquetes(true);
         foreach ($enq_ids as $enq_id) {
             if (!isset($aEnq[$enq_id])) abort(403);
