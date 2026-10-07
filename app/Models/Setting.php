@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class Setting extends Model
@@ -45,6 +46,33 @@ class Setting extends Model
                 }
             }
         }
+    }
+
+    /**
+     * ブラウザ言語設定を考慮して、設定を取得する
+     */
+    public static function getByLocale(string $setting_name): ?Setting
+    {
+        $locale = app()->getLocale();
+        if ($locale !== 'ja') {
+            $locale_setting_name = strtoupper($setting_name . '_' . $locale);
+            $setting = Setting::where('name', $locale_setting_name)->where('valid', true)->first();
+        }
+        if (!isset($setting)) {
+            $setting = Setting::where('name', $setting_name)->where('valid', true)->first();
+        }
+        return $setting;
+    }
+    public static function getvalByLocale(string $setting_name): ?string
+    {
+        $setting = Setting::getByLocale($setting_name);
+        if ($setting) {
+            if ($setting->isbool) {
+                return filter_var($setting->value, FILTER_VALIDATE_BOOLEAN);
+            }
+            return $setting->value;
+        }
+        return null;
     }
 
     /**
