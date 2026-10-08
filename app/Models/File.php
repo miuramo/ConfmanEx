@@ -552,6 +552,9 @@ class File extends Model
         return 0;
     }
 
+    /**
+     * FILEPUT_DIRに置かれたファイルの一覧を取得する
+     */
     public static function getRealFileNames(): array
     {
         $parentdir = storage_path(File::apf());
@@ -578,6 +581,10 @@ class File extends Model
         }
         return $folders;
     }
+    /**
+     * Get the list of file names that are not present in the database.
+     * ただし、pdfから生成されたpngファイル
+     */
     public static function getFileNamesNotInDB(): array
     {
         $fnames = self::getRealFileNames();
@@ -589,7 +596,11 @@ class File extends Model
             if ($f) {
                 $indb[$f->id] = $fname;
             } else {
-                $notindb[] = $fname;
+                $base_pdf = preg_replace('/\.png$/i', '.pdf', $base);
+                $cnt = File::where("fname", $base_pdf)->count(); //softdeleteはつかっていない。
+                if ($cnt == 0) { // PDFから生成されたPNGファイルは無視する
+                    $notindb[] = $fname;
+                }
             }
         }
         return ['notindb' => $notindb, 'indb' => $indb];
@@ -616,6 +627,17 @@ class File extends Model
             // }
             // info($realfiles);
         }
+    }
+    /**
+     * YYYY-MM-DD HH:MM:SS形式のタイムスタンプを返す
+     */
+    public static function timestamp(string $filename): ?string
+    {
+        $fullpath = storage_path(File::apf() . '/' . $filename);
+        if (file_exists($fullpath)) {
+            return date('Y-m-d H:i:s', filemtime($fullpath));
+        }
+        return null;
     }
     /**
      * PDFにフォントが埋め込まれているかどうかをチェックする

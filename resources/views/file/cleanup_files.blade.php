@@ -68,7 +68,9 @@
         <ul>
             @foreach ($list['notindb'] as $n => $fn)
                 <li>
-                    {{ $fn }}
+                    {{ $fn }} 
+                    <span class="mx-2"></span>
+                    {{ App\Models\File::timestamp($fn) }}
                 </li>
             @endforeach
         </ul>
