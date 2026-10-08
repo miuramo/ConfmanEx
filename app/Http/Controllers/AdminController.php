@@ -898,6 +898,7 @@ class AdminController extends Controller
         chdir($app_public_filedir);
         shell_exec("mysqldump -u {$db_name} -p{$db_name} {$db_name} > dump.sql");
         shell_exec("zip -e --password={$pass} passdumpsql.zip dump.sql");
+        shell_exec("rm dump.sql");
         return response()->file(
             $app_public_filedir . "/passdumpsql.zip",
             [
