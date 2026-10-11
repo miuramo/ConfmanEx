@@ -8,16 +8,21 @@
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",
+        "@tailwindcss/postcss": "^4.3.3",
         "alpinejs": "^3.4.2",
         "autoprefixer": "^10.4.2",
         "axios": "^1.6.4",
         "concurrently": "^9.1.2",
         "laravel-vite-plugin": "^1.2.0",
         "postcss": "^8.4.31",
-        "tailwindcss": "^3.1.0",
+        "tailwindcss": "^4.3.3",
         "vite": "^6.4.1"
     },
     "dependencies": {
         "@alpinejs/persist": "^3.13.8"
+    },
+    "allowScripts": {
+        "esbuild@0.25.12": true,
+        "fsevents@2.3.3": true
     }
 }
