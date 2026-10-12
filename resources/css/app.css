@@ -2,3 +2,7 @@
 @config "../../tailwind.config.js";
 
 [x-cloak] { display: none !important; }
+
+@layer base {
+  button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
+}
