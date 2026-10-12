@@ -19,6 +19,8 @@
     // 氏名が全角スペース区切りだったり、半角スペース複数区切りだったりするのを修正
     App\Models\User::fix_username_space_all();
 
+    // LogModifyのdiffが空のレコードを削除
+    App\Models\LogModify::cleanup_nodiff();
 @endphp
 <div class="px-4 py-4">
     <x-element.h1>あなたのRole</x-element.h1>

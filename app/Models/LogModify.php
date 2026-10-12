@@ -20,4 +20,9 @@ class LogModify extends Model
     {
         return $this->belongsTo(User::class, 'uid');
     }
+
+    public static function cleanup_nodiff()
+    {
+        self::whereNull('diff')->orWhere('diff', '')->delete();
+    }
 }
