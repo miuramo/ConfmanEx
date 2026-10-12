@@ -31,6 +31,10 @@ trait MetaObserverTrait
         }
         $diffstr = implode("\n", $diffary);
 
+        if (empty($diffstr)) {
+            return;
+        }
+
         //ログインユーザ
         $uid = (Auth::user() == null) ? 0 : Auth::user()->id;
 
