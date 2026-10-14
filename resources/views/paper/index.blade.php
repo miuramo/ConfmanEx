@@ -28,10 +28,10 @@
             @if (count($all) == 0)
                 <div
                     class="xs:text-sm sm:text-xl text-orange-400 bg-yellow-200 dark:bg-yellow-800 dark:text-orange-700 p-4 rounded-md text-center">
-                    {{__('あなたが作成した投稿情報はまだありません。')}}
+                    {{ __('あなたが作成した投稿情報はまだありません。') }}
                     <div class="mt-5 mb-2">
                         <x-element.linkbutton href="{{ route('paper.create') }}" color="yellow">
-                            {{__('新規投稿')}} </x-element.linkbutton>
+                            {{ __('新規投稿') }} </x-element.linkbutton>
                     </div>
                 </div>
 
@@ -40,10 +40,10 @@
                 @if (auth()->user()->can('role_any', 'reviewer|metareviewer'))
                     <div
                         class="xs:text-sm sm:text-xl text-blue-700 bg-cyan-200 dark:bg-cyan-800 dark:text-blue-700 p-4 rounded-md text-center">
-                        {{__('【査読者のかたへ】依頼された査読・Biddingをはじめるには、以下の「査読一覧」ボタン（または、トップメニューの「査読」）をクリックしてください。')}}
+                        {{ __('【査読者のかたへ】依頼された査読・Biddingをはじめるには、以下の「査読一覧」ボタン（または、トップメニューの「査読」）をクリックしてください。') }}
                         <div class="mt-5 mb-2">
                             <x-element.linkbutton href="{{ route('role.top', ['role' => 'reviewer']) }}" color="cyan">
-                                {{__('査読一覧')}} </x-element.linkbutton>
+                                {{ __('査読一覧') }} </x-element.linkbutton>
                         </div>
                     </div>
                 @endif
@@ -52,7 +52,8 @@
                     @if ($paper->accepted)
                         <div
                             class="bg-cyan-100 p-3 motion-safe:hover:scale-[1.03] transition-all duration-250 dark:bg-cyan-300">
-                            <span class="border-2 border-blue-600 p-1 text-blue-600 font-bold">{{__('投稿完了')}}</span>
+                            <span
+                                class="border-2 border-blue-600 p-1 text-blue-600 font-bold">{{ __('投稿完了') }}</span>
                         @else
                             <div
                                 class="bg-slate-200 p-3 motion-safe:hover:scale-[1.03] transition-all duration-250 dark:bg-slate-700">
@@ -71,11 +72,11 @@
                     &nbsp;
                     &nbsp;
                     <x-element.linkbutton href="{{ route('paper.edit', ['paper' => $paper->id]) }}" color="blue">
-                        {{__('Edit')}} </x-element.linkbutton>
+                        {{ __('Edit') }} </x-element.linkbutton>
                     &nbsp;
                     &nbsp;
                     <x-element.linkbutton2 href="{{ route('paper.show', ['paper' => $paper->id]) }}" color="green">
-                        {{__('View')}} </x-element.linkbutton2>
+                        {{ __('View') }} </x-element.linkbutton2>
 
                     @if ($revreturn[$paper->category_id])
                         &nbsp;
@@ -83,7 +84,7 @@
                         <x-element.linkbutton
                             href="{{ route('paper.review', ['paper' => $paper->id, 'token' => $paper->token()]) }}"
                             color="orange" target="_blank">
-                            {{__('結果')}} </x-element.linkbutton>
+                            {{ __('結果') }} </x-element.linkbutton>
                         {{-- 議論掲示板があれば、ここにもリンクを表示する --}}
                         @php
                             $bb = App\Models\Bb::where('paper_id', $paper->id)
@@ -96,7 +97,7 @@
                             &nbsp;
                             <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb, 'key' => $bb->key]) }}"
                                 color="pink" target="_blank">
-                                {{__('シェファーディング掲示板')}} </x-element.linkbutton>
+                                {{ __('シェファーディング掲示板') }} </x-element.linkbutton>
                         @endisset
 
                         @php
@@ -110,14 +111,14 @@
                             &nbsp;
                             <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb3, 'key' => $bb3->key]) }}"
                                 color="pink" target="_blank">
-                                {{__('出版掲示板')}} </x-element.linkbutton>
+                                {{ __('出版掲示板') }} </x-element.linkbutton>
                         @endisset
 
                         @if (App\Models\Setting::isTrue('ENABLE_ANNOTPAPER'))
                             &nbsp;
                             &nbsp;
                             <x-element.linkbutton href="{{ route('annot.create') }}" color="lime" target="_blank">
-                                {{__('AnnotPaper')}} </x-element.linkbutton>
+                                {{ __('AnnotPaper') }} </x-element.linkbutton>
                         @endif
                     @endif
 
@@ -135,14 +136,14 @@
     @if (count($coauthor_all) == 0)
         <div
             class="xs:text-sm sm:text-xl text-slate-400 bg-slate-200 p-4 rounded-md text-center mt-10  dark:bg-slate-700 dark:text-slate-400">
-            {{__('あなたが表示できる共著者投稿はありません。')}}
+            {{ __('あなたが表示できる共著者投稿はありません。') }}
             <div class="text-sm mt-5">
-                {{__('ここに共著の投稿を表示するには、あなたの登録メールアドレスを投稿者に伝え、投稿連絡用メールアドレスへの追加を依頼してください。')}}
+                {{ __('ここに共著の投稿を表示するには、あなたの登録メールアドレスを投稿者に伝え、投稿連絡用メールアドレスへの追加を依頼してください。') }}
             </div>
         </div>
     @else
         <h2 class="font-semibold text-xl text-gray-800 leading-tight dark:bg-slate-800 dark:text-slate-400 pt-10 pb-3">
-            {{__('共著者分')}}
+            {{ __('共著者分') }}
         </h2>
         <div id="coauthorpaperlist" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             @foreach ($coauthor_all as $paper)
@@ -175,7 +176,7 @@
                     <x-element.linkbutton
                         href="{{ route('paper.review', ['paper' => $paper->id, 'token' => $paper->token()]) }}"
                         color="orange" target="_blank">
-                        {{__('結果')}} </x-element.linkbutton>
+                        {{ __('結果') }} </x-element.linkbutton>
                     {{-- 議論掲示板があれば、ここにもリンクを表示する --}}
                     @php
                         $bb = App\Models\Bb::where('paper_id', $paper->id)
@@ -188,8 +189,29 @@
                         &nbsp;
                         <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb, 'key' => $bb->key]) }}"
                             color="pink" target="_blank">
-                            {{__('掲示板')}} </x-element.linkbutton>
+                            {{ __('シェファーディング掲示板') }} </x-element.linkbutton>
                     @endisset
+
+                    @php
+                        $bb3 = App\Models\Bb::where('paper_id', $paper->id)
+                            ->where('category_id', $paper->category_id)
+                            ->where('type', 3) // 3: 出版　この条件を忘れると、議論用が表示されてしまうため注意
+                            ->first();
+                    @endphp
+                    @isset($bb3)
+                        &nbsp;
+                        &nbsp;
+                        <x-element.linkbutton href="{{ route('bb.show', ['bb' => $bb3, 'key' => $bb3->key]) }}"
+                            color="pink" target="_blank">
+                            {{ __('出版掲示板') }} </x-element.linkbutton>
+                    @endisset
+
+                    @if (App\Models\Setting::isTrue('ENABLE_ANNOTPAPER'))
+                        &nbsp;
+                        &nbsp;
+                        <x-element.linkbutton href="{{ route('annot.create') }}" color="lime" target="_blank">
+                            {{ __('AnnotPaper') }} </x-element.linkbutton>
+                    @endif
                 @endif
 
                 <a href="{{ route('paper.show', ['paper' => $paper->id]) }}">
