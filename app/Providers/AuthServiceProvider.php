@@ -187,7 +187,10 @@ class AuthServiceProvider extends ServiceProvider
                 Log::warning("REG_EARLY_LIMIT is not set correctly. value={$early_end}");
                 return false;
             }
-            return new DateTime() <= new DateTime($early_end . " 23:59:59");
+            $now = (new DateTime())->format("Y-m-d H:i:s");
+            $isearly = $now <= new DateTime($early_end . " 23:59:59")->format("Y-m-d H:i:s");
+            Log::info("Current time: " . $now . " isearly: " . ($isearly ? "true" : "false"));
+            return $isearly;
         });
         // 現在が通常申込期間内（早期期間を過ぎた後）か
         Gate::define('is_now_late', function () {
@@ -196,15 +199,18 @@ class AuthServiceProvider extends ServiceProvider
                 Log::warning("REG_LATE_LIMIT is not set correctly. value={$late_end}");
                 return false;
             }
-            return new DateTime() <= new DateTime($late_end . " 23:59:59") && new DateTime() > new DateTime(\App\Models\Setting::getval('REG_EARLY_LIMIT') . " 23:59:59");
+            $now = (new DateTime())->format("Y-m-d H:i:s");
+            return $now <= new DateTime($late_end . " 23:59:59")->format("Y-m-d H:i:s") && $now > new DateTime(\App\Models\Setting::getval('REG_EARLY_LIMIT') . " 23:59:59")->format("Y-m-d H:i:s");
         });
 
         // 参加登録がisearlyかつ、早期申し込み期限内、または、参加登録が!isearlyかつ通常申し込み期限内かどうか
         Gate::define('can_edit_registration', function ($user, $reg) {
             $is_now_early = $user->can('is_now_early');
             $is_now_late = $user->can('is_now_late');
-            if ($reg->isearly && $is_now_early) return true;
-            if (!$reg->isearly && $is_now_late) return true;
+            if ($is_now_early) return true;
+            // earlyを過ぎたとき、$reg->isearly は編集できなくなる
+            if ($reg->isearly && !$is_now_early) return false; // 早期申込期間を過ぎた場合、早期登録は編集不可
+            if (!$reg->isearly && $is_now_late) return true; // 通常申込期間内であれば、通常登録は編集可能
             return false;
         });
     }
