@@ -189,7 +189,7 @@ class AuthServiceProvider extends ServiceProvider
             }
             $now = (new DateTime())->format("Y-m-d H:i:s");
             $isearly = $now <= (new DateTime($early_end . " 23:59:59"))->format("Y-m-d H:i:s");
-            Log::info("Current time: " . $now . " isearly: " . ($isearly ? "true" : "false"));
+            // Log::info("Current time: " . $now . " isearly: " . ($isearly ? "true" : "false"));
             return $isearly;
         });
         // 現在が通常申込期間内（早期期間を過ぎた後）か
