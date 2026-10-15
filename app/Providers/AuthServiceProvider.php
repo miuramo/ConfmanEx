@@ -188,7 +188,7 @@ class AuthServiceProvider extends ServiceProvider
                 return false;
             }
             $now = (new DateTime())->format("Y-m-d H:i:s");
-            $isearly = $now <= new DateTime($early_end . " 23:59:59")->format("Y-m-d H:i:s");
+            $isearly = $now <= (new DateTime($early_end . " 23:59:59"))->format("Y-m-d H:i:s");
             Log::info("Current time: " . $now . " isearly: " . ($isearly ? "true" : "false"));
             return $isearly;
         });
@@ -200,7 +200,7 @@ class AuthServiceProvider extends ServiceProvider
                 return false;
             }
             $now = (new DateTime())->format("Y-m-d H:i:s");
-            return $now <= new DateTime($late_end . " 23:59:59")->format("Y-m-d H:i:s") && $now > new DateTime(\App\Models\Setting::getval('REG_EARLY_LIMIT') . " 23:59:59")->format("Y-m-d H:i:s");
+            return $now <= (new DateTime($late_end . " 23:59:59"))->format("Y-m-d H:i:s") && $now > (new DateTime(\App\Models\Setting::getval('REG_EARLY_LIMIT') . " 23:59:59"))->format("Y-m-d H:i:s");
         });
 
         // 参加登録がisearlyかつ、早期申し込み期限内、または、参加登録が!isearlyかつ通常申し込み期限内かどうか
