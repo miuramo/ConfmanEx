@@ -41,11 +41,13 @@
                 $reg_late_limit = App\Models\Setting::getval('REG_LATE_LIMIT');
 
             @endphp
-            <ul class="m-4">
+            <ul id="sankakakunin-list" class="m-4">
                 @foreach ($sankakakunin as $name => $mes)
                     <li class="hover:bg-lime-100 dark:text-slate-400 dark:hover:bg-lime-950">
-                        <input type="checkbox" checked="checked" class="checked:bg-lime-500">
+                        <input type="checkbox" id="sankakakunin_{{ $name }}" class="checked:bg-lime-500">
+                        <label for="sankakakunin_{{ $name }}">
                         {!! $mes !!}
+                        </label>
                     </li>
                 @endforeach
             </ul>
@@ -175,12 +177,21 @@
                     </x-element.h1>
                 @else
                     <x-element.h1>
-                        上記について、すべて確認・了承したうえで、参加登録を開始してください。
+                        上記について、すべて確認・了承し、チェックをつけたうえで、参加登録を開始してください。
                         <br>
                         <b>（注：{{ $allowed_users }}）</b><br>
-                        <x-element.linkbutton href="{{ route('regist.create') }}" color="cyan">
-                            参加登録を開始する
-                        </x-element.linkbutton>
+                        <div id="regist-create-button">
+                            <span id="regist-create-button-disabled">
+                                <x-element.linkbutton_disabled>
+                                    参加登録を開始する
+                                </x-element.linkbutton_disabled>
+                            </span>
+                            <span id="regist-create-button-enabled" class="hidden">
+                                <x-element.linkbutton href="{{ route('regist.create') }}" color="cyan">
+                                    参加登録を開始する
+                                </x-element.linkbutton>
+                            </span>
+                        </div>
                     </x-element.h1>
                 @endif
             @endisset
@@ -299,6 +310,27 @@
     </script>
 
     @push('localjs')
+        <script>
+            const sankakakuninCheckboxes = Array.from(
+                document.querySelectorAll('#sankakakunin-list input[type="checkbox"]')
+            );
+            const disabledButton = document.getElementById('regist-create-button-disabled');
+            const enabledButton = document.getElementById('regist-create-button-enabled');
+
+            function updateRegistCreateButton() {
+                const isConfirmed = sankakakuninCheckboxes.length > 0
+                    && sankakakuninCheckboxes.every((checkbox) => checkbox.checked);
+                if (!disabledButton || !enabledButton) return;
+
+                disabledButton.classList.toggle('hidden', isConfirmed);
+                enabledButton.classList.toggle('hidden', !isConfirmed);
+            }
+
+            sankakakuninCheckboxes.forEach((checkbox) => {
+                checkbox.addEventListener('change', updateRegistCreateButton);
+            });
+            updateRegistCreateButton();
+        </script>
         <script src="/js/jquery.min.js"></script>
         <script src="/js/sortable.js"></script>
         <script src="/js/form_changed.js"></script>

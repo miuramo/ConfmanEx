@@ -284,9 +284,7 @@ class RegistController extends Controller
         }
         // 管理者(pcacc)はいつでも削除可能
         // ユーザ本人は、申込種別に対応する期間中であれば削除可能
-        $can_delete = $reg->isearly
-            ? auth()->user()->can('is_now_early')
-            : auth()->user()->can('is_now_late');
+        $can_delete = auth()->user()->can('can_edit_registration', $reg);
         if (!$pcacc && !$can_delete) {
             return redirect()->route('regist.index')->with('feedback.error', '現在は参加登録の削除はできません。');
         }
