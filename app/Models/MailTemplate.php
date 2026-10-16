@@ -653,6 +653,21 @@ class MailTemplate extends Model
         // }
         return $users;
     }
+    /**
+     * 参加登録Validで、指定したアンケート回答がtextの人を返す
+     * $include が false の場合は、指定した回答をしていない人を返す
+     */
+    public static function mt_reg_user_enqans(string $enqname, string $enqans_text, bool $include = true): Collection
+    {
+        $enqitm = EnqueteItem::where("name", $enqname)->first();
+        $exist_enqansers_uid = EnqueteAnswer::where('enquete_item_id', $enqitm->id)->where('valuestr', $enqans_text)->pluck('user_id')->toArray();
+        if ($include) {
+            $uids = Regist::where('valid', 1)->whereIn('user_id', $exist_enqansers_uid)->pluck('user_id')->toArray();
+        } else {
+            $uids = Regist::where('valid', 1)->whereNotIn('user_id', $exist_enqansers_uid)->pluck('user_id')->toArray();
+        }
+        return Collection::make(User::whereIn('id', $uids)->get());
+    }
 
     /**
      * AltPDFのアンケート回答と、PDF提出の不一致

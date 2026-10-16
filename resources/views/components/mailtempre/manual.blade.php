@@ -89,6 +89,7 @@
                 'primary_of_paper(pid1,pid2,...)' => 'PaperIDのPrimary査読者',
                 'reg_user_valid( valid=1 )' => '参加登録ユーザ全員 (引数を「0」にすると無効ユーザのみ)',
                 'reg_user_noenqans("name")' => 'アンケート項目「name」に未回答の参加登録ユーザ',
+                'reg_user_enqans("name", "ans", include=true)' => 'アンケート項目「name」に「ans」と回答している有効参加登録ユーザ。includeをfalseにすると、指定回答をしていない有効参加登録ユーザ',
             ];
         @endphp
         <table class="border-cyan-200 border-2">
