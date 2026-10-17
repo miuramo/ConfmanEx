@@ -21,7 +21,7 @@ switch ($width) {
 }
 @endphp
 
-<div class="float-right" x-data="{ open: false }" @mouseleave="open = false" @close.stop="open = false">
+<div class="relative float-right" x-data="{ open: false }" @mouseleave="open = false" @close.stop="open = false">
     <div @click="open = ! open">
         {{ $trigger }}
     </div>
@@ -35,7 +35,7 @@ switch ($width) {
             x-transition:leave-end="opacity-0 scale-95"
             class="absolute z-50 mt-0 {{ $width }} rounded-md shadow-lg {{ $alignmentClasses }}"
             style="display: none;">
-        <div class="rounded-md ring-1 ring-black ring-opacity-5 {{ $contentClasses }}">
+        <div class="rounded-md ring-1 ring-gray-300 dark:ring-gray-500 {{ $contentClasses }}">
             {{ $content }}
         </div>
     </div>

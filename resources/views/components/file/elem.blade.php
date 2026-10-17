@@ -14,7 +14,7 @@
         overflow-hidden shadow-lg sm:rounded-lg dark:text-slate-400 motion-safe:hover:scale-[1.05] transition-all
         duration-250">
         {{-- <div class="p-4 text-gray-900 xs:text-sm sm:text-sm md:text-md lg:text-lg xl:text-2xl"> --}}
-        <div class="p-2 text-gray-900 text-sm leading-relaxed  dark:text-gray-400">
+        <div class="p-2 text-gray-900 text-sm leading-relaxed dark:text-gray-400">
             @if (!$file->locked)
                 <x-dropdown2>
                     <x-slot name="trigger">

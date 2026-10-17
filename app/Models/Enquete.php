@@ -173,6 +173,13 @@ class Enquete extends Model
             }
             $until[$enq->id] = Enquete::mm_dd_fancy($config->openend);
         }
+        // もし、canedit と readonly の両方に同じアンケートが入っていたら、readonlyから削除する
+        $readonly = array_filter($readonly, function($enq) use ($canedit) {
+            foreach ($canedit as $ce) {
+                if ($ce->id === $enq->id) return false;
+            }
+            return true;
+        });
         return ["canedit" => $canedit, "readonly" => $readonly, "until" => $until];
     }
 
