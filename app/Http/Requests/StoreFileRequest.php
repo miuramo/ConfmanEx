@@ -37,6 +37,11 @@ class StoreFileRequest extends FormRequest
     {
         $tmp = $this->file("file");
 
+        // post_max_size 超過などでリクエストが空になった場合
+        if ($this->input("paper_id") === null || $tmp === null) {
+            return redirect()->back()->with('feedback.error', "ファイルをアップロードできませんでした。ファイルサイズが大きすぎる可能性があります。");
+        }
+
         // フォルダがなければ作る
         File::mkdir_ifnot(storage_path(File::apf()));
 
