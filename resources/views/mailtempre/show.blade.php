@@ -52,6 +52,19 @@
             text-align: left;
         }
     </style>
+    <script>
+        function copyToClipboard(elementId) {
+            var copyText = document.getElementById(elementId);
+            var textArea = document.createElement("textarea");
+            textArea.value = copyText.innerText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("Copy");
+            document.body.removeChild(textArea);
+            alert("コピーしました。");
+        }
+    </script>
+
     @section('title', 'Preview ' . $mt->id)
 
     <!-- mailtempre.index -->
@@ -76,12 +89,14 @@
                 送信対象は{{ $count }}件：
                 @foreach ($papers as $paper)
                     @if ($paper instanceof \App\Models\Paper)
-                        <span class="mr-1 px-1 bg-pink-100 dark:bg-slate-500 hover:bg-pink-200 hover-on-paper hover:font-bold hover:text-pink-600 pointer cursor-pointer"
+                        <span
+                            class="mr-1 px-1 bg-pink-100 dark:bg-slate-500 hover:bg-pink-200 hover-on-paper hover:font-bold hover:text-pink-600 pointer cursor-pointer"
                             onmouseenter="Livewire.dispatch('id-changed', { value: {{ $paper->id }} });"
                             title="{{ $paper->paperowner->name }} {{ $paper->title }}">{{ $paper->id_03d() }}</span>
                     @endif
                     @if ($paper instanceof \App\Models\User)
-                        <span class="mr-1 px-1 bg-sky-100 dark:bg-slate-500 hover:bg-sky-300 hover-on-user hover:font-bold hover:text-sky-600 pointer cursor-pointer"
+                        <span
+                            class="mr-1 px-1 bg-sky-100 dark:bg-slate-500 hover:bg-sky-300 hover-on-user hover:font-bold hover:text-sky-600 pointer cursor-pointer"
                             onmouseenter="Livewire.dispatch('id-changed', { value: {{ $paper->id }} });"
                             title="{{ $paper->name }}（{{ $paper->affil }}）">{{ $paper->id_03d() }}</span>
                     @endif
@@ -101,7 +116,28 @@
                 この雛形をつかって送信
             </x-element.linkbutton>
 
-
+            @if ($count > 0)
+                <span class="mx-2"></span>
+                <x-element.button id="toggleButton" value="送信先アドレスを表示／非表示" color="lime" size="xs"
+                    onclick="openclose('div_allto')">
+                </x-element.button>
+                <div id="div_allto" style="display:none; padding-top: 0.5rem; padding-bottom: 0.5rem;">
+                    <button onclick="copyToClipboard('pre_allto')"
+                        class="px-2 py-1 bg-lime-500 text-white rounded text-sm cursor-pointer">クリップボードにコピー</button>
+                    <pre id="pre_allto" class="text-xs p-2 bg-white dark:bg-slate-800 text-wrap">
+@foreach ($papers as $paper)
+@php 
+  $to_cc = $paper->get_mail_to_cc(); 
+  $to_cc_str = $to_cc['to'];
+  if(!empty($to_cc['cc'])) {
+      $to_cc_str .= "\r\n  " . implode("\r\n  ", $to_cc['cc']);
+  }
+@endphp
+{{ $to_cc_str }}
+@endforeach
+</pre>
+                </div>
+            @endif
         </x-element.h1>
 
         上の数字にマウスをホバーすると、プレビュー対象を変更できます：
@@ -129,5 +165,9 @@
         </x-mailtempre.manual>
 
     </div>
+    @push('localjs')
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/openclose.js"></script>
+    @endpush
 
 </x-app-layout>
