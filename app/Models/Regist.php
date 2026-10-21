@@ -19,6 +19,7 @@ class Regist extends Model
         'user_id',
         'valid',
         'paid',
+        'locked',
         'paid_at',
         'payment_method',
         'payment_id',

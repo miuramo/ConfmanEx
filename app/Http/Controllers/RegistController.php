@@ -154,9 +154,11 @@ class RegistController extends Controller
             }
             $with_token = true;
         } else if ($reg->user_id !== auth()->id()) {
-            return redirect()->route('regist.index')->with('feedback.error', '他のユーザーの参加登録を編集することはできません。');
+            return redirect()->route('regist.index')->with('feedback.error', '他のユーザの参加登録を編集することはできません。');
         }
-
+        if ($reg->locked) {
+            return redirect()->route('regist.index')->with('feedback.error', 'この参加登録は編集ロックされています。');
+        }
         if ($with_token || auth()->user()->can('can_edit_registration', $reg)) {
             $reg->valid = false; // 編集開始時点で無効にする
             $reg->save();
@@ -180,7 +182,7 @@ class RegistController extends Controller
             }
             $with_token = true;
         } else if ($reg->user_id !== auth()->id()) {
-            return redirect()->route('regist.index')->with('feedback.error', '他のユーザーの参加登録を参照することはできません。');
+            return redirect()->route('regist.index')->with('feedback.error', '他のユーザの参加登録を参照することはできません。');
         }
         return view('regist.show', ['regist' => $reg])->with('regid', $id)->with('reg', $reg);
     }
@@ -223,7 +225,7 @@ class RegistController extends Controller
         // 参加登録の編集フォームを表示する
         $reg = Regist::findOrFail($id);
         if ($reg->user_id !== auth()->id()) {
-            return redirect()->route('regist.index')->with('feedback.error', '他のユーザーの参加登録を編集することはできません。');
+            return redirect()->route('regist.index')->with('feedback.error', '他のユーザの参加登録を編集することはできません。');
         }
         if ($reg->valid) {
             // メール送信処理を実行
@@ -299,5 +301,44 @@ class RegistController extends Controller
             ->whereIn('enquete_id', $enqIDs)
             ->delete();
         return back()->with('feedback.success', '参加登録を削除しました。');
+    }
+
+    /**
+     * 参加登録をまとめて編集ロックまたは解除する
+     */
+    public function manage_locked()
+    {
+        if (!auth()->user()->can('role_any', 'pc|acc')) {
+            return redirect()->route('regist.index')->with('feedback.error', '編集ロックの管理権限がありません。');
+        }
+        $regists = Regist::with('user')
+            ->orderByRaw('CASE WHEN submitted_at IS NULL THEN 1 ELSE 0 END')
+            ->orderBy('submitted_at')
+            ->get();
+
+        return view('admin.manage_locked', compact('regists'));
+    }
+
+    public function update_locked(Request $request)
+    {
+        if (!auth()->user()->can('role_any', 'pc|acc')) {
+            return redirect()->route('regist.index')->with('feedback.error', '編集ロックの管理権限がありません。');
+        }
+        // チェックを入れた参加登録を対象とする
+        $validated = $request->validate([
+            'action' => ['required', 'in:do_lock,do_unlock'],
+        ]);
+
+        $target = Regist::where('valid', true)
+            ->whereNotNull('submitted_at')
+            ->whereIn('id', $request->input('chk', []));
+        $count = (clone $target)->count();
+
+        $target->update(['locked' => $validated['action'] === 'do_lock']);
+
+        $action = $validated['action'] === 'do_lock' ? 'ロック' : 'ロック解除';
+
+        return redirect()->route('regist.manage_locked')
+            ->with('feedback.success', "{$count}件の有効な参加登録を{$action}しました。");
     }
 }

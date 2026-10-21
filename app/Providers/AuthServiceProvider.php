@@ -205,6 +205,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // 参加登録がisearlyかつ、早期申し込み期限内、または、参加登録が!isearlyかつ通常申し込み期限内かどうか
         Gate::define('can_edit_registration', function ($user, $reg) {
+            if ($reg->locked) return false; // 編集ロックされている場合は編集不可
             $is_now_early = $user->can('is_now_early');
             $is_now_late = $user->can('is_now_late');
             if ($is_now_early) return true;

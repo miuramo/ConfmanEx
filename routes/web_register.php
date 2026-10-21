@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('auth')->group(function () {
+    Route::get('/regist_manage_locked', [RegistController::class, 'manage_locked'])->name('regist.manage_locked');
+    Route::post('/regist_manage_locked', [RegistController::class, 'update_locked'])->name('regist.update_locked');
     Route::resource('regist', RegistController::class);
     // override edit and show routes with token support
     Route::get('/regist/{regist}/edit/{token?}', [RegistController::class, 'edit'])->name('regist.editwithtoken');

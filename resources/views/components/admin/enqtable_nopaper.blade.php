@@ -1,6 +1,6 @@
 @props([
     'papers' => [],
-    'heads' => ['regid', 'uid', 'name', 'affil', 'email', 'submitted_at', 'updated_at', 'isearly', 'canceled_at'],
+    'heads' => ['regid', 'uid', 'name', 'affil', 'email', 'submitted_at', 'updated_at', 'isearly', 'locked', 'canceled_at'],
     'enqans' => [],
     'enq' => [],
 ])
@@ -67,6 +67,11 @@
                 <td class="p-1">
                     @isset($regists[$paper->id])
                         {{ $regists[$paper->id]->isearly }}
+                    @endisset
+                </td>
+                <td class="p-1">
+                    @isset($regists[$paper->id])
+                        {{ $regists[$paper->id]->locked }}
                     @endisset
                 </td>
                 <td class="p-1">

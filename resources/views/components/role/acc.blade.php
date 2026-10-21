@@ -20,6 +20,10 @@
         </x-element.linkbutton2>
         <span class="px-3"></span>
         <x-element.resist_sponsorlink /> {{-- スポンサー向けの特殊な参加登録URLをクリップボードにコピー --}}
+        <span class="px-3"></span>
+        <x-element.linkbutton2 href="{{ route('regist.manage_locked') }}" color="orange" size="sm">
+            参加登録のLock管理
+        </x-element.linkbutton>
         <br>
         {{-- ここから2段組にしたい。 --}}
         <div class="grid grid-cols-2 gap-4">
