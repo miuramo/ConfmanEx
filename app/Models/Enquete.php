@@ -135,6 +135,7 @@ class Enquete extends Model
     }
     /**
      * 必要なアンケートを返す
+     * 複数のEnqueteConfigがあった場合、まずは期間が有効なものを優先する
      */
     public static function needForSubmit(Paper $paper): array
     {
@@ -149,7 +150,17 @@ class Enquete extends Model
             $willDemo = false;
         }
         $matcher = ($willDemo) ? "d" . $cat_id : $cat_id;
-        $configs = EnqueteConfig::where('valid', 1)->orderBy('openstart', 'desc')->get();
+        $configs = EnqueteConfig::where('valid', 1)->orderBy('openstart', 'desc')->get()
+            ->sort(function ($a, $b) {
+                $aIsOpen = Enquete::checkdayduration($a->openstart, $a->openend);
+                $bIsOpen = Enquete::checkdayduration($b->openstart, $b->openend);
+
+                if ($aIsOpen !== $bIsOpen) {
+                    return $bIsOpen <=> $aIsOpen;
+                }
+
+                return strcmp($b->openstart, $a->openstart);
+            });
         $canedit = [];
         $readonly = [];
         $until = []; //enqid=>deadline

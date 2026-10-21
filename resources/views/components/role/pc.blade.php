@@ -8,7 +8,7 @@
 
 @endphp
 <!-- components.role.pc -->
-<div class="px-6 py-4">
+<div class="px-6 py-4 break-words">
 
     <x-element.h1>投稿論文</x-element.h1>
 
@@ -50,7 +50,7 @@
             </x-element.linkbutton2>
         </div>
 
-        <div class="px-2 py-2 flex-grow">
+        <div class="px-2 py-2 grow">
             @php
                 $fts = ['pdf', 'img', 'video', 'altpdf'];
             @endphp
@@ -82,8 +82,9 @@
                     デモ希望数：{{ App\Models\EnqueteAnswer::demoCount() }}
                 </div>
                 <div>
-                    デモ希望PaperIDリスト：{{ implode(",", App\Models\EnqueteAnswer::demoPaperIDs()) }}
+                    デモ希望PaperIDリスト：{{ implode(", ", App\Models\EnqueteAnswer::demoPaperIDs()) }}
                 </div>
+                <div class="text-sm text-gray-500">詳細は デモToppage を参照</div>
             </div>
         </div>
     </div>
