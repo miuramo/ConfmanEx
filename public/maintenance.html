@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fb">
+  <title>メンテナンス中 | ConfmanEx</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP",
+        "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      color: #1d2b45;
+      background: #f4f7fb;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      min-height: 100svh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 32px 20px;
+      background:
+        radial-gradient(ellipse at 50% 0, #e4edff 0, transparent 48%),
+        #f4f7fb;
+    }
+
+    main {
+      width: min(100%, 560px);
+      padding: clamp(32px, 7vw, 56px);
+      border: 1px solid #e5eaf2;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 20px 60px rgb(30 55 90 / 9%);
+      text-align: center;
+    }
+
+    .brand {
+      margin: 0 0 36px;
+      color: #243b63;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .icon {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      background: #edf3ff;
+      color: #4169b2;
+    }
+
+    .icon svg {
+      width: 38px;
+      height: 38px;
+    }
+
+    .status {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #fff4df;
+      color: #895a0a;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    h1 {
+      margin: 0;
+      color: #1d2b45;
+      font-size: clamp(1.5rem, 5vw, 1.9rem);
+      line-height: 1.5;
+    }
+
+    .message {
+      margin: 18px 0 0;
+      color: #53627a;
+      font-size: 1rem;
+      line-height: 1.9;
+    }
+
+    .note {
+      margin: 28px 0 0;
+      padding-top: 20px;
+      border-top: 1px solid #edf0f5;
+      color: #758198;
+      font-size: 0.875rem;
+      line-height: 1.8;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .icon svg {
+        animation: turn 12s linear infinite;
+      }
+
+      @keyframes turn {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="brand">ConfmanEx</p>
+    <div class="icon" aria-hidden="true">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24 7v4m0 26v4M7 24h4m26 0h4M12 12l2.8 2.8m18.4 18.4L36 36m0-24-2.8 2.8M14.8 33.2 12 36" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="24" cy="24" r="9" stroke="currentColor" stroke-width="3"/>
+      </svg>
+    </div>
+    <span class="status">メンテナンス中</span>
+    <h1>ただいま緊急メンテナンス中です</h1>
+    <p class="message">
+      セキュリティ向上のため、システムメンテナンスを実施しています。<br>
+      ご不便をおかけしますが、終了までしばらくお待ちください。
+    </p>
+    <p class="note">メンテナンス終了後、あらためてアクセスしてください。</p>
+  </main>
+</body>
+</html>
