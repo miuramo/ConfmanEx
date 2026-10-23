@@ -40,11 +40,16 @@
                 $reg_early_limit = App\Models\Setting::getval('REG_EARLY_LIMIT');
                 $reg_late_limit = App\Models\Setting::getval('REG_LATE_LIMIT');
 
+                $reg = App\Models\Regist::where('user_id', Auth::user()->id)->first();
             @endphp
             <ul id="sankakakunin-list" class="m-4">
                 @foreach ($sankakakunin as $name => $mes)
                     <li class="hover:bg-lime-100 dark:text-slate-400 dark:hover:bg-lime-950">
-                        <input type="checkbox" id="sankakakunin_{{ $name }}" class="checked:bg-lime-500">
+                        <input type="checkbox" id="sankakakunin_{{ $name }}" class="checked:bg-lime-500"
+                        @if($reg && $reg->valid && $reg->created_at)
+                            checked
+                        @endif  
+                        >
                         <label for="sankakakunin_{{ $name }}">
                         {!! $mes !!}
                         </label>
@@ -54,9 +59,6 @@
 
         </div>
         <div class="py-2 px-6">
-            @php
-                $reg = App\Models\Regist::where('user_id', Auth::user()->id)->first();
-            @endphp
             @isset($reg)
                 <x-element.h1>
                     @if ($reg->valid)
