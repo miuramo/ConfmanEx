@@ -131,6 +131,10 @@
             rebuildPDFThumb
         </x-element.linkbutton>
         <span class="px-3"></span>
+        <x-element.linkbutton href="{{ route('admin.purge_pdf_thumbs') }}" color="orange">
+            PDFサムネイルキャッシュ削除
+        </x-element.linkbutton>
+        <span class="px-3"></span>
         <x-element.linkbutton href="{{ route('admin.test9w') }}" color="slate">
             test QueueWork
         </x-element.linkbutton>

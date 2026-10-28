@@ -89,7 +89,7 @@ class FileController extends Controller
         // $file はあるが、サムネイルpngがない場合は、PDFからサムネイルを作る。これも失敗したらnoimageを出す。
         if (file_exists($filepath = storage_path(File::apf() . '/' . substr($file->fname, 0, -4) . ".png"))) {
             return response()->file($filepath);
-        } else if (file_exists($filepath_fallback = storage_path(File::apf() . '/' . substr($file->fname, 0, -4) . '/t-00001.png'))) { // fallback: PDFの1ページ目のサムネイル
+        } else if (file_exists($filepath_fallback = $file->getPdfThumbPathOnDemand(1))) { // fallback: PDFの1ページ目のサムネイル（オンデマンド生成）
             return response()->file($filepath_fallback);
         } else {
             $file->makeThumbPNG();
@@ -109,7 +109,12 @@ class FileController extends Controller
                 if (strlen($firsthash) < 12) abort(403, 'file id and key required');
                 if (strpos($file->key, $firsthash) !== 0) abort(403, 'file key mismatch');
             }
-            return response()->file($file->getPdfThumbPath((int)$pagenum));
+            $thumbpath = $file->getPdfThumbPathOnDemand((int)$pagenum);
+            if (!file_exists($thumbpath)) {
+                $this->noimage();
+                return;
+            }
+            return response()->file($thumbpath);
             // ->header("Content-Disposition", $file->origname);
         } catch (ModelNotFoundException $e) {
             return "error";

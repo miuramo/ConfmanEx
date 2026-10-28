@@ -225,7 +225,8 @@ class File extends Model
     }
 
     /**
-     * PDFのサムネイルをつくる
+     * PDFのサムネイルを全ページ分つくる
+     * 注: 通常はオンデマンド生成(getPdfThumbPathOnDemand)を使う。こちらは手動での一括再生成用。
      */
     public function makePdfThumbs(): void
     {
@@ -267,6 +268,45 @@ class File extends Model
         $page05f = sprintf("t-%05d.png", $pagenum);
         $dir = substr($this->fname, 0, -4);
         return storage_path(File::apf() . '/' . $dir . "/" . $page05f);
+    }
+    /**
+     * 指定ページのPDFサムネイルパスを返す。キャッシュがなければ pdftoppm でそのページだけオンデマンド生成する。
+     * （アップロード時に全ページ生成せず、リクエストされたページのみキャッシュしてストレージを節約する）
+     */
+    public function getPdfThumbPathOnDemand(int $pagenum): string
+    {
+        $path = $this->getPdfThumbPath($pagenum);
+        if (file_exists($path)) return $path;
+        if ($this->mime !== "application/pdf") return $path;
+        if ($pagenum < 1 || ($this->pagenum > 0 && $pagenum > $this->pagenum)) return $path;
+
+        $fullpath = storage_path(File::apf() . '/' . $this->fname);
+        if (!file_exists($fullpath)) return $path;
+
+        $dir = substr($this->fname, 0, -4);
+        $dirpath = storage_path(File::apf() . '/' . $dir);
+        File::mkdir_ifnot($dirpath);
+
+        // 同時リクエストによる二重生成を防ぐ
+        $lock = fopen($dirpath . '/.thumbgen.lock', 'c');
+        if ($lock) flock($lock, LOCK_EX);
+        try {
+            if (!file_exists($path)) { // ロック取得後に再確認
+                $tmpprefix = $dirpath . '/.gen' . getmypid() . '-' . $pagenum;
+                shell_exec("pdftoppm -png -f {$pagenum} -l {$pagenum} -singlefile {$fullpath} {$tmpprefix}");
+                if (file_exists($tmpprefix . '.png')) {
+                    rename($tmpprefix . '.png', $path);
+                } else {
+                    Log::error("File@getPdfThumbPathOnDemand: pdftoppm failed for {$fullpath} page {$pagenum}");
+                }
+            }
+        } finally {
+            if ($lock) {
+                flock($lock, LOCK_UN);
+                fclose($lock);
+            }
+        }
+        return $path;
     }
     public function getPdfTextPath(): string
     {
@@ -439,6 +479,41 @@ class File extends Model
     }
 
     /**
+     * PDF各ページサムネイル(t-*.png)キャッシュの統計情報を返す
+     */
+    public static function pdfThumbCacheStats(): array
+    {
+        $base = storage_path(File::apf());
+        $count = 0;
+        $bytes = 0;
+        foreach (glob($base . '/*', GLOB_ONLYDIR) as $dir) {
+            foreach (glob($dir . '/t-*.png') as $png) {
+                $count++;
+                $bytes += filesize($png);
+            }
+        }
+        return ['count' => $count, 'bytes' => $bytes];
+    }
+
+    /**
+     * PDF各ページサムネイル(t-*.png)キャッシュをすべて削除する（閲覧時にオンデマンド再生成される）
+     */
+    public static function purgePdfThumbCache(): array
+    {
+        $base = storage_path(File::apf());
+        $count = 0;
+        $bytes = 0;
+        foreach (glob($base . '/*', GLOB_ONLYDIR) as $dir) {
+            // オンデマンド生成の途中で残った一時ファイル(.gen*.png)も削除
+            foreach (array_merge(glob($dir . '/t-*.png'), glob($dir . '/.gen*.png')) as $png) {
+                $bytes += filesize($png);
+                if (@unlink($png)) $count++;
+            }
+        }
+        return ['count' => $count, 'bytes' => $bytes];
+    }
+
+    /**
      * サーバ側でPDFから生成するファイルについて、不足があればtrueをかえす。
      * 注：PDFのみ意味がある。ビデオや画像には適用できない。
      */
@@ -448,10 +523,7 @@ class File extends Model
         if (!file_exists(storage_path(File::apf() . '/' . $dir))) return true;
 
         if (!file_exists($this->getPdfHeadPath())) return true;
-        $pages = $this->pagenum;
-        for ($i = 1; $i <= $pages; $i++) {
-            if (!file_exists($this->getPdfThumbPath($i))) return true;
-        }
+        // 各ページのサムネイル(t-*.png)はオンデマンド生成するので、ここではチェックしない
         if (!file_exists($this->getPdfTextPath())) return true;
         return false;
     }
@@ -475,6 +547,7 @@ class File extends Model
     {
         $dir = substr($this->fname, 0, -4);
         $dirpath = storage_path(File::apf() . '/' . $dir); // /でおわらないので注意
+        $this->getPdfThumbPathOnDemand(1); // t-00001.png をオンデマンド生成
         chdir($dirpath);
         shell_exec("tesseract h-00001.png h-00001 -l jpn tsv ");
         // shell_exec("tesseract h-00001.png h-00001 --psm 6 -l jpn+eng tsv ");

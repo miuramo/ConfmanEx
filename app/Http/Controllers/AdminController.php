@@ -937,6 +937,25 @@ class AdminController extends Controller
         return $redirect->with('feedback.success', "file_id={$file->id} の PdfJob を再実行キューへ投入しました。");
     }
 
+    /**
+     * PDFサムネイルキャッシュ(t-*.png)の一括削除画面
+     */
+    public function purgePdfThumbs()
+    {
+        if (!auth()->user()->can('role_any', 'admin')) abort(403);
+        $stats = File::pdfThumbCacheStats();
+        return view('admin.purge_pdf_thumbs')->with(compact('stats'));
+    }
+
+    public function purgePdfThumbsPost(Request $request)
+    {
+        if (!auth()->user()->can('role_any', 'admin')) abort(403);
+        $stats = File::purgePdfThumbCache();
+        $mb = number_format($stats['bytes'] / 1024 / 1024, 1);
+        return redirect()->route('admin.purge_pdf_thumbs')
+            ->with('feedback.success', "PDFサムネイルキャッシュを {$stats['count']} ファイル（{$mb} MB）削除しました。");
+    }
+
 
     public function data_status()
     {
