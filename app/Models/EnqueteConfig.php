@@ -56,7 +56,7 @@ class EnqueteConfig extends Model
     {
         return sprintf(
             "EnqueteConfig: %s, %s 〜 %s, %s, %s, %s",
-            $this->enquete->name,
+            $this->enquete->name ?? '(不明)',
             $this->openstart,
             $this->openend,
             $this->catcsv,
