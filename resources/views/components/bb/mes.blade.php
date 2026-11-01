@@ -11,7 +11,7 @@
 @endphp
 
 @if ($mes->user_id == auth()->id())
-    <div class="text-right">
+    <div class="text-right message-div">
         <div class="inline-block w-3/4 bg-green-300 p-2 rounded-lg px-2 py-1 my-1 dark:bg-green-800 dark:text-gray-50">
             <div class="flex justify-between">
                 <div class="mx-2">{{ $mes->subject }}</div>
@@ -47,7 +47,7 @@
         </div>
     </div>
 @else
-    <div class="bg-slate-300 rounded-lg w-3/4 px-2 py-1 my-1 dark:bg-slate-600 dark:text-gray-50">
+    <div class="bg-slate-300 rounded-lg w-3/4 px-2 py-1 my-1 dark:bg-slate-600 dark:text-gray-50 message-div">
         <div class="flex justify-between">
             <div class="mx-2">{{ $mes->subject }}</div>
             <div class="text-right text-gray-500 text-sm mr-2 dark:text-gray-200">

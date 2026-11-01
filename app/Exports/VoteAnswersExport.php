@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Exports;
+use Illuminate\Support\Enumerable;
 
 use App\Models\VoteAnswer;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -16,9 +17,9 @@ class VoteAnswersExport implements FromCollection, WithMapping, ShouldAutoSize, 
         $this->vote_id = $vote_id;
     }
     /**
-     * @return \Illuminate\Support\Collection
+     * @return \Illuminate\Support\Enumerable
      */
-    public function collection()
+    public function collection(): Enumerable
     {
         if ($this->vote_id == 0) return VoteAnswer::where('valid', 1)->get();
         else return VoteAnswer::where('valid', 1)->where('vote_id', $this->vote_id)->get();

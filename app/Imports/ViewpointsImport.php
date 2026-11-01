@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Viewpoint;
+use Illuminate\Database\Eloquent\Model;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
@@ -13,7 +14,7 @@ class ViewpointsImport implements ToModel, WithHeadingRow
     *
     * @return \Illuminate\Database\Eloquent\Model|null
     */
-    public function model(array $row)
+    public function model(array $row): Model|array|null
     {
         return new Viewpoint([
             'category_id' => $row['category_id'],

@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 class RevNameExportFromView implements FromView, ShouldAutoSize, WithHeadings
 {
     protected int $cat_id;
-    public function __construct($e)
+    public function __construct(int $e)
     {
         $this->cat_id = $e;
     }

@@ -16,7 +16,7 @@ class ReviewCommentExportFromView implements FromView, ShouldAutoSize, WithHeadi
     protected Category $category;
     protected int $scoreonly;
 
-    public function __construct($tgt, $sonly = 0)
+    public function __construct(Category $tgt, $sonly = 0)
     {
         $this->category = $tgt;
         $this->scoreonly = $sonly;

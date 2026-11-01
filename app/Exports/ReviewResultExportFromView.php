@@ -11,7 +11,7 @@ use Illuminate\Contracts\View\View;
 class ReviewResultExportFromView extends AbstractExportFromView
 {
     protected Category $target;
-    public function __construct($tgt)
+    public function __construct(Category $tgt)
     {
         $this->target = $tgt;
     }

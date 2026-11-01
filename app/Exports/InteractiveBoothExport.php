@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -21,10 +22,11 @@ class InteractiveBoothExport implements FromCollection, WithMapping, ShouldAutoS
         'owner' => '投稿者氏名',
     ];
     /**
-     * @return \Illuminate\Support\Collection
+     * @return \Illuminate\Support\Enumerable
      */
-    public function collection()
+    public function collection(): Enumerable
     {
+        return new \Illuminate\Support\Collection();
         //
     }
     public function headings(): array

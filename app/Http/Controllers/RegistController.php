@@ -324,19 +324,30 @@ class RegistController extends Controller
         if (!auth()->user()->can('role_any', 'pc|acc')) {
             return redirect()->route('regist.index')->with('feedback.error', '編集ロックの管理権限がありません。');
         }
-        // チェックを入れた参加登録を対象とする
+        // lock/unlock: submitted_at から delay_hours 時間経過した参加登録をサーバ側で対象にする
+        // do_lock/do_unlock: チェックを入れた参加登録を対象とする（管理画面のフォームから）
         $validated = $request->validate([
-            'action' => ['required', 'in:do_lock,do_unlock'],
+            'action' => ['required', 'in:lock,unlock,do_lock,do_unlock'],
+            'delay_hours' => ['required_if:action,lock,unlock', 'numeric', 'min:0'],
+            'chk' => ['array'],
+            'chk.*' => ['integer'],
         ]);
 
+        $isLock = in_array($validated['action'], ['lock', 'do_lock']);
+
         $target = Regist::where('valid', true)
-            ->whereNotNull('submitted_at')
-            ->whereIn('id', $request->input('chk', []));
+            ->whereNotNull('submitted_at');
+        if (in_array($validated['action'], ['lock', 'unlock'])) {
+            $cutoff = now()->subHours((float) $validated['delay_hours']);
+            $target->where('submitted_at', '<=', $cutoff);
+        } else {
+            $target->whereIn('id', $request->input('chk', []));
+        }
         $count = (clone $target)->count();
 
-        $target->update(['locked' => $validated['action'] === 'do_lock']);
+        $target->update(['locked' => $isLock]);
 
-        $action = $validated['action'] === 'do_lock' ? 'ロック' : 'ロック解除';
+        $action = $isLock ? 'ロック' : 'ロック解除';
 
         return redirect()->route('regist.manage_locked')
             ->with('feedback.success', "{$count}件の有効な参加登録を{$action}しました。");

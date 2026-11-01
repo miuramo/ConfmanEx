@@ -55,7 +55,9 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single', 'slack', 'db'],
+            // Slack の Webhook URL が未設定の環境では slack チャンネルを除外する
+            // （未設定のまま含めるとチャンネル解決時に TypeError となり、 emergency logger にフォールバックする）
+            'channels' => env('LOG_SLACK_WEBHOOK_URL') ? ['single', 'slack', 'db'] : ['single', 'db'],
             'ignore_exceptions' => true,
         ],
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Exports;
+use Illuminate\Support\Enumerable;
 
 use App\Models\Paper;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -13,7 +14,7 @@ class PapersExport implements FromCollection, WithMapping, ShouldAutoSize, WithH
     /**
      * @return \Illuminate\Support\Collection
      */
-    public function collection()
+    public function collection(): Enumerable
     {
         return Paper::all();
     }

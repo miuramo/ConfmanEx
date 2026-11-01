@@ -13,8 +13,8 @@
         "laravel/passkeys": "^0.2",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
-        "livewire/livewire": "^3.5",
-        "maatwebsite/excel": "^3.1.47",
+        "livewire/livewire": "^3.6",
+        "maatwebsite/excel": "^4.0",
         "psr/simple-cache": "^2.0",
         "stechstudio/laravel-zipstream": "^5.0",
         "phpoffice/phppresentation": "dev-master"

@@ -96,11 +96,11 @@
                         <th class="p-2 text-left">参照</th>
                         <th class="p-2 text-left">名前</th>
                         <th class="p-2 text-left">所属</th>
-                        <th class="p-2 text-center">Locked</th>
+                        <th class="p-2 text-center">ロック状態</th>
                         <th class="p-2 text-center">Valid</th>
                         <th class="p-2 text-left">uID</th>
                         <th class="p-2 text-left">regID</th>
-                        <th class="p-2 text-center">isearly</th>
+                        <th class="p-2 text-center">isearly（早期/通常）</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white dark:bg-slate-800">
@@ -112,7 +112,7 @@
                                     data-submitted-at="{{ $regist->submitted_at ? \Illuminate\Support\Carbon::parse($regist->submitted_at)->toIso8601String() : '' }}"
                                     data-valid="{{ $regist->valid ? 'true' : 'false' }}">
                             </td>
-                            <td class="p-2 dark:text-gray-200">{{ $regist->submitted_at ?? '未完了' }}</td>
+                            <td class="p-2 dark:text-gray-200">{{ $regist->submitted_at ?? '未提出' }}</td>
                             <td class="p-2 dark:text-gray-200">
                                 <x-element.linkbutton2
                                     href="{{ route('regist.showwithtoken', ['regist' => $regist->id, 'token' => $regist->token()]) }}"
@@ -130,7 +130,7 @@
                             <td class="p-2 text-left dark:text-gray-200">{{ $regist->user?->id ?? '不明' }}</td>
                             <td class="p-2 text-left dark:text-gray-200">{{ $regist->id }}</td>
                             <td class="p-2 text-center dark:text-gray-200">
-                                {{ $regist->isearly ? 'Early' : 'Late' }}
+                                {{ $regist->isearly ? '早期' : '通常' }}
                             </td>
                         </tr>
                     @empty

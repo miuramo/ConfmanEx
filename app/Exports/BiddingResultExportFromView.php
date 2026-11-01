@@ -13,7 +13,7 @@ class BiddingResultExportFromView extends AbstractExportFromView
 {
     protected Category $cat;
     protected Role $role;
-    public function __construct($_cat, $_role)
+    public function __construct(Category $_cat, Role $_role)
     {
         $this->cat = $_cat;
         $this->role = $_role;

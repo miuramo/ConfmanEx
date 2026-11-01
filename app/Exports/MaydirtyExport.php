@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\Paper;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -12,9 +13,9 @@ class MaydirtyExport implements FromCollection, WithMapping, ShouldAutoSize, Wit
 {
 
     /**
-     * @return \Illuminate\Support\Collection
+     * @return \Illuminate\Support\Enumerable
      */
-    public function collection()
+    public function collection(): Enumerable
     {
         return Paper::orderBy('category_id', 'asc')->orderBy('id', 'asc')->get();
     }

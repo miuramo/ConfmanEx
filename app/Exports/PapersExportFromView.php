@@ -9,7 +9,7 @@ use Illuminate\Contracts\View\View;
 class PapersExportFromView extends AbstractExportFromView
 {
     protected array $targets;
-    public function __construct($tgt)
+    public function __construct(array $tgt)
     {
         $this->targets = $tgt;
     }

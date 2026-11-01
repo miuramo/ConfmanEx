@@ -11,7 +11,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 class RoleMembersExportFromView implements FromView, ShouldAutoSize, WithHeadings
 {
     protected Role $role;
-    public function __construct($ro)
+    public function __construct(Role $ro)
     {
         $this->role = $ro;
     }

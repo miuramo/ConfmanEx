@@ -11,7 +11,7 @@ class MultiEnqExportFromView extends AbstractExportFromView
 {
     protected array $enq_ids;
     protected bool $with_paper;
-    public function __construct($e, $with_paper = false)
+    public function __construct(array $e, $with_paper = false)
     {
         $this->enq_ids = $e;
         $this->with_paper = $with_paper;

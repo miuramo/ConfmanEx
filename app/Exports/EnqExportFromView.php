@@ -10,7 +10,7 @@ use Illuminate\Contracts\View\View;
 class EnqExportFromView extends AbstractExportFromView
 {
     protected Enquete $enq;
-    public function __construct($e)
+    public function __construct(Enquete $e)
     {
         $this->enq = $e;
     }
