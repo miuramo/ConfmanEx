@@ -22,7 +22,10 @@
             {{ $bb->paper->title }}</div>
 
         <span class="mx-4"></span>
-            <x-element.button onclick="window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });" color="teal" size="sm" value="一番下に移動 [b]"></x-element.button>
+        <x-element.button onclick="window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });"
+            color="teal" size="sm" value="一番下に移動 [b]"></x-element.button>
+        <span class="mx-2 text-teal-500 text-sm">[j],[k] キーでメッセージ単位での移動</span>
+
     </x-slot>
     @section('title', $bb->paper->id_03d() . ' 掲示板')
 
@@ -73,8 +76,9 @@
 
         </div>
         <div class="my-10"></div>
-<x-element.button onclick="window.scrollTo({ top: 0, behavior: 'smooth' });" color="teal" size="sm" value="一番上に移動 [t]">
-            </x-element.button>
+        <x-element.button onclick="window.scrollTo({ top: 0, behavior: 'smooth' });" color="teal" size="sm"
+            value="一番上に移動 [t]">
+        </x-element.button>
         {{-- bb.type == 1 and メタのみに表示される査読者 --}}
         {{-- <x-review.iammeta :bb_id="$bb->id"></x-review.iammeta> --}}
         @if ($bb->type == 1)
@@ -125,11 +129,14 @@
             const messages = [...document.querySelectorAll('.message-div')];
             if (messages.length === 0) return;
             const threshold = window.scrollY + 8; // 現在位置のわずかな誤差を許容
-            const target = direction > 0
-                ? messages.find((el) => el.offsetTop > threshold)
-                : messages.findLast((el) => el.offsetTop < window.scrollY - 8);
+            const target = direction > 0 ?
+                messages.find((el) => el.offsetTop > threshold) :
+                messages.findLast((el) => el.offsetTop < window.scrollY - 8);
             if (target) {
-                window.scrollTo({ top: target.offsetTop - 8, behavior: 'smooth' });
+                window.scrollTo({
+                    top: target.offsetTop - 8,
+                    behavior: 'smooth'
+                });
             }
         };
 
@@ -139,9 +146,15 @@
             if (target instanceof HTMLElement &&
                 (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))) return;
             if (event.key === 'b') {
-                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
             } else if (event.key === 't') {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             } else if (event.key === 'j') {
                 scrollToMessage(1);
             } else if (event.key === 'k') {
