@@ -96,6 +96,9 @@
                         <x-element.linkbutton_disabled size="sm">
                             参加登録内容を編集する（現在は編集不可）
                         </x-element.linkbutton_disabled>
+                        @if($reg->locked)
+                            <span class="text-blue-500 font-extrabold text-sm text-center px-4">状況：会計担当が参加登録をロックしています</span>
+                        @endif
                     @endif
                     <div
                         class="mx-6 mt-2 px-6 py-2 bg-yellow-50 rounded-lg dark:bg-yellow-900 dark:text-yellow-200 text-lg text-orange-600">
