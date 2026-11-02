@@ -200,14 +200,21 @@ class AuthServiceProvider extends ServiceProvider
                 return false;
             }
             $now = (new DateTime())->format("Y-m-d H:i:s");
-            return $now <= (new DateTime($late_end . " 23:59:59"))->format("Y-m-d H:i:s") && $now > (new DateTime(\App\Models\Setting::getval('REG_EARLY_LIMIT') . " 23:59:59"))->format("Y-m-d H:i:s");
+            $late_limit = (new DateTime($late_end . " 23:59:59"))->format("Y-m-d H:i:s");
+            $early_limit = (new DateTime(\App\Models\Setting::getval('REG_EARLY_LIMIT') . " 23:59:59"))->format("Y-m-d H:i:s");
+            // Log::channel('single')->info("Late and early limits", ['late_limit' => $late_limit, 'early_limit' => $early_limit, 'now' => $now]);
+            return $now <= $late_limit && $now > $early_limit;
         });
 
         // 参加登録がisearlyかつ、早期申し込み期限内、または、参加登録が!isearlyかつ通常申し込み期限内かどうか
         Gate::define('can_edit_registration', function ($user, $reg) {
-            if ($reg->locked) return false; // 編集ロックされている場合は編集不可
+            if ($reg->locked) {
+                Log::channel('single')->info("cannot edit reg because it is locked", ['user_id' => $user->id, 'registration_id' => $reg->id]);
+                return false; // 編集ロックされている場合は編集不可
+            }
             if ($reg->isearly) return $user->can('is_now_early'); // 早期登録は早期申込期限内のみ編集可能
-            return $user->can('is_now_late'); // 通常登録は通常申込期限内のみ編集可能
+            if ($user->can('is_now_early')) return true; // 通常でも、早期期間であれば修正可能にする
+            return $user->can('is_now_late'); // 通常登録は通常申込期限内のみ編集可能。つまり、late期限以前であれば編集可能
         });
     }
 }
