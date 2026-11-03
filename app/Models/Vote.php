@@ -15,6 +15,7 @@ class Vote extends Model
         'category_id',
         'isclose',
         'separate_student',
+        'prohibit_selfvote',
         'for_pc',
         'student_paper_ids',
     ];

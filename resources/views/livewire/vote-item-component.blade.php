@@ -25,19 +25,23 @@
 @endphp
         @foreach ($boothes as $booth => $pid)
             @php
-                $disabled = count($selectedPapers) >= $vi->upperlimit && !in_array($booth, $selectedPapers);
+                $isSelf = in_array($booth, $selfBooths);
+                $disabled = (count($selectedPapers) >= $vi->upperlimit && !in_array($booth, $selectedPapers)) || $isSelf;
                 if ($vi->upperlimit == 0) {
-                    $disabled = false;
+                    $disabled = $isSelf;
                     $vi->upperlimit = count($boothes) ; // 0 means unlimited, but we set it to a high number for display purposes
                 }
             @endphp
             <div class="mx-1 my-1">
                 <input type="checkbox" class="cursor-pointer mt-0 mb-1 disabled:cursor-not-allowed disabled:bg-slate-400"
                     id="{{ $booth }}" value="{{ $booth }}" wire:model.defer="selectedPapers"
-                    wire:change="checkLimit" @disabled(count($selectedPapers) >= $vi->upperlimit && !in_array($booth, $selectedPapers)) />
+                    wire:change="checkLimit" @disabled($isSelf || (count($selectedPapers) >= $vi->upperlimit && !in_array($booth, $selectedPapers))) />
                 <label for="{{ $booth }}"
                     class="hover:bg-yellow-100 hover:border-2 hover:border-yellow-300 hover:p-1 hover-trigger hover:font-bold cursor-pointer p-0.5 transition-all duration-150 {{ $disabled ? 'cursor-not-allowed text-gray-400 hover:border-0 hover:border-gray-300 hover:bg-gray-200 hover:p-0' : 'cursor-pointer' }}">
                     {{ $booth }} : {{ $papers[$pid] }}</label>
+                @if ($isSelf)
+                    <span class="ml-2 text-sm text-red-500">（ご自身の発表には投票できません）</span>
+                @endif
                 <div
                     class="absolute hidden border-2 border-lime-300 p-1 ml-64 mt-4 text-black bg-lime-100 bg-opacity-85 tooltip text-sm transition-all duration-150">
                     {{ str_replace("\n", ' ', trim($authors[$pid])) }}

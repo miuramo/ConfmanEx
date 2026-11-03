@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Paper;
 use App\Models\Submit;
+use App\Models\User;
 use App\Models\Vote;
 use App\Models\VoteAnswer;
 use App\Models\VoteItem;
@@ -20,6 +21,7 @@ class VoteItemComponent extends Component
     public $papers = [];
     public $authors = [];
     public array $selectedPapers = [];
+    public array $selfBooths = [];
     public VoteTicket $ticket;
     public $uid;
     public $comment = '';
@@ -36,6 +38,10 @@ class VoteItemComponent extends Component
     public function updated($propertyName, $value)
     {
         // info("Property updated: {$propertyName} with value: {$value}");
+        // 自著への投票が禁止されている場合、自分の発表にあたる booth は除外する
+        if ($this->vote->prohibit_selfvote && !empty($this->selfBooths)) {
+            $this->selectedPapers = array_values(array_diff($this->selectedPapers, $this->selfBooths));
+        }
         sort($this->selectedPapers);
 
         DB::transaction(function () {
@@ -90,6 +96,28 @@ class VoteItemComponent extends Component
             $this->comment = $this->ticket->email;
         }
         $this->selectedPapers = VoteAnswer::where('valid', 1)->where('vote_id', $this->vote->id)->where('vote_item_id', $this->voteItem->id)->where('token', $this->ticket->token)->pluck('booth')->toArray();
+
+        // 自著への投票が禁止されている場合、自分の発表にあたる booth を特定する（getATが0以下なら投票可能）
+        $this->selfBooths = [];
+        if ($this->vote->prohibit_selfvote) {
+            $uid = $this->uid;
+            if ($uid === null) {
+                // 未ログインの場合は、投票チケットのメールアドレスからユーザーを特定する
+                $uid = User::where('email', $this->ticket->email)->value('id');
+            }
+            if ($uid) {
+                $boothes = json_decode($this->voteItem->submits, true);
+                if (is_array($boothes)) {
+                    foreach ($boothes as $booth => $pid) {
+                        if (Paper::getAT($uid, $pid) > 0) {
+                            $this->selfBooths[] = $booth;
+                        }
+                    }
+                }
+                // 既存の選択済み回答からも除外する（無効なチェックボックスが選択状態になるのを防ぐ）
+                $this->selectedPapers = array_values(array_diff($this->selectedPapers, $this->selfBooths));
+            }
+        }
     }
 
     public function render()

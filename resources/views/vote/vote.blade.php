@@ -53,6 +53,10 @@
     <div class="mx-6">
         <x-element.h1>
             選択するとすぐに投票結果として保存されます。期限までは何度でも修正できます。
+            @if($vote->prohibit_selfvote)
+                <br>
+                <span class="text-red-500">注：ご自身の発表には投票できません。</span>
+            @endif
         </x-element.h1>
     </div>
     @php
